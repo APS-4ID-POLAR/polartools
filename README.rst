@@ -7,20 +7,18 @@ Polar Tools
 
 .. image:: https://img.shields.io/pypi/v/polartools.svg
         :target: https://pypi.python.org/pypi/polartools
+        
+.. image:: https://api.codacy.com/project/badge/Grade/b94ee8138eec41d680ece65b77b8f7c2
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/gh/APS-4ID-POLAR/polartools?utm_source=github.com&utm_medium=referral&utm_content=APS-4ID-POLAR/polartools&utm_campaign=Badge_Grade
 
 
 Python package to read and process data from the APS Polar beamline
 
 * Free software: 3-clause BSD license
-* Documentation: (COMING SOON!) https://gfabbris.github.io/polartools.
+* Documentation: (COMING SOON!)
 
 Features
 --------
 
 * TODO
-
-This is a change just to test travis CI
-
-.. image:: https://api.codacy.com/project/badge/Grade/b94ee8138eec41d680ece65b77b8f7c2
-   :alt: Codacy Badge
-   :target: https://app.codacy.com/gh/APS-4ID-POLAR/polartools?utm_source=github.com&utm_medium=referral&utm_content=APS-4ID-POLAR/polartools&utm_campaign=Badge_Grade
