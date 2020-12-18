@@ -20,3 +20,7 @@ Features
 * TODO
 
 This is a change just to test travis CI
+
+.. image:: https://api.codacy.com/project/badge/Grade/b94ee8138eec41d680ece65b77b8f7c2
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/gh/APS-4ID-POLAR/polartools?utm_source=github.com&utm_medium=referral&utm_content=APS-4ID-POLAR/polartools&utm_campaign=Badge_Grade
