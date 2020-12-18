@@ -37,7 +37,7 @@ def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv'):
 def load_databroker(scan_id, db, version='v2', **kwargs):
     """
     Loads the data in the 'primary' stream of the first scan with the provided
-    scan_id.
+    scan_id. BLA.
 
     Parameters
     ----------
@@ -99,8 +99,13 @@ def run_v2_query(db, query):
 
     See also
     --------
-    `databroker.catalog.search`
+    :func:`databroker.catalog.search`
     """
+
+    # See also
+    # --------
+    # 
+
     since = query.pop('since', None)
     until = query.pop('until', None)
 
