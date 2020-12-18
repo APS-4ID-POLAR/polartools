@@ -1,0 +1,13 @@
+sources:
+  packed_catalog:
+    args:
+      paths:
+      - /home/beams17/POLAR/bluesky_setup/exported_scans_test/documents/*.msgpack
+      root_map: {}
+    driver: bluesky-msgpack-catalog
+    metadata:
+      generated_by:
+        library: databroker_pack
+        version: 0.3.0
+      relative_paths:
+      - ./documents/*.msgpack
