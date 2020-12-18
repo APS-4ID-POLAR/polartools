@@ -49,6 +49,7 @@ jobs:
     - name: Run tests with pytest
       run: |
         source $CONDA/bin/activate $ENV_NAME
+        databroker-unpack inplace polartools/tests/data_for_test/databroker test_data
         pytest
       env:
         PY_VER: ${{ matrix.python-version }}

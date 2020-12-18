@@ -1,7 +1,6 @@
 from polartools import load_data
 from os.path import join
-# from os import system
-# from databroker import catalog
+from databroker import catalog
 
 
 def test_load_csv():
@@ -10,12 +9,9 @@ def test_load_csv():
     assert table.shape == (4, 21)
 
 
-# TODO: This is not working, probably because of the system call.
-# def test_load_databroker():
-#     path = join('polartools', 'tests', 'data_for_test', 'databroker')
-#     system(f'databroker-unpack inplace {path} test_data')
-#     db = catalog['test_data'].get()
-#     table = load_data.load_databroker(1049, db)
+def test_load_databroker():
+    db = catalog['test_data'].get()
+    table = load_data.load_databroker(1049, db)
 
-#     # TODO: Check this. I got different results depending on versions.
-#     assert table.shape == (4, 19)
+    # TODO: Check this. I got different results depending on versions.
+    assert table.shape == (4, 19)
