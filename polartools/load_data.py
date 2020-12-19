@@ -1,3 +1,6 @@
+# Copyright (c) 2019-2020, UChicago Argonne, LLC.
+# See LICENSE.txt file for details.
+
 import numpy as np
 from pandas import read_csv
 from scipy.interpolate import interp1d
