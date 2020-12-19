@@ -22,7 +22,8 @@ Polar Tools
 
 Python package to read and process data from the APS Polar beamline
 
-* Free software: 3-clause BSD license
+* License: `ANL OPEN SOURCE LICENSE`_
+.. _`ANL OPEN SOURCE LICENSE`: LICENSE.txt
 * Documentation: (COMING SOON!)
 
 Features
