@@ -102,10 +102,6 @@ def run_v2_query(db, query):
     :func:`databroker.catalog.search`
     """
 
-    # See also
-    # --------
-    # 
-
     since = query.pop('since', None)
     until = query.pop('until', None)
 
@@ -197,19 +193,15 @@ def load_scan(db, scan, positioner, detectors, monitor=None, **kwargs):
     """
 
     table = load_table(scan, db=db, **kwargs)
-    x = np.array(table[positioner])
-    ys = []
+    data = [np.array(table[positioner])]
     if monitor is None:
         for detector in detectors:
-            ys.append(np.array(table[detector]))
+            data.append(np.array(table[detector]))
     else:
         for detector in detectors:
-            ys.append(np.array(table[detector])/np.array(table[monitor]))
+            data.append(np.array(table[detector])/np.array(table[monitor]))
 
-    if len(ys) > 1:
-        return x, tuple(ys)
-    else:
-        return x, ys[0]
+    return tuple(data)
 
 
 def load_absorption(db, scan, positioner='monochromator_energy',
