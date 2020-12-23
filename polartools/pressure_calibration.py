@@ -148,8 +148,8 @@ def xrd_calibrate_pressure(scan, *, db=None, bragg_peak=[1, 1, 1],
                            positioner='huber_tth', detector='APDSector4',
                            monitor=None, center=None, sigma=None,
                            amplitude=None, fraction=None, fit_fraction=True,
-                           m=None, b=None, fit_m=True, tth_offset=0.0,
-                           **kwargs):
+                           slope=None, intercept=None, fit_slope=True,
+                           tth_offset=0.0, **kwargs):
     """
     Calibrate pressure using x-ray diffraction.
 
@@ -193,11 +193,11 @@ def xrd_calibrate_pressure(scan, *, db=None, bragg_peak=[1, 1, 1],
         see: :func: `lmfit.models.PseudoVoigtModel`
     fit_fraction : boolean, optional
         Flag to control if fraction will be varied.
-    m, b : float, optional
+    slope, intercept : float, optional
         Initial guess parameters of linear function. For more details,
         see: :func: `lmfit.models.LinearModel`
-    fit_m : boolean, optional
-        Flag to control if m will be varied.
+    fit_slope : boolean, optional
+        Flag to control if slope will be varied.
     tth_off : float, optional
         Offset between the reference two theta and the measured value.
     kwargs :
@@ -223,8 +223,8 @@ def xrd_calibrate_pressure(scan, *, db=None, bragg_peak=[1, 1, 1],
                      **kwargs)
 
     fit = fit_bragg_peak(x, y, center=center, sigma=sigma, amplitude=amplitude,
-                         fraction=fraction, fit_fraction=fit_fraction, m=m,
-                         b=b, fit_m=fit_m)
+                         fraction=fraction, fit_fraction=fit_fraction,
+                         slope=slope, intercept=intercept, fit_slope=fit_slope)
 
     tth = fit.best_values['center']
 

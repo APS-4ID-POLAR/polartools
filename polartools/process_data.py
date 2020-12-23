@@ -60,7 +60,7 @@ def normalize_absorption(energy, xanes, pre_edge_range, pos_edge_range, e0,
 
 
 def _generate_initial_guess(params, x, y, center, sigma, amplitude, fraction,
-                            fit_fraction, m, b, fit_m):
+                            fit_fraction, slope, intercept, fit_slope):
     """
     Adds initial guess to the lmfit parameters.
 
@@ -100,11 +100,11 @@ def _generate_initial_guess(params, x, y, center, sigma, amplitude, fraction,
         see: :func: `lmfit.models.PseudoVoigtModel`
     fit_fraction : boolean, optional
         Flag to control if fraction will be varied.
-    m, b : float, optional
+    slope, intercept : float, optional
         Initial guess parameters of linear function. For more details,
         see: :func: `lmfit.models.LinearModel`
-    fit_n : boolean, optional
-        Flag to control if m will be varied.
+    fit_slope : boolean, optional
+        Flag to control if slope will be varied.
 
     Returns
     -------
@@ -119,7 +119,7 @@ def _generate_initial_guess(params, x, y, center, sigma, amplitude, fraction,
 
     if not center:
         index = y == np.nanmax(y)
-        center = x[index]
+        center = x[index][0]
     params['center'].set(center, min=np.nanmin(x), max=np.nanmax(x))
 
     if not sigma:
@@ -138,19 +138,20 @@ def _generate_initial_guess(params, x, y, center, sigma, amplitude, fraction,
         fraction = 0.5
     params['fraction'].set(fraction, min=0, max=1, vary=fit_fraction)
 
-    if not m:
-        m = (y[-1]-y[0])/(x[-1]-x[0])
-    params['m'].set(m, vary=fit_m)
+    if not slope:
+        slope = (y[-1]-y[0])/(x[-1]-x[0])
+    params['slope'].set(slope, vary=fit_slope)
 
-    if not b:
-        b = x[0]
-    params['b'].set(b)
+    if not intercept:
+        intercept = x[0]
+    params['intercept'].set(intercept)
 
     return params
 
 
 def fit_bragg_peak(x, y, center=None, sigma=None, amplitude=None, fraction=None,
-                   fit_fraction=True, m=None, b=None, fit_m=True):
+                   fit_fraction=True, slope=None, intercept=None,
+                   fit_slope=True):
     """
     Fit Bragg peak with a pseudo-voigt function.
 
@@ -170,11 +171,11 @@ def fit_bragg_peak(x, y, center=None, sigma=None, amplitude=None, fraction=None,
         see: :func: `lmfit.models.PseudoVoigtModel`
     fit_fraction : boolean, optional
         Flag to control if fraction will be varied.
-    m, b : float, optional
+    slope, intercept : float, optional
         Initial guess parameters of linear function. For more details,
         see: :func: `lmfit.models.LinearModel`
-    fit_n : boolean, optional
-        Flag to control if m will be varied.
+    fit_slope : boolean, optional
+        Flag to control if slope will be varied.
 
     Returns
     -------
@@ -195,6 +196,7 @@ def fit_bragg_peak(x, y, center=None, sigma=None, amplitude=None, fraction=None,
     params = model.make_params()
 
     params = _generate_initial_guess(params, x, y, center, sigma, amplitude,
-                                     fraction, fit_fraction,  m, b, fit_m)
+                                     fraction, fit_fraction,  slope, intercept,
+                                     fit_slope)
 
     return model.fit(y, params=params, x=x)
