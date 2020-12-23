@@ -195,7 +195,7 @@ def load_table(scan, db, file_format='spec', **kwargs):
             file_name = kwargs.pop('file_name', None)
             if not file_name:
                 raise NameError("file_name kwarg is needed to load spec files")
-            return load_spec(scan, **kwargs)
+            return load_spec(scan, file_name, **kwargs)
         else:
             raise ValueError(f"text_format can only be 'csv' or 'spec', but \
                 {file_format} was entered.")
