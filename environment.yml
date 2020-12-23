@@ -17,6 +17,7 @@ dependencies:
   - bluesky-live
   - flake8
   - lmfit
+  - spec2nexus
   - pip:
     - ipython-genutils==0.2.0
     - prompt-toolkit==1.0.15
