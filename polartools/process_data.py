@@ -1,4 +1,5 @@
 import numpy as np
+from lmfit.models import LinearModel, PseudoVoigtModel
 
 
 def normalize_absorption(energy, xanes, pre_edge_range, pos_edge_range, e0,
@@ -36,7 +37,7 @@ def normalize_absorption(energy, xanes, pre_edge_range, pos_edge_range, e0,
 
     See also
     --------
-    `numpy.polyfit`
+    :func:`numpy.polyfit`
     """
 
     energy = np.array(energy)
@@ -56,3 +57,144 @@ def normalize_absorption(energy, xanes, pre_edge_range, pos_edge_range, e0,
     jump = pos_edge_func(e0)
 
     return pre_edge, pre_edge + pos_edge, jump
+
+
+def _generate_initial_guess(params, x, y, center, sigma, amplitude, fraction,
+                            fit_fraction, m, b, fit_m):
+    """
+    Adds initial guess to the lmfit parameters.
+
+    Uses lmfit (https://lmfit.github.io/lmfit-py/).
+
+    WARNING: The following initial guesses (if None is passed) and constrains
+    are applied:
+    - center
+        value: x position where y is maximum.
+        constrain: min = min(x), max = max(x)
+    - sigma
+        value: (max(x) - min(x))/10
+        constrain: min = 0
+    - amplitude
+        value: max(y)*sigma*sqrt(pi/2)
+        constrain: min = 0
+    - fraction
+        value: 0.5
+        constrain: min = 0, max = 1
+    - m
+        value: (y[-1]-y[0])/(x[-1]-x[0])
+        No constrain
+    - b
+        value: x[0]
+        No constrain
+
+    Parameters
+    ----------
+    params: lmfit Parameters class
+        Will hold the initial parameters initial setup.
+    x : iterable
+        List of x-axis values.
+    y : iterable
+        List of y-axis values.
+    center, sigma, amplitude, fraction : float, optional
+        Initial guess parameters of pseudo-voigt function. For more details,
+        see: :func: `lmfit.models.PseudoVoigtModel`
+    fit_fraction : boolean, optional
+        Flag to control if fraction will be varied.
+    m, b : float, optional
+        Initial guess parameters of linear function. For more details,
+        see: :func: `lmfit.models.LinearModel`
+    fit_n : boolean, optional
+        Flag to control if m will be varied.
+
+    Returns
+    -------
+    params : lmfit Parameters class
+        Holds the initial parameters initial setup.
+
+    See also
+    --------
+    :func:`lmfit.models.PseudoVoigtModel`
+    :func:`lmfit.models.LinearModel`
+    """
+
+    if not center:
+        index = y == np.nanmax(y)
+        center = x[index]
+    params['center'].set(center, min=np.nanmin(x), max=np.nanmax(x))
+
+    if not sigma:
+        sigma = (np.nanmax(x)-np.nanmin(x))/10
+    params['sigma'].set(sigma, min=0)
+
+    if not amplitude:
+        amplitude = np.nanmax(y)*sigma*np.sqrt(np.pi/np.log(2))
+    params['amplitude'].set(amplitude, min=0)
+
+    if not fraction:
+        fraction = 0.5
+    if (fraction < 0) or (fraction > 1):
+        print(f'WARNING: fraction must be 0 <= fraction <= 1, but you provided\
+         fraction = {fraction}. Using fraction = 0.5.')
+        fraction = 0.5
+    params['fraction'].set(fraction, min=0, max=1, vary=fit_fraction)
+
+    if not m:
+        m = (y[-1]-y[0])/(x[-1]-x[0])
+    params['m'].set(m, vary=fit_m)
+
+    if not b:
+        b = x[0]
+    params['b'].set(b)
+
+    return params
+
+
+def fit_bragg_peak(x, y, center=None, sigma=None, amplitude=None, fraction=None,
+                   fit_fraction=True, m=None, b=None, fit_m=True):
+    """
+    Fit Bragg peak with a pseudo-voigt function.
+
+    Uses lmfit (https://lmfit.github.io/lmfit-py/).
+
+    WARNING: This imposes constrains to the fit that are described in
+    :func: `polartools.process_data._generate_initial_guess`
+
+    Parameters
+    ----------
+    x : iterable
+        List of x-axis values.
+    y : iterable
+        List of y-axis values.
+    center, sigma, amplitude, fraction : float, optional
+        Initial guess parameters of pseudo-voigt function. For more details,
+        see: :func: `lmfit.models.PseudoVoigtModel`
+    fit_fraction : boolean, optional
+        Flag to control if fraction will be varied.
+    m, b : float, optional
+        Initial guess parameters of linear function. For more details,
+        see: :func: `lmfit.models.LinearModel`
+    fit_n : boolean, optional
+        Flag to control if m will be varied.
+
+    Returns
+    -------
+    fit : lmfit ModelResult class
+        Contains the fit results. See:
+        https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
+
+    See also
+    --------
+    :func:`lmfit.models.PseudoVoigtModel`
+    :func:`lmfit.models.LinearModel`
+    """
+
+    x = np.copy(x)
+    y = np.copy(y)
+
+    model = PseudoVoigtModel() + LinearModel()
+    params = model.make_params()
+
+    params = _generate_initial_guess(params, x, y, center, sigma, amplitude,
+                                     fraction, fit_fraction,  m, b, fit_m)
+
+    return model.fit(y, params=params, x=x)

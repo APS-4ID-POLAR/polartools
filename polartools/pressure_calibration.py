@@ -5,148 +5,8 @@
 
 import numpy as np
 from scipy.interpolate import interp1d
-from lmfit.models import LinearModel, PseudoVoigtModel
-
-
-def _generate_initial_guess(params, x, y, center, sigma, amplitude, fraction,
-                            fit_fraction, m, b, fit_m):
-    """
-    Adds initial guess to the lmfit parameters.
-
-    Uses lmfit (https://lmfit.github.io/lmfit-py/index.html).
-
-    WARNING: The following initial guess (if None is passed) and constrains are
-    applied:
-    - center
-        value: x position where y is maximum.
-        constrain: min = min(x), max = max(x)
-    - sigma
-        value: (max(x) - min(x))/10
-        constrain: min = 0
-    - amplitude
-        value: max(y)*sigma*sqrt(pi/2)
-        constrain: min = 0
-    - fraction
-        value: 0.5
-        constrain: min = 0, max = 1
-    - m
-        value: (y[-1]-y[0])/(x[-1]-x[0])
-        No constrain
-    - b
-        value: x[0]
-        No constrain
-
-    Parameters
-    ----------
-    params: lmfit Parameters class
-        Will hold the initial parameters initial setup.
-    x : iterable
-        List of x-axis values.
-    y : iterable
-        List of y-axis values.
-    center, sigma, amplitude, fraction : float, optional
-        Initial guess parameters of pseudo-voigt function. For more details,
-        see: :func: `lmfit.models.PseudoVoigtModel`
-    fit_fraction : boolean, optional
-        Flag to control if fraction will be varied.
-    m, b : float, optional
-        Initial guess parameters of linear function. For more details,
-        see: :func: `lmfit.models.LinearModel`
-    fit_n : boolean, optional
-        Flag to control if m will be varied.
-
-    Returns
-    -------
-    params : lmfit Parameters class
-        Holds the initial parameters initial setup.
-
-    See also
-    --------
-    :func:`lmfit.models.PseudoVoigtModel`
-    :func:`lmfit.models.LinearModel`
-    """
-
-    if not center:
-        index = y == np.nanmax(y)
-        center = x[index]
-    params['center'].set(center, min=np.nanmin(x), max=np.nanmax(x))
-
-    if not sigma:
-        sigma = (np.nanmax(x)-np.nanmin(x))/10
-    params['sigma'].set(sigma, min=0)
-
-    if not amplitude:
-        amplitude = np.nanmax(y)*sigma*np.sqrt(np.pi/np.log(2))
-    params['amplitude'].set(amplitude, min=0)
-
-    if not fraction:
-        fraction = 0.5
-    if (fraction < 0) or (fraction > 1):
-        print(f'WARNING: fraction must be 0 <= fraction <= 1, but you provided\
-         fraction = {fraction}. Using fraction = 0.5.')
-        fraction = 0.5
-    params['fraction'].set(fraction, min=0, max=1, vary=fit_fraction)
-
-    if not m:
-        m = (y[-1]-y[0])/(x[-1]-x[0])
-    params['m'].set(m, vary=fit_m)
-
-    if not b:
-        b = x[0]
-    params['b'].set(b)
-
-    return params
-
-
-def fit_bragg_peak(x, y, center=None, sigma=None, amplitude=None, fraction=None,
-                   fit_fraction=True, m=None, b=None, fit_m=True):
-    """
-    Fit Bragg peak with a pseudo-voigt function.
-
-    Uses lmfit (https://lmfit.github.io/lmfit-py/index.html).
-
-    WARNING: This imposes constrains in the fit that are described in
-    :func: `polartools.pressure_calibration._generate_initial_guess`
-
-    Parameters
-    ----------
-    x : iterable
-        List of x-axis values.
-    y : iterable
-        List of y-axis values.
-    center, sigma, amplitude, fraction : float, optional
-        Initial guess parameters of pseudo-voigt function. For more details,
-        see: :func: `lmfit.models.PseudoVoigtModel`
-    fit_fraction : boolean, optional
-        Flag to control if fraction will be varied.
-    m, b : float, optional
-        Initial guess parameters of linear function. For more details,
-        see: :func: `lmfit.models.LinearModel`
-    fit_n : boolean, optional
-        Flag to control if m will be varied.
-
-    Returns
-    -------
-    fit : lmfit ModelResult class
-        Contains the fit results. See:
-        https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
-
-    See also
-    --------
-    :func:`lmfit.models.PseudoVoigtModel`
-    :func:`lmfit.models.LinearModel`
-    """
-
-    x = np.copy(x)
-    y = np.copy(y)
-
-    model = PseudoVoigtModel() + LinearModel()
-    params = model.make_params()
-
-    params = _generate_initial_guess(params, x, y, center, sigma, amplitude,
-                                     fraction, fit_fraction,  m, b, fit_m)
-
-    return model.fit(y, params=params, x=x)
+from .load_data import load_scan, load_databroker
+from .process_data import fit_bragg_peak
 
 
 def load_ag_params(temperature):
@@ -280,3 +140,103 @@ def calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
     pressure = 3*k0*(1-x)/x**5*np.exp(c0*(1-x))*(1+c2*x*(1-x))
 
     return pressure
+
+
+def xrd_calibrate_pressure(scan, *, db=None, bragg_peak=[1, 1, 1],
+                           calibrant='Au', temperature=300,
+                           energy='monochromator_energy',
+                           positioner='huber_tth', detector='APDSector4',
+                           monitor=None, center=None, sigma=None,
+                           amplitude=None, fraction=None, fit_fraction=True,
+                           m=None, b=None, fit_m=True, tth_offset=0.0,
+                           **kwargs):
+    """
+    Calibrate pressure using x-ray diffraction.
+
+    This is a wrapper of multiple functions in `polartools` meant to make it
+    more convenient to extract the pressure in XRD measurements.
+
+    For a given experiment, it is recommended to create a kwarg dictionary that
+    holds the input parameters that are different from the standard defaults,
+    and make it easier to process multiple scans. For instance:
+    >> kwargs = {'db': db, 'calibrant': 'Ag', 'temperature': 10}
+    >> pressure = xrd_calibrate_pressure(100, **kwargs)
+
+    Parameters
+    -----------
+    scan : int or string
+        Scan our uid. It will load the last scan with that scan_id. See kwargs
+        for search options.
+    db : databroker database, optional
+        If None is passed it will try to load data from *.csv files using
+        :func: `polartools.load_data.load_csv`.
+    bragg_peak : iterable, optional
+        List containing the Bragg peak indices [H, K, L].
+    calibrant : string, optional
+        Selects the calibrant used. Options are 'Au' or 'Ag'.
+    temperature : float or string, optional
+        A string can only be passed if using databroker. In this case it will
+        read the temperature from the database baseline stream. If float is
+        passed, then it is the temperature in Kelvin.
+    energy : float or string, optional
+        A string can only be passed if using databroker. In this case it will
+        read the energy from the database baseline stream. If float is passed,
+        then it is the energy in keV.
+    positioner : string, optional
+        2 theta motor name.
+    detector : string, optional
+        XRD detector name.
+    monitor : string, optional
+        Monitor detector name.
+    center, sigma, amplitude, fraction : float, optional
+        Initial guess parameters of pseudo-voigt function. For more details,
+        see: :func: `lmfit.models.PseudoVoigtModel`
+    fit_fraction : boolean, optional
+        Flag to control if fraction will be varied.
+    m, b : float, optional
+        Initial guess parameters of linear function. For more details,
+        see: :func: `lmfit.models.LinearModel`
+    fit_m : boolean, optional
+        Flag to control if m will be varied.
+    tth_off : float, optional
+        Offset between the reference two theta and the measured value.
+    kwargs :
+        Passed to :func;`polartools.load_data.load_table`.
+
+    Returns
+    -----------
+    pressure : float
+        Calculated pressure in GPa.
+
+    See also
+    --------
+    :func:`polartools.load_data.load_scan`
+    :func:`polartools.load_data.load_databroker`
+    :func:`polartools.process_data.fit_bragg_peak`
+    :func:`polartools.pressure_calibration.calculate_pressure`
+    """
+
+    # TODO: Is there a better way to define some of these keyword arguments?
+    # for example, positioner and detectors might be retrievable from metadata.
+
+    x, y = load_scan(db, scan, positioner, [detector], monitor=monitor,
+                     **kwargs)
+
+    fit = fit_bragg_peak(x, y, center=center, sigma=sigma, amplitude=amplitude,
+                         fraction=fraction, fit_fraction=fit_fraction, m=m,
+                         b=b, fit_m=fit_m)
+
+    tth = fit.best_values['center']
+
+    # TODO: we can probably add the option to search both 'baseline' and
+    # 'primary' streams here.
+    if isinstance(temperature, str):
+        temperature = load_databroker(scan, db,
+                                      stream='baseline')[temperature].mean()
+
+    if isinstance(energy, str):
+        energy = load_databroker(scan, db,
+                                 stream='baseline')[energy].mean()
+
+    return calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
+                              tth_off=tth_offset)
