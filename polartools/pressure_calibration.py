@@ -1,7 +1,5 @@
-'''
- Copyright (c) 2020, UChicago Argonne, LLC
- See LICENSE file.
-'''
+# Copyright (c) 2020, UChicago Argonne, LLC
+# See LICENSE file.
 
 import numpy as np
 from scipy.interpolate import interp1d

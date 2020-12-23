@@ -1,3 +1,6 @@
+# Copyright (c) 2020, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 from polartools.pressure_calibration import xrd_calibrate_pressure
 from numpy import allclose
 from os.path import join

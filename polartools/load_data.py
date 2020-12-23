@@ -1,3 +1,6 @@
+# Copyright (c) 2020, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 import numpy as np
 from pandas import read_csv, DataFrame
 from scipy.interpolate import interp1d
@@ -95,7 +98,7 @@ def load_databroker(scan_id, db, version='v2', stream='primary', **kwargs):
 
     # TODO: Not sure this is the best way to handle this.
     if 'databroker' not in str(type(db)):
-        raise TypeError(f'db must be a databroker database, but you the db \
+        raise TypeError(f'db must be a databroker database, but the db \
             you passed is a {type(db)}')
 
     if version == 'v1':
@@ -159,7 +162,7 @@ def run_v2_query(db, query):
 
 def load_table(scan, db, file_format='spec', **kwargs):
     """
-    Load generic pandas dataframe of from one scan.
+    Load generic pandas dataframe from one scan.
 
     Parameters
     ----------
@@ -167,7 +170,8 @@ def load_table(scan, db, file_format='spec', **kwargs):
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id. See kwargs for search options.
     db : database
-        Databroker database. If None, it will attempt to read from csv files.
+        Databroker database. If None, it will attempt to read from spec or csv
+        sfiles.
     file_format : string
         If db = None, then this selects the type of file to open. Options are
         'spec' or 'csv'.
@@ -210,7 +214,8 @@ def load_scan(db, scan, positioner, detectors, monitor=None, **kwargs):
     Parameters
     ----------
     db : database
-        Databroker database. If None, it will attempt to read from csv files.
+        Databroker database. If None, it will attempt to read from csv or spec
+        files.
     scan : int
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id. See kwargs for search options.

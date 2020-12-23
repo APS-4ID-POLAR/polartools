@@ -9,7 +9,7 @@ dependencies:
   - scipy
   - numpy
   - pandas
-  - databroker>=1.0.6
+  - databroker>=1.0.6f
   - pip
   - sphinx
   - pytest
@@ -18,9 +18,9 @@ dependencies:
   - flake8
   - lmfit
   - spec2nexus
+  - versioneer
   - pip:
     - ipython-genutils==0.2.0
     - prompt-toolkit==1.0.15
     - sphinx-rtd-theme
     - super-state-machine
-    - versioneer

@@ -1,3 +1,6 @@
+# Copyright (c) 2020, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 import numpy as np
 from lmfit.models import LinearModel, PseudoVoigtModel
 
