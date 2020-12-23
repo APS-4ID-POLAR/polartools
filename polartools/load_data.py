@@ -96,11 +96,6 @@ def load_databroker(scan_id, db, version='v2', stream='primary', **kwargs):
         Table with the data from the primary stream.
     """
 
-    # TODO: Not sure this is the best way to handle this.
-    if 'databroker' not in str(type(db)):
-        raise TypeError(f'db must be a databroker database, but the db \
-            you passed is a {type(db)}')
-
     if version == 'v1':
         if len(kwargs) == 0:
             data = db.v1[scan_id].table()
