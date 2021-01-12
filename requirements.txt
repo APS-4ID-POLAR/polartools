@@ -6,3 +6,5 @@ scipy
 lmfit
 spec2nexus
 ipython
+numpydoc
+sphinx_copybutton
