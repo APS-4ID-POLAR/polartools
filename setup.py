@@ -38,7 +38,7 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="Python package to read and process data from the APS Polar beamline",
-    long_description=readme,
+    long_description="Python package to read and process data from the APS Polar beamline",
     author="Argonne National Laboratory",
     author_email='gfabbris@anl.gov',
     url='https://github.com/gfabbris/polartools',
