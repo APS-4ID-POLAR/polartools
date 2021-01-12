@@ -5,3 +5,4 @@ pandas
 scipy
 lmfit
 spec2nexus
+ipython
