@@ -1,10 +1,11 @@
-# Copyright (c) 2019-2020, UChicago Argonne, LLC.
-# See LICENSE.txt file for details.
+# Copyright (c) 2020, UChicago Argonne, LLC.
+# See LICENSE file for details.
 
 import numpy as np
-from pandas import read_csv
+from pandas import read_csv, DataFrame
 from scipy.interpolate import interp1d
 from os.path import join
+from spec2nexus.spec import SpecDataFile
 
 try:
     from databroker.queries import TimeRange
@@ -15,14 +16,42 @@ except ModuleNotFoundError:
 # all over the place here.
 
 
-def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv'):
+def load_spec(scan_id, file_name, folder=''):
     """
-    Loads the data in the 'primary' stream from exported csv files.
+    Load data from spec file.
 
     Parameters
     ----------
     scan_id : int
-        Scan_id of the scan to be retrieved
+        Scan_id of the scan to be retrieved.
+    file_name : string
+        Name of spec file.
+    folder : string, optional
+        Folder where spec file is located.
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Table with the data from scan.
+
+    See also
+    --------
+    :func:`spec2nexus.spec.SpecDataFile`
+    """
+
+    path = join(folder, file_name)
+    data = SpecDataFile(path).getScan(scan_id).data
+    return DataFrame(data)
+
+
+def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv'):
+    """
+    Load data from the 'primary' stream from exported csv files.
+
+    Parameters
+    ----------
+    scan_id : int
+        Scan_id of the scan to be retrieved.
     folder : string, optional
         Folder where csv files are located.
     file_name_format : string, optional
@@ -33,14 +62,18 @@ def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv'):
     -------
     data : pandas.DataFrame
         Table with the data from the primary stream.
+
+    See also
+    --------
+    :func:`pandas.read_csv`
     """
+
     return read_csv(join(folder, file_name_format.format(scan_id)))
 
 
-def load_databroker(scan_id, db, version='v2', **kwargs):
+def load_databroker(scan_id, db, version='v2', stream='primary', **kwargs):
     """
-    Loads the data in the 'primary' stream of the first scan with the provided
-    scan_id. BLA.
+    Load data of the first scan with the provided scan_id.
 
     Parameters
     ----------
@@ -51,6 +84,8 @@ def load_databroker(scan_id, db, version='v2', **kwargs):
     version : string, optional
         Version of the databroker to be used in retrieving the data. Must be
         'v1' or 'v2'.
+    stream : string, optional
+        Selects the stream from which data will be loaded.
     kwargs : optional
         These are passed to the database search. Note that if no kwarg is
         passed, it will skip the search to save time.
@@ -60,10 +95,6 @@ def load_databroker(scan_id, db, version='v2', **kwargs):
     data : pandas.DataFrame
         Table with the data from the primary stream.
     """
-    # TODO: Not sure this is the best way to handle this.
-    if 'databroker' not in str(type(db)):
-        raise TypeError(f'db must be a databroker database, but you the db \
-            you passed is a {type(db)}')
 
     if version == 'v1':
         if len(kwargs) == 0:
@@ -75,7 +106,7 @@ def load_databroker(scan_id, db, version='v2', **kwargs):
             _db = db
         else:
             _db = run_v2_query(db, kwargs)
-        data = _db.v2[scan_id].primary.read().to_dataframe()
+        data = getattr(_db.v2[scan_id], stream).read().to_dataframe()
     else:
         raise ValueError(f"version must be 'v1' or 'v2', but you entered \
             {version}")
@@ -105,10 +136,6 @@ def run_v2_query(db, query):
     :func:`databroker.catalog.search`
     """
 
-    # See also
-    # --------
-    # 
-
     since = query.pop('since', None)
     until = query.pop('until', None)
 
@@ -128,9 +155,9 @@ def run_v2_query(db, query):
     return _db
 
 
-def load_table(scan, db, **kwargs):
+def load_table(scan, db, file_format='spec', **kwargs):
     """
-    Load generic pandas dataframe of from one scan.
+    Load generic pandas dataframe from one scan.
 
     Parameters
     ----------
@@ -138,7 +165,11 @@ def load_table(scan, db, **kwargs):
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id. See kwargs for search options.
     db : database
-        Databroker database. If None, it will attempt to read from csv files.
+        Databroker database. If None, it will attempt to read from spec or csv
+        sfiles.
+    file_format : string
+        If db = None, then this selects the type of file to open. Options are
+        'spec' or 'csv'.
     kwargs:
         If db = None these ware passed to `load_csv`, otherwise passed to
         `load_databroker`.
@@ -152,12 +183,21 @@ def load_table(scan, db, **kwargs):
 
     See also
     --------
-    `polartools.load_data.load_bluesky`
-    `polartools.load_data.load_csv`
+    :func:`polartools.load_data.load_bluesky`
+    :func:`polartools.load_data.load_csv`
     """
 
     if not db:
-        return load_csv(scan, **kwargs)
+        if file_format == 'csv':
+            return load_csv(scan, **kwargs)
+        elif file_format == 'spec':
+            file_name = kwargs.pop('file_name', None)
+            if not file_name:
+                raise NameError("file_name kwarg is needed to load spec files")
+            return load_spec(scan, file_name, **kwargs)
+        else:
+            raise ValueError(f"text_format can only be 'csv' or 'spec', but \
+                {file_format} was entered.")
     else:
         return load_databroker(scan, db, **kwargs)
 
@@ -169,7 +209,8 @@ def load_scan(db, scan, positioner, detectors, monitor=None, **kwargs):
     Parameters
     ----------
     db : database
-        Databroker database. If None, it will attempt to read from csv files.
+        Databroker database. If None, it will attempt to read from csv or spec
+        files.
     scan : int
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id. See kwargs for search options.
@@ -187,32 +228,30 @@ def load_scan(db, scan, positioner, detectors, monitor=None, **kwargs):
 
     Returns
     -------
-    (x, y1, y2, ..., yn) : tuple
-        The size `n` will be `len(detectors)+1`. The first item is the
-        positioner values, and the remaining follow the same order as
+    x : numpy.array
+        Positioner values.
+
+    y1, y2, ..., yn : numpy.array
+        The size `n` will be `len(detectors)`. It follows the same order as
         `detectors`.
 
     See also
     --------
-    `polartools.load_data.load_table`
-    `polartools.load_data.load_bluesky`
-    `polartools.load_data.load_csv`
+    :func:`polartools.load_data.load_table`
+    :func:`polartools.load_data.load_bluesky`
+    :func:`polartools.load_data.load_csv`
     """
 
     table = load_table(scan, db=db, **kwargs)
-    x = np.array(table[positioner])
-    ys = []
+    data = [np.array(table[positioner])]
     if monitor is None:
         for detector in detectors:
-            ys.append(np.array(table[detector]))
+            data.append(np.array(table[detector]))
     else:
         for detector in detectors:
-            ys.append(np.array(table[detector])/np.array(table[monitor]))
+            data.append(np.array(table[detector])/np.array(table[monitor]))
 
-    if len(ys) > 1:
-        return x, tuple(ys)
-    else:
-        return x, ys[0]
+    return tuple(data)
 
 
 def load_absorption(db, scan, positioner='monochromator_energy',
@@ -251,8 +290,9 @@ def load_absorption(db, scan, positioner='monochromator_energy',
 
     See also
     --------
-    `polartools.load_data.load_scan`
+    :func:`polartools.load_data.load_scan`
     """
+
     x, y = load_scan(db, scan, positioner, [detector], monitor=monitor,
                      **kwargs)
 
@@ -299,8 +339,9 @@ def load_lockin(db, scan, positioner='monochromator_energy', dc_col='Lock DC',
 
     See also
     --------
-    `polartools.load_data.load_scan`
+    :func:`polartools.load_data.load_scan`
     """
+
     x, dc, ac, ac_off = load_scan(db, scan, positioner, [dc_col, ac_col,
                                   acoff_col], **kwargs)
     return x, dc, ac-ac_off
@@ -342,7 +383,7 @@ def load_dichro(scan, db=None, positioner='monochromator_energy',
 
     See also
     --------
-    `polartools.load_data.load_scan`
+    :func:`polartools.load_data.load_scan`
     """
 
     x0, y0 = load_absorption(db, scan, positioner=positioner, monitor=monitor,
@@ -392,9 +433,9 @@ def load_xanes(db, scans, return_mean=True, **kwargs):
 
     See also
     --------
-    `polartools.load_data.load_absorption`
-    `polartools.load_data.load_bluesky`
-    `polartools.load_data.load_csv`
+    :func:`polartools.load_data.load_absorption`
+    :func:`polartools.load_data.load_bluesky`
+    :func:`polartools.load_data.load_csv`
     """
 
     for scan in scans:
@@ -435,7 +476,7 @@ def load_xmcd(db, scans, return_mean=True, func=load_dichro, **kwargs):
         Note that if True five outputs are generated, otherwise three.
     func : function, optional
         Function that will load the XMCD signal. It has to have the call:
-        func(db, scan, **kwargs). Defaults to `load_dichro`, but see also
+        func(db, scan, \*\*kwargs). Defaults to `load_dichro`, but see also
         `load_lockin`.
     kwargs :
         Passed to `load_absorption`. Can be used to select the detector/monitor
@@ -461,10 +502,10 @@ def load_xmcd(db, scans, return_mean=True, func=load_dichro, **kwargs):
 
     See also
     --------
-    `polartools.load_data.load_dichro`
-    `polartools.load_data.load_lockin`
-    `polartools.load_data.load_bluesky`
-    `polartools.load_data.load_csv`
+    :func:`polartools.load_data.load_dichro`
+    :func:`polartools.load_data.load_lockin`
+    :func:`polartools.load_data.load_bluesky`
+    :func:`polartools.load_data.load_csv`
     """
 
     for scan in scans:

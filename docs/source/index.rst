@@ -6,10 +6,16 @@
 Polar Tools Documentation
 =========================
 
+This code is in very early stage development!
+
+Please use the Github discussions if you have questions/comments (). 
+
 .. toctree::
    :maxdepth: 2
 
    installation
    usage
-   release-history
+   API
    min_versions
+   release-history
+
