@@ -504,7 +504,7 @@ def get_versions():
         # this to find the root from __file__.
         separator = os.path._get_sep(root)
         num_levels = len(cfg.versionfile_source.split(separator))
-        root = os.path.join(root.split(separator)[:,-num_levels])
+        root = os.path.join(root.split(separator)[:-num_levels])
     except NameError:
         return {"version": "0+unknown", "full-revisionid": None,
                 "dirty": None,
