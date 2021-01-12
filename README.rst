@@ -2,11 +2,16 @@
 Polar Tools
 ===========
 
-.. image:: https://img.shields.io/travis/gfabbris/polartools.svg
-        :target: https://travis-ci.org/gfabbris/polartools
+.. image:: https://img.shields.io/pypi/pyversions/apstools.svg
+   :target: https://pypi.python.org/pypi/apstools
 
 .. image:: https://img.shields.io/pypi/v/polartools.svg
-        :target: https://pypi.python.org/pypi/polartools
+   :target: https://pypi.python.org/pypi/polartools
+ 
+.. image:: https://github.com/APS-4ID-POLAR//polartools/workflows/Unit%20Tests/badge.svg
+
+.. image:: https://readthedocs.org/projects/polartools/badge/?version=latest
+   :target: http://polartools.readthedocs.io/en/latest/?badge=latest
         
 .. image:: https://api.codacy.com/project/badge/Grade/b94ee8138eec41d680ece65b77b8f7c2
    :alt: Codacy Badge
@@ -24,9 +29,5 @@ Python package to read and process data from the APS Polar beamline
 
 * License: `ANL OPEN SOURCE LICENSE`_
 .. _`ANL OPEN SOURCE LICENSE`: LICENSE.txt
-* Documentation: (COMING SOON!)
-
-Features
---------
-
-* TODO
+* `Documentation`_
+.. _`Documentation`: https://polartools.readthedocs.io
