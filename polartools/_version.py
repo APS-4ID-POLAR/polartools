@@ -115,7 +115,7 @@ def versions_from_parentdir(parentdir_prefix, root, verbose):
     """
     rootdirs = []
 
-    for i in range(3):
+    while len(rootdirs) <= 3:
         dirname = os.path.basename(root)
         if dirname.startswith(parentdir_prefix):
             return {"version": dirname[len(parentdir_prefix):],
@@ -503,8 +503,9 @@ def get_versions():
         # versionfile_source is the relative path from the top of the source
         # tree (where the .git directory might live) to this file. Invert
         # this to find the root from __file__.
-        for i in cfg.versionfile_source.split('/'):
-            root = os.path.dirname(root)
+        separator = os.path._get_sep(root)
+        num_levels = len(cfg.versionfile_source.split(separator))
+        root = os.path.join(root.split(separator)[:,-num_levels])
     except NameError:
         return {"version": "0+unknown", "full-revisionid": None,
                 "dirty": None,
