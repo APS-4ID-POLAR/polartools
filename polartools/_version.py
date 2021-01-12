@@ -502,8 +502,7 @@ def get_versions():
         # versionfile_source is the relative path from the top of the source
         # tree (where the .git directory might live) to this file. Invert
         # this to find the root from __file__.
-        separator = os.path._get_sep(root)
-        num_levels = len(cfg.versionfile_source.split(separator))
+        num_levels = len(cfg.versionfile_source.split(os.sep))
         root = os.path.join(*root.split(separator)[:-num_levels])
     except NameError:
         return {"version": "0+unknown", "full-revisionid": None,
