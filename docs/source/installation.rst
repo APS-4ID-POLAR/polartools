@@ -2,6 +2,14 @@
 Installation
 ============
 
+--------
+From pip
+--------
+
+.. code-block:: bash
+
+    pip install polartools
+
 -----------
 From source
 -----------
@@ -18,10 +26,3 @@ Navigate to the polartools folder and install (note that you may need activate t
 
     cd polartools
     python setup.py install
-
-
---------
-From pip
---------
-
-TODO!
