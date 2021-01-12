@@ -24,7 +24,6 @@ def load_ag_params(temperature):
     v0_out, k0_out, kp0_out : float
         Volume, K and K' calibration parameters.
     """
-
     if temperature > 500:
         raise ValueError(f'temperature must be < 500 K, but {temperature} \
         was entered.')

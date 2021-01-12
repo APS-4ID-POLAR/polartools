@@ -230,7 +230,7 @@ def load_scan(db, scan, positioner, detectors, monitor=None, **kwargs):
     -------
     x : numpy.array
         Positioner values.
-    
+
     y1, y2, ..., yn : numpy.array
         The size `n` will be `len(detectors)`. It follows the same order as
         `detectors`.
