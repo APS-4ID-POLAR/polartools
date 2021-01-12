@@ -158,7 +158,7 @@ def xrd_calibrate_pressure(scan, *, db=None, bragg_peak=[1, 1, 1],
     holds the input parameters that are different from the standard defaults,
     and make it easier to process multiple scans. For instance:
     >> kwargs = {'db': db, 'calibrant': 'Ag', 'temperature': 10}
-    >> pressure = xrd_calibrate_pressure(100, **kwargs)
+    >> pressure = xrd_calibrate_pressure(100, \*\*kwargs)
 
     Parameters
     -----------
@@ -166,8 +166,8 @@ def xrd_calibrate_pressure(scan, *, db=None, bragg_peak=[1, 1, 1],
         Scan our uid. It will load the last scan with that scan_id. See kwargs
         for search options.
     db : databroker database, optional
-        If None is passed it will try to load data from *.csv files using
-        :func: `polartools.load_data.load_csv`.
+        If None is passed it will try to load data from \*.csv files using
+        `polartools.load_data.load_csv`.
     bragg_peak : iterable, optional
         List containing the Bragg peak indices [H, K, L].
     calibrant : string, optional
@@ -188,18 +188,18 @@ def xrd_calibrate_pressure(scan, *, db=None, bragg_peak=[1, 1, 1],
         Monitor detector name.
     center, sigma, amplitude, fraction : float, optional
         Initial guess parameters of pseudo-voigt function. For more details,
-        see: :func: `lmfit.models.PseudoVoigtModel`
+        see: `lmfit.models.PseudoVoigtModel`.
     fit_fraction : boolean, optional
         Flag to control if fraction will be varied.
     slope, intercept : float, optional
         Initial guess parameters of linear function. For more details,
-        see: :func: `lmfit.models.LinearModel`
+        see: `lmfit.models.LinearModel`.
     fit_slope : boolean, optional
         Flag to control if slope will be varied.
     tth_off : float, optional
         Offset between the reference two theta and the measured value.
     kwargs :
-        Passed to :func;`polartools.load_data.load_table`.
+        Passed to `polartools.load_data.load_table`.
 
     Returns
     -----------
@@ -208,10 +208,14 @@ def xrd_calibrate_pressure(scan, *, db=None, bragg_peak=[1, 1, 1],
 
     See also
     --------
+    :func:`polartools.load_data.load_table`
     :func:`polartools.load_data.load_scan`
+    :func:`polartools.load_data.load_csv`
     :func:`polartools.load_data.load_databroker`
     :func:`polartools.process_data.fit_bragg_peak`
     :func:`polartools.pressure_calibration.calculate_pressure`
+    :func:`lmfit.models.LinearModel`
+    :func:`lmfit.models.PseudoVoigtModel`
     """
 
     # TODO: Is there a better way to define some of these keyword arguments?

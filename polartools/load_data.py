@@ -23,7 +23,7 @@ def load_spec(scan_id, file_name, folder=''):
     Parameters
     ----------
     scan_id : int
-        Scan_id of the scan to be retrieved
+        Scan_id of the scan to be retrieved.
     file_name : string
         Name of spec file.
     folder : string, optional
@@ -51,7 +51,7 @@ def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv'):
     Parameters
     ----------
     scan_id : int
-        Scan_id of the scan to be retrieved
+        Scan_id of the scan to be retrieved.
     folder : string, optional
         Folder where csv files are located.
     file_name_format : string, optional
@@ -228,9 +228,11 @@ def load_scan(db, scan, positioner, detectors, monitor=None, **kwargs):
 
     Returns
     -------
-    (x, y1, y2, ..., yn) : tuple
-        The size `n` will be `len(detectors)+1`. The first item is the
-        positioner values, and the remaining follow the same order as
+    x : numpy.array
+        Positioner values.
+    
+    y1, y2, ..., yn : numpy.array
+        The size `n` will be `len(detectors)`. It follows the same order as
         `detectors`.
 
     See also
@@ -474,7 +476,7 @@ def load_xmcd(db, scans, return_mean=True, func=load_dichro, **kwargs):
         Note that if True five outputs are generated, otherwise three.
     func : function, optional
         Function that will load the XMCD signal. It has to have the call:
-        func(db, scan, **kwargs). Defaults to `load_dichro`, but see also
+        func(db, scan, \*\*kwargs). Defaults to `load_dichro`, but see also
         `load_lockin`.
     kwargs :
         Passed to `load_absorption`. Can be used to select the detector/monitor
