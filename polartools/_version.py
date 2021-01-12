@@ -31,6 +31,7 @@ def get_keywords():
 
 
 class VersioneerConfig:
+
     """Container for Versioneer configuration parameters."""
 
 
@@ -49,6 +50,7 @@ def get_config():
 
 
 class NotThisMethod(Exception):
+
     """Exception raised if a method is not valid for the current scenario."""
 
 
@@ -105,7 +107,8 @@ def run_command(commands, args, cwd=None, verbose=False, hide_stderr=False,
 
 
 def versions_from_parentdir(parentdir_prefix, root, verbose):
-    """Try to determine the version from the parent directory name.
+    """
+    Try to determine the version from the parent directory name.
 
     Source tarballs conventionally unpack into a directory that includes both
     the project name and a version string. We will also support searching up
@@ -215,7 +218,8 @@ def git_versions_from_keywords(keywords, tag_prefix, verbose):
 
 @register_vcs_handler("git", "pieces_from_vcs")
 def git_pieces_from_vcs(tag_prefix, root, verbose, run_command=run_command):
-    """Get version from 'git describe' in the root of the source tree.
+    """
+    Get version from 'git describe' in the root of the source tree.
 
     This only gets called if the git-archive 'subst' keywords were *not*
     expanded, and _version.py hasn't already been rewritten with a short
@@ -225,8 +229,8 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, run_command=run_command):
     if sys.platform == "win32":
         GITS = ["git.cmd", "git.exe"]
 
-    out, rc = run_command(GITS, ["rev-parse", "--git-dir"], cwd=root,
-                          hide_stderr=True)
+    _, rc = run_command(GITS, ["rev-parse", "--git-dir"], cwd=root,
+                        hide_stderr=True)
     if rc != 0:
         if verbose:
             print("Directory %s not under git control" % root)
@@ -313,7 +317,8 @@ def plus_or_dot(pieces):
 
 
 def render_pep440(pieces):
-    """Build up version string, with post-release "local version identifier".
+    """
+    Build up version string, with post-release "local version identifier".
 
     Our goal: TAG[+DISTANCE.gHEX[.dirty]] . Note that if you
     get a tagged build and then dirty it, you'll get TAG+0.gHEX.dirty
@@ -338,7 +343,8 @@ def render_pep440(pieces):
 
 
 def render_pep440_pre(pieces):
-    """TAG[.post.devDISTANCE] -- No -dirty.
+    """
+    TAG[.post.devDISTANCE] -- No -dirty.
 
     Exceptions:
     1: no tags. 0.post.devDISTANCE
@@ -354,7 +360,8 @@ def render_pep440_pre(pieces):
 
 
 def render_pep440_post(pieces):
-    """TAG[.postDISTANCE[.dev0]+gHEX] .
+    """
+    TAG[.postDISTANCE[.dev0]+gHEX] .
 
     The ".dev0" means dirty. Note that .dev0 sorts backwards
     (a dirty tree will appear "older" than the corresponding clean one),
@@ -403,7 +410,8 @@ def render_pep440_old(pieces):
 
 
 def render_git_describe(pieces):
-    """TAG[-DISTANCE-gHEX][-dirty].
+    """
+    TAG[-DISTANCE-gHEX][-dirty].
 
     Like 'git describe --tags --dirty --always'.
 
@@ -423,7 +431,8 @@ def render_git_describe(pieces):
 
 
 def render_git_describe_long(pieces):
-    """TAG-DISTANCE-gHEX[-dirty].
+    """
+    TAG-DISTANCE-gHEX[-dirty].
 
     Like 'git describe --tags --dirty --always -long'.
     The distance/hash is unconditional.
