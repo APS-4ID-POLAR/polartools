@@ -113,7 +113,9 @@ def calculate_tth(pressure, temperature, energy, bragg_peak, calibrant,
     pressure_ref = calculate_pressure(tth_ref, temperature, energy, bragg_peak,
                                       calibrant, tth_off=tth_off)
 
-    return interp1d(pressure_ref, tth_ref)(pressure)
+    tth = interp1d(pressure_ref, tth_ref)(pressure)
+
+    return float(tth) if tth.size == 1 else tth
 
 
 def calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
