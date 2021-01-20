@@ -1,7 +1,7 @@
 # Copyright (c) 2020, UChicago Argonne, LLC
 # See LICENSE file.
 
-import numpy as np
+from numpy import sin, exp, log, pi, sqrt, array, linspace
 from scipy.interpolate import interp1d
 from .load_data import load_scan, load_databroker
 from .process_data import fit_bragg_peak
@@ -79,18 +79,18 @@ def load_au_params(temperature):
     return v0_out, k0_out, kp0_out
 
 
-def calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
-                       tth_off=0.0):
+def calculate_tth(pressure, temperature, energy, bragg_peak, calibrant,
+                  tth_off=0.0):
     """
-    Calculate the pressure using diffraction from Au or Ag.
+    Calculate the two theta of Au or Ag Bragg peak of given a pressure.  
 
     See Holzapfel et al., J. Phys. Chem. Ref. Data 30, 515 (2001) for more
     details.
 
     Parameters
     -----------
-    tth : float
-        Two theta of the selected Bragg peak.
+    pressure : float or iterable
+        Pressure (or list of) to be converted.
     temperature : float
         Measurement temperature in Kelvin.
     energy : float
@@ -104,8 +104,46 @@ def calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
 
     Returns
     -----------
-    pressure : float
-        Calculated pressure in GPa.
+    tth : float or numpy.array
+        Calculated tth in degrees. A numpy.array is returned if an iterable is
+        passed to pressure.
+    """
+
+    tth_ref = linspace(1e-2, 180, 10000)
+    pressure_ref = calculate_pressure(tth_ref, temperature, energy, bragg_peak,
+                                      calibrant, tth_off=tth_off)
+
+    return interp1d(pressure_ref, tth_ref)(pressure)
+
+
+def calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
+                       tth_off=0.0):
+    """
+    Calculate the pressure using diffraction from Au or Ag.
+
+    See Holzapfel et al., J. Phys. Chem. Ref. Data 30, 515 (2001) for more
+    details.
+
+    Parameters
+    -----------
+    tth : float or iterable
+        Two theta of the selected Bragg peak. It can be a list of two theta.
+    temperature : float
+        Measurement temperature in Kelvin.
+    energy : float
+        X-ray energy used in keV.
+    bragg_peak : iterable
+        List containing the Bragg peak indices [H, K, L].
+    calibrant : string
+        Selects the calibrant used. Options are 'Au' or 'Ag'.
+    tth_off : float, optional
+        Offset between the reference two theta and the measured value.
+
+    Returns
+    -----------
+    pressure : float or numpy.array
+        Calculated pressure in GPa. A numpy.array is returned if an iterable is
+        passed to tth.
     """
     # Constants
     afg = 2337  # GPa.AA^5
@@ -123,18 +161,22 @@ def calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
         raise ValueError(f'calibrant must be "Au" or "Ag", but {calibrant} was\
         entered')
 
+    # If it's not a number it will turn tth into a numpy.array
+    if not isinstance(tth, (int, float)):
+        tth = array(tth)
+
     # Calculate atomic volume
     lamb = h*c/energy/1000.
-    d = lamb/2/np.sin((tth-tth_off)/2.*np.pi/180.)
-    a = d*np.sqrt(bragg_peak[0]**2+bragg_peak[1]**2+bragg_peak[2]**2)
+    d = lamb/2/sin((tth-tth_off)/2.*pi/180.)
+    a = d*sqrt(bragg_peak[0]**2+bragg_peak[1]**2+bragg_peak[2]**2)
     v = a**3/4.
 
     # Calculate pressure
     x = (v/v0)**0.3333
     pfg0 = afg*(z/v0)**1.6666
-    c0 = -1*np.log(3*k0/pfg0)
+    c0 = -1*log(3*k0/pfg0)
     c2 = (3/2)*(kp0-3)-c0
-    pressure = 3*k0*(1-x)/x**5*np.exp(c0*(1-x))*(1+c2*x*(1-x))
+    pressure = 3*k0*(1-x)/x**5*exp(c0*(1-x))*(1+c2*x*(1-x))
 
     return pressure
 
