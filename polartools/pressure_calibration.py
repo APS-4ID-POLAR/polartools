@@ -82,7 +82,7 @@ def load_au_params(temperature):
 def calculate_tth(pressure, temperature, energy, bragg_peak, calibrant,
                   tth_off=0.0):
     """
-    Calculate the two theta of Au or Ag Bragg peak of given a pressure.  
+    Calculate the two theta of Au or Ag Bragg peak of given a pressure.
 
     See Holzapfel et al., J. Phys. Chem. Ref. Data 30, 515 (2001) for more
     details.
