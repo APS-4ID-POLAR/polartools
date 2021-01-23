@@ -37,13 +37,13 @@ def fit_peak(xdata,ydata,model='Gaussian',output=False):
     models=['Gaussian','Lorentzian','Voigt','PseudoVoigt']
     if model in models:
         if model=='Gaussian':
-                peak_mod=GaussianModel()
+            peak_mod=GaussianModel()
         if model=='Lorentzian':
-                peak_mod=LorentzianModel()
+            peak_mod=LorentzianModel()
         if model=='Voigt':
-                peak_mod=VoigtModel()
+            peak_mod=VoigtModel()
         if model=='PseudoVoigt':
-                peak_mod=PseudoVoigtModel()
+            peak_mod=PseudoVoigtModel()
 
     background=LinearModel()
     mod=peak_mod+background
@@ -58,10 +58,7 @@ def fit_peak(xdata,ydata,model='Gaussian',output=False):
         plt.plot(xdata,ydata)
         plt.plot(xdata,fit.best_fit)
         plt.show()
-   
     return fit
-
-
 
 def fit_series(db,scan_series,model='Gaussian',output=False,var_series=None,normalize=False,positioner='4C Theta',detector='APD',**kwargs): 
     """
