@@ -10,13 +10,13 @@ from spec2nexus.spec import SpecDataFile
 try:
     from databroker.queries import TimeRange
 except ModuleNotFoundError:
-    pass
+    pass 
 
 # TODO: For the beamline we can import db directly, and not worry about it
 # all over the place here.
 
 
-def load_spec(scan_id, file_name, folder=''):
+def load_spec(scan_id, file_name, folder='',**kwargs):
     """
     Load data from spec file.
 
@@ -44,7 +44,7 @@ def load_spec(scan_id, file_name, folder=''):
     return DataFrame(data)
 
 
-def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv'):
+def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv',**kwargs):
     """
     Load data from the 'primary' stream from exported csv files.
 
@@ -535,3 +535,4 @@ def load_xmcd(db, scans, return_mean=True, func=load_dichro, **kwargs):
 
     else:
         return energy, xanes, xmcd
+        
