@@ -2,11 +2,8 @@
 # See LICENSE file for details.
 
 import numpy as np
-from pandas import read_csv, DataFrame
-from os.path import join
-from spec2nexus.spec import SpecDataFile
+from pandas import DataFrame
 from lmfit.models import GaussianModel, LorentzianModel, VoigtModel, LinearModel, PseudoVoigtModel
-from lmfit import Parameter
 import matplotlib.pyplot as plt
 from .load_data import load_table
 
