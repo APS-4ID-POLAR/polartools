@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from .load_data import load_table
 
 def fit_peak(xdata,ydata,model='Gaussian',output=False):
-     """
+    """
     Fit Bragg peak with a pseudo-voigt function.
 
     Uses lmfit (https://lmfit.github.io/lmfit-py/).
