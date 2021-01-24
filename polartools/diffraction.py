@@ -147,20 +147,6 @@ def fit_series(
         print("Intervals: {} to {} with step {}".format(start, stop, step))
         # fitnr=0
         for scan in range(start, stop + 1, step):
-            """
-            #Too slow since load_scan needs to be called twice (temperature cannot be normalized to monitor)
-            if var_series:
-                x, parameter = load_scan(db, scan, positioner,[var_series], monitor=None, **kwargs)
-                fit_result[index][0] = parameter.mean()
-                print(f"{var_series} = {fit_result[index][0]}")
-                x, y= load_scan(db, scan, positioner,[detector], monitor=monitor, **kwargs)
-            else:
-                x, y = load_scan(db, scan, positioner, detector, monitor=monitor, **kwargs)
-                fit_result[index][0] = index
-                print(f"Index value {fit_result[index][0]}")
-
-            fit = fit_peak(x, y, model=model, output=output)
-            """
 
             table = load_table(
                 scan, db, detector=detector, monitor=monitor, **kwargs
