@@ -10,22 +10,25 @@ from spec2nexus.spec import SpecDataFile
 try:
     from databroker.queries import TimeRange
 except ModuleNotFoundError:
-    pass 
+    pass
 
 # TODO: For the beamline we can import db directly, and not worry about it
 # all over the place here.
 
 
-def load_spec(scan_id, file_name, folder='',**kwargs):
+def load_spec(scan_id, spec_file, folder=''):
     """
     Load data from spec file.
+
+    NOTE: if `spec_file` is the file name, it will load the spec file
+    internally which is time consuming.
 
     Parameters
     ----------
     scan_id : int
         Scan_id of the scan to be retrieved.
-    file_name : string
-        Name of spec file.
+    spec_file : string or spec2nexus.spec.SpecDataFile
+        Either the spec file name or a SpecDataFile instance.
     folder : string, optional
         Folder where spec file is located.
 
@@ -39,12 +42,14 @@ def load_spec(scan_id, file_name, folder='',**kwargs):
     :func:`spec2nexus.spec.SpecDataFile`
     """
 
-    path = join(folder, file_name)
-    data = SpecDataFile(path).getScan(scan_id).data
-    return DataFrame(data)
+    if isinstance(spec_file, str):
+        path = join(folder, spec_file)
+        spec_file = SpecDataFile(path)
+
+    return DataFrame(spec_file.getScan(scan_id).data)
 
 
-def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv',**kwargs):
+def load_csv(scan_id, folder='', name_format='scan_{}_primary.csv'):
     """
     Load data from the 'primary' stream from exported csv files.
 
@@ -54,7 +59,7 @@ def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv',**kwargs
         Scan_id of the scan to be retrieved.
     folder : string, optional
         Folder where csv files are located.
-    file_name_format : string, optional
+    name_format : string, optional
         General format of file name. The correct name must be
         retrievable through: `file_name_format.format(scan_id)`
 
@@ -68,7 +73,7 @@ def load_csv(scan_id, folder='', file_name_format='scan_{}_primary.csv',**kwargs
     :func:`pandas.read_csv`
     """
 
-    return read_csv(join(folder, file_name_format.format(scan_id)))
+    return read_csv(join(folder, name_format.format(scan_id)))
 
 
 def load_databroker(scan_id, db, version='v2', stream='primary', **kwargs):
@@ -171,15 +176,13 @@ def load_table(scan, db, file_format='spec', **kwargs):
         If db = None, then this selects the type of file to open. Options are
         'spec' or 'csv'.
     kwargs:
-        If db = None these ware passed to `load_csv`, otherwise passed to
-        `load_databroker`.
+        If db = None these are passed to `load_csv` or `load_spec`, otherwise
+        passed to `load_databroker`.
 
     Returns
     -------
-    (x, y1, y2, ..., yn) : tuple
-        The size `n` will be `len(detectors)+1`. The first item is the
-        positioner values, and the remaining follow the same order as
-        `detectors`.
+    data : pandas.DataFrame
+        Table with the scan data.
 
     See also
     --------
@@ -188,16 +191,18 @@ def load_table(scan, db, file_format='spec', **kwargs):
     """
 
     if not db:
+        folder = kwargs.get('folder', '')
         if file_format == 'csv':
-            return load_csv(scan, **kwargs)
+            name_format = kwargs.get('name_format', 'scan_{}_primary.csv')
+            return load_csv(scan, folder=folder, name_format=name_format)
         elif file_format == 'spec':
-            file_name = kwargs.pop('file_name', None)
-            if not file_name:
-                raise NameError("file_name kwarg is needed to load spec files")
-            return load_spec(scan, file_name, **kwargs)
+            spec_file = kwargs.get('spec_file', None)
+            if not spec_file:
+                raise NameError("spec_file kwarg is needed to load spec files")
+            return load_spec(scan, spec_file, folder=folder)
         else:
-            raise ValueError(f"text_format can only be 'csv' or 'spec', but \
-                {file_format} was entered.")
+            raise ValueError("text_format can only be 'csv' or 'spec', but "
+                             f"{file_format} was entered.")
     else:
         return load_databroker(scan, db, **kwargs)
 
@@ -220,9 +225,14 @@ def load_scan(db, scan, positioner, detectors, monitor=None, **kwargs):
     detectors : iterable
         List of detector to be read from this scan, again it needs to be the
         same name as in Bluesky.
-    monitor : string, optional
-        Name of the monitor detector. The returned scans will be
-        detectors/monitor.
+    monitor : string or list, optional
+        Data that will be used to normalize `detectors`. The returned scans
+        will be detectors/monitor. If a string is passed, this is the name of
+        the monitor detector, which will be applied to every detector. If a
+        list is passed it must have the same length of `detectors`. This list
+        can be used to skip normalization of one detector by passing None, for
+        instance: if `detectors = ['A', 'B']`, and `monitor = ['C', None]`,
+        then it will return: `x, 'A'/'C', 'B'`.
     kwargs :
         Passed to `load_table`.
 
@@ -247,9 +257,20 @@ def load_scan(db, scan, positioner, detectors, monitor=None, **kwargs):
     if monitor is None:
         for detector in detectors:
             data.append(np.array(table[detector]))
-    else:
+    elif isinstance(monitor, str):
         for detector in detectors:
             data.append(np.array(table[detector])/np.array(table[monitor]))
+    else:
+        if len(detectors) != len(monitor):
+            raise ValueError("detectors and monitor lists need to be the same "
+                             f"size, but len(detectors) = {len(detectors)} "
+                             f"and len(monitor) = {len(monitor)}")
+
+        for det, mon in zip(detectors, monitor):
+            if mon:
+                data.append(np.array(table[det])/np.array(table[mon]))
+            else:
+                data.append(np.array(table[det]))
 
     return tuple(data)
 
@@ -535,4 +556,3 @@ def load_xmcd(db, scans, return_mean=True, func=load_dichro, **kwargs):
 
     else:
         return energy, xanes, xmcd
-        
