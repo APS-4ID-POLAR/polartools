@@ -11,7 +11,7 @@ from lmfit.models import (
     PseudoVoigtModel,
 )
 import matplotlib.pyplot as plt
-from .load_data import load_table
+from .load_data import load_scan
 
 
 def fit_peak(xdata, ydata, model="Gaussian", output=False):
