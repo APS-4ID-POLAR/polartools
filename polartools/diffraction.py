@@ -11,6 +11,7 @@ from lmfit.models import (
     PseudoVoigtModel,
 )
 import matplotlib.pyplot as plt
+from os.path import join
 from spec2nexus.spec import SpecDataFile
 from .load_data import load_scan
 
