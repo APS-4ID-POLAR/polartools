@@ -11,6 +11,7 @@ from lmfit.models import (
     PseudoVoigtModel,
 )
 import matplotlib.pyplot as plt
+from spec2nexus.spec import SpecDataFile
 from .load_data import load_scan
 
 
@@ -138,6 +139,12 @@ def fit_series(
         )
     fit_result = [np.zeros(7) for i in range(int(nbp))]
 
+    spec_file = kwargs.pop("spec_file", None)
+    folder = kwargs.pop("folder", None)
+    if spec_file and isinstance(spec_file, str):
+        path = join(folder, spec_file)
+        spec_file = SpecDataFile(path)
+
     index = 0
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
@@ -153,6 +160,7 @@ def fit_series(
                     positioner,
                     [detector, var_series],
                     monitor=[monitor, None],
+                    spec_file=spec_file,
                     **kwargs,
                 )
                 fit_result[index][0] = parameter.mean()
