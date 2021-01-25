@@ -56,6 +56,7 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
         )
     background = LinearModel()
     mod = peak_mod + background
+
     pars = background.make_params(intercept=ydata.min(), slope=0)
     pars += peak_mod.guess(ydata, x=xdata)
     pars["sigma"].set(min=0)
@@ -135,9 +136,7 @@ def fit_series(
             / scan_series[series + 1]
             + 1
         )
-    fit_result = [np.zeros(7)]
-    for i in range(int(nbp) - 1):
-        fit_result.append(np.zeros(7))
+    fit_result = [np.zeros(7) for i in range(int(nbp))]
 
     index = 0
     for series in range(1, len(scan_series), 3):
@@ -147,25 +146,29 @@ def fit_series(
         print("Intervals: {} to {} with step {}".format(start, stop, step))
         # fitnr=0
         for scan in range(start, stop + 1, step):
-
-            table = load_table(
-                scan, db, detector=detector, monitor=monitor, **kwargs
-            )
-            data = [np.array(table[positioner])]
-            if monitor is None:
-                data.append(np.array(table[detector]))
-            else:
-                data.append(
-                    np.array(table[detector]) / np.array(table[monitor])
+            if var_series:
+                x, y, parameter = load_scan(
+                    db,
+                    scan,
+                    positioner,
+                    [detector, var_series],
+                    monitor=[monitor, None],
+                    **kwargs,
                 )
-            try:
-                data.append(np.array(table[var_series]))
-                fit_result[index][0] = data[2].mean()
+                fit_result[index][0] = parameter.mean()
                 print(f"{var_series} = {fit_result[index][0]}")
-            except:
+            else:
+                x, y = load_scan(
+                    db,
+                    scan,
+                    positioner,
+                    [detector],
+                    monitor=[monitor],
+                    **kwargs,
+                )
                 fit_result[index][0] = index
 
-            fit = fit_peak(data[0], data[1], model=model, output=output)
+            fit = fit_peak(x, y, model=model, output=output)
 
             fit_result[index][1] = fit.params["amplitude"].value
             fit_result[index][2] = fit.params["amplitude"].stderr
