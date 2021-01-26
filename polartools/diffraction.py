@@ -182,8 +182,15 @@ def fit_series(
         fit model: Gaussian, Lorentian, Voigt, PseidoVoigt
     output:
         Output fit parameters and plot data+fit for each scan.
-    var_series:
-        Varying variable for scan series, e.g. SampK (sample temperature), optional.
+    var_series: string or list
+        string: Varying variable for scan series to be read from scan (detector),
+            e.g. SampK (sample temperature), optional.
+        list: Information on metadata to be read: List starting with #P, #U or #Q for
+            motor positions, user values or Q-position, optional:
+            #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        If None, successive scans will be numbered starting from zero.
     positioner : string
         Name of the positioner, this needs to be the same as defined in
         Bluesky.
