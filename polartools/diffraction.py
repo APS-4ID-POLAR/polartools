@@ -115,7 +115,7 @@ def load_info(db, spec_file, scan, folder, info):
         specscan = spec_file.getScan(scan)
         if isinstance(info, str):
             raise ValueError(
-                f"expect list [#P, (#Q, #U), Variable (string or line number), element number]"
+                "expect list [#P, (#Q, #U), Variable (string or line number), element number]"
             )
 
         if info[0] == "#P":
@@ -124,7 +124,7 @@ def load_info(db, spec_file, scan, folder, info):
                 value = data_array[info[1]][info[2]]
             else:
                 raise ValueError(
-                    f"For #P, expect row and column integer numbers"
+                    "For #P, expect row and column integer numbers"
                 )
 
         elif info[0] == "#U":
@@ -136,14 +136,14 @@ def load_info(db, spec_file, scan, folder, info):
                         value = ival[info[2]].split()[0]
                         break
             else:
-                raise ValueError(f"For #U, expect string and item number")
+                raise ValueError("For #U, expect string and item number")
 
         elif info[0] == "#Q":
             data_array = specscan.Q
             value = data_array[info[2]]
         else:
             raise ValueError(
-                f"expect list [#P, (#Q, #U), Variable (string or line number), element number]"
+                "expect list [#P, (#Q, #U), Variable (string or line number), element number]"
             )
 
     else:
