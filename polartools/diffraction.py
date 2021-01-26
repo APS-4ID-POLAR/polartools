@@ -65,9 +65,9 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
     pars["amplitude"].set(min=0)
 
     fit = mod.fit(ydata, pars, x=xdata)
-    print(f"Fitting with {model} model")
     if output:
         for key in fit.params:
+            print(f"Fitting with {model} model")
             print(
                 key, "=", fit.params[key].value, "+/-", fit.params[key].stderr
             )
@@ -75,6 +75,83 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
         plt.plot(xdata, fit.best_fit)
         plt.show()
     return fit
+
+
+def load_info(db, spec_file, scan, folder, info):
+    """
+    Load metadata variable value.
+
+    Parameters
+    ----------
+    db : database
+        Databroker database. If None, it will attempt to read from csv or spec
+        files.
+    spec_file : string or spec2nexus.spec.SpecDataFile
+        Either the spec file name or a SpecDataFile instance.
+    scan : int
+        Scan_id our uid. If scan_id is passed, it will load the last scan with
+        that scan_id.
+    folder : string, optional
+        Folder where spec file is located.
+    info: list
+        Information on metadata to be read: List starting with #P, #U or #Q for
+        motor positions, user values or Q-position:
+        #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+        #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+        #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+
+    Returns
+    -------
+    value : number
+        Variable value.
+
+    """
+
+    if not db:
+        if isinstance(spec_file, str):
+            path = join(folder, spec_file)
+            spec_file = SpecDataFile(path)
+            print(spec_file)
+        specscan = spec_file.getScan(scan)
+        if isinstance(info, str):
+            raise ValueError(
+                f"expect list [#P, (#Q, #U), Variable (string or line number), element number]"
+            )
+
+        if info[0] == "#P":
+            data_array = specscan.P
+            if isinstance(info[1], int):
+                value = data_array[info[1]][info[2]]
+            else:
+                raise ValueError(
+                    f"For #P, expect row and column integer numbers"
+                )
+
+        elif info[0] == "#U":
+            data_array = specscan.U
+            if isinstance(info[1], str):
+                for item in data_array:
+                    ival = item.split(":")
+                    if ival[0] == info[1]:
+                        value = ival[info[2]].split()[0]
+                        break
+            else:
+                raise ValueError(f"For #U, expect string and item number")
+
+        elif info[0] == "#Q":
+            data_array = specscan.Q
+            value = data_array[info[2]]
+        else:
+            raise ValueError(
+                f"expect list [#P, (#Q, #U), Variable (string or line number), element number]"
+            )
+
+    else:
+        # routine to load from db
+        # To be implemented
+        pass
+
+    return value
 
 
 def fit_series(
@@ -154,7 +231,20 @@ def fit_series(
         print("Intervals: {} to {} with step {}".format(start, stop, step))
         # fitnr=0
         for scan in range(start, stop + 1, step):
-            if var_series:
+            if var_series and var_series[0][0] == "#":
+                fit_result[index][0] = load_info(
+                    db, spec_file, scan, folder, info=var_series
+                )
+                x, y = load_scan(
+                    db,
+                    scan,
+                    positioner,
+                    [detector],
+                    monitor=[monitor],
+                    spec_file=spec_file,
+                    **kwargs,
+                )
+            elif var_series:
                 x, y, parameter = load_scan(
                     db,
                     scan,
@@ -165,7 +255,6 @@ def fit_series(
                     **kwargs,
                 )
                 fit_result[index][0] = parameter.mean()
-                print(f"{var_series} = {fit_result[index][0]}")
             else:
                 x, y = load_scan(
                     db,
