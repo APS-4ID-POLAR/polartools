@@ -1,10 +1,21 @@
+"""
+Functions to import and export Bluesky data.
+
+.. autosummary::
+   ~to_databroker
+   ~to_csv_json
+   ~from_databroker_inplace
+   ~remove_catalog
+"""
+
 # Copyright (c) 2021, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
 from databroker_pack import (export_catalog, write_documents_manifest,
-                             write_msgpack_catalog_file)
+                             write_msgpack_catalog_file, unpack_inplace)
+from databroker import catalog_search_path
 from .load_data import run_v2_query
-from os import makedirs
+from os import makedirs, remove
 from os.path import exists, join
 from itertools import tee
 from suitcase.utils import MultiFileManager
@@ -93,8 +104,8 @@ def to_csv_json(db, folder, query=None, fname_format='scan-{}-',
         Maximum number of times that a new suffix will be added to the file
         name. Once it reaches this maximum, it will overwrite the last file.
 
-    Notes:
-    ------
+    Notes
+    -----
     - Each scan has one json "*-metadata.json" file, plus ome csv file for each
     data stream, for instance "*-primary.csv".
 
@@ -133,3 +144,63 @@ def to_csv_json(db, folder, query=None, fname_format='scan-{}-',
         fname = next_available_fname(folder, fname_format.format(scanno),
                                      max_attempts)
         my_exporter(results[uid].documents(fill='yes'), folder, fname)
+
+
+def from_databroker_inplace(folder, name, merge=False):
+    """
+    Load the exported databroker database.
+
+    This is a narrow usage of the databroker-pack package. Note that this
+    package includes a convenient command line tool.
+    https://blueskyproject.io/databroker-pack/index.html
+
+    Parameters
+    ----------
+    folder : str
+        Folder with files exported by
+        :func:`polartools.manage_database.to_databroker`.
+    name : str
+        Unique name that will be set in the databroker catalog.
+    merge : bool, optional
+        Flag to decide if this data will be merged into an existing catalog.
+
+    EXAMPLE::
+
+        from databroker import catalog
+        from polartools.manage_database import from_databroker_inplace
+
+        from_databroker_inplace('folder/to/files', 'my_data')
+        db = catalog['my_data']
+    """
+    config_path = unpack_inplace(folder, name, merge=merge)
+    print(f"Placed configuration file at {config_path!s}")
+
+
+def remove_catalog(name):
+    """
+    Removes a catalog created by `to_databroker`.
+
+    Parameters
+    ----------
+    name : str
+        Catalog name
+
+    Notes
+    -----
+    - This will not remove the data files, only the catalog, which will not be
+    discoverable using `databroker.catalog`.
+    - It assumes that the catalog was created by `to_databroker` or
+    `databroker_pack`. The actual name of the file is
+    'databroker_unpack_NAME.yml'.
+    """
+
+    found = False
+    for path in catalog_search_path():
+        filepath = join(path, f'databroker_unpack_{name}.yml')
+        if exists(filepath):
+            remove(filepath)
+            print(f'The {name} catalog was removed.')
+            found = True
+
+    if not found:
+        print(f'The catalog {name} was not found.')
