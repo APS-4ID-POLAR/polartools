@@ -143,7 +143,9 @@ def to_csv_json(db, folder, query=None, fname_format='scan-{}-',
         scanno = results[uid].metadata['start']['scan_id']
         fname = next_available_fname(folder, fname_format.format(scanno),
                                      max_attempts)
+        print('Exporting uid #{}, scan_id #{}', end='... ')
         my_exporter(results[uid].documents(fill='yes'), folder, fname)
+        print('Done!')
 
 
 def from_databroker_inplace(folder, name, merge=False):
