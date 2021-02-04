@@ -1,27 +1,34 @@
-# Copyright (c) 2020, UChicago Argonne, LLC.
+"""
+Base functions to load data from various sources.
+
+.. autosummary::
+   ~load_spec
+   ~load_csv
+   ~load_databroker
+   ~db_query
+   ~load_table
+"""
+
+# Copyright (c) 2020-2021, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
-import numpy as np
 from pandas import read_csv, DataFrame
-from scipy.interpolate import interp1d
 from os.path import join
 from spec2nexus.spec import SpecDataFile
+from warnings import warn
 
 try:
     from databroker.queries import TimeRange
 except ModuleNotFoundError:
     pass
 
-# TODO: For the beamline we can import db directly, and not worry about it
-# all over the place here.
-
 
 def load_spec(scan_id, spec_file, folder=''):
     """
     Load data from spec file.
 
-    NOTE: if `spec_file` is the file name, it will load the spec file
-    internally which is time consuming.
+    If `spec_file` is the file name, it will load the spec file internally
+    which is time consuming.
 
     Parameters
     ----------
@@ -76,7 +83,7 @@ def load_csv(scan_id, folder='', name_format='scan_{}_primary.csv'):
     return read_csv(join(folder, name_format.format(scan_id)))
 
 
-def load_databroker(scan_id, db, version='v2', stream='primary', **kwargs):
+def load_databroker(scan_id, db, stream='primary', query=None):
     """
     Load data of the first scan with the provided scan_id.
 
@@ -86,42 +93,28 @@ def load_databroker(scan_id, db, version='v2', stream='primary', **kwargs):
         Scan_id of the scan to be retrieved
     db :
         `databroker` database
-    version : string, optional
-        Version of the databroker to be used in retrieving the data. Must be
-        'v1' or 'v2'.
     stream : string, optional
         Selects the stream from which data will be loaded.
-    kwargs : optional
-        These are passed to the database search. Note that if no kwarg is
-        passed, it will skip the search to save time.
+    query : dict, optional
+        Dictionary with search parameters for the database.
 
     Returns
     -------
     data : pandas.DataFrame
         Table with the data from the primary stream.
+
+    See also
+    --------s
+    https://blueskyproject.io/databroker/
     """
 
-    if version == 'v1':
-        if len(kwargs) == 0:
-            data = db.v1[scan_id].table()
-        else:
-            data = list(db.v1(scan_id=scan_id, **kwargs))[0].table()
-    elif version == 'v2':
-        if len(kwargs) == 0:
-            _db = db
-        else:
-            _db = run_v2_query(db, kwargs)
-        data = getattr(_db.v2[scan_id], stream).read().to_dataframe()
-    else:
-        raise ValueError(f"version must be 'v1' or 'v2', but you entered \
-            {version}")
-
-    return data
+    _db = db_query(db, query) if query else db
+    return getattr(_db.v2[scan_id], stream).read().to_dataframe()
 
 
-def run_v2_query(db, query):
+def db_query(db, query):
     """
-    Searches the V2 database.
+    Searches the databroker v2 database.
 
     Parameters
     ----------
@@ -160,399 +153,55 @@ def run_v2_query(db, query):
     return _db
 
 
-def load_table(scan, db, file_format='spec', **kwargs):
+def load_table(scan, source, **kwargs):
     """
-    Load generic pandas dataframe from one scan.
+    Automated scan table loader.
+
+    The automation is based on the source argument:
+        - if source == 'csv' -> uses `load_csv`.
+        - else if source is a string -> uses `load_spec`.
+        - else -> uses `load_databroker`.
 
     Parameters
     ----------
     scan : int
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id. See kwargs for search options.
-    db : database
-        Databroker database. If None, it will attempt to read from spec or csv
-        sfiles.
-    file_format : string
-        If db = None, then this selects the type of file to open. Options are
-        'spec' or 'csv'.
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     kwargs:
-        If db = None these are passed to `load_csv` or `load_spec`, otherwise
-        passed to `load_databroker`.
+        The necessary kwargs are passed to the loading functions defined by the
+        `source` argument:
+            - csv        -> possible kwargs: folder, name_format
+            - spec       -> possible kwargs: folder
+            - databroker -> possible kwargs: stream, query
+        Note that a warning will be printed if the an unnecessary kwarg is
+        passed.
 
     Returns
     -------
-    data : pandas.DataFrame
+    table : pandas.DataFrame
         Table with the scan data.
 
     See also
     --------
-    :func:`polartools.load_data.load_bluesky`
+    :func:`polartools.load_data.load_databroker`
     :func:`polartools.load_data.load_csv`
+    :func:`polartools.load_data.load_spec`
     """
 
-    if not db:
-        folder = kwargs.get('folder', '')
-        if file_format == 'csv':
-            name_format = kwargs.get('name_format', 'scan_{}_primary.csv')
-            return load_csv(scan, folder=folder, name_format=name_format)
-        elif file_format == 'spec':
-            spec_file = kwargs.get('spec_file', None)
-            if not spec_file:
-                raise NameError("spec_file kwarg is needed to load spec files")
-            return load_spec(scan, spec_file, folder=folder)
-        else:
-            raise ValueError("text_format can only be 'csv' or 'spec', but "
-                             f"{file_format} was entered.")
+    folder = kwargs.pop('folder', '')
+    if source == 'csv':
+        name_format = kwargs.pop('name_format', 'scan_{}_primary.csv')
+        table = load_csv(scan, folder=folder, name_format=name_format)
+    elif isinstance(source, str):
+        table = load_spec(scan, source, folder=folder)
     else:
-        return load_databroker(scan, db, **kwargs)
+        stream = kwargs.pop('stream', 'primary')
+        query = kwargs.pop('query', None)
+        table = load_databroker(scan, source, stream=stream, query=query)
 
+    if len(kwargs) != 0:
+        warn(f"The following kwargs were not used! {list(kwargs.keys)}")
 
-def load_scan(db, scan, positioner, detectors, monitor=None, **kwargs):
-    """
-    Load generic data of multiple detectors from one scan.
-
-    Parameters
-    ----------
-    db : database
-        Databroker database. If None, it will attempt to read from csv or spec
-        files.
-    scan : int
-        Scan_id our uid. If scan_id is passed, it will load the last scan with
-        that scan_id. See kwargs for search options.
-    positioner : string
-        Name of the positioner, this needs to be the same as defined in
-        Bluesky.
-    detectors : iterable
-        List of detector to be read from this scan, again it needs to be the
-        same name as in Bluesky.
-    monitor : string or list, optional
-        Data that will be used to normalize `detectors`. The returned scans
-        will be detectors/monitor. If a string is passed, this is the name of
-        the monitor detector, which will be applied to every detector. If a
-        list is passed it must have the same length of `detectors`. This list
-        can be used to skip normalization of one detector by passing None, for
-        instance: if `detectors = ['A', 'B']`, and `monitor = ['C', None]`,
-        then it will return: `x, 'A'/'C', 'B'`.
-    kwargs :
-        Passed to `load_table`.
-
-    Returns
-    -------
-    x : numpy.array
-        Positioner values.
-
-    y1, y2, ..., yn : numpy.array
-        The size `n` will be `len(detectors)`. It follows the same order as
-        `detectors`.
-
-    See also
-    --------
-    :func:`polartools.load_data.load_table`
-    :func:`polartools.load_data.load_bluesky`
-    :func:`polartools.load_data.load_csv`
-    """
-
-    table = load_table(scan, db=db, **kwargs)
-    data = [np.array(table[positioner])]
-    if monitor is None:
-        for detector in detectors:
-            data.append(np.array(table[detector]))
-    elif isinstance(monitor, str):
-        for detector in detectors:
-            data.append(np.array(table[detector])/np.array(table[monitor]))
-    else:
-        if len(detectors) != len(monitor):
-            raise ValueError("detectors and monitor lists need to be the same "
-                             f"size, but len(detectors) = {len(detectors)} "
-                             f"and len(monitor) = {len(monitor)}")
-
-        for det, mon in zip(detectors, monitor):
-            if mon:
-                data.append(np.array(table[det])/np.array(table[mon]))
-            else:
-                data.append(np.array(table[det]))
-
-    return tuple(data)
-
-
-def load_absorption(db, scan, positioner='monochromator_energy',
-                    detector='Ion Ch 5', monitor='Ion Ch 4',
-                    transmission=True, **kwargs):
-    """
-    Load the x-ray absorption from one scan.
-
-    Parameters
-    ----------
-    db : database
-        Databroker database. If None, it will attempt to read from csv files.
-    scan : int
-        Scan_id our uid. If scan_id is passed, it will load the last scan with
-        that scan_id. See kwargs for search options.
-    positioner : string, optional
-        Name of the positioner, this needs to be the same as defined in
-        Bluesky. Defauts to the x-ray energy.
-    detector : string, optional
-        Detector to be read from this scan, again it needs to be the same name
-        as in Bluesky. Defaults to the ion chamber 5.
-    monitor : string, optional
-        Name of the monitor detector. Defaults to the ion chamber 4.
-    transmission: boolean, optional
-        Flag to select between transmission mode -> ln(monitor/detector)
-        or fluorescence mode -> detector/monitor
-    kwargs :
-        Passed to `load_scan`.
-
-    Returns
-    -------
-    x : numpy.array
-        Positioner data.
-    y : numpy.array
-        X-ray absorption.
-
-    See also
-    --------
-    :func:`polartools.load_data.load_scan`
-    """
-
-    x, y = load_scan(db, scan, positioner, [detector], monitor=monitor,
-                     **kwargs)
-
-    if transmission:
-        return x, np.log(1/y)
-    else:
-        return x, y
-
-
-def load_lockin(db, scan, positioner='monochromator_energy', dc_col='Lock DC',
-                ac_col='Lock AC', acoff_col='Lock AC off', **kwargs):
-    """
-    Load the x-ray magnetic dichroism from one scan taken in lock-in mode.
-
-    Parameters
-    ----------
-    db : database
-        Databroker database. If None, it will attempt to read from csv files.
-    scan : int
-        Scan_id our uid. If scan_id is passed, it will load the last scan with
-        that scan_id. See kwargs for search options.
-    positioner : string, optional
-        Name of the positioner, this needs to be the same as defined in
-        Bluesky. Defauts to the x-ray energy.
-    dc_col : string, optional
-        Name of the DC scaler, again it needs to be the same name as in
-        Bluesky. Defaults to 'Lock DC'.
-    ac_col : string, optional
-        Name of the AC scaler. Defaults to 'Lock AC'.
-    acoff_col : string, optional
-        Name of the AC offset scaler. Defaults to 'Lock AC off'.
-    kwargs :
-        Passed to `load_scan`.
-
-    Returns
-    -------
-    x : numpy.array
-        Positioner data.
-    dc : numpy.array
-        DC response, normally corresponds to the x-ray absorption.
-    ac-ac_off : numpy.array
-        AC response minus the offset, normally corresponds to the x-ray
-        magnetic dichroism.
-
-    See also
-    --------
-    :func:`polartools.load_data.load_scan`
-    """
-
-    x, dc, ac, ac_off = load_scan(db, scan, positioner, [dc_col, ac_col,
-                                  acoff_col], **kwargs)
-    return x, dc, ac-ac_off
-
-
-def load_dichro(scan, db=None, positioner='monochromator_energy',
-                detector='Ion Ch 5', monitor='Ion Ch 4', **kwargs):
-
-    """
-    Load the x-ray magnetic dichroism from one scan taken in non-lock-in mode
-    ('dichro').
-
-    Parameters
-    ----------
-    db : database
-        Databroker database. If None, it will attempt to read from csv files.
-    scan : int
-        Scan_id our uid. If scan_id is passed, it will load the last scan with
-        that scan_id. See kwargs for search options.
-    positioner : string, optional
-        Name of the positioner, this needs to be the same as defined in
-        Bluesky. Defauts to the x-ray energy.
-    detector : string, optional
-        Name of the DC scaler, again it needs to be the same name as in
-        Bluesky. Defaults to ion chamber 5.
-    monitor : string, optional
-        Name of the AC scaler. Defaults to ion chamber 4.
-    kwargs :
-        Passed to `load_scan`.
-
-    Returns
-    -------
-    x : numpy.array
-        Positioner data.
-    xanes : numpy.array
-        X-ray absorption.
-    xmcd : numpy.array
-        X-ray magnetic dichroism.
-
-    See also
-    --------
-    :func:`polartools.load_data.load_scan`
-    """
-
-    x0, y0 = load_absorption(db, scan, positioner=positioner, monitor=monitor,
-                             detectors=[detector], **kwargs)
-    size = x0.size//4
-
-    x0 = x0.reshape(size, 4)
-    y0 = y0.reshape(size, 4)
-
-    x = x0.mean(axis=1)
-    xanes = y0.mean(axis=1)
-    xmcd = y0[:, [0, 3]].mean(axis=1) - y0[:, [1, 2]].mean(axis=1)
-
-    return x, xanes, xmcd
-
-
-def load_xanes(db, scans, return_mean=True, **kwargs):
-    """
-    Load multiple x-ray absorption energy scans.
-
-    Parameters
-    ----------
-    db : database
-        Databroker database. If None, it will attempt to read from csv files.
-    scans : iterable
-        Sequence of scan_ids our uids. If scan_id is passed, it will load the
-        last scan with that scan_id. Use kwargs for search options.
-    return_mean : boolean
-        Flag to indicate if the averaging of multiple scans will be performed.
-        Note that if True three outputs are generated, otherwise two.
-    kwargs :
-        Passed to `load_absorption`. Can be used to select the detector/monitor
-        to be used. It is also passed to `load_bluesky` or `load_csv`, see
-        the respective docstring for details.
-
-    Returns
-    -------
-    energy : numpy.array
-        X-ray energy.
-    xanes : numpy.array
-        X-ray absorption. If return_mean = True:
-        xanes.shape = (len(scans), len(energy)), otherwise:
-        xanes.shape = (len(energy))
-    xanes_std : numpy.array, optional
-        Error of the mean of x-ray absorption. This will only be returned if
-        return_mean = True.
-
-    See also
-    --------
-    :func:`polartools.load_data.load_absorption`
-    :func:`polartools.load_data.load_bluesky`
-    :func:`polartools.load_data.load_csv`
-    """
-
-    for scan in scans:
-        if 'energy' not in locals():
-            energy, xanes = load_absorption(db, scan, **kwargs)
-        else:
-            energy_tmp, xanes_tmp = load_absorption(db, scan, **kwargs)
-            xanes = np.vstack((xanes, interp1d(energy_tmp, xanes_tmp,
-                                               kind='linear',
-                                               fill_value=np.nan,
-                                               bounds_error=False)(energy)))
-
-    if return_mean:
-        if len(xanes.shape) == 2:
-            xanes_std = xanes.std(axis=0)/np.sqrt(len(scans))
-            xanes = xanes.mean(axis=0)
-            return energy, xanes, xanes_std
-        else:
-            return energy, xanes, np.zeros((xanes.size))
-
-    else:
-        return energy, xanes
-
-
-def load_xmcd(db, scans, return_mean=True, func=load_dichro, **kwargs):
-    """
-    Load multiple x-ray magnetic dichroism energy scans.
-
-    Parameters
-    ----------
-    db : database
-        Databroker database. If None, it will attempt to read from csv files.
-    scans : iterable
-        Sequence of scan_ids our uids. If scan_id is passed, it will load the
-        last scan with that scan_id. Use kwargs for search options.
-    return_mean : boolean
-        Flag to indicate if the averaging of multiple scans will be performed.
-        Note that if True five outputs are generated, otherwise three.
-    func : function, optional
-        Function that will load the XMCD signal. It has to have the call:
-        func(db, scan, \*\*kwargs). Defaults to `load_dichro`, but see also
-        `load_lockin`.
-    kwargs :
-        Passed to `load_absorption`. Can be used to select the detector/monitor
-        to be used. It is also passed to `load_bluesky` or `load_csv`, see
-        the respective docstring for details.
-
-    Returns
-    -------
-    energy : numpy.array
-        X-ray energy.
-    xanes : numpy.array
-        X-ray absorption. If return_mean = True:
-        xanes.shape = (len(scans), len(energy)), otherwise:
-        xanes.shape = (len(energy))
-    xmcd : numpy.array
-        X-ray magnetic dichroism. It has the same shape as the xanes.
-    xanes_std : numpy.array, optional
-        Error of the mean of x-ray absorption. This will only be returned if
-        return_mean = True.
-    xmcd_std : numpy.array, optional
-        Error of the mean of x-ray magnetic dichroism. This will only be
-        returned if return_mean = True.
-
-    See also
-    --------
-    :func:`polartools.load_data.load_dichro`
-    :func:`polartools.load_data.load_lockin`
-    :func:`polartools.load_data.load_bluesky`
-    :func:`polartools.load_data.load_csv`
-    """
-
-    for scan in scans:
-        if 'energy' not in locals():
-            energy, xanes, xmcd = func(db, scan, **kwargs)
-        else:
-            energy_tmp, xanes_tmp, xmcd_tmp = func(db, scan, **kwargs)
-            xanes = np.vstack((xanes, interp1d(energy_tmp, xanes_tmp,
-                                               kind='linear',
-                                               fill_value=np.nan,
-                                               bounds_error=False)(energy)))
-            xmcd = np.vstack((xmcd, interp1d(energy_tmp, xmcd_tmp,
-                                             kind='linear',
-                                             fill_value=np.nan,
-                                             bounds_error=False)(energy)))
-
-    if return_mean:
-        if len(xanes.shape) == 2:
-            xanes_std = xanes.std(axis=0)/np.sqrt(len(scans))
-            xanes = xanes.mean(axis=0)
-            xmcd_std = xmcd.std(axis=0)/np.sqrt(len(scans))
-            xmcd = xmcd.mean(axis=0)
-            return energy, xanes, xmcd, xanes_std, xmcd_std
-        else:
-            return (energy, xanes, xmcd, np.zeros((xanes.size)),
-                    np.zeros((xanes.size)))
-
-    else:
-        return energy, xanes, xmcd
+    return table
