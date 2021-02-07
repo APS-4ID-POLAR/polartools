@@ -194,7 +194,7 @@ def load_table(scan, source, **kwargs):
     if source == 'csv':
         name_format = kwargs.pop('name_format', 'scan_{}_primary.csv')
         table = load_csv(scan, folder=folder, name_format=name_format)
-    elif isinstance(source, str):
+    elif isinstance(source, str) or isinstance(source, SpecDataFile):
         table = load_spec(scan, source, folder=folder)
     else:
         stream = kwargs.pop('stream', 'primary')
@@ -202,6 +202,6 @@ def load_table(scan, source, **kwargs):
         table = load_databroker(scan, source, stream=stream, query=query)
 
     if len(kwargs) != 0:
-        warn(f"The following kwargs were not used! {list(kwargs.keys)}")
+        warn(f"The following kwargs were not used! {list(kwargs.keys())}")
 
     return table
