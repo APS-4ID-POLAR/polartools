@@ -16,6 +16,8 @@ Functions to load and process x-ray absorption data.
 from .load_data import load_table
 import numpy as np
 from scipy.interpolate import interp1d
+from spec2nexus.spec import SpecDataFile
+
 
 _spec_default_cols = dict(
     positioner='Energy',
@@ -81,7 +83,7 @@ def load_absorption(scan, source, positioner=None, detector=None, monitor=None,
     :func:`polartools.load_data.load_table`
     """
     # Select default parameters
-    if isinstance(source, str) and source != 'csv':
+    if isinstance(source, (str, SpecDataFile)) and source != 'csv':
         _defaults = _spec_default_cols
     else:
         _defaults = _bluesky_default_cols
@@ -97,7 +99,7 @@ def load_absorption(scan, source, positioner=None, detector=None, monitor=None,
     table = load_table(scan, source, **kwargs)
     x = table[positioner]
     y = table[detector]
-    y0 = table[monitor] if monitor else 1.0
+    y0 = table[monitor]
 
     if transmission:
         return x, np.log(y0/y)
@@ -153,7 +155,7 @@ def load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None,
     """
 
     # Select default parameters
-    if isinstance(source, str) and source != 'csv':
+    if isinstance(source, (str, SpecDataFile)) and source != 'csv':
         _defaults = _spec_default_cols
     else:
         _defaults = _bluesky_default_cols
@@ -227,7 +229,7 @@ def load_dichro(scan, source, positioner=None, detector=None, monitor=None,
     """
 
     # In SPEC the columns are different.
-    if isinstance(source, str) and source != 'csv':
+    if isinstance(source, (str, SpecDataFile)) and source != 'csv':
         if not positioner:
             positioner = _spec_default_cols['positioner']
         if not monitor:
@@ -340,7 +342,6 @@ def load_multi_xas(scans, source, return_mean=True, positioner=None,
             return energy, xanes, xanes_std
         else:
             return energy, xanes, np.zeros((xanes.size))
-
     else:
         return energy, xanes
 
@@ -434,7 +435,6 @@ def load_multi_dichro(scans, source, return_mean=True, positioner=None,
         else:
             return (energy, xanes, xmcd, np.zeros((xanes.size)),
                     np.zeros((xanes.size)))
-
     else:
         return energy, xanes, xmcd
 
@@ -524,7 +524,6 @@ def load_multi_lockin(scans, source, return_mean=True, positioner=None,
         else:
             return (energy, xanes, xmcd, np.zeros((xanes.size)),
                     np.zeros((xanes.size)))
-
     else:
         return energy, xanes, xmcd
 
