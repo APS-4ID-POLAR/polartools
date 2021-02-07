@@ -338,7 +338,7 @@ def calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
     return pressure
 
 
-def xrd_calibrate_pressure(scan, source, bragg_peak=[1, 1, 1],
+def xrd_calibrate_pressure(scan, source, bragg_peak=(1, 1, 1),
                            calibrant='Au', temperature=300,
                            energy='monochromator_energy',
                            positioner='huber_tth', detector='APDSector4',
