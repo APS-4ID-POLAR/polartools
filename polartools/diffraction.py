@@ -122,6 +122,7 @@ def load_info(source, scan_id, info, **kwargs):
     """
     folder = kwargs.pop("folder", "")
     if source == "csv":
+        pass
         # to be implemented for csv
     elif isinstance(source, str) or isinstance(source, SpecDataFile):
         if isinstance(source, str):
@@ -162,7 +163,7 @@ def load_info(source, scan_id, info, **kwargs):
             )
     else:
         pass
-        # database to be implemented
+        # to be implemented
     if len(kwargs) != 0:
         warn(f"The following kwargs were not used! {list(kwargs.keys())}")
 
@@ -288,7 +289,7 @@ def fit_series(
                     source,
                     **kwargs,
                 )
-                fit_result[index][0] = table[parameter].mean()
+                fit_result[index][0] = table[var_series].mean()
             else:
                 table = load_table(
                     scan,
