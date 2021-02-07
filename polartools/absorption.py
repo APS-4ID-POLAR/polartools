@@ -226,16 +226,40 @@ def load_dichro(scan, source, positioner=None, detector=None, monitor=None,
     :func:`polartools.load_data.load_table`
     """
 
-    x0, y0 = load_absorption(scan, source, positioner, detector, monitor,
-                             transmission, **kwargs)
-    size = x0.size//4
+    # In SPEC the columns are different.
+    if isinstance(source, str) and source != 'csv':
+        if not positioner:
+            positioner = _spec_default_cols['positioner']
+        if not monitor:
+            monitor = _spec_default_cols['monitor']
+        if not detector:
+            detector = _spec_default_cols['detector']
 
-    x0 = x0.reshape(size, 4)
-    y0 = y0.reshape(size, 4)
+        table = load_table(scan, source, **kwargs)
+        x = table[positioner]
+        monp = table[monitor+'(+)']
+        detp = table[detector+'(+)']
+        monm = table[monitor+'(-)']
+        detm = table[detector+'(-)']
 
-    x = x0.mean(axis=1)
-    xanes = y0.mean(axis=1)
-    xmcd = y0[:, [0, 3]].mean(axis=1) - y0[:, [1, 2]].mean(axis=1)
+        if transmission:
+            xanes = (np.log(monp/detp) + np.log(monm/detm))/2.
+            xmcd = np.log(monp/detp) - np.log(monm/detm)
+        else:
+            xanes = (detp/monp + detm/monm)/2.
+            xmcd = detp/monp - detm/monm
+
+    else:
+        x0, y0 = load_absorption(scan, source, positioner, detector, monitor,
+                                 transmission, **kwargs)
+        size = x0.size//4
+
+        x0 = x0.reshape(size, 4)
+        y0 = y0.reshape(size, 4)
+
+        x = x0.mean(axis=1)
+        xanes = y0.mean(axis=1)
+        xmcd = y0[:, [0, 3]].mean(axis=1) - y0[:, [1, 2]].mean(axis=1)
 
     return x, xanes, xmcd
 
@@ -474,11 +498,11 @@ def load_multi_lockin(scans, source, return_mean=True, positioner=None,
 
     for scan in scans:
         if 'energy' not in locals():
-            energy, xanes, xmcd = load_dichro(
+            energy, xanes, xmcd = load_lockin(
                 scan, source, positioner, dc_col, ac_col, acoff_col, **kwargs
                 )
         else:
-            energy_tmp, xanes_tmp, xmcd_tmp = load_dichro(
+            energy_tmp, xanes_tmp, xmcd_tmp = load_lockin(
                 scan, source, positioner, dc_col, ac_col, acoff_col, **kwargs
                 )
             xanes = np.vstack((xanes, interp1d(energy_tmp, xanes_tmp,
@@ -503,3 +527,60 @@ def load_multi_lockin(scans, source, return_mean=True, positioner=None,
 
     else:
         return energy, xanes, xmcd
+
+
+def normalize_absorption(energy, xanes, pre_edge_range, pos_edge_range, e0,
+                         pre_edge_order=1, pos_edge_order=1):
+    """
+    Extract pre- and post-edge normalization curves by fitting polynomials.
+
+    Parameters
+    ----------
+    energy : list
+        Incident energy.
+    xanes : list
+        X-ray absorption.
+    pre_edge_range : list
+        List with the energy ranges [initial, final] of the pre-edge region
+        **relative** to the absorption edge.
+    pos_edge_range : list
+        List with the energy ranges [initial, final] of the post-edge region
+        **relative** to the absorption edge.
+    e0 : float
+        Absorption edge energy.
+    pre_edge_order : int, optional
+        Order of the polynomial to be used in the pre-edge. Defauts to 1.
+    pos_edge_order : int, optional
+        Order of the polynomial to be used in the post-edge. Defauts to 1.
+
+    Returns
+    -------
+    pre_edge : numpy.array
+        Pre-edge polynomial.
+    pos_edge : numpy.array
+        Post-edge polynomial.
+    jump : float
+        Size of the absorption jump.
+
+    See also
+    --------
+    :func:`numpy.polyfit`
+    """
+
+    energy = np.array(energy)
+    xanes = np.array(xanes)
+
+    # Process pre-edge
+    index = (energy > pre_edge_range[0]) & (energy < pre_edge_range[1])
+    pre_edge = np.poly1d(np.polyfit(energy[index], xanes[index],
+                                    pre_edge_order))(energy)
+    processed_xanes = xanes - pre_edge
+
+    # Process pos-edge
+    index = (energy > pos_edge_range[0]) & (energy < pos_edge_range[1])
+    pos_edge_func = np.poly1d(np.polyfit(energy[index], processed_xanes[index],
+                              pos_edge_order))
+    pos_edge = pos_edge_func(energy)
+    jump = pos_edge_func(e0)
+
+    return pre_edge, pre_edge + pos_edge, jump
