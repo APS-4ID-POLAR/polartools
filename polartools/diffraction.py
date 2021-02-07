@@ -10,7 +10,7 @@ from lmfit.models import (
 import matplotlib.pyplot as plt
 from os.path import join
 from spec2nexus.spec import SpecDataFile
-from .load_data import load_scan
+from .load_data import load_table
 
 
 _spec_default_cols = dict(
@@ -164,8 +164,6 @@ def load_info(source, scan_id, info, **kwargs):
     else:
         pass
         # to be implemented
-    if len(kwargs) != 0:
-        warn(f"The following kwargs were not used! {list(kwargs.keys())}")
 
     return value
 
