@@ -122,7 +122,6 @@ def load_info(source, scan_id, info, **kwargs):
     """
     folder = kwargs.pop("folder", "")
     if source == "csv":
-        name_format = kwargs.pop("name_format", "scan_{}_primary.csv")
         # to be implemented for csv
     elif isinstance(source, str) or isinstance(source, SpecDataFile):
         if isinstance(source, str):
@@ -162,10 +161,8 @@ def load_info(source, scan_id, info, **kwargs):
                 "expect list [#P, (#Q, #U), Variable (string or line number), element number]"
             )
     else:
-        stream = kwargs.pop("stream", "primary")
-        query = kwargs.pop("query", None)
-        # table = load_databroker(scan, source, stream=stream, query=query)
-        # to be implemented
+        pass
+        # database to be implemented
     if len(kwargs) != 0:
         warn(f"The following kwargs were not used! {list(kwargs.keys())}")
 
