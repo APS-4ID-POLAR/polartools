@@ -279,12 +279,14 @@ def fit_series(
                 table = load_table(
                     scan,
                     source,
+                    folder=folder,
                     **kwargs,
                 )
             elif var_series:
                 table = load_table(
                     scan,
                     source,
+                    folder=folder,
                     **kwargs,
                 )
                 fit_result[index][0] = table[var_series].mean()
@@ -292,6 +294,7 @@ def fit_series(
                 table = load_table(
                     scan,
                     source,
+                    folder=folder,
                     **kwargs,
                 )
                 fit_result[index][0] = index
