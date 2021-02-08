@@ -11,21 +11,17 @@ def test_xrd_calibrate_pressure():
     path = join('polartools', 'tests', 'data_for_test')
 
     # Au calibrant
-    pressure = xrd_calibrate_pressure(419, temperature=9, energy=12.0,
-                                      positioner='4C Two Theta',
-                                      detector='CyberMag', monitor='IC3',
-                                      spec_file='pressure.dat',
-                                      folder=path)
+    pressure = xrd_calibrate_pressure(
+        419, 'pressure_calibration.dat', temperature=9, energy=12.0,
+        positioner='4C Two Theta', detector='CyberMag', monitor='IC3',
+        folder=path)
 
     assert allclose(pressure, 0.743387, atol=1e-5)
 
     # Ag calibrant
-    spec_file = SpecDataFile(join(path, 'pressure.dat'))
-    pressure = xrd_calibrate_pressure(419, temperature=9, energy=12.0,
-                                      calibrant='Ag',
-                                      positioner='4C Two Theta',
-                                      detector='CyberMag', monitor='IC3',
-                                      spec_file=spec_file,
-                                      folder=path)
+    spec_file = SpecDataFile(join(path, 'pressure_calibration.dat'))
+    pressure = xrd_calibrate_pressure(
+        419, spec_file, temperature=9, energy=12.0, calibrant='Ag',
+        positioner='4C Two Theta', detector='CyberMag', monitor='IC3')
 
     assert allclose(pressure, 0.818770, atol=1e-5)
