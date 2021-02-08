@@ -261,7 +261,7 @@ def fit_series(
             / scan_series[series + 1]
             + 1
         )
-    fit_result = [np.zeros(7) for i in range(int(nbp))]
+    fit_result = [np.zeros(8) for i in range(int(nbp))]
 
     index = 0
 
@@ -270,12 +270,12 @@ def fit_series(
         stop = scan_series[series]
         step = scan_series[series + 1]
         print("Intervals: {} to {} with step {}".format(start, stop, step))
-        # fitnr=0
         for scan in range(start, stop + 1, step):
             if var_series and var_series[0][0] == "#":
                 fit_result[index][0] = load_info(
                     source, scan, info=var_series, **kwargs
                 )
+                fit_result[index][1] = 0
                 table = load_table(
                     scan,
                     source,
@@ -290,6 +290,7 @@ def fit_series(
                     **kwargs,
                 )
                 fit_result[index][0] = table[var_series].mean()
+                fit_result[index][1] = table[var_series].std()
             else:
                 table = load_table(
                     scan,
@@ -298,6 +299,7 @@ def fit_series(
                     **kwargs,
                 )
                 fit_result[index][0] = index
+                fit_result[index][1] = 0
             x = table[positioner]
             y = table[detector]
             y0 = table[monitor]
@@ -306,23 +308,24 @@ def fit_series(
 
             fit = fit_peak(x, y, model=model, output=output)
 
-            fit_result[index][1] = fit.params["amplitude"].value
-            fit_result[index][2] = fit.params["amplitude"].stderr
-            fit_result[index][3] = fit.params["center"].value
-            fit_result[index][4] = fit.params["center"].stderr
-            fit_result[index][5] = fit.params["fwhm"].value
-            fit_result[index][6] = fit.params["fwhm"].stderr
+            fit_result[index][2] = fit.params["amplitude"].value
+            fit_result[index][3] = fit.params["amplitude"].stderr
+            fit_result[index][4] = fit.params["center"].value
+            fit_result[index][5] = fit.params["center"].stderr
+            fit_result[index][6] = fit.params["fwhm"].value
+            fit_result[index][7] = fit.params["fwhm"].stderr
             index += 1
 
     return DataFrame(
         fit_result,
         columns=[
             "Index",
+            "Std Index",
             "Intensity",
-            "sigma I",
+            "Std I",
             "Position",
-            "sigma P",
+            "Std P",
             "Width",
-            "sigma W",
+            "Std W",
         ],
     )
