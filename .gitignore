@@ -45,7 +45,7 @@ nosetests.xml
 coverage.xml
 *,cover
 .hypothesis/
-polartools/tests/tmp
+polartools/tests/tmp/
 
 # Translations
 *.mo

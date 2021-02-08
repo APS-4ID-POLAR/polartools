@@ -1,6 +1,3 @@
-# Copyright (c) 2020, UChicago Argonne, LLC.
-# See LICENSE file for details.
-
 import numpy as np
 from pandas import DataFrame
 from lmfit.models import (
@@ -13,7 +10,21 @@ from lmfit.models import (
 import matplotlib.pyplot as plt
 from os.path import join
 from spec2nexus.spec import SpecDataFile
-from .load_data import load_scan
+
+from .load_data import load_table, load_csv, is_Bluesky_specfile
+
+
+_spec_default_cols = dict(
+    positioner="4C Theta",
+    detector="APD",
+    monitor="IC3",
+)
+
+_bluesky_default_cols = dict(
+    positioner="fourc_theta",
+    detector="APDSector4",
+    monitor="Ion Ch 3",
+)
 
 
 def fit_peak(xdata, ydata, model="Gaussian", output=False):
@@ -77,28 +88,33 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
     return fit
 
 
-def load_info(db, spec_file, scan, folder, info):
+def load_info(source, scan_id, info, **kwargs):
     """
     Load metadata variable value.
 
     Parameters
     ----------
-    db : database
-        Databroker database. If None, it will attempt to read from csv or spec
-        files.
-    spec_file : string or spec2nexus.spec.SpecDataFile
-        Either the spec file name or a SpecDataFile instance.
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     scan : int
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id.
-    folder : string, optional
-        Folder where spec file is located.
     info: list
-        Information on metadata to be read: List starting with #P, #U or #Q for
-        motor positions, user values or Q-position:
-        #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
-        #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-        #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        SPEC: Information on metadata to be read: List starting with #P, #U or #Q for
+            motor positions, user values or Q-position:
+            #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        CSV: #metadata_name
+
+    kwargs:
+        The necessary kwargs are passed to the loading functions defined by the
+        `source` argument:
+            - csv        -> possible kwargs: folder, name_format
+            - spec       -> possible kwargs: folder
+            - databroker -> possible kwargs: stream, query
+        Note that a warning will be printed if the an unnecessary kwarg is
+        passed.
 
     Returns
     -------
@@ -106,13 +122,17 @@ def load_info(db, spec_file, scan, folder, info):
         Variable value.
 
     """
-
-    if not db:
-        if isinstance(spec_file, str):
-            path = join(folder, spec_file)
-            spec_file = SpecDataFile(path)
-            print(spec_file)
-        specscan = spec_file.getScan(scan)
+    folder = kwargs.pop("folder", "")
+    if source == "csv":
+        value = load_csv(
+            scan_id, folder=folder, name_format="scan_{}_baseline.csv"
+        )[info[1:]].mean()
+        # to be implemented for csv
+    elif isinstance(source, str) or isinstance(source, SpecDataFile):
+        if isinstance(source, str):
+            path = join(folder, source)
+            source = SpecDataFile(path)
+        specscan = source.getScan(scan_id)
         if isinstance(info, str):
             raise ValueError(
                 "expect list [#P, (#Q, #U), Variable (string or line number), element number]"
@@ -145,24 +165,22 @@ def load_info(db, spec_file, scan, folder, info):
             raise ValueError(
                 "expect list [#P, (#Q, #U), Variable (string or line number), element number]"
             )
-
     else:
-        # routine to load from db
-        # To be implemented
         pass
-
+        # to be implemented
     return value
 
 
 def fit_series(
-    db,
+    source,
     scan_series,
     model="Gaussian",
     output=False,
     var_series=None,
-    positioner="4C Theta",
-    detector="APD",
+    positioner=None,
+    detector=None,
     monitor=None,
+    normalize=False,
     **kwargs,
 ):
     """
@@ -173,9 +191,8 @@ def fit_series(
 
     Parameters
     ----------
-    db : database
-        Databroker database. If None, it will attempt to read from csv or spec
-        files.
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
     model:
@@ -183,24 +200,35 @@ def fit_series(
     output:
         Output fit parameters and plot data+fit for each scan.
     var_series: string or list
-        string: Varying variable for scan series to be read from scan (detector),
-            e.g. SampK (sample temperature), optional.
+        string:
+            - Varying variable for scan series to be read from scan (detector),
+                e.g. SampK (sample temperature), optional.
+            - String starting with #metadata, reads metadata from CSV baseline
         list: Information on metadata to be read: List starting with #P, #U or #Q for
             motor positions, user values or Q-position, optional:
             #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
             #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
             #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
         If None, successive scans will be numbered starting from zero.
-    positioner : string
+    positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
-        Bluesky.
-    detector : string
-        Detector to be read, needs to be the same name as in Bluesky.
+        Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+    detector : string, optional
+        Detector to be read from this scan, again it needs to be the same name
+        as in Bluesky. If None is passed, it defaults to the APD detector.
     monitor : string, optional
-        Name of the monitor detector. The returned scans will be
-        detectors/monitor.
-    kwargs :
-        Passed to `load_table` and 'fit_peak'.
+        Name of the monitor detector. If None is passed, it defaults to the ion
+        chamber 3.
+    normalize: boolean
+        Normalization to selected/default monitor on/off
+    kwargs:
+        The necessary kwargs are passed to the loading and fitting functions defined by the
+        `source` argument:
+            - csv        -> possible kwargs: folder, name_format
+            - spec       -> possible kwargs: folder
+            - databroker -> possible kwargs: stream, query
+        Note that a warning will be printed if the an unnecessary kwarg is
+        passed.
 
     Returns
     -------
@@ -208,6 +236,26 @@ def fit_series(
         Contains the fit results. See:
         https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
     """
+    # Select default parameters
+    folder = kwargs.pop("folder", "")
+    if isinstance(source, (str, SpecDataFile)) and source != "csv":
+        if isinstance(source, str):
+            path = join(folder, source)
+            source = SpecDataFile(path)
+        if is_Bluesky_specfile(source):
+            _defaults = _bluesky_default_cols
+        else:
+            _defaults = _spec_default_cols
+
+    else:
+        _defaults = _bluesky_default_cols
+
+    if not positioner:
+        positioner = _defaults["positioner"]
+    if not detector:
+        detector = _defaults["detector"]
+    if not monitor:
+        monitor = _defaults["monitor"]
 
     if len(scan_series) % 3:
         raise ValueError(
@@ -222,76 +270,71 @@ def fit_series(
             / scan_series[series + 1]
             + 1
         )
-    fit_result = [np.zeros(7) for i in range(int(nbp))]
-
-    spec_file = kwargs.pop("spec_file", None)
-    folder = kwargs.pop("folder", None)
-    if spec_file and isinstance(spec_file, str):
-        path = join(folder, spec_file)
-        spec_file = SpecDataFile(path)
+    fit_result = [np.zeros(8) for i in range(int(nbp))]
 
     index = 0
+
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
         stop = scan_series[series]
         step = scan_series[series + 1]
         print("Intervals: {} to {} with step {}".format(start, stop, step))
-        # fitnr=0
         for scan in range(start, stop + 1, step):
             if var_series and var_series[0][0] == "#":
                 fit_result[index][0] = load_info(
-                    db, spec_file, scan, folder, info=var_series
+                    source, scan, info=var_series, folder=folder, **kwargs
                 )
-                x, y = load_scan(
-                    db,
+                fit_result[index][1] = 0
+                table = load_table(
                     scan,
-                    positioner,
-                    [detector],
-                    monitor=[monitor],
-                    spec_file=spec_file,
+                    source,
+                    folder=folder,
                     **kwargs,
                 )
             elif var_series:
-                x, y, parameter = load_scan(
-                    db,
+                table = load_table(
                     scan,
-                    positioner,
-                    [detector, var_series],
-                    monitor=[monitor, None],
-                    spec_file=spec_file,
+                    source,
+                    folder=folder,
                     **kwargs,
                 )
-                fit_result[index][0] = parameter.mean()
+                fit_result[index][0] = table[var_series].mean()
+                fit_result[index][1] = table[var_series].std()
             else:
-                x, y = load_scan(
-                    db,
+                table = load_table(
                     scan,
-                    positioner,
-                    [detector],
-                    monitor=[monitor],
+                    source,
+                    folder=folder,
                     **kwargs,
                 )
                 fit_result[index][0] = index
+                fit_result[index][1] = 0
+            x = table[positioner]
+            y = table[detector]
+            y0 = table[monitor]
+            if normalize:
+                y = y / y0
 
             fit = fit_peak(x, y, model=model, output=output)
 
-            fit_result[index][1] = fit.params["amplitude"].value
-            fit_result[index][2] = fit.params["amplitude"].stderr
-            fit_result[index][3] = fit.params["center"].value
-            fit_result[index][4] = fit.params["center"].stderr
-            fit_result[index][5] = fit.params["fwhm"].value
-            fit_result[index][6] = fit.params["fwhm"].stderr
+            fit_result[index][2] = fit.params["amplitude"].value
+            fit_result[index][3] = fit.params["amplitude"].stderr
+            fit_result[index][4] = fit.params["center"].value
+            fit_result[index][5] = fit.params["center"].stderr
+            fit_result[index][6] = fit.params["fwhm"].value
+            fit_result[index][7] = fit.params["fwhm"].stderr
             index += 1
 
     return DataFrame(
         fit_result,
         columns=[
             "Index",
+            "Std Index",
             "Intensity",
-            "sigma I",
+            "Std I",
             "Position",
-            "sigma P",
+            "Std P",
             "Width",
-            "sigma W",
+            "Std W",
         ],
     )
