@@ -29,3 +29,19 @@ def test_db_query():
     db = catalog['test_data']
     search = load_data.db_query(db, query)
     assert len(list(search)) == 0
+
+
+def test_is_Bluesky_specfile():
+    folder = join('polartools', 'tests', 'data_for_test')
+
+    result = load_data.is_Bluesky_specfile('pressure_calibration.dat',
+                                           folder=folder)
+    assert result is False
+
+    result = load_data.is_Bluesky_specfile('bluesky_spec.dat',
+                                           folder=folder)
+    assert result is True
+
+    result = load_data.is_Bluesky_specfile('absorption.dat',
+                                           folder=folder)
+    assert result is False

@@ -159,7 +159,8 @@ def load_table(scan, source, **kwargs):
 
     The automation is based on the source argument:
         - if source == 'csv' -> uses `load_csv`.
-        - else if source is a string -> uses `load_spec`.
+        - else if source is a string or nexus2spec.spec.SpecDataFile -> uses
+        `load_spec`.
         - else -> uses `load_databroker`.
 
     Parameters
@@ -205,3 +206,16 @@ def load_table(scan, source, **kwargs):
         warn(f"The following kwargs were not used! {list(kwargs.keys())}")
 
     return table
+
+
+def is_Bluesky_specfile(source, folder=''):
+
+    if isinstance(source, str):
+        path = join(folder, source)
+        source = SpecDataFile(path)
+
+    for comment in source.headers[0].comments:
+        if 'Bluesky' in comment:
+            return True
+
+    return False
