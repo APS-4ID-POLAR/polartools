@@ -8,3 +8,6 @@ spec2nexus
 ipython
 numpydoc
 sphinx_copybutton
+suitcase-csv
+suitcase-json-metadata
+databroker

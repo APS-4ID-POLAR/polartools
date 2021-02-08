@@ -19,6 +19,8 @@ dependencies:
   - lmfit
   - spec2nexus
   - versioneer
+  - suitcase-csv
+  - suitcase-json-metadata
   - pip:
     - ipython-genutils==0.2.0
     - prompt-toolkit==1.0.15
