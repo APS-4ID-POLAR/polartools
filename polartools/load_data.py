@@ -7,6 +7,7 @@ Base functions to load data from various sources.
    ~load_databroker
    ~db_query
    ~load_table
+   ~is_Bluesky_specfile
 """
 
 # Copyright (c) 2020-2021, UChicago Argonne, LLC.
