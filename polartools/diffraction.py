@@ -20,8 +20,8 @@ _spec_default_cols = dict(
 )
 
 _bluesky_default_cols = dict(
-    positioner="4C Theta",
-    detector="APD",
+    positioner="fourc_theta",
+    detector="APDSector4",
     monitor="Ion Ch 3",
 )
 
