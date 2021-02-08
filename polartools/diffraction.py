@@ -9,11 +9,8 @@ from lmfit.models import (
 )
 import matplotlib.pyplot as plt
 from os.path import join
-from spec2nexus.spec import (
-    SpecDataFile,
-    SpecDataFileNotFound,
-    NotASpecDataFile,
-)
+from spec2nexus.spec import SpecDataFile
+
 from .load_data import load_table, load_csv, is_Bluesky_specfile
 
 
