@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 from .load_data import load_table
+from .load_data import is_Bluesky_specfile
 
 
 _spec_default_cols = dict(
@@ -234,10 +235,14 @@ def fit_series(
     # Select default parameters
     folder = kwargs.pop("folder", "")
     if isinstance(source, (str, SpecDataFile)) and source != "csv":
-        _defaults = _spec_default_cols
         if isinstance(source, str):
             path = join(folder, source)
             source = SpecDataFile(path)
+        if is_Bluesky_specfile(source):
+            _defaults = _bluesky_default_cols
+        else:
+            _defaults = _spec_default_cols
+
     else:
         _defaults = _bluesky_default_cols
 
