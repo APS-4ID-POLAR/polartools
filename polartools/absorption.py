@@ -13,11 +13,11 @@ Functions to load and process x-ray absorption data.
 # Copyright (c) 2020-2021, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
-from .load_data import load_table
+from .load_data import load_table, is_Bluesky_specfile
 import numpy as np
 from scipy.interpolate import interp1d
-from spec2nexus.spec import SpecDataFile
-
+from spec2nexus.spec import (SpecDataFile, SpecDataFileNotFound,
+                             NotASpecDataFile)
 
 _spec_default_cols = dict(
     positioner='Energy',
@@ -36,6 +36,23 @@ _bluesky_default_cols = dict(
     ac_col='Lock AC',
     acoff_col='Lock AC off',
     )
+
+
+def _select_default_names(source, **kwargs):
+    # Select default parameters
+    if isinstance(source, (str, SpecDataFile)):
+        # It is csv or spec.
+        try:
+            # Checks spec origin.
+            check = is_Bluesky_specfile(source, **kwargs)
+            _defaults = _bluesky_default_cols if check else _spec_default_cols
+        except (NotASpecDataFile, SpecDataFileNotFound):
+            # If not a spec file, it must be csv, and use bluesky defaults.
+            _defaults = _bluesky_default_cols
+    else:
+        # It is databroker.
+        _defaults = _bluesky_default_cols
+    return _defaults
 
 
 def load_absorption(scan, source, positioner=None, detector=None, monitor=None,
@@ -82,11 +99,8 @@ def load_absorption(scan, source, positioner=None, detector=None, monitor=None,
     --------
     :func:`polartools.load_data.load_table`
     """
-    # Select default parameters
-    if isinstance(source, (str, SpecDataFile)) and source != 'csv':
-        _defaults = _spec_default_cols
-    else:
-        _defaults = _bluesky_default_cols
+
+    _defaults = _select_default_names(source, **kwargs)
 
     if not positioner:
         positioner = _defaults['positioner']
@@ -97,14 +111,11 @@ def load_absorption(scan, source, positioner=None, detector=None, monitor=None,
 
     # Load data
     table = load_table(scan, source, **kwargs)
-    x = table[positioner]
-    y = table[detector]
-    y0 = table[monitor]
 
     if transmission:
-        return x, np.log(y0/y)
+        return table[positioner], np.log(table[monitor]/table[detector])
     else:
-        return x, y/y0
+        return table[positioner], table[detector]/table[monitor]
 
 
 def load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None,
@@ -154,11 +165,7 @@ def load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None,
     :func:`polartools.load_data.load_table`
     """
 
-    # Select default parameters
-    if isinstance(source, (str, SpecDataFile)) and source != 'csv':
-        _defaults = _spec_default_cols
-    else:
-        _defaults = _bluesky_default_cols
+    _defaults = _select_default_names(source, **kwargs)
 
     if not positioner:
         positioner = _defaults['positioner']
@@ -171,12 +178,8 @@ def load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None,
 
     # Load data
     table = load_table(scan, source, **kwargs)
-    x = table[positioner]
-    ac = table[ac_col]
-    dc = table[dc_col]
-    acoff = table[acoff_col]
 
-    return x, dc, ac - acoff
+    return table[positioner], table[dc_col], table[ac_col] - table[acoff_col]
 
 
 def load_dichro(scan, source, positioner=None, detector=None, monitor=None,
@@ -229,7 +232,9 @@ def load_dichro(scan, source, positioner=None, detector=None, monitor=None,
     """
 
     # In SPEC the columns are different.
-    if isinstance(source, (str, SpecDataFile)) and source != 'csv':
+    if (isinstance(source, (str, SpecDataFile)) and source != 'csv' and not
+            is_Bluesky_specfile(source, **kwargs)):
+
         if not positioner:
             positioner = _spec_default_cols['positioner']
         if not monitor:
