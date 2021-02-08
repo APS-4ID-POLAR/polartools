@@ -14,7 +14,7 @@ Functions to import and export Bluesky data.
 from databroker_pack import (export_catalog, write_documents_manifest,
                              write_msgpack_catalog_file, unpack_inplace)
 from databroker import catalog_search_path
-from .load_data import run_v2_query
+from .load_data import db_query
 from os import makedirs, remove
 from os.path import exists, join
 from itertools import tee
@@ -31,7 +31,7 @@ def to_databroker(db, folder, query=None):
     WARNING: While you can pass a query dictionary here, it is advised to run
     the query and check the results before running this function as you
     may inadvertely export a very large number of scans. See
-    :func:`polartools.load_data.run_v2_query`.
+    :func:`polartools.load_data.db_query`.
 
     This is a narrow usage of the databroker-pack package. Note that this
     package includes a convenient command line tool.
@@ -45,7 +45,7 @@ def to_databroker(db, folder, query=None):
         Destination directory.
     query : dict, optional
         Search parameters to select a subsection of `db`. See
-        :func:`polartools.load_data.run_v2_query` for more details.
+        :func:`polartools.load_data.db_query` for more details.
 
     Notes:
     ------
@@ -55,12 +55,12 @@ def to_databroker(db, folder, query=None):
 
     See also
     --------
-    :func:`polartools.load_data.run_v2_query`
+    :func:`polartools.load_data.db_query`
     :func:`databroker-pack.export_catalog`
     :func:`databroker-pack.write_documents_manifest`
     :func:`databroker-pack.write_msgpack_catalog_file`
     """
-    results = run_v2_query(db, query) if query else db.v2
+    results = db_query(db, query) if query else db.v2
 
     makedirs(folder, exist_ok=True)
     manager = MultiFileManager(folder)
@@ -70,8 +70,8 @@ def to_databroker(db, folder, query=None):
     write_msgpack_catalog_file(manager, folder, ["./documents/*.msgpack"], {})
 
 
-def to_csv_json(db, folder, query=None, fname_format='scan-{}-',
-                overwrite=True, max_attempts=100):
+def to_csv_json(db, folder, query=None, fname_format='scan_{}_',
+                overwrite=False, max_attempts=100):
     """
     Exports scans into *.csv and *.json files.
 
@@ -83,7 +83,7 @@ def to_csv_json(db, folder, query=None, fname_format='scan-{}-',
     WARNING: While you can pass a query dictionary here, it is advised to run
     the query and check the results before running this function as you
     may inadvertely export a very large number of scans. See
-    :func:`polartools.load_data.run_v2_query`.
+    :func:`polartools.load_data.db_query`.
 
     Parameters
     ----------
@@ -93,7 +93,7 @@ def to_csv_json(db, folder, query=None, fname_format='scan-{}-',
         Destination directory.
     query : dict, optional
         Search parameters to select a subsection of `db`. See
-        :func:`polartools.load_data.run_v2_query` for more details.
+        :func:`polartools.load_data.db_query` for more details.
     fname_format : str, optional
         Format of the string to be used for the file names. Note that one has
         to be able to add the scan numbers into this string by doing:
@@ -111,7 +111,7 @@ def to_csv_json(db, folder, query=None, fname_format='scan-{}-',
 
     See also
     --------
-    :func:`polartools.load_data.run_v2_query`
+    :func:`polartools.load_data.db_query`
     :func:`suitcase.csv.export`
     :func:`suitcase.json_metadata.export`
     """
@@ -138,7 +138,7 @@ def to_csv_json(db, folder, query=None, fname_format='scan-{}-',
         raise FileExistsError(f'{folder} already exists. Either select '
                               '`overwrite=True` or enter a another folder.')
 
-    results = run_v2_query(db, query) if query else db.v2
+    results = db_query(db, query) if query else db.v2
     for uid in list(results):
         scanno = results[uid].metadata['start']['scan_id']
         fname = next_available_fname(folder, fname_format.format(scanno),
