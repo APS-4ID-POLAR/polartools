@@ -28,3 +28,15 @@ def test_load_multi_lockin():
     _, _, xmcd, _, _ = absorption.load_multi_lockin(scans, 'absorption.dat',
                                                     folder=path)
     assert allclose(xmcd.mean(), -2935.7871485943774)
+
+
+def test_load_absorption():
+    # Meant to test loading bluesky vs. SPEC generated spec_file.
+    path = join('polartools', 'tests', 'data_for_test')
+
+    _, xas = absorption.load_absorption(
+        44, 'bluesky_spec.dat', positioner='fourc_h', folder=path)
+    assert allclose(xas.mean(), 0.7141861035115614)
+
+    _, xas = absorption.load_absorption(18, 'absorption.dat', folder=path)
+    assert allclose(xas.mean(), 0.7581461103557833)
