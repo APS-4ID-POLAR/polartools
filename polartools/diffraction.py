@@ -9,9 +9,12 @@ from lmfit.models import (
 )
 import matplotlib.pyplot as plt
 from os.path import join
-from spec2nexus.spec import SpecDataFile
-from .load_data import load_table
-from .load_data import is_Bluesky_specfile
+from spec2nexus.spec import (
+    SpecDataFile,
+    SpecDataFileNotFound,
+    NotASpecDataFile,
+)
+from .load_data import load_table, load_csv, is_Bluesky_specfile
 
 
 _spec_default_cols = dict(
@@ -100,11 +103,12 @@ def load_info(source, scan_id, info, **kwargs):
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id.
     info: list
-        Information on metadata to be read: List starting with #P, #U or #Q for
-        motor positions, user values or Q-position:
-        #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
-        #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-        #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        SPEC: Information on metadata to be read: List starting with #P, #U or #Q for
+            motor positions, user values or Q-position:
+            #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        CSV: #metadata_name
 
     kwargs:
         The necessary kwargs are passed to the loading functions defined by the
@@ -123,7 +127,9 @@ def load_info(source, scan_id, info, **kwargs):
     """
     folder = kwargs.pop("folder", "")
     if source == "csv":
-        pass
+        value = load_csv(
+            scan_id, folder=folder, name_format="scan_{}_baseline.csv"
+        )[info[1:]].mean()
         # to be implemented for csv
     elif isinstance(source, str) or isinstance(source, SpecDataFile):
         if isinstance(source, str):
@@ -165,7 +171,6 @@ def load_info(source, scan_id, info, **kwargs):
     else:
         pass
         # to be implemented
-
     return value
 
 
@@ -198,8 +203,10 @@ def fit_series(
     output:
         Output fit parameters and plot data+fit for each scan.
     var_series: string or list
-        string: Varying variable for scan series to be read from scan (detector),
-            e.g. SampK (sample temperature), optional.
+        string:
+            - Varying variable for scan series to be read from scan (detector),
+                e.g. SampK (sample temperature), optional.
+            - String starting with #metadata, reads metadata from CSV baseline
         list: Information on metadata to be read: List starting with #P, #U or #Q for
             motor positions, user values or Q-position, optional:
             #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
@@ -278,7 +285,7 @@ def fit_series(
         for scan in range(start, stop + 1, step):
             if var_series and var_series[0][0] == "#":
                 fit_result[index][0] = load_info(
-                    source, scan, info=var_series, **kwargs
+                    source, scan, info=var_series, folder=folder, **kwargs
                 )
                 fit_result[index][1] = 0
                 table = load_table(
