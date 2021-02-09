@@ -88,6 +88,11 @@ def load_databroker(scan_id, db, stream='primary', query=None):
     """
     Load data of the first scan with the provided scan_id.
 
+
+    For further details, refer to the `databroker` `documentation`_.
+
+    .. _documentation: https://blueskyproject.io/databroker/
+
     Parameters
     ----------
     scan_id : int
@@ -103,10 +108,6 @@ def load_databroker(scan_id, db, stream='primary', query=None):
     -------
     data : pandas.DataFrame
         Table with the data from the primary stream.
-
-    See also
-    --------s
-    https://blueskyproject.io/databroker/
     """
 
     _db = db_query(db, query) if query else db

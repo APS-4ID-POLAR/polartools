@@ -15,7 +15,6 @@ Please use the Github discussions if you have questions/comments ().
 
    installation
    usage
-   API
-   min_versions
+   API/index
    release-history
 

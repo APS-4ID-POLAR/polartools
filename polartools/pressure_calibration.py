@@ -190,7 +190,7 @@ def fit_bragg_peak(x, y, center=None, sigma=None, amplitude=None, fraction=None,
     Uses lmfit (https://lmfit.github.io/lmfit-py/).
 
     WARNING: This imposes constrains to the fit that are described in
-    :func: `polartools.process_data._generate_initial_guess`
+    `polartools.pressure_calibration._generate_initial_guess`
 
     Parameters
     ----------
@@ -355,8 +355,11 @@ def xrd_calibrate_pressure(scan, source, bragg_peak=(1, 1, 1),
     For a given experiment, it is recommended to create a kwarg dictionary that
     holds the input parameters that are different from the standard defaults,
     and make it easier to process multiple scans. For instance:
-    >> kwargs = {'db': db, 'calibrant': 'Ag', 'temperature': 10}
-    >> pressure = xrd_calibrate_pressure(100, \*\*kwargs)
+
+    .. code-block:: python
+
+        kwargs = {'db': db, 'calibrant': 'Ag', 'temperature': 10}
+        pressure = xrd_calibrate_pressure(100, **kwargs)
 
     Parameters
     -----------
