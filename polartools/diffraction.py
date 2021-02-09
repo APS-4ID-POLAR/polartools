@@ -12,7 +12,6 @@ from pandas import DataFrame
 from lmfit.models import (
     GaussianModel,
     LorentzianModel,
-    VoigtModel,
     LinearModel,
     PseudoVoigtModel,
 )

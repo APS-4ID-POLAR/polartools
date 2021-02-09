@@ -236,8 +236,5 @@ def is_Bluesky_specfile(source, folder=""):
         path = join(folder, source)
         source = SpecDataFile(path)
 
-    for comment in source.headers[0].comments:
-        if "Bluesky" in comment:
-            return True
-
-    return False
+    if len(source.headers[0].comments):
+        return source.headers[0].comments[0].startswith("Bluesky")
