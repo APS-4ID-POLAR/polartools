@@ -38,7 +38,7 @@ _bluesky_default_cols = dict(
 
 def fit_peak(xdata, ydata, model="Gaussian", output=False):
     """
-    Fit Bragg peak with model of choice: Gaussian, Lorentzian, Voigt, PseudoVoigt.
+    Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.
 
     Uses lmfit (https://lmfit.github.io/lmfit-py/).
 
@@ -49,7 +49,7 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
     yydata : iterable
         List of y-axis values.
     model:
-        fit model: Gaussian, Lorentzian, Voigt, PseudoVoigt
+        fit model: Gaussian, Lorentzian, PseudoVoigt
     output:
         Output fit parameters and plot data+fit for each scan.
 
@@ -63,7 +63,6 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
     models = {
         "Gaussian": GaussianModel(),
         "Lorentzian": LorentzianModel(),
-        "Voigt": VoigtModel(),
         "PseudoVoigt": PseudoVoigtModel(),
     }
     try:
@@ -83,8 +82,8 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
 
     fit = mod.fit(ydata, pars, x=xdata)
     if output:
+        print(f"Fitting with {model} model")
         for key in fit.params:
-            print(f"Fitting with {model} model")
             print(
                 key, "=", fit.params[key].value, "+/-", fit.params[key].stderr
             )
@@ -202,7 +201,7 @@ def fit_series(
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
     model:
-        fit model: Gaussian, Lorentian, Voigt, PseidoVoigt
+        fit model: Gaussian, Lorentian, PseudoVoigt
     output:
         Output fit parameters and plot data+fit for each scan.
     var_series: string or list
