@@ -1,3 +1,12 @@
+"""
+Functions to load and process x-ray diffraction data.
+
+.. autosummary::
+   ~fit_peak
+   ~load_info
+   ~fit_series
+"""
+
 import numpy as np
 from pandas import DataFrame
 from lmfit.models import (
@@ -32,9 +41,6 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
     Fit Bragg peak with model of choice: Gaussian, Lorentzian, Voigt, PseudoVoigt.
 
     Uses lmfit (https://lmfit.github.io/lmfit-py/).
-
-    WARNING: This imposes constrains to the fit that are described in
-    :func: `polartools.process_data._generate_initial_guess`
 
     Parameters
     ----------

@@ -8,14 +8,14 @@ Polar Tools Documentation
 
 This code is in very early stage development!
 
-Please use the Github discussions if you have questions/comments (). 
+Please use the Github discussions if you have questions/comments 
+(https://github.com/APS-4ID-POLAR/polartools/discussions). 
 
 .. toctree::
    :maxdepth: 2
 
    installation
    usage
-   API
-   min_versions
+   API/index
    release-history
 
