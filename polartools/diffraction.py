@@ -48,9 +48,9 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
         List of x-axis values.
     yydata : iterable
         List of y-axis values.
-    model:
+    model: string
         fit model: Gaussian, Lorentzian, PseudoVoigt
-    output:
+    output: boolean, optional
         Output fit parameters and plot data+fit for each scan.
 
     Returns
@@ -200,9 +200,9 @@ def fit_series(
         Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-    model:
+    model: string, optional
         fit model: Gaussian, Lorentian, PseudoVoigt
-    output:
+    output: boolean
         Output fit parameters and plot data+fit for each scan.
     var_series: string or list
         string:
@@ -224,7 +224,7 @@ def fit_series(
     monitor : string, optional
         Name of the monitor detector. If None is passed, it defaults to the ion
         chamber 3.
-    normalize: boolean
+    normalize: boolean, optional
         Normalization to selected/default monitor on/off
     kwargs:
         The necessary kwargs are passed to the loading and fitting functions defined by the
