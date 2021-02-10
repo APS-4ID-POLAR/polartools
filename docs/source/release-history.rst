@@ -3,6 +3,14 @@ Release History
 ===============
 
 -------------------
+v0.1.4 (2021-02-09)
+-------------------
+
+- Fixes bug in :func:`polartools.load_data.is_Bluesky_specfile` and adds extra testing for it.
+
+- Fixes bug in building the :mod:`manage_database` documentation.
+
+-------------------
 v0.1.3 (2021-02-08)
 -------------------
 
