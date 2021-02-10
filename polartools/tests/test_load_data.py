@@ -4,6 +4,7 @@
 from polartools import load_data
 from os.path import join
 from databroker import catalog
+from spec2nexus.spec import SpecDataFile
 
 
 def test_load_csv():
@@ -32,8 +33,10 @@ def test_db_query():
 
 
 def test_is_Bluesky_specfile():
+
     folder = join('polartools', 'tests', 'data_for_test')
 
+    # Tests with spec loading within polartools.
     result = load_data.is_Bluesky_specfile('pressure_calibration.dat',
                                            folder=folder)
     assert result is False
@@ -44,4 +47,17 @@ def test_is_Bluesky_specfile():
 
     result = load_data.is_Bluesky_specfile('absorption.dat',
                                            folder=folder)
+    assert result is False
+
+    # Tests loading the spec file here.
+    spec_file = SpecDataFile(join(folder, 'pressure_calibration.dat'))
+    result = load_data.is_Bluesky_specfile(spec_file)
+    assert result is False
+
+    spec_file = SpecDataFile(join(folder, 'bluesky_spec.dat'))
+    result = load_data.is_Bluesky_specfile(spec_file)
+    assert result is True
+
+    spec_file = SpecDataFile(join(folder, 'absorption.dat'))
+    result = load_data.is_Bluesky_specfile(spec_file)
     assert result is False
