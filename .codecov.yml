@@ -20,4 +20,5 @@ comment:
   require_changes: no
 
 ignore:
-  - "*.py"
+  - "./setup.py"
+  - "./versioneer.py"
