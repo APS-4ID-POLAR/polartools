@@ -11,3 +11,4 @@ sphinx_copybutton
 suitcase-csv
 suitcase-json-metadata
 databroker
+databroker-pack
