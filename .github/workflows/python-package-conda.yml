@@ -69,5 +69,5 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         fail_ci_if_error: true
-        gcov_path_exclude: "*.py"
+        gcov_path_exclude: ./*.py
         verbose: true"
