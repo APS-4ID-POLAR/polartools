@@ -214,7 +214,7 @@ def fit_series(
                 e.g. SampK (sample temperature), optional.
         - String starting with #metadata, reads metadata from CSV baseline
 
-        If list, information on metadata to be read: List starting with #P, #U 
+        If list, information on metadata to be read: List starting with #P, #U
         or #Q for motor positions, user values or Q-position, optional:
 
         - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
