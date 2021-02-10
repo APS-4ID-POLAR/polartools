@@ -399,11 +399,13 @@ def xrd_calibrate_pressure(scan, source, bragg_peak=(1, 1, 1),
     tth_off : float, optional
         Offset between the reference two theta and the measured value.
     kwargs :
-        Passed to `polartools.load_data.load_table`. The potential kwargs are
-        passed to the loading functions defined by the `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+        The necessary kwargs are passed to the loading functions defined by the
+        `source` argument:
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 

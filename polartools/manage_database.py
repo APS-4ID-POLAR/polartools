@@ -1,15 +1,16 @@
 """
 Functions to import and export Bluesky data.
 
-.. autosummary::
-   ~to_databroker
-   ~to_csv_json
-   ~from_databroker_inplace
-   ~remove_catalog
 """
 
 # Copyright (c) 2021, UChicago Argonne, LLC.
 # See LICENSE file for details.
+
+# .. autosummary::
+#    ~to_databroker
+#    ~to_csv_json
+#    ~from_databroker_inplace
+#    ~remove_catalog
 
 from databroker_pack import (export_catalog, write_documents_manifest,
                              write_msgpack_catalog_file, unpack_inplace)
@@ -33,11 +34,10 @@ def to_databroker(db, folder, query=None):
     may inadvertely export a very large number of scans. See
     :func:`polartools.load_data.db_query`.
 
-    This is a narrow usage of the `databroker-pack package`_. Note that this
+    This is a narrow usage of the `databroker-pack` package_. Note that this
     package includes a convenient command line tool.
 
-    .. _databroker-pack package: \
-    https://blueskyproject.io/databroker-pack/index.html
+    .. _package: https://blueskyproject.io/databroker-pack/index.html
 
     Parameters
     ----------
@@ -49,10 +49,11 @@ def to_databroker(db, folder, query=None):
         Search parameters to select a subsection of `db`. See
         :func:`polartools.load_data.db_query` for more details.
 
-    Notes:
+    Notes
     ------
     - The scans are saved in msgpack files placed in the `folder/documents` \
     folder.
+
     - `catalog.yml` and `documents_manifest.txt` are located in `folder`.
 
     See also
@@ -75,7 +76,7 @@ def to_databroker(db, folder, query=None):
 def to_csv_json(db, folder, query=None, fname_format='scan_{}_',
                 overwrite=False, max_attempts=100):
     """
-    Exports scans into *.csv and *.json files.
+    Exports scans into .csv and .json files.
 
 
     The scans will be labeled by their `scan_id` metadata. If two or more scans
@@ -108,8 +109,8 @@ def to_csv_json(db, folder, query=None, fname_format='scan_{}_',
 
     Notes
     -----
-    - Each scan has one json "*-metadata.json" file, plus ome csv file for \
-    each data stream, for instance "*-primary.csv".
+    - Each scan has one json "-metadata.json" file, plus ome csv file for \
+    each data stream, for instance "-primary.csv".
 
     See also
     --------
@@ -155,11 +156,10 @@ def from_databroker_inplace(folder, name, merge=False):
     """
     Load the exported databroker database.
 
-    This is a narrow usage of the `databroker-pack package`_. Note that this
+    This is a narrow usage of the `databroker-pack` package_. Note that this
     package includes a convenient command line tool.
 
-    .. _databroker-pack package: \
-    https://blueskyproject.io/databroker-pack/index.html
+    .. _package: https://blueskyproject.io/databroker-pack/index.html
 
     Parameters
     ----------
