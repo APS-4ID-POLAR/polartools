@@ -11,5 +11,6 @@ exclude_lines =
 [run]
 omit =
     setup.py
-	versioneer.py
-	polartools/_version.py
+    versioneer.py
+    polartools/_version.py
+    polartools/tests/*
