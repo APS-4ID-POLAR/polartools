@@ -238,3 +238,5 @@ def is_Bluesky_specfile(source, folder=""):
 
     if len(source.headers[0].comments):
         return source.headers[0].comments[0].startswith("Bluesky")
+    else:
+        return False
