@@ -1,10 +1,10 @@
-name: Unit Tests
+name: CIs
 
 on: [push]
 
 jobs:
   build-linux:
-    name: CI py${{ matrix.python-version }}
+    name: py${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -56,18 +56,18 @@ jobs:
         PY_VER: ${{ matrix.python-version }}
         ENV_NAME: anaconda-test-env-py-${{ matrix.python-version }}
         
-    - name: Run tests with pytest
+    - name: Run pytest
       run: |
         source $CONDA/bin/activate $ENV_NAME
         databroker-unpack inplace polartools/tests/data_for_test/databroker test_data
-        pytest
+        pytest --cov=./ --cov-report=xml
       env:
         PY_VER: ${{ matrix.python-version }}
         ENV_NAME: anaconda-test-env-py-${{ matrix.python-version }}
 
-# This is a copy from apstools.
-# These actions were done by travis after success of previous steps
-# TODO: coverage
-# https://github.com/marketplace/actions/codecov
-# TODO: coveralls
-# https://github.com/marketplace/actions/coveralls-github-action
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        fail_ci_if_error: true
+        gcov_path_exclude: ./*.py
+        verbose: true"
