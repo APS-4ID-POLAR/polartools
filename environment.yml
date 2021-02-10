@@ -13,6 +13,7 @@ dependencies:
   - pip
   - sphinx
   - pytest
+  - pytest-cov
   - databroker-pack
   - bluesky-live
   - flake8
