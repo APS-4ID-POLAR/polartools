@@ -76,15 +76,17 @@ def load_absorption(scan, source, positioner=None, detector=None, monitor=None,
     monitor : string, optional
         Name of the monitor detector. If None is passed, it defaults to the ion
         chamber 4.
-    transmission: bool, optional
+    transmission : bool, optional
         Flag to select between transmission mode -> ln(monitor/detector)
         or fluorescence mode -> detector/monitor
-    kwargs:
+    kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
@@ -141,12 +143,14 @@ def load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None,
     acoff_col : string, optional
         Name of the AC offset scaler. If None is passed, it defaults to
         'Lock AC off'.
-    kwargs:
+    kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
@@ -207,12 +211,14 @@ def load_dichro(scan, source, positioner=None, detector=None, monitor=None,
     transmission: bool, optional
         Flag to select between transmission mode -> ln(monitor/detector)
         or fluorescence mode -> detector/monitor.
-    kwargs:
+    kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
@@ -298,12 +304,14 @@ def load_multi_xas(scans, source, return_mean=True, positioner=None,
     transmission: bool, optional
         Flag to select between transmission mode -> ln(monitor/detector)
         or fluorescence mode -> detector/monitor
-    kwargs:
+    kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
@@ -379,12 +387,14 @@ def load_multi_dichro(scans, source, return_mean=True, positioner=None,
     transmission: bool, optional
         Flag to select between transmission mode -> ln(monitor/detector)
         or fluorescence mode -> detector/monitor
-    kwargs:
+    kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
@@ -470,12 +480,14 @@ def load_multi_lockin(scans, source, return_mean=True, positioner=None,
     acoff_col : string, optional
         Name of the AC offset scaler. If None is passed, it defaults to
         'Lock AC off'.
-    kwargs:
+    kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 

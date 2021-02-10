@@ -103,20 +103,23 @@ def load_info(source, scan_id, info, **kwargs):
     scan : int
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id.
-    info: list
-        SPEC: Information on metadata to be read: List starting with #P, #U or #Q for
-            motor positions, user values or Q-position:
-            #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
-            #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-            #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
-        CSV: #metadata_name
+    info : list
+        If SPEC, information on metadata to be read: List starting with #P, #U
+        or #Q for motor positions, user values or Q-position:
 
-    kwargs:
+        - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+        - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+        - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+
+        If CSV, #metadata_name
+    kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
@@ -188,10 +191,9 @@ def fit_series(
     **kwargs,
 ):
     """
-    Fit series of scan with reflection profile of choice and provide fit parameters as list.
+    Fit series of scans with chosen functional and returns fit parameters.
 
     Uses lmfit (https://lmfit.github.io/lmfit-py/).
-
 
     Parameters
     ----------
@@ -199,20 +201,24 @@ def fit_series(
         Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-    model: string, optional
-        fit model: Gaussian, Lorentian, PseudoVoigt
-    output: boolean
+    model : string, optional
+        fit model: Gaussian, Lorentian, Voigt, PseidoVoigt
+    output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
-    var_series: string or list
-        string:
-            - Varying variable for scan series to be read from scan (detector),
+    var_series : string or list
+        If string
+
+        - Varying variable for scan series to be read from scan (detector),
                 e.g. SampK (sample temperature), optional.
-            - String starting with #metadata, reads metadata from CSV baseline
-        list: Information on metadata to be read: List starting with #P, #U or #Q for
-            motor positions, user values or Q-position, optional:
-            #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
-            #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-            #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        - String starting with #metadata, reads metadata from CSV baseline
+
+        If list, information on metadata to be read: List starting with #P, #U
+        or #Q for motor positions, user values or Q-position, optional:
+
+        - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
+        - #U ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+        - #Q ['#Q', None, element_number], e.g. ['#Q', None, 0]
+
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -223,14 +229,16 @@ def fit_series(
     monitor : string, optional
         Name of the monitor detector. If None is passed, it defaults to the ion
         chamber 3.
-    normalize: boolean, optional
+    normalize : boolean, optional
         Normalization to selected/default monitor on/off
-    kwargs:
-        The necessary kwargs are passed to the loading and fitting functions defined by the
+    kwargs :
+        The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 

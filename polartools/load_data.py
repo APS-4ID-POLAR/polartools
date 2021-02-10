@@ -159,11 +159,12 @@ def load_table(scan, source, **kwargs):
     """
     Automated scan table loader.
 
-    The automation is based on the source argument:
-        - if source == 'csv' -> uses `load_csv`.
-        - else if source is a string or nexus2spec.spec.SpecDataFile -> uses
-        `load_spec`.
-        - else -> uses `load_databroker`.
+    The automation is based on the source argument.
+
+    - if source == 'csv' -> uses `load_csv`.
+    - else if source is a string or nexus2spec.spec.SpecDataFile -> uses \
+    `load_spec`.
+    - else -> uses `load_databroker`.
 
     Parameters
     ----------
@@ -172,12 +173,14 @@ def load_table(scan, source, **kwargs):
         that scan_id. See kwargs for search options.
     source : databroker database, name of the spec file, or 'csv'
         Note that applicable kwargs depend on this selection.
-    kwargs:
+    kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
-            - csv        -> possible kwargs: folder, name_format
-            - spec       -> possible kwargs: folder
-            - databroker -> possible kwargs: stream, query
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
