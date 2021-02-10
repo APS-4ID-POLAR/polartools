@@ -1,16 +1,15 @@
 """
 Functions to import and export Bluesky data.
 
+.. autosummary::
+   ~to_databroker
+   ~to_csv_json
+   ~from_databroker_inplace
+   ~remove_catalog
 """
 
 # Copyright (c) 2021, UChicago Argonne, LLC.
 # See LICENSE file for details.
-
-# .. autosummary::
-#    ~to_databroker
-#    ~to_csv_json
-#    ~from_databroker_inplace
-#    ~remove_catalog
 
 from databroker_pack import (export_catalog, write_documents_manifest,
                              write_msgpack_catalog_file, unpack_inplace)
