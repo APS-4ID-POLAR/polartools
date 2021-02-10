@@ -12,7 +12,6 @@ from pandas import DataFrame
 from lmfit.models import (
     GaussianModel,
     LorentzianModel,
-    VoigtModel,
     LinearModel,
     PseudoVoigtModel,
 )
@@ -38,7 +37,7 @@ _bluesky_default_cols = dict(
 
 def fit_peak(xdata, ydata, model="Gaussian", output=False):
     """
-    Fit Bragg peak with model of choice: Gaussian, Lorentzian, Voigt, PseudoVoigt.
+    Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.
 
     Uses lmfit (https://lmfit.github.io/lmfit-py/).
 
@@ -48,9 +47,9 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
         List of x-axis values.
     yydata : iterable
         List of y-axis values.
-    model:
-        fit model: Gaussian, Lorentzian, Voigt, PseudoVoigt
-    output:
+    model: string
+        fit model: Gaussian, Lorentzian, PseudoVoigt
+    output: boolean, optional
         Output fit parameters and plot data+fit for each scan.
 
     Returns
@@ -63,7 +62,6 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
     models = {
         "Gaussian": GaussianModel(),
         "Lorentzian": LorentzianModel(),
-        "Voigt": VoigtModel(),
         "PseudoVoigt": PseudoVoigtModel(),
     }
     try:
@@ -83,8 +81,8 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
 
     fit = mod.fit(ydata, pars, x=xdata)
     if output:
+        print(f"Fitting with {model} model")
         for key in fit.params:
-            print(f"Fitting with {model} model")
             print(
                 key, "=", fit.params[key].value, "+/-", fit.params[key].stderr
             )
@@ -201,9 +199,9 @@ def fit_series(
         Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-    model:
-        fit model: Gaussian, Lorentian, Voigt, PseidoVoigt
-    output:
+    model: string, optional
+        fit model: Gaussian, Lorentian, PseudoVoigt
+    output: boolean
         Output fit parameters and plot data+fit for each scan.
     var_series: string or list
         string:
@@ -225,7 +223,7 @@ def fit_series(
     monitor : string, optional
         Name of the monitor detector. If None is passed, it defaults to the ion
         chamber 3.
-    normalize: boolean
+    normalize: boolean, optional
         Normalization to selected/default monitor on/off
     kwargs:
         The necessary kwargs are passed to the loading and fitting functions defined by the

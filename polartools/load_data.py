@@ -24,7 +24,7 @@ except ModuleNotFoundError:
     pass
 
 
-def load_spec(scan_id, spec_file, folder=''):
+def load_spec(scan_id, spec_file, folder=""):
     """
     Load data from spec file.
 
@@ -57,7 +57,7 @@ def load_spec(scan_id, spec_file, folder=''):
     return DataFrame(spec_file.getScan(scan_id).data)
 
 
-def load_csv(scan_id, folder='', name_format='scan_{}_primary.csv'):
+def load_csv(scan_id, folder="", name_format="scan_{}_primary.csv"):
     """
     Load data from the 'primary' stream from exported csv files.
 
@@ -84,7 +84,7 @@ def load_csv(scan_id, folder='', name_format='scan_{}_primary.csv'):
     return read_csv(join(folder, name_format.format(scan_id)))
 
 
-def load_databroker(scan_id, db, stream='primary', query=None):
+def load_databroker(scan_id, db, stream="primary", query=None):
     """
     Load data of the first scan with the provided scan_id.
 
@@ -136,14 +136,14 @@ def db_query(db, query):
     :func:`databroker.catalog.search`
     """
 
-    since = query.pop('since', None)
-    until = query.pop('until', None)
+    since = query.pop("since", None)
+    until = query.pop("until", None)
 
     if since or until:
         if not since:
-            since = '2010'
+            since = "2010"
         if not until:
-            until = '2050'
+            until = "2050"
 
         _db = db.v2.search(TimeRange(since=since, until=until))
     else:
@@ -193,15 +193,15 @@ def load_table(scan, source, **kwargs):
     :func:`polartools.load_data.load_spec`
     """
 
-    folder = kwargs.pop('folder', '')
-    if source == 'csv':
-        name_format = kwargs.pop('name_format', 'scan_{}_primary.csv')
+    folder = kwargs.pop("folder", "")
+    if source == "csv":
+        name_format = kwargs.pop("name_format", "scan_{}_primary.csv")
         table = load_csv(scan, folder=folder, name_format=name_format)
     elif isinstance(source, str) or isinstance(source, SpecDataFile):
         table = load_spec(scan, source, folder=folder)
     else:
-        stream = kwargs.pop('stream', 'primary')
-        query = kwargs.pop('query', None)
+        stream = kwargs.pop("stream", "primary")
+        query = kwargs.pop("query", None)
         table = load_databroker(scan, source, stream=stream, query=query)
 
     if len(kwargs) != 0:
@@ -210,7 +210,7 @@ def load_table(scan, source, **kwargs):
     return table
 
 
-def is_Bluesky_specfile(spec_file, folder=''):
+def is_Bluesky_specfile(source, folder=""):
     """
     Check if the specfile was created by Bluesky.
 
@@ -218,7 +218,7 @@ def is_Bluesky_specfile(spec_file, folder=''):
 
     Parameters
     ----------
-    spec_file : string or spec2nexus.spec.SpecDataFile
+    source : string or spec2nexus.spec.SpecDataFile
         Either the spec file name or a SpecDataFile instance.
     folder : string, optional
         Folder where spec file is located.
@@ -232,12 +232,11 @@ def is_Bluesky_specfile(spec_file, folder=''):
     --------
     :func:`spec2nexus.spec.SpecDataFile`
     """
-    if isinstance(spec_file, str):
-        path = join(folder, spec_file)
+    if isinstance(source, str):
+        path = join(folder, source)
         source = SpecDataFile(path)
 
-    for comment in source.headers[0].comments:
-        if 'Bluesky' in comment:
-            return True
-
-    return False
+    if len(source.headers[0].comments):
+        return source.headers[0].comments[0].startswith("Bluesky")
+    else:
+        return False
