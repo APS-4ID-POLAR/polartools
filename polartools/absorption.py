@@ -8,6 +8,7 @@ Functions to load and process x-ray absorption data.
    ~load_multi_xas
    ~load_multi_dichro
    ~load_multi_lockin
+   ~normalize_absorption
 """
 
 # Copyright (c) 2020-2021, UChicago Argonne, LLC.
@@ -18,6 +19,9 @@ import numpy as np
 from scipy.interpolate import interp1d
 from spec2nexus.spec import (SpecDataFile, SpecDataFileNotFound,
                              NotASpecDataFile)
+from larch.xafs import preedge
+from larch.math import index_of, index_nearest, remove_nans2
+from lmfit.models import PolynomialModel
 
 _spec_default_cols = dict(
     positioner='Energy',
@@ -545,10 +549,20 @@ def load_multi_lockin(scans, source, return_mean=True, positioner=None,
         return energy, xanes, xmcd
 
 
-def normalize_absorption(energy, xanes, pre_edge_range, pos_edge_range, e0,
-                         pre_edge_order=1, pos_edge_order=1):
+def normalize_absorption(energy, xanes, *, e0=None, pre_range=None,
+                         post_range=None, pre_exponent=0, post_order=None,
+                         fpars=None):
     """
     Extract pre- and post-edge normalization curves by fitting polynomials.
+
+    This is a wrapper of `larch.xafs.preedge` that adds the flattening of the
+    post-edge.
+
+    Please see the larch documentation_ for details on how the optional
+    parameters are determined.
+
+    .. _documentation:\
+    https://xraypy.github.io/xraylarch/xafs/preedge.html#the-pre-edge-function
 
     Parameters
     ----------
@@ -556,47 +570,122 @@ def normalize_absorption(energy, xanes, pre_edge_range, pos_edge_range, e0,
         Incident energy.
     xanes : list
         X-ray absorption.
-    pre_edge_range : list
+    e0 : float or int, optional
+        Absorption edge energy.
+    pre_range : list, optional
         List with the energy ranges [initial, final] of the pre-edge region
         **relative** to the absorption edge.
-    pos_edge_range : list
+    post_range : list, optional
         List with the energy ranges [initial, final] of the post-edge region
         **relative** to the absorption edge.
-    e0 : float
-        Absorption edge energy.
-    pre_edge_order : int, optional
-        Order of the polynomial to be used in the pre-edge. Defauts to 1.
-    pos_edge_order : int, optional
-        Order of the polynomial to be used in the post-edge. Defauts to 1.
+    pre_exponent : int, optional
+        Energy exponent to use. The pre-edge background is modelled by a line
+        that is fit to xanes(energy)*energy**pre_exponent. Defaults to 0.
+    post_order : int, optional
+        Order of the polynomial to be used in the post-edge. If None, it will
+        be determined by `larch.xafs.preedge`:
+        - nnorm = 2 if post_range[1]-post_range[0]>350, 1 if
+        50 < post_range[1]-post_range[0] < 350, or 0 otherwise.
+    fpars : lmfit.Parameters, optional
+        Option to input the initial parameters to the polynomial used in the
+        data flattening. These will be labelled 'c0', 'c1', ..., depending on
+        `post_order`. See lmfit.models.PolynomialModel_ for details.
+
+        .. _lmfit.models.PolynomialModel:\
+        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel
 
     Returns
     -------
-    pre_edge : numpy.array
-        Pre-edge polynomial.
-    pos_edge : numpy.array
-        Post-edge polynomial.
-    jump : float
-        Size of the absorption jump.
+    results : dict
+        Dictionary with the results and parameters of the normalization and
+        flattening. The most important items are:
+
+        - 'energy' -> incident energy.
+        - 'raw' -> raw xanes.
+        - 'norm' -> normalized xanes.
+        - 'flat' -> flattened xanes.
 
     See also
     --------
-    :func:`numpy.polyfit`
+    :func:`larch.xafs.preedge`
     """
 
-    energy = np.array(energy)
-    xanes = np.array(xanes)
+    if not pre_range:
+        pre_range = [None, None]
 
-    # Process pre-edge
-    index = (energy > pre_edge_range[0]) & (energy < pre_edge_range[1])
-    pre_edge = np.poly1d(np.polyfit(energy[index], xanes[index],
-                                    pre_edge_order))(energy)
-    processed_xanes = xanes - pre_edge
+    if not post_range:
+        post_range = [None, None]
 
-    # Process pos-edge
-    index = (energy > pos_edge_range[0]) & (energy < pos_edge_range[1])
-    pos_edge_func = np.poly1d(np.polyfit(energy[index], processed_xanes[index],
-                              pos_edge_order))
-    pos_edge = pos_edge_func(energy)
-    jump = pos_edge_func(e0)
+    results = preedge(energy, xanes, e0=e0, pre1=pre_range[0],
+                      pre2=pre_range[1], nvict=pre_exponent,
+                      norm1=post_range[0], norm2=post_range[1],
+                      nnorm=post_order)
 
-    return pre_edge, pre_edge + pos_edge, jump
+    results['energy'] = np.copy(energy)
+    results['raw'] = np.copy(xanes)
+    results['flat'] = _flatten_norm(energy, results['norm'], results['e0'],
+                                    results['norm1'], results['norm2'],
+                                    results['nnorm'], fpars=fpars)
+
+    return results
+
+
+def _flatten_norm(energy, norm, e0, norm1, norm2, nnorm, fpars=None):
+    """
+    Flattens the normalized absorption.
+
+    This is a slightly modified version from that in the larch_ package.
+
+    .. _larch: https://xraypy.github.io/xraylarch/index.html
+
+    The energies inputs must have the same units.
+
+    Parameters
+    ----------
+    energy : iterable
+        Incident energy in eV.
+    norm : iterable
+        Normalized x-ray absorption.
+    e0 : float or int
+        Absorption edge energy.
+    norm1 : float or int
+        Low energy limit of normalization range with respect to e0.
+    norm2 : float or int
+        High energy limit of normalization range with respect to e0.
+    nnorm : int
+        Degree of polynomial to be used.
+    fpars : lmfit.Parameters, optional
+        Option to input the initial parameters. These will be labelled 'c0',
+        'c1', ..., depending on `nnorm`. See lmfit.models.PolynomialModel_ for
+        details.
+
+        .. _lmfit.models.PolynomialModel:\
+        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel
+
+    Returns
+    -------
+    flat : numpy.array
+        Flattened x-ray absorption.
+
+    See also
+    --------
+    :func:`larch.xafs.pre_edge`
+    :func:`lmfit.models.PolynomialModel`
+    """
+
+    ie0 = index_nearest(energy, e0)
+    p1 = index_of(energy, norm1+e0)
+    p2 = index_nearest(energy, norm2+e0)
+
+    enx, mux = remove_nans2(np.copy(energy)[p1:p2], np.copy(norm)[p1:p2])
+
+    model = PolynomialModel(degree=nnorm)
+    if not fpars:
+        fpars = model.guess(mux, x=enx)
+    result = model.fit(mux, fpars, x=enx,
+                       fit_kws=dict(xtol=1.e-6, ftol=1.e-6))
+
+    flat = norm - (result.eval(x=energy) - result.eval(x=energy)[ie0])
+    flat[:ie0] = norm[:ie0]
+
+    return flat

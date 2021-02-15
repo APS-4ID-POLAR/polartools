@@ -12,3 +12,5 @@ suitcase-csv
 suitcase-json-metadata
 databroker
 databroker-pack
+lmfit
+xraylarch
