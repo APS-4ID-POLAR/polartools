@@ -404,7 +404,7 @@ def xrd_calibrate_pressure(scan, source, bragg_peak=(1, 1, 1),
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.

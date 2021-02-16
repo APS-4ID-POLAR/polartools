@@ -85,7 +85,7 @@ def load_absorption(scan, source, positioner=None, detector=None, monitor=None,
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
@@ -149,7 +149,7 @@ def load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None,
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
@@ -217,7 +217,7 @@ def load_dichro(scan, source, positioner=None, detector=None, monitor=None,
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
@@ -310,7 +310,7 @@ def load_multi_xas(scans, source, return_mean=True, positioner=None,
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
@@ -393,7 +393,7 @@ def load_multi_dichro(scans, source, return_mean=True, positioner=None,
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
@@ -486,7 +486,7 @@ def load_multi_lockin(scans, source, return_mean=True, positioner=None,
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
