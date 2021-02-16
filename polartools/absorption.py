@@ -566,9 +566,10 @@ def normalize_absorption(energy, xanes, *, e0=None, pre_range=None,
 
     Parameters
     ----------
-    energy : list
-        Incident energy.
-    xanes : list
+    energy : iterable
+        Incident energy. Must be in eV. It will raise an error if it notices
+        the maximum of this list is below 100.
+    xanes : iterable
         X-ray absorption.
     e0 : float or int, optional
         Absorption edge energy.
@@ -609,6 +610,8 @@ def normalize_absorption(energy, xanes, *, e0=None, pre_range=None,
     --------
     :func:`larch.xafs.preedge`
     """
+    if np.nanmax(energy) < 100:
+        raise ValueError('The energy must be in eV, but seems to be in keV!')
 
     if not pre_range:
         pre_range = [None, None]
