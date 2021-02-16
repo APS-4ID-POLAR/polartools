@@ -15,8 +15,12 @@ def test_load_csv():
 
 def test_load_databroker():
     db = catalog['test_data']
-    table = load_data.load_table(1049, db)
+
+    table = load_data.load_table(1049, db, use_db_v1=False)
     assert table.shape == (4, 19)
+
+    table = load_data.load_table(1049, db, use_db_v1=True)
+    assert table.shape == (4, 20)
 
 
 def test_spec():
