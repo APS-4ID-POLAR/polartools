@@ -619,6 +619,10 @@ def normalize_absorption(energy, xanes, *, e0=None, pre_range=None,
     if not post_range:
         post_range = [None, None]
 
+    sort = np.argsort(energy)
+    energy = np.array(energy)[sort]
+    xanes = np.array(xanes)[sort]
+
     results = preedge(energy, xanes, e0=e0, pre1=pre_range[0],
                       pre2=pre_range[1], nvict=pre_exponent,
                       norm1=post_range[0], norm2=post_range[1],
