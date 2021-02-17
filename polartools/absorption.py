@@ -626,9 +626,10 @@ def normalize_absorption(energy, xanes, *, e0=None, pre_range=None,
 
     results['energy'] = np.copy(energy)
     results['raw'] = np.copy(xanes)
-    results['flat'] = _flatten_norm(energy, results['norm'], results['e0'],
-                                    results['norm1'], results['norm2'],
-                                    results['nnorm'], fpars=fpars)
+    results['flat'], results['flat_params'] = _flatten_norm(
+        energy, results['norm'], results['e0'], results['norm1'],
+        results['norm2'], results['nnorm'], fpars=fpars
+        )
 
     return results
 
@@ -691,4 +692,4 @@ def _flatten_norm(energy, norm, e0, norm1, norm2, nnorm, fpars=None):
     flat = norm - (result.eval(x=energy) - result.eval(x=energy)[ie0])
     flat[:ie0] = norm[:ie0]
 
-    return flat
+    return flat, result.best_values
