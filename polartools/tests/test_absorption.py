@@ -40,3 +40,17 @@ def test_load_absorption():
 
     _, xas = absorption.load_absorption(18, 'absorption.dat', folder=path)
     assert allclose(xas.mean(), 0.7581461103557833)
+
+
+def test_normalization():
+    path = join('polartools', 'tests', 'data_for_test')
+    scans = [28, 29, 30, 31, 32]
+    energy, xas, _ = absorption.load_multi_xas(
+        scans, 'absorption.dat', detector='IC4', monitor='IC3', folder=path)
+
+    print(energy)
+    result = absorption.normalize_absorption(energy.to_numpy()*1000., xas)
+
+    assert allclose(result['e0'], 7233.5)
+    assert allclose(result['flat'].mean(), -0.25136020653859914)
+    assert allclose(result['edge_step'], 0.005179323346776066)
