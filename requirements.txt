@@ -10,5 +10,6 @@ numpydoc
 sphinx_copybutton
 suitcase-csv
 suitcase-json-metadata
+intake!=0.6.1
 databroker
 databroker-pack
