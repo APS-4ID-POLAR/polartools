@@ -19,9 +19,10 @@ import numpy as np
 from scipy.interpolate import interp1d
 from spec2nexus.spec import (SpecDataFile, SpecDataFileNotFound,
                              NotASpecDataFile)
-from larch.xafs import preedge
-from larch.math import index_of, index_nearest, remove_nans2
+from larch.xafs.pre_edge import _finde0
+from larch.math import index_nearest
 from lmfit.models import PolynomialModel
+from warnings import warn
 
 _spec_default_cols = dict(
     positioner='Energy',
@@ -549,9 +550,10 @@ def load_multi_lockin(scans, source, return_mean=True, positioner=None,
         return energy, xanes, xmcd
 
 
-def normalize_absorption(energy, xanes, *, e0=None, pre_range=None,
-                         post_range=None, pre_exponent=0, post_order=None,
-                         fpars=None):
+def normalize_absorption(energy, mu, *, e0=None, edge_step=None,
+                         pre_range=None, pre_order=1, nvict=0, pre_pars=None,
+                         post_range=None, post_order=None, post_pars=None,
+                         flat_range=None, flat_order=None, flat_pars=None):
     """
     Extract pre- and post-edge normalization curves by fitting polynomials.
 
@@ -610,35 +612,118 @@ def normalize_absorption(energy, xanes, *, e0=None, pre_range=None,
     --------
     :func:`larch.xafs.preedge`
     """
-    if np.nanmax(energy) < 100:
-        raise ValueError('The energy must be in eV, but seems to be in keV!')
 
-    if not pre_range:
-        pre_range = [None, None]
-
-    if not post_range:
-        post_range = [None, None]
-
+    # Start output dictionary
+    results = {}
     sort = np.argsort(energy)
-    energy = np.array(energy)[sort]
-    xanes = np.array(xanes)[sort]
+    results['energy'] = np.array(energy)[sort]
+    results['mu'] = np.array(mu)[sort]
 
-    results = preedge(energy, xanes, e0=e0, pre1=pre_range[0],
-                      pre2=pre_range[1], nvict=pre_exponent,
-                      norm1=post_range[0], norm2=post_range[1],
-                      nnorm=post_order)
+    # Process pre-edge
+    pre1, pre2 = (None, None) if not pre_range else tuple(pre_range)
 
-    results['energy'] = np.copy(energy)
-    results['raw'] = np.copy(xanes)
-    results['flat'], results['flat_params'] = _flatten_norm(
-        energy, results['norm'], results['e0'], results['norm1'],
-        results['norm2'], results['nnorm'], fpars=fpars
+    pre_results = pre_edge_background(
+        results['energy'], results['mu'], e0=e0, pre1=pre1, pre2=pre2,
+        pre_order=pre_order, nvict=nvict, pre_pars=pre_pars
         )
+
+    results.update(pre_results)
+
+    # Process post-edge
+    post1, post2 = (None, None) if not post_range else tuple(post_range)
+
+    post_results = post_edge_background(
+        results['energy'], results['mu'], preedge=results['preedge'],
+        e0=results['e0'], edge_step=edge_step, post1=post1, post2=post2,
+        post_order=post_order, post_pars=post_pars
+        )
+
+    results.update(post_results)
+
+    # Flatten post-edge
+    use_post = not bool(flat_order or flat_range or flat_pars)
+    postedge_results = post_results if use_post else None
+
+    flat1, flat2 = (None, None) if not flat_range else tuple(flat_range)
+
+    flat_results = post_edge_flatten(
+        results['energy'], results['norm'], e0=results['e0'],
+        flat1=flat1, flat2=flat2, flat_order=flat_order, flat_pars=flat_pars,
+        bkg_results=postedge_results
+        )
+
+    results.update(flat_results)
 
     return results
 
 
-def _flatten_norm(energy, norm, e0, norm1, norm2, nnorm, fpars=None):
+def pre_edge_background(energy, mu, e0=None, pre1=None, pre2=None, pre_order=1,
+                        nvict=0, pre_pars=None):
+
+    # Edge energy
+    e0, unit = _process_e0(energy, mu, e0)
+
+    # Process pre-edge range
+    pre1, pre2 = _process_preedge_params(energy, e0, pre1, pre2)
+
+    # Find pre-edge background
+    index = np.logical_and(energy > pre1+e0, energy < pre2+e0)
+
+    mu_fit = mu[index]*energy[index]**nvict
+    energy_fit = energy[index]
+
+    fit = _fit_polynomial(energy_fit, mu_fit, pre_order, pars=pre_pars)
+
+    precoefs = fit.best_values
+    preedge = fit.eval(x=energy)*energy**(-nvict)
+
+    return dict(preedge=preedge, pre1=pre1, pre2=pre2, pre_order=pre_order,
+                nvict=nvict, e0=e0, precoefs=precoefs, energy_unit=unit)
+
+
+def post_edge_background(energy, mu, preedge=None, e0=None, edge_step=None,
+                         post1=None, post2=None, post_order=None,
+                         post_pars=None):
+
+    # Edge energy
+    e0, unit = _process_e0(energy, mu, e0)
+
+    # Post-edge params
+    post1, post2, post_order = _process_postedge_params(
+        energy, e0, post1, post2, post_order
+        )
+
+    # Pre-edge
+    if preedge is None:
+        preedge = np.zeros(len(energy))
+    else:
+        if len(preedge) != len(energy):
+            raise TypeError('preedge must have the same dimensions as energy.')
+
+    # Normalization
+    index = np.logical_and(energy > post1+e0, energy < post2+e0)
+    energy_fit = energy[index]
+    mu_fit = (mu-preedge)[index]
+
+    fit = _fit_polynomial(energy_fit, mu_fit, post_order, pars=post_pars)
+
+    postcoefs = fit.best_values
+    postedge = preedge + fit.eval(x=energy)
+
+    if not edge_step:
+        ie0 = index_nearest(energy, e0)
+        edge_step = postedge[ie0] - preedge[ie0]
+
+    norm = (mu - preedge)/edge_step
+
+    return dict(energy=energy, mu=mu, postedge=postedge, preedge=preedge,
+                postcoefs=postcoefs, post1=post1, post2=post2,
+                post_order=post_order, energy_unit=unit, norm=norm,
+                edge_step=edge_step)
+
+
+def post_edge_flatten(energy, norm, e0=None, flat1=None, flat2=None,
+                      flat_order=None, flat_pars=None, bkg_results=None):
     """
     Flattens the normalized absorption.
 
@@ -681,19 +766,89 @@ def _flatten_norm(energy, norm, e0, norm1, norm2, nnorm, fpars=None):
     :func:`lmfit.models.PolynomialModel`
     """
 
+    # Edge energy
+    e0, unit = _process_e0(energy, norm, e0)
     ie0 = index_nearest(energy, e0)
-    p1 = index_of(energy, norm1+e0)
-    p2 = index_nearest(energy, norm2+e0)
 
-    enx, mux = remove_nans2(np.copy(energy)[p1:p2], np.copy(norm)[p1:p2])
+    # Runs the post edge fit with flat parameters if needed.
+    if not bkg_results:
+        bkg_results = post_edge_background(
+            energy, norm, e0=e0, post1=flat1, post2=flat2,
+            post_order=flat_order, post_pars=flat_pars
+            )
 
-    model = PolynomialModel(degree=nnorm)
-    if not fpars:
-        fpars = model.guess(mux, x=enx)
-    result = model.fit(mux, fpars, x=enx,
-                       fit_kws=dict(xtol=1.e-6, ftol=1.e-6))
+        flat_function = bkg_results['postedge']
+    else:
+        flat_function = (bkg_results['postedge'] - bkg_results['preedge'])
+        flat_function /= bkg_results['edge_step']
 
-    flat = norm - (result.eval(x=energy) - result.eval(x=energy)[ie0])
+    flat1 = bkg_results['post1']
+    flat2 = bkg_results['post2']
+    flat_order = bkg_results['post_order']
+    flatcoefs = bkg_results['postcoefs']
+
+    flat = norm - (flat_function - flat_function[ie0])
     flat[:ie0] = norm[:ie0]
 
-    return flat, result.best_values
+    return dict(energy=energy, norm=norm, flat=flat, flat1=flat1, flat2=flat2,
+                flat_order=flat_order, flatcoefs=flatcoefs,
+                flat_function=flat_function, energy_unit=unit)
+
+
+def _process_e0(energy, mu, e0):
+
+    # Energy unit
+    unit = 'keV' if np.nanmax(energy) < 100 else 'eV'
+
+    # Edge energy
+    if e0 is None:
+        e0 = _finde0(energy, mu)
+    elif e0 < energy.min() or e0 > energy.max():
+        e0 = _finde0(energy, mu)
+        warn("e0 is not contained in the provided energy range, "
+             "using e0 = {:0.2f} {}".format(e0, unit))
+    else:
+        e0 = energy[index_nearest(energy, e0)]
+
+    return e0, unit
+
+
+def _process_preedge_params(energy, e0, pre1, pre2):
+
+    # Process pre-edge range
+    if pre1 is None:
+        pre1 = np.nanmin(energy[1:-1])-e0  # avoid first/last points
+    if pre2 is None:
+        pre2 = 5.0*round(pre1/15.0)  # from larch, don't understand logic.
+    if pre1 > pre2:
+        pre1, pre2 = pre2, pre1
+
+    return pre1, pre2
+
+
+def _process_postedge_params(energy, e0, post1, post2, post_order):
+
+    # Post-edge params
+    if post2 is None:
+        post2 = np.nanmax(energy[1:-1])-e0  # avoid first/last two points
+    if post1 is None:
+        post1 = min(150, 5.0*round(post2/15.0))
+    if post1 > post2:
+        post1, post2 = post2, post1
+    if post_order is None:
+        if post2-post1 < 50:
+            post_order = 0
+        elif post2-post1 < 350:
+            post_order = 1
+        else:
+            post_order = 2
+
+    return post1, post2, post_order
+
+
+def _fit_polynomial(x, y, order, pars=None):
+
+    model = PolynomialModel(order)
+    if not pars:
+        pars = model.guess(y, x=x)
+    return model.fit(y, pars, x=x)
