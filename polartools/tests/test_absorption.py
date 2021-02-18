@@ -46,11 +46,13 @@ def test_normalization():
     path = join('polartools', 'tests', 'data_for_test')
     scans = [28, 29, 30, 31, 32]
     energy, xas, _ = absorption.load_multi_xas(
-        scans, 'absorption.dat', detector='IC4', monitor='IC3', folder=path)
+        scans, 'absorption.dat', detector='IC5', monitor='IC4', folder=path
+        )
+    result = absorption.normalize_absorption(
+        energy.to_numpy()*1000., xas, pre_range=[-30, -20],
+        post_range=[25, None]
+    )
 
-    print(energy)
-    result = absorption.normalize_absorption(energy.to_numpy()*1000., xas)
-
-    assert allclose(result['e0'], 7233.5)
-    assert allclose(result['flat'].mean(), -0.25136020653859914)
-    assert allclose(result['edge_step'], 0.005179323346776066)
+    assert allclose(result['e0'], 7244.49)
+    assert allclose(result['flat'].mean(), 0.9401761497318735)
+    assert allclose(result['edge_step'], 0.09597937635663531)
