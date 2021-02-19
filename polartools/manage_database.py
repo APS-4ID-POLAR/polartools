@@ -13,7 +13,7 @@ Functions to import and export Bluesky data.
 
 from databroker_pack import (export_catalog, write_documents_manifest,
                              write_msgpack_catalog_file, unpack_inplace)
-from databroker import catalog_search_path
+from databroker import catalog_search_path, catalog
 from .load_data import db_query
 from os import makedirs, remove
 from os.path import exists, join
@@ -179,6 +179,7 @@ def from_databroker_inplace(folder, name, merge=False):
             db = catalog['my_data']
     """
     config_path = unpack_inplace(folder, name, merge=merge)
+    catalog.force_reload()
     print(f"Placed configuration file at {config_path!s}")
 
 
@@ -206,6 +207,7 @@ def remove_catalog(name):
         filepath = join(path, f'databroker_unpack_{name}.yml')
         if exists(filepath):
             remove(filepath)
+            catalog.force_reload()
             print(f'The {name} catalog was removed.')
             found = True
 
