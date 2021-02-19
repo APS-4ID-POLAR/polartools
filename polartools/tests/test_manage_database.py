@@ -14,6 +14,7 @@ def test_manage_databroker_database(tmpdir):
     manage_database.from_databroker_inplace(
         path, 'pytest_data_jfhworu1287', catalog
         )
+    catalog.force_reload()
     assert 'pytest_data_jfhworu1287' in list(catalog)
 
     # export databroker
@@ -32,4 +33,5 @@ def test_manage_databroker_database(tmpdir):
 
     # remove db
     manage_database.remove_catalog('pytest_data_jfhworu1287', catalog)
+    catalog.force_reload()
     assert 'pytest_data_jfhworu1287' not in list(catalog)

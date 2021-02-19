@@ -16,6 +16,7 @@ def db():
     if CATALOG_NAME not in list(catalog):
         path = join('polartools', 'tests', 'data_for_test', 'databroker')
         from_databroker_inplace(path, 'pytest_data_asdahshj', catalog)
+        catalog.force_reload()
     return catalog[CATALOG_NAME]
 
 
