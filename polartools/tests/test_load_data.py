@@ -8,8 +8,7 @@ from databroker import catalog
 from polartools.manage_database import from_databroker_inplace
 from spec2nexus.spec import SpecDataFile
 
-# CATALOG_NAME = 'pytest_data_asdahshj'
-CATALOG_NAME = 'test_data'
+CATALOG_NAME = 'data_2'
 
 
 @pytest.fixture

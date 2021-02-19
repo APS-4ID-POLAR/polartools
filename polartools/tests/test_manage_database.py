@@ -6,19 +6,21 @@ from os.path import join
 from glob import glob
 from databroker import catalog
 
+CATALOG_NAME = 'data_1'
+
 
 def test_manage_databroker_database(tmpdir):
 
     # load databroker
     path = join('polartools', 'tests', 'data_for_test', 'databroker')
     manage_database.from_databroker_inplace(
-        path, 'pytest_data_jfhworu1287', catalog
+        path, CATALOG_NAME, catalog
         )
     catalog.force_reload()
-    assert 'pytest_data_jfhworu1287' in list(catalog)
+    assert CATALOG_NAME in list(catalog)
 
     # export databroker
-    db = catalog['pytest_data_jfhworu1287']
+    db = catalog[CATALOG_NAME]
     path = str(tmpdir.mkdir('test_db'))
     manage_database.to_databroker(db, path, query=dict(scan_id=1049))
     files = glob(join(path, '*.*')) + glob(join(path, '*', '*'))
@@ -32,6 +34,6 @@ def test_manage_databroker_database(tmpdir):
     assert len(files) == 3
 
     # remove db
-    manage_database.remove_catalog('pytest_data_jfhworu1287', catalog)
+    manage_database.remove_catalog(CATALOG_NAME, catalog)
     catalog.force_reload()
-    assert 'pytest_data_jfhworu1287' not in list(catalog)
+    assert CATALOG_NAME not in list(catalog)
