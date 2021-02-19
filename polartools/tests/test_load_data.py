@@ -27,7 +27,7 @@ def test_load_csv():
 
 
 def test_load_databroker(db):
-    table = load_data.load_table(1049, db)
+    table = load_data.load_table(1049, db, use_db_v1=False)
     assert table.shape == (4, 19)
 
     table = load_data.load_table(1049, db, use_db_v1=True)
