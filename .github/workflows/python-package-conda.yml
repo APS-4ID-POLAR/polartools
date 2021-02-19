@@ -59,7 +59,7 @@ jobs:
     - name: Run pytest
       run: |
         source $CONDA/bin/activate $ENV_NAME
-        databroker-unpack inplace polartools/tests/data_for_test/databroker test_data
+        databroker-unpack inplace polartools/tests/data_for_test/databroker data_3
         pytest --cov-config=.coveragerc --cov=./ --cov-report=xml
       env:
         PY_VER: ${{ matrix.python-version }}
