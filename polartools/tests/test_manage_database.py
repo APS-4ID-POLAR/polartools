@@ -11,7 +11,9 @@ def test_manage_databroker_database(tmpdir):
 
     # load databroker
     path = join('polartools', 'tests', 'data_for_test', 'databroker')
-    manage_database.from_databroker_inplace(path, 'pytest_data_jfhworu1287')
+    manage_database.from_databroker_inplace(
+        path, 'pytest_data_jfhworu1287', catalog
+        )
     assert 'pytest_data_jfhworu1287' in list(catalog)
 
     # export databroker
@@ -29,6 +31,5 @@ def test_manage_databroker_database(tmpdir):
     assert len(files) == 3
 
     # remove db
-    manage_database.remove_catalog('pytest_data_jfhworu1287')
-    catalog()  # Updates catalog list
+    manage_database.remove_catalog('pytest_data_jfhworu1287', catalog)
     assert 'pytest_data_jfhworu1287' not in list(catalog)
