@@ -8,14 +8,15 @@ from databroker import catalog
 from polartools.manage_database import from_databroker_inplace
 from spec2nexus.spec import SpecDataFile
 
-CATALOG_NAME = 'pytest_data_asdahshj'
+# CATALOG_NAME = 'pytest_data_asdahshj'
+CATALOG_NAME = 'test_data'
 
 
 @pytest.fixture
 def db():
     if CATALOG_NAME not in list(catalog):
         path = join('polartools', 'tests', 'data_for_test', 'databroker')
-        from_databroker_inplace(path, 'pytest_data_asdahshj', catalog)
+        from_databroker_inplace(path, CATALOG_NAME, catalog)
         catalog.force_reload()
     return catalog[CATALOG_NAME]
 
