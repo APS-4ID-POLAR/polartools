@@ -21,6 +21,7 @@ from spec2nexus.spec import (SpecDataFile, SpecDataFileNotFound,
                              NotASpecDataFile)
 from larch.xafs.pre_edge import _finde0
 from larch.math import index_nearest
+from xraydb import xray_line, xray_edge, material_mu
 from lmfit.models import PolynomialModel
 from warnings import warn
 
@@ -852,3 +853,55 @@ def _fit_polynomial(x, y, order, pars=None):
     if not pars:
         pars = model.guess(y, x=x)
     return model.fit(y, pars, x=x)
+
+
+def fluo_corr(norm, formula, elem, edge, line, anginp, angout):
+    """
+    Correct over-absorption (self-absorption) for fluorescene XAFS
+    using the based on the `larch` implementation of the FLUO alogrithm of 
+    D. Haskel. See FLUO manual_ for details.
+    
+    .. _manual: https://www3.aps.anl.gov/haskel/fluo.html
+
+    Parameters
+    ---------
+    norm : iter
+        Normalized fluorescence
+    formula : str
+        Chemical formula of the compound. For example: 'EuO'.
+    elem : str
+        Element of interest. For example: 'Eu'.
+    edge : str
+        Absorption edge of interest. For example: 'L3'.
+    line : str
+        Fluorescence line measured. For example: 'La'.
+    anginp : float
+        Input angle with respect to the sample surface. See FLUO manual.
+    anginp : float
+        Output angle with respect to the sample surface. See FLUO manual.
+
+    Returns
+    --------
+    norm_corr : numpy.array
+        Corrected normalized fluorescence.
+    """
+
+    # Angular correction. Avoid divide by zero.
+    ang_corr = (np.sin(np.deg2rad(anginp)) /
+                np.sin(max(1.e-7, np.deg2rad(angout))))
+
+    # Find edge energies and fluorescence line energy
+    e_edge = xray_edge(elem, edge).energy
+    e_fluor = xray_line(elem, line).energy
+
+    # Calculate mu(E) for fluorescence energy, above, below edge
+    # alpha ends up independent of density!
+    muvals = material_mu(
+        formula, np.array([e_fluor, e_edge-10.0, e_edge+10.0]), density=1
+        )
+
+    # Do the correction
+    alpha = (muvals[0]*ang_corr + muvals[1])/(muvals[2] - muvals[1])
+    norm_corr = np.array(norm)*alpha/(alpha + 1 - np.array(norm))
+
+    return norm_corr
