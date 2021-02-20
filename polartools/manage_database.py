@@ -151,7 +151,7 @@ def to_csv_json(db, folder, query=None, fname_format='scan_{}_',
         print('Done!')
 
 
-def from_databroker_inplace(folder, name, merge=False):
+def from_databroker_inplace(folder, name, catalog, merge=False):
     """
     Load the exported databroker database.
 
@@ -179,10 +179,11 @@ def from_databroker_inplace(folder, name, merge=False):
             db = catalog['my_data']
     """
     config_path = unpack_inplace(folder, name, merge=merge)
+    catalog.force_reload()
     print(f"Placed configuration file at {config_path!s}")
 
 
-def remove_catalog(name):
+def remove_catalog(name, catalog=None):
     """
     Removes a catalog created by `to_databroker`.
 
@@ -206,6 +207,8 @@ def remove_catalog(name):
         filepath = join(path, f'databroker_unpack_{name}.yml')
         if exists(filepath):
             remove(filepath)
+            if catalog is not None:
+                catalog.force_reload()
             print(f'The {name} catalog was removed.')
             found = True
 

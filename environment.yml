@@ -9,8 +9,7 @@ dependencies:
   - scipy
   - numpy
   - pandas
-  - intake!=0.6.1
-  - databroker>=1.1.0
+  - databroker>=1.2.2
   - pip
   - sphinx
   - pytest

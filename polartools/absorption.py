@@ -121,9 +121,15 @@ def load_absorption(scan, source, positioner=None, detector=None, monitor=None,
     table = load_table(scan, source, **kwargs)
 
     if transmission:
-        return table[positioner], np.log(table[monitor]/table[detector])
+        return (
+            table[positioner].to_numpy(),
+            np.log(table[monitor]/table[detector])
+            )
     else:
-        return table[positioner], table[detector]/table[monitor]
+        return (
+            table[positioner].to_numpy(),
+            (table[detector]/table[monitor]).to_numpy()
+            )
 
 
 def load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None,
@@ -189,7 +195,8 @@ def load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None,
     # Load data
     table = load_table(scan, source, **kwargs)
 
-    return table[positioner], table[dc_col], table[ac_col] - table[acoff_col]
+    return (table[positioner].to_numpy(), table[dc_col].to_numpy(),
+            (table[ac_col] - table[acoff_col]).to_numpy())
 
 
 def load_dichro(scan, source, positioner=None, detector=None, monitor=None,

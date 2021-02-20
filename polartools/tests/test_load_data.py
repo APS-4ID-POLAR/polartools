@@ -1,10 +1,23 @@
 # Copyright (c) 2020-2021, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
+import pytest
 from polartools import load_data
 from os.path import join
 from databroker import catalog
+from polartools.manage_database import from_databroker_inplace
 from spec2nexus.spec import SpecDataFile
+
+CATALOG_NAME = 'data_2'
+
+
+@pytest.fixture
+def db():
+    if CATALOG_NAME not in list(catalog):
+        path = join('polartools', 'tests', 'data_for_test', 'databroker')
+        from_databroker_inplace(path, CATALOG_NAME, catalog)
+        catalog.force_reload()
+    return catalog[CATALOG_NAME]
 
 
 def test_load_csv():
@@ -13,8 +26,7 @@ def test_load_csv():
     assert table.shape == (4, 21)
 
 
-def test_load_databroker():
-    db = catalog['test_data']
+def test_load_databroker(db):
     table = load_data.load_table(1049, db)
     assert table.shape == (4, 19)
 
@@ -25,9 +37,8 @@ def test_spec():
     assert table.shape == (51, 16)
 
 
-def test_db_query():
+def test_db_query(db):
     query = dict(since='2020-12-18', until='2020-12-19')
-    db = catalog['test_data']
     search = load_data.db_query(db, query)
     assert len(list(search)) == 0
 
