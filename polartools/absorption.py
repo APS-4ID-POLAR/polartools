@@ -24,7 +24,6 @@ from larch.math import index_nearest
 from xraydb import xray_line, xray_edge, material_mu
 from lmfit.models import PolynomialModel
 from warnings import warn
-from inspect import signature
 
 _spec_default_cols = dict(
     positioner='Energy',
@@ -856,47 +855,36 @@ def _fit_polynomial(x, y, order, pars=None):
     return model.fit(y, pars, x=x)
 
 
-def fluo_corr(energy, mu, formula, elem, edge='K', line='Ka', anginp=45,
-              angout=45, density=8, **kwargs):
+def fluo_corr(norm, formula, elem, edge, line, anginp, angout):
     """
     Correct over-absorption (self-absorption) for fluorescene XAFS
-    using the FLUO alogrithm of D. Haskel.
-    Arguments
+    using the based on the `larch` implementation of the FLUO alogrithm of 
+    D. Haskel. See FLUO manual_ for details.
+    
+    .. _manual: https://www3.aps.anl.gov/haskel/fluo.html
+
+    Parameters
     ---------
-      energy    array of energies
-      mu        uncorrected fluorescence mu
-      formula   string for sample stoichiometry
-      elem      atomic symbol or Z of absorbing element
-      group     output group [default None]
-      edge      name of edge ('K', 'L3', ...) [default 'K']
-      line      name of line ('K', 'Ka', 'La', ...) [default 'Ka']
-      anginp    input angle in degrees  [default 45]
-      angout    output angle in degrees  [default 45]
-    Additional keywords will be passed to pre_edge(), which will be used
-    to ensure consistent normalization.
+    norm : iter
+        Normalized fluorescence
+    formula : str
+        Chemical formula of the compound. For example: 'EuO'.
+    elem : str
+        Element of interest. For example: 'Eu'.
+    edge : str
+        Absorption edge of interest. For example: 'L3'.
+    line : str
+        Fluorescence line measured. For example: 'La'.
+    anginp : float
+        Input angle with respect to the sample surface. See FLUO manual.
+    anginp : float
+        Output angle with respect to the sample surface. See FLUO manual.
+
     Returns
     --------
-       None, writes `mu_corr` and `norm_corr` (normalized `mu_corr`)
-       to output group.
-    Notes
-    -----
-       Support First Argument Group convention, requiring group
-       members 'energy' and 'mu'
+    norm_corr : numpy.array
+        Corrected normalized fluorescence.
     """
-
-    # Collect kwargs for normalization.
-    params = signature(normalize_absorption).parameters
-    kw_norm = {}
-    for key, item in params.items():
-        if str(item.kind) == 'KEYWORD_ONLY':
-            kw_norm[key] = kwargs.pop(key, item.default)
-
-    if len(kwargs) != 0:
-        warn("The following kwargs are not accepted by the normalization "
-             f"function: {list(kwargs)}")
-
-    # Generate normalized mu for correction
-    norm_results = normalize_absorption(energy, mu, **kw_norm)
 
     # Angular correction. Avoid divide by zero.
     ang_corr = (np.sin(np.deg2rad(anginp)) /
@@ -907,14 +895,13 @@ def fluo_corr(energy, mu, formula, elem, edge='K', line='Ka', anginp=45,
     e_fluor = xray_line(elem, line).energy
 
     # Calculate mu(E) for fluorescence energy, above, below edge
+    # alpha ends up independent of density!
     muvals = material_mu(
-        formula, np.array([e_fluor, e_edge-10.0, e_edge+10.0]), density=density
+        formula, np.array([e_fluor, e_edge-10.0, e_edge+10.0]), density=1
         )
-    # TODO: Is it correct to use density=1 above?
 
-    # Do the correcction
+    # Do the correction
     alpha = (muvals[0]*ang_corr + muvals[1])/(muvals[2] - muvals[1])
-    mu_corr = mu*alpha/(alpha + 1 - norm_results['norm'])
-    corr_results = normalize_absorption(energy, mu_corr, **kw_norm)
+    norm_corr = np.array(norm)*alpha/(alpha + 1 - np.array(norm))
 
-    return mu_corr, corr_results['norm'], corr_results['flat']
+    return norm_corr
