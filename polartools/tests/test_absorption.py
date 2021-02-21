@@ -49,7 +49,7 @@ def test_normalization():
         scans, 'absorption.dat', detector='IC5', monitor='IC4', folder=path
         )
     result = absorption.normalize_absorption(
-        energy.to_numpy()*1000., xas, pre_range=[-30, -20],
+        energy*1000., xas, pre_range=[-30, -20],
         post_range=[25, None]
     )
 
