@@ -51,8 +51,29 @@ def test_normalization():
     result = absorption.normalize_absorption(
         energy*1000., xas, pre_range=[-30, -20],
         post_range=[25, None]
-    )
+        )
 
     assert allclose(result['e0'], 7244.49)
     assert allclose(result['flat'].mean(), 0.9401761497318735)
     assert allclose(result['edge_step'], 0.09597937635663531)
+
+
+def test_fluo():
+    path = join('polartools', 'tests', 'data_for_test')
+    scans = [199, 200]
+    energy, xas, _, _, _ = absorption.load_multi_dichro(
+       scans, 'fluorescence.dat', detector='xspRoi1totc', monitor='IC3',
+       folder=path, transmission=False
+       )
+
+    result = absorption.normalize_absorption(
+        energy*1000., xas, pre_range=[-30, -20], pre_order=0,
+        post_range=[15, None], post_order=1
+        )
+
+    norm_corr = absorption.fluo_corr(
+        result['norm'], 'EuFe2As2', 'Eu', 'L3', 'La', 10, 80
+        )
+
+    assert allclose(norm_corr.mean(), 0.7611857565650514)
+    assert allclose(norm_corr.max(), 2.6009413580639853)
