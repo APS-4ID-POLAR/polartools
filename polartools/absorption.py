@@ -9,6 +9,10 @@ Functions to load and process x-ray absorption data.
    ~load_multi_dichro
    ~load_multi_lockin
    ~normalize_absorption
+   ~pre_edge_background
+   ~post_edge_background
+   ~post_edge_flatten
+   ~fluo_corr
 """
 
 # Copyright (c) 2020-2021, UChicago Argonne, LLC.
@@ -559,45 +563,65 @@ def load_multi_lockin(scans, source, return_mean=True, positioner=None,
 
 
 def normalize_absorption(energy, mu, *, e0=None, edge_step=None,
-                         pre_range=None, pre_order=1, nvict=0, pre_pars=None,
-                         post_range=None, post_order=None, post_pars=None,
-                         flat_range=None, flat_order=None, flat_pars=None):
+                         pre_range=None, pre_order=1, nvict=0, post_range=None,
+                         post_order=None, flat_range=None, flat_order=None,
+                         pre_pars=None, post_pars=None, flat_pars=None):
     """
     Extract pre- and post-edge normalization curves by fitting polynomials.
 
-    This is a wrapper of `larch.xafs.preedge` that adds the flattening of the
-    post-edge.
-
-    Please see the larch documentation_ for details on how the optional
-    parameters are determined.
-
-    .. _documentation:\
-    https://xraypy.github.io/xraylarch/xafs/preedge.html#the-pre-edge-function
+    This is a wrapper of for the `pre_edge_background`, `post_edge_background`,
+    and `post_edge_flatten`. The overall process is largely based on
+    `larch.xafs.preedge`, but it was modified so that a polynomial of any order
+    can be applied to the pre-edge, and the initial parameters for the pre- and
+    post-edge polynomials can be given by the user.
 
     Parameters
     ----------
     energy : iterable
         Incident energy. Must be in eV. It will raise an error if it notices
         the maximum of this list is below 100.
-    xanes : iterable
-        X-ray absorption.
+    mu : iterable
+        Raw x-ray absorption.
     e0 : float or int, optional
-        Absorption edge energy.
+        Absorption edge energy. If None, it is extracted from the data.
+    edge_step : float, optional
+        Size of edge step of the raw data. If None, it is calculated based by
+        postedge[e0] - preedge[e0].
     pre_range : list, optional
         List with the energy ranges [initial, final] of the pre-edge region
-        **relative** to the absorption edge.
+        **relative** to the absorption edge. If None is passed to either
+        pre_range or one of the elements, a guessed value will be used. For
+        example:
+
+        - pre_range = None -> guess initial and final points.
+        - pre_range = [None, -20] -> guess only initial point.
+        - pre_range = [-40, None] -> guess only final point.
+        - pre_range = [-40, -20] -> guess neither.
+
+    pre_order : int, optional
+        Order of the polynomial to be used in the pre-edge. Defaults to 1.
+    nvict : int, optional
+        Energy exponent to use. The pre-edge background is modelled by a line
+        that is fit to xanes(energy)*energy**pre_exponent. Defaults to 0.
     post_range : list, optional
         List with the energy ranges [initial, final] of the post-edge region
         **relative** to the absorption edge.
-    pre_exponent : int, optional
-        Energy exponent to use. The pre-edge background is modelled by a line
-        that is fit to xanes(energy)*energy**pre_exponent. Defaults to 0.
     post_order : int, optional
         Order of the polynomial to be used in the post-edge. If None, it will
         be determined by `larch.xafs.preedge`:
-        - nnorm = 2 if post_range[1]-post_range[0]>350, 1 if
-        50 < post_range[1]-post_range[0] < 350, or 0 otherwise.
-    fpars : lmfit.Parameters, optional
+
+        - If post_range[1]-post_range[0]>350 -> post_order = 2;
+        - if 50 < post_range[1]-post_range[0] < 350 -> post_order = 1;
+        - otherwise -> post_order = 0
+
+    flat_range : list, optional
+        List with the energy ranges [initial, final] of the post-edge region
+        **relative** to the absorption edge. If None, it will be set as the
+        same as `post_range`.
+    flat_order : int, optional
+        Order of the polynomial to be used in the post-edge. If None, it will
+        be set as the same as `post_order`.
+    pre_pars, post_pars, flat_pars : lmfit.Parameters, optional
         Option to input the initial parameters to the polynomial used in the
         data flattening. These will be labelled 'c0', 'c1', ..., depending on
         `post_order`. See lmfit.models.PolynomialModel_ for details.
@@ -612,13 +636,16 @@ def normalize_absorption(energy, mu, *, e0=None, edge_step=None,
         flattening. The most important items are:
 
         - 'energy' -> incident energy.
-        - 'raw' -> raw xanes.
+        - 'mu' -> raw xanes.
         - 'norm' -> normalized xanes.
         - 'flat' -> flattened xanes.
 
     See also
     --------
     :func:`larch.xafs.preedge`
+    :func:`polartools.absorption.pre_edge_background`
+    :func:`polartools.absorption.post_edge_background`
+    :func:`polartools.absorption.post_edge_flatten`
     """
 
     # Start output dictionary
@@ -667,6 +694,53 @@ def normalize_absorption(energy, mu, *, e0=None, edge_step=None,
 
 def pre_edge_background(energy, mu, e0=None, pre1=None, pre2=None, pre_order=1,
                         nvict=0, pre_pars=None):
+    """
+    Extracts the pre-edge background by fitting a polynomial.
+
+    Based on `larch.xafs.preedge`. Modified so that a polynomial of any order
+    can be applied to the pre-edge, and its initial parameters can be given by
+    the user.
+
+    Parameters
+    ----------
+    energy : iterable
+        Incident energy. Must be in eV. It will raise an error if it notices
+        the maximum of this list is below 100.
+    mu : iterable
+        Raw x-ray absorption.
+    e0 : float or int, optional
+        Absorption edge energy.
+    pre1, pre2 : float, optional
+        Low, high energy limit of pre-edge range with respect to e0. If None,
+         it will try to guess it based on mu(energy).
+    pre_order : int, optional
+        Order of the polynomial to be used in the pre-edge. Defaults to 1.
+    nvict : int, optional
+        Energy exponent to use. The pre-edge background is modelled by a line
+        that is fit to xanes(energy)*energy**pre_exponent. Defaults to 0.
+    pre_pars : lmfit.Parameters, optional
+        Option to input the initial parameters to the polynomial used in the
+        data flattening. These will be labelled 'c0', 'c1', ..., depending on
+        `post_order`. See lmfit.models.PolynomialModel_ for details.
+
+        .. _lmfit.models.PolynomialModel:\
+        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel
+
+    Returns
+    -------
+    results : dict
+        Dictionary with the results and parameters of the normalization and
+        flattening. The most important items are:
+
+        - 'energy' -> incident energy.
+        - 'mu' -> raw xanes.
+        - 'preedge' -> preedge polynomial.
+
+    See also
+    --------
+    :func:`larch.xafs.preedge`
+    :func:`larch.absorption.normalize_absorption`
+    """
 
     # Edge energy
     e0, unit = _process_e0(energy, mu, e0)
@@ -685,14 +759,71 @@ def pre_edge_background(energy, mu, e0=None, pre1=None, pre2=None, pre_order=1,
     precoefs = fit.best_values
     preedge = fit.eval(x=energy)*energy**(-nvict)
 
-    return dict(preedge=preedge, pre1=pre1, pre2=pre2, pre_order=pre_order,
-                nvict=nvict, e0=e0, precoefs=precoefs, energy_unit=unit)
+    return dict(energy=energy, mu=mu, preedge=preedge, pre1=pre1, pre2=pre2,
+                pre_order=pre_order, nvict=nvict, e0=e0, precoefs=precoefs,
+                energy_unit=unit)
 
 
 def post_edge_background(energy, mu, preedge=None, e0=None, edge_step=None,
                          post1=None, post2=None, post_order=None,
                          post_pars=None):
+    """
+    Extracts the post-edge background by fitting a polynomial.
 
+    Based on `larch.xafs.preedge`. Modified so that a polynomial of any order
+    can be applied to the post-edge, and its initial parameters can be given by
+    the user.
+
+    Parameters
+    ----------
+    energy : iterable
+        Incident energy. Must be in eV. It will raise an error if it notices
+        the maximum of this list is below 100.
+    mu : iterable
+        Raw x-ray absorption.
+    e0 : float or int, optional
+        Absorption edge energy.
+    edge_step : float, optional
+        Size of edge step of the raw data. If None, it is calculated based by
+        postedge[e0] - preedge[e0].
+    preedge : iterable, optional
+        Pre-edge polynomial. If None, it will be set to zero.
+    post1, post2 : float, optional
+        Low, high energy limit of post-edge range with respect to e0. If None,
+         it will try to guess it based on mu(energy).
+    post_order : int, optional
+        Order of the polynomial to be used in the post-edge. If None, it will
+        be determined using:
+
+        - If post2-post1>350 -> post_order = 2;
+        - if 50 < post2-post1 < 350 -> post_order = 1;
+        - otherwise -> post_order = 0
+
+    post_pars : lmfit.Parameters, optional
+        Option to input the initial parameters to the polynomial used in the
+        data flattening. These will be labelled 'c0', 'c1', ..., depending on
+        `post_order`. See lmfit.models.PolynomialModel_ for details.
+
+        .. _lmfit.models.PolynomialModel:\
+        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel
+
+    Returns
+    -------
+    results : dict
+        Dictionary with the results and parameters of the normalization and
+        flattening. The most important items are:
+
+        - 'energy' -> incident energy.
+        - 'mu' -> raw xanes.
+        - 'norm' -> normalized XAS.
+        - 'post-edge' -> post-edge background.
+        - 'edge-step' -> Absorption jump size.
+
+    See also
+    --------
+    :func:`larch.xafs.preedge`
+    :func:`larch.absorption.normalize_absorption`
+    """
     # Edge energy
     e0, unit = _process_e0(energy, mu, e0)
 
@@ -730,8 +861,8 @@ def post_edge_background(energy, mu, preedge=None, e0=None, edge_step=None,
                 edge_step=edge_step)
 
 
-def post_edge_flatten(energy, norm, e0=None, flat1=None, flat2=None,
-                      flat_order=None, flat_pars=None, bkg_results=None):
+def post_edge_flatten(energy, norm, bkg_results=None, e0=None, flat1=None,
+                      flat2=None, flat_order=None, flat_pars=None):
     """
     Flattens the normalized absorption.
 
@@ -747,14 +878,20 @@ def post_edge_flatten(energy, norm, e0=None, flat1=None, flat2=None,
         Incident energy in eV.
     norm : iterable
         Normalized x-ray absorption.
+    bkg_results : dict, optional
+        Results of the data processing done by `post_edge_background`. If None,
+        the remaining keyword arguments will be ignored. 
     e0 : float or int
         Absorption edge energy.
-    norm1 : float or int
-        Low energy limit of normalization range with respect to e0.
-    norm2 : float or int
-        High energy limit of normalization range with respect to e0.
-    nnorm : int
-        Degree of polynomial to be used.
+    flat1, flat2 : float or int
+        Low, high energy limit of flattening range with respect to e0.
+    flat_order : int, optional
+        Degree of polynomial to be used. If None, it will be determined using:
+
+        - If post2-post1>350 -> post_order = 2;
+        - if 50 < post2-post1 < 350 -> post_order = 1;
+        - otherwise -> post_order = 0
+
     fpars : lmfit.Parameters, optional
         Option to input the initial parameters. These will be labelled 'c0',
         'c1', ..., depending on `nnorm`. See lmfit.models.PolynomialModel_ for
@@ -804,7 +941,7 @@ def post_edge_flatten(energy, norm, e0=None, flat1=None, flat2=None,
 
 
 def _process_e0(energy, mu, e0):
-
+    """ Internal function to extract the e0 and energy unit."""
     # Energy unit
     unit = 'keV' if np.nanmax(energy) < 100 else 'eV'
 
@@ -822,7 +959,7 @@ def _process_e0(energy, mu, e0):
 
 
 def _process_preedge_params(energy, e0, pre1, pre2):
-
+    """ Internal function to process the pre-edge parameters."""
     # Process pre-edge range
     if pre1 is None:
         pre1 = np.nanmin(energy[1:-1])-e0  # avoid first/last points
@@ -835,7 +972,7 @@ def _process_preedge_params(energy, e0, pre1, pre2):
 
 
 def _process_postedge_params(energy, e0, post1, post2, post_order):
-
+    """ Internal function to process the post-edge parameters."""
     # Post-edge params
     if post2 is None:
         post2 = np.nanmax(energy[1:-1])-e0  # avoid first/last two points
@@ -855,7 +992,7 @@ def _process_postedge_params(energy, e0, post1, post2, post_order):
 
 
 def _fit_polynomial(x, y, order, pars=None):
-
+    """ Internal function to fit a polynomial using `lmfit`."""
     model = PolynomialModel(order)
     if not pars:
         pars = model.guess(y, x=x)
@@ -871,7 +1008,7 @@ def fluo_corr(norm, formula, elem, edge, line, anginp, angout):
     .. _manual: https://www3.aps.anl.gov/haskel/fluo.html
 
     Parameters
-    ---------
+    ----------
     norm : iter
         Normalized fluorescence
     formula : str
