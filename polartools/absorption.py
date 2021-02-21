@@ -880,7 +880,7 @@ def post_edge_flatten(energy, norm, bkg_results=None, e0=None, flat1=None,
         Normalized x-ray absorption.
     bkg_results : dict, optional
         Results of the data processing done by `post_edge_background`. If None,
-        the remaining keyword arguments will be ignored. 
+        the remaining keyword arguments will be ignored.
     e0 : float or int
         Absorption edge energy.
     flat1, flat2 : float or int
