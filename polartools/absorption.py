@@ -865,9 +865,9 @@ def _fit_polynomial(x, y, order, pars=None):
 def fluo_corr(norm, formula, elem, edge, line, anginp, angout):
     """
     Correct over-absorption (self-absorption) for fluorescene XAFS
-    using the based on the `larch` implementation of the FLUO alogrithm of 
+    using the based on the `larch` implementation of the FLUO alogrithm of
     D. Haskel. See FLUO manual_ for details.
-    
+
     .. _manual: https://www3.aps.anl.gov/haskel/fluo.html
 
     Parameters
