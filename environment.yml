@@ -9,7 +9,7 @@ dependencies:
   - scipy
   - numpy
   - pandas
-  - databroker>=1.2.1
+  - databroker>=1.2.2
   - pip
   - sphinx
   - pytest
@@ -22,6 +22,7 @@ dependencies:
   - versioneer
   - suitcase-csv
   - suitcase-json-metadata
+  - xraylarch
   - pip:
     - ipython-genutils==0.2.0
     - prompt-toolkit==1.0.15

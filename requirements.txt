@@ -10,5 +10,7 @@ numpydoc
 sphinx_copybutton
 suitcase-csv
 suitcase-json-metadata
-databroker>=1.2.1
+databroker>=1.2.2
 databroker-pack
+lmfit
+xraylarch
