@@ -350,3 +350,274 @@ def fit_series(
             "Std W",
         ],
     )
+
+
+def load_series(
+    source,
+    scan_series,
+    log=False,
+    var_series=None,
+    positioner=None,
+    detector=None,
+    monitor=None,
+    **kwargs,
+):
+    """
+    Plot 2d
+
+    Parameters
+    ----------
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
+    scan_series : list, int
+        start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+        e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
+    var_series: string or list
+        string:
+            - Varying variable for scan series to be read from scan (detector),
+                e.g. SampK (sample temperature), optional.
+            - String starting with #metadata, reads metadata from CSV baseline
+        list: Information on metadata to be read: List starting with #P, #U or #Q for
+            motor positions, user values or Q-position, optional:
+            #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        If None, successive scans will be numbered starting from zero.
+    positioner : string, optional
+        Name of the positioner, this needs to be the same as defined in
+        Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+    detector : string, optional
+        Detector to be read from this scan, again it needs to be the same name
+        as in Bluesky. If None is passed, it defaults to the APD detector.
+    monitor : string, optional
+        Name of the monitor detector for normalization. If None is passed, data are not normalized.
+    kwargs:
+        The necessary kwargs are passed to the loading and fitting functions defined by the
+        `source` argument:
+            - csv        -> possible kwargs: folder, name_format, e.g. "scan_{}_primary.csv"
+            - spec       -> possible kwargs: folder
+            - databroker -> possible kwargs: stream, query
+        Note that a warning will be printed if the an unnecessary kwarg is
+        passed.
+
+    """
+    nbp = 0
+    for series in range(1, len(scan_series), 3):
+        nbp = (
+            nbp
+            + int(scan_series[series] - scan_series[series - 1])
+            / scan_series[series + 1]
+            + 1
+        )
+
+    folder = kwargs.pop("folder", "")
+    if isinstance(source, (str, SpecDataFile)) and source != "csv":
+        if isinstance(source, str):
+            path = join(folder, source)
+            source = SpecDataFile(path)
+        if is_Bluesky_specfile(source):
+            _defaults = _bluesky_default_cols
+        else:
+            _defaults = _spec_default_cols
+
+    else:
+        _defaults = _bluesky_default_cols
+
+    if not positioner:
+        positioner = _defaults["positioner"]
+    if not detector:
+        detector = _defaults["detector"]
+    if not monitor:
+        monitor = _defaults["monitor"]
+    if len(scan_series) % 3:
+        raise ValueError(
+            f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
+        )
+
+    if isinstance(source, SpecDataFile):
+        specscan = source.getScan(scan_series[1])
+        data_len = len(specscan.data[detector])
+    elif source == "csv":
+        name_format = kwargs.pop("name_format", "scan_{}_primary.csv")
+        scan = load_csv(
+            scan_id=scan_series[1], folder=folder, name_format=name_format
+        )
+        data_len = len(scan[detector])
+    else:
+        # to be implemented for db
+        pass
+
+    datax = [np.zeros(data_len) for i in range(int(nbp))]
+    datay = [np.zeros(data_len) for i in range(int(nbp))]
+    dataz = [np.zeros(data_len) for i in range(int(nbp))]
+
+    index = 0
+    for series in range(1, len(scan_series), 3):
+        start = scan_series[series - 1]
+        stop = scan_series[series]
+        step = scan_series[series + 1]
+        print("Intervals: {} to {} with step {}".format(start, stop, step))
+        for scan in range(start, stop + 1, step):
+            if var_series and var_series[0][0] == "#":
+                datay[index] = load_info(
+                    source, scan, info=var_series, folder=folder, **kwargs
+                )
+                table = load_table(
+                    scan,
+                    source,
+                    folder=folder,
+                    **kwargs,
+                )
+            elif var_series:
+                table = load_table(
+                    scan,
+                    source,
+                    folder=folder,
+                    **kwargs,
+                )
+                datay[index] = table[var_series]
+            else:
+                table = load_table(
+                    scan,
+                    source,
+                    folder=folder,
+                    **kwargs,
+                )
+                datay[index] = index
+
+            datax[index] = table[positioner]
+            if monitor:
+                dataz[index] = table[detector] / table[monitor]
+            else:
+                dataz[index] = table[detector]
+
+            if log:
+                # dataz[index] = [np.log10(a) for a in dataz[index]]
+                for var in range(0, len(dataz[index])):
+                    if dataz[index][var] == 0:
+                        dataz[index][var] = 1
+                dataz[index] = np.log10(dataz[index])
+            index += 1
+    return datax, datay, dataz
+
+
+def plot_2d(
+    source,
+    scan_series,
+    var_series=None,
+    positioner=None,
+    detector=None,
+    monitor=None,
+    log=False,
+    **kwargs,
+):
+    """
+    Plot 2d
+
+    Parameters
+    ----------
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
+    scan_series : list, int
+        start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+        e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
+    var_series: string or list
+        string:
+            - Varying variable for scan series to be read from scan (detector),
+                e.g. SampK (sample temperature), optional.
+            - String starting with #metadata, reads metadata from CSV baseline
+        list: Information on metadata to be read: List starting with #P, #U or #Q for
+            motor positions, user values or Q-position, optional:
+            #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        If None, successive scans will be numbered starting from zero.
+    positioner : string, optional
+        Name of the positioner, this needs to be the same as defined in
+        Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+    detector : string, optional
+        Detector to be read from this scan, again it needs to be the same name
+        as in Bluesky. If None is passed, it defaults to the APD detector.
+    monitor : string, optional
+        Name of the monitor detector for normalization. If None is passed, data are not normalized.
+    log: boolean
+        If True, intensities plotted in logarithmic scale.
+    output: string
+        Output file for png file of plot.
+    kwargs:
+        The necessary kwargs are passed to the loading and fitting functions defined by the
+        `source` argument:
+            - csv        -> possible kwargs: folder, name_format, e.g. "scan_{}_primary.csv"
+            - spec       -> possible kwargs: folder
+            - databroker -> possible kwargs: stream, query
+        Note that a warning will be printed if the an unnecessary kwarg is
+        passed.
+
+    """
+    folder = kwargs.pop("folder", "")
+    output = kwargs.pop("output", None)
+    if isinstance(source, (str, SpecDataFile)) and source != "csv":
+        if isinstance(source, str):
+            path = join(folder, source)
+            source = SpecDataFile(path)
+        if is_Bluesky_specfile(source):
+            _defaults = _bluesky_default_cols
+        else:
+            _defaults = _spec_default_cols
+
+    else:
+        _defaults = _bluesky_default_cols
+
+    if not positioner:
+        positioner = _defaults["positioner"]
+    if not detector:
+        detector = _defaults["detector"]
+    if not monitor:
+        monitor = _defaults["monitor"]
+
+    datax, datay, dataz = load_series(
+        source=source,
+        scan_series=scan_series,
+        log=log,
+        var_series=var_series,
+        positioner=positioner,
+        detector=detector,
+        monitor=monitor,
+        **kwargs,
+    )
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    cmap = plt.get_cmap("rainbow")
+
+    c = ax.pcolormesh(datax, datay, dataz, cmap=cmap, shading="nearest")
+    plt.colorbar(c)
+    z_label = detector
+    x_label = positioner
+    y_label = var_series
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+
+    nlabel = ""
+    for series in range(1, len(scan_series), 3):
+        start = scan_series[series - 1]
+        stop = scan_series[series]
+        nlabel = nlabel + (", #{}-{}".format(start, stop))
+    areas = len(scan_series) / 3
+    if areas < 3:
+        ax.set_title("{}{}".format(z_label, nlabel), fontsize=14)
+    elif areas < 5:
+        ax.set_title("{}{}".format(z_label, nlabel), fontsize=11)
+    else:
+        ax.set_title("{}{}".format(z_label, nlabel), fontsize=8)
+
+    SIZE = 14
+    plt.rc("font", size=SIZE)
+    plt.rc("axes", titlesize=SIZE)
+    plt.rc("axes", labelsize=SIZE)
+    plt.rc("xtick", labelsize=SIZE)
+    plt.rc("ytick", labelsize=SIZE)
+    plt.rc("legend", fontsize=SIZE)
+
+    if output:
+        plt.savefig(output, dpi=600, transparent=True)
