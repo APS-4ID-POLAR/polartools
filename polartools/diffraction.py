@@ -2,9 +2,11 @@
 Functions to load and process x-ray diffraction data.
 
 .. autosummary::
-   ~fit_peak
-   ~load_info
-   ~fit_series
+    ~fit_peak
+    ~load_info
+    ~fit_series
+    ~load_series
+    ~plot_2d
 """
 
 import numpy as np
@@ -391,6 +393,8 @@ def load_series(
         as in Bluesky. If None is passed, it defaults to the APD detector.
     monitor : string, optional
         Name of the monitor detector for normalization. If None is passed, data are not normalized.
+    log: boolean
+        If True, z-axis plotted in logarithmic scale.
     kwargs:
         The necessary kwargs are passed to the loading and fitting functions defined by the
         `source` argument:
@@ -489,9 +493,7 @@ def load_series(
                 dataz[index] = table[detector]
 
             if log:
-                for var in range(0, len(dataz[index])):
-                    if dataz[index][var] == 0:
-                        dataz[index][var] = 1
+                dataz[index][dataz[index] == 0] = 1
                 dataz[index] = np.log10(dataz[index])
             index += 1
     return datax, datay, dataz
@@ -537,7 +539,7 @@ def plot_2d(
     monitor : string, optional
         Name of the monitor detector for normalization. If None is passed, data are not normalized.
     log: boolean
-        If True, intensities plotted in logarithmic scale.
+        If True, z-axis plotted in logarithmic scale.
     output: string
         Output file for png file of plot.
     kwargs:
