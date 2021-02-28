@@ -434,18 +434,6 @@ def load_series(
             f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
         )
 
-    table = load_table(
-        scan_series[1],
-        source,
-        folder=folder,
-        **kwargs,
-    )
-    data_len = len(table[detector])
-
-    datax = [np.zeros(data_len) for i in range(int(nbp))]
-    datay = [np.zeros(data_len) for i in range(int(nbp))]
-    dataz = [np.zeros(data_len) for i in range(int(nbp))]
-
     index = 0
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
@@ -454,14 +442,18 @@ def load_series(
         print("Intervals: {} to {} with step {}".format(start, stop, step))
         for scan in range(start, stop + 1, step):
             if var_series and var_series[0][0] == "#":
-                datay[index] = load_info(
-                    source, scan, info=var_series, folder=folder, **kwargs
-                )
                 table = load_table(
                     scan,
                     source,
                     folder=folder,
                     **kwargs,
+                )
+                data_len = len(table[detector])
+                datax = [np.zeros(data_len) for i in range(int(nbp))]
+                datay = [np.zeros(data_len) for i in range(int(nbp))]
+                dataz = [np.zeros(data_len) for i in range(int(nbp))]
+                datay[index] = load_info(
+                    source, scan, info=var_series, folder=folder, **kwargs
                 )
             elif var_series:
                 table = load_table(
@@ -470,6 +462,10 @@ def load_series(
                     folder=folder,
                     **kwargs,
                 )
+                data_len = len(table[detector])
+                datax = [np.zeros(data_len) for i in range(int(nbp))]
+                datay = [np.zeros(data_len) for i in range(int(nbp))]
+                dataz = [np.zeros(data_len) for i in range(int(nbp))]
                 datay[index] = table[var_series]
             else:
                 table = load_table(
@@ -478,6 +474,10 @@ def load_series(
                     folder=folder,
                     **kwargs,
                 )
+                data_len = len(table[detector])
+                datax = [np.zeros(data_len) for i in range(int(nbp))]
+                datay = [np.zeros(data_len) for i in range(int(nbp))]
+                dataz = [np.zeros(data_len) for i in range(int(nbp))]
                 datay[index] = index
 
             datax[index] = table[positioner]
