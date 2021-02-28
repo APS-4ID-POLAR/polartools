@@ -434,18 +434,13 @@ def load_series(
             f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
         )
 
-    if isinstance(source, SpecDataFile):
-        specscan = source.getScan(scan_series[1])
-        data_len = len(specscan.data[detector])
-    elif source == "csv":
-        name_format = kwargs.pop("name_format", "scan_{}_primary.csv")
-        scan = load_csv(
-            scan_id=scan_series[1], folder=folder, name_format=name_format
-        )
-        data_len = len(scan[detector])
-    else:
-        # to be implemented for db
-        pass
+    table = df.load_table(
+        scan_series[1],
+        source,
+        folder=folder,
+        **kwargs,
+    )
+    data_len = len(table[detector])
 
     datax = [np.zeros(data_len) for i in range(int(nbp))]
     datay = [np.zeros(data_len) for i in range(int(nbp))]
