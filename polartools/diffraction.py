@@ -363,7 +363,8 @@ def load_series(
     **kwargs,
 ):
     """
-    Plot 2d
+    Load series of scans as function of variable like temperature of field which can be
+    spaced unequally. Generates input arrays for plot_2d.
 
     Parameters
     ----------
@@ -399,6 +400,9 @@ def load_series(
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
+    Returns
+    -------
+    data : arrays with x, y and z information for 2D plot
     """
     nbp = 0
     for series in range(1, len(scan_series), 3):
@@ -504,7 +508,7 @@ def plot_2d(
     **kwargs,
 ):
     """
-    Plot 2d
+    Plot 2d: Creates 2D plot of scans as function of variable parameter
 
     Parameters
     ----------
@@ -544,6 +548,10 @@ def plot_2d(
             - databroker -> possible kwargs: stream, query
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
+
+    Returns
+    -------
+    2D plot, png-file
 
     """
     folder = kwargs.pop("folder", "")
