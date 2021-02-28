@@ -623,3 +623,4 @@ def plot_2d(
 
     if output:
         plt.savefig(output, dpi=600, transparent=True)
+    plt.show()
