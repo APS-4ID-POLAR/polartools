@@ -434,7 +434,7 @@ def load_series(
             f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
         )
 
-    table = df.load_table(
+    table = load_table(
         scan_series[1],
         source,
         folder=folder,
