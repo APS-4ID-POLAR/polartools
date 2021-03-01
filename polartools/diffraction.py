@@ -599,7 +599,10 @@ def plot_2d(
     plt.colorbar(c)
     z_label = detector
     x_label = positioner
-    y_label = var_series
+    if isinstance(var_series, list):
+        y_label = " ".join(map(str, var_series))
+    else:
+        y_label = var_series
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     ax.xaxis.set_major_locator(plt.MaxNLocator(3))
@@ -694,7 +697,11 @@ def plot_fit(
     )
     ax.set_ylabel("Intensity")
     ax.set_ylabel("FWHM")
-    ax.set_xlabel(var_series)
+    if isinstance(var_series, list):
+        x_label = " ".join(map(str, var_series))
+    else:
+        x_label = var_series
+    ax.set_xlabel(x_label)
 
     plt.show()
     print(data)
