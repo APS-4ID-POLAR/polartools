@@ -7,7 +7,7 @@ Functions to load and process x-ray diffraction data.
     ~fit_series
     ~load_series
     ~plot_2d
-    ~plot)fit
+    ~plot_fit
 """
 
 import numpy as np
@@ -153,7 +153,7 @@ def load_info(source, scan_id, info, **kwargs):
         if info[0] == "#P":
             data_array = specscan.P
             if isinstance(info[1], int):
-                value = data_array[info[1]][info[2]]
+                value = data_array[info[1]][int(info[2])]
             else:
                 raise ValueError(
                     "For #P, expect row and column integer numbers"
@@ -165,7 +165,7 @@ def load_info(source, scan_id, info, **kwargs):
                 for item in data_array:
                     ival = item.split(":")
                     if ival[0] == info[1]:
-                        value = ival[info[2]].split()[0]
+                        value = ival[1].split()[int(info[2])]
                         break
             else:
                 raise ValueError("For #U, expect string and item number")
@@ -179,7 +179,7 @@ def load_info(source, scan_id, info, **kwargs):
             )
     else:
         pass
-        # to be implemented
+        # to be implemented for database
     return value
 
 
@@ -345,7 +345,7 @@ def fit_series(
     return DataFrame(
         fit_result,
         columns=[
-            var_series,
+            "Index",
             "Std Index",
             "Intensity",
             "Std I",
@@ -602,6 +602,8 @@ def plot_2d(
     y_label = var_series
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
+    ax.xaxis.set_major_locator(plt.MaxNLocator(3))
+    ax.yaxis.set_major_locator(plt.MaxNLocator(5))
 
     nlabel = ""
     for series in range(1, len(scan_series), 3):
@@ -656,10 +658,10 @@ def plot_fit(
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(3, 1, 1)
     ax.errorbar(
-        data[var_series],
+        data["Index"],
         data["Intensity"],
         yerr=data["Std I"],
-        xerr=data["Std"],
+        xerr=data["Std Index"],
         color="orange",
         marker="o",
         linewidth=2,
@@ -668,10 +670,10 @@ def plot_fit(
     ax.set_ylabel("Intensity")
     ax = fig.add_subplot(3, 1, 2)
     ax.errorbar(
-        data[var_series],
+        data["Index"],
         data["Position"],
         yerr=data["Std P"],
-        xerr=data["Std"],
+        xerr=data["Std Index"],
         color="blue",
         marker="o",
         linewidth=2,
@@ -681,10 +683,10 @@ def plot_fit(
     ax.set_ylabel("Position")
     ax = fig.add_subplot(3, 1, 3)
     ax.errorbar(
-        data[var_series],
+        data["Index"],
         data["Width"],
         yerr=data["Std W"],
-        xerr=data["Std"],
+        xerr=data["Std Index"],
         color="green",
         marker="o",
         linewidth=2,
