@@ -37,7 +37,7 @@ _bluesky_default_cols = dict(
 )
 
 
-def fit_peak(xdata, ydata, model="Gaussian", output=False):
+def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
     """
     Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.
 
@@ -51,6 +51,8 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
         List of y-axis values.
     model: string
         fit model: Gaussian, Lorentzian, PseudoVoigt
+    scan: integer
+        scan number of scan fitted
     output: boolean, optional
         Output fit parameters and plot data+fit for each scan.
 
@@ -83,7 +85,7 @@ def fit_peak(xdata, ydata, model="Gaussian", output=False):
 
     fit = mod.fit(ydata, pars, x=xdata)
     if output:
-        print(f"Fitting with {model} model")
+        print(f"Fitting scan #{scan} with {model} model")
         for key in fit.params:
             print(
                 key, "=", fit.params[key].value, "+/-", fit.params[key].stderr
@@ -329,7 +331,7 @@ def fit_series(
             if normalize:
                 y = y / y0
 
-            fit = fit_peak(x, y, model=model, output=output)
+            fit = fit_peak(x, y, model=model, scan=scan, output=output)
 
             fit_result[index][2] = fit.params["amplitude"].value
             fit_result[index][3] = fit.params["amplitude"].stderr
@@ -342,7 +344,7 @@ def fit_series(
     return DataFrame(
         fit_result,
         columns=[
-            "Index",
+            var_series,
             "Std Index",
             "Intensity",
             "Std I",
@@ -624,3 +626,72 @@ def plot_2d(
     if output:
         plt.savefig(output, dpi=600, transparent=True)
     plt.show()
+
+
+def plot_fit(
+    source,
+    scan_series,
+    model="Gaussian",
+    output=False,
+    var_series=None,
+    positioner=None,
+    detector=None,
+    monitor=None,
+    normalize=False,
+    **kwargs,
+):
+
+    data = fit_series(
+        source,
+        scan_series,
+        output=output,
+        var_series=var_series,
+        positioner=positioner,
+        detector=detector,
+        monitor=monitor,
+        normalize=normalize,
+        **kwargs,
+    )
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_subplot(3, 1, 1)
+    ax.errorbar(
+        data[var_series],
+        data["Intensity"],
+        yerr=data["Std I"],
+        xerr=data["Std"],
+        color="orange",
+        marker="o",
+        linewidth=2,
+        markersize=10,
+    )
+    ax.set_ylabel("Intensity")
+    ax = fig.add_subplot(3, 1, 2)
+    ax.errorbar(
+        data[var_series],
+        data["Position"],
+        yerr=data["Std P"],
+        xerr=data["Std"],
+        color="blue",
+        marker="o",
+        linewidth=2,
+        markersize=10,
+    )
+    ax.set_ylabel("Intensity")
+    ax.set_ylabel("Position")
+    ax = fig.add_subplot(3, 1, 3)
+    ax.errorbar(
+        data[var_series],
+        data["Width"],
+        yerr=data["Std W"],
+        xerr=data["Std"],
+        color="green",
+        marker="o",
+        linewidth=2,
+        markersize=10,
+    )
+    ax.set_ylabel("Intensity")
+    ax.set_ylabel("FWHM")
+    ax.set_xlabel(var_series)
+
+    plt.show()
+    print(data)
