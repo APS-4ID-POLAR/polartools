@@ -595,7 +595,7 @@ def plot_2d(
     ax = fig.add_subplot(1, 1, 1)
     cmap = plt.get_cmap("rainbow")
 
-    c = ax.pcolormesh(datax, datay, dataz, cmap=cmap, shading="nearest")
+    c = ax.pcolormesh(datax, datay, dataz, cmap=cmap, shading="auto")
     plt.colorbar(c)
     z_label = detector
     x_label = positioner
@@ -646,6 +646,67 @@ def plot_fit(
     normalize=False,
     **kwargs,
 ):
+    """
+    Fit and plot series of scans with chosen functional and returns fit parameters.
+
+    Uses lmfit (https://lmfit.github.io/lmfit-py/).
+
+    Parameters
+    ----------
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
+    scan_series : int
+        start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+    model : string, optional
+        fit model: Gaussian, Lorentian, Voigt, PseidoVoigt
+    output : boolean, optional
+        Output fit parameters and plot data+fit for each scan.
+    var_series : string or list
+        If string
+
+        - Varying variable for scan series to be read from scan (detector),
+                e.g. SampK (sample temperature), optional.
+        - String starting with #metadata, reads metadata from CSV baseline
+
+        If list, information on metadata to be read: List starting with #P, #U
+        or #Q for motor positions, user values or Q-position, optional:
+
+        - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
+        - #U ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+        - #Q ['#Q', None, element_number], e.g. ['#Q', None, 0]
+
+        If None, successive scans will be numbered starting from zero.
+    positioner : string, optional
+        Name of the positioner, this needs to be the same as defined in
+        Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+    detector : string, optional
+        Detector to be read from this scan, again it needs to be the same name
+        as in Bluesky. If None is passed, it defaults to the APD detector.
+    monitor : string, optional
+        Name of the monitor detector. If None is passed, it defaults to the ion
+        chamber 3.
+    normalize : boolean, optional
+        Normalization to selected/default monitor on/off
+    kwargs :
+        The necessary kwargs are passed to the loading functions defined by the
+        `source` argument:
+
+        - csv -> possible kwargs: folder, name_format.
+        - spec -> possible kwargs: folder.
+        - databroker -> possible kwargs: stream, query.
+
+        Note that a warning will be printed if the an unnecessary kwarg is
+        passed.
+
+    Returns
+    -------
+    fit : lmfit ModelResult class
+        Contains the fit results. See:
+        https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
+
+    plot: plot of fitted data as function of variable changing between scans
+
+    """
 
     data = fit_series(
         source,
@@ -659,8 +720,8 @@ def plot_fit(
         **kwargs,
     )
     fig = plt.figure(figsize=(8, 8))
-    ax = fig.add_subplot(3, 1, 1)
-    ax.errorbar(
+    ax1 = fig.add_subplot(3, 1, 1)
+    ax1.errorbar(
         data["Index"],
         data["Intensity"],
         yerr=data["Std I"],
@@ -670,9 +731,9 @@ def plot_fit(
         linewidth=2,
         markersize=10,
     )
-    ax.set_ylabel("Intensity")
-    ax = fig.add_subplot(3, 1, 2)
-    ax.errorbar(
+    ax1.set_ylabel("Intensity")
+    ax2 = fig.add_subplot(3, 1, 2)
+    ax2.errorbar(
         data["Index"],
         data["Position"],
         yerr=data["Std P"],
@@ -682,10 +743,9 @@ def plot_fit(
         linewidth=2,
         markersize=10,
     )
-    ax.set_ylabel("Intensity")
-    ax.set_ylabel("Position")
-    ax = fig.add_subplot(3, 1, 3)
-    ax.errorbar(
+    ax2.set_ylabel("Position")
+    ax3 = fig.add_subplot(3, 1, 3)
+    ax3.errorbar(
         data["Index"],
         data["Width"],
         yerr=data["Std W"],
@@ -695,13 +755,12 @@ def plot_fit(
         linewidth=2,
         markersize=10,
     )
-    ax.set_ylabel("Intensity")
-    ax.set_ylabel("FWHM")
+    ax3.set_ylabel("FWHM")
     if isinstance(var_series, list):
         x_label = " ".join(map(str, var_series))
     else:
         x_label = var_series
-    ax.set_xlabel(x_label)
+    ax3.set_xlabel(x_label)
 
     plt.show()
     print(data)
