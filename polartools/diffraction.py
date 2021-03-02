@@ -723,7 +723,7 @@ def plot_fit(
         normalize=normalize,
         **kwargs,
     )
-    fig = plt.figure(figsize=(8, 12))
+    fig = plt.figure(figsize=(8, 8))
     ax1 = fig.add_subplot(3, 1, 1)
     ax1.errorbar(
         data["Index"],
@@ -766,5 +766,5 @@ def plot_fit(
         x_label = var_series
     ax3.set_xlabel(x_label)
 
-    plt.show()
     print(data)
+    plt.show()
