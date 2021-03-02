@@ -469,9 +469,12 @@ def load_series(
                     folder=folder,
                     **kwargs,
                 )
-                datay[index] = load_info(
+                y_value = load_info(
                     source, scan, info=var_series, folder=folder, **kwargs
                 )
+                tt = np.empty(data_len)
+                tt.fill(y_value)
+                datay[index] = tt
             elif var_series:
                 table = load_table(
                     scan,
@@ -487,8 +490,9 @@ def load_series(
                     folder=folder,
                     **kwargs,
                 )
-                datay[index] = index
-
+                tt = np.empty(data_len)
+                tt.fill(index)
+                datay[index] = tt
             datax[index] = table[positioner]
             if monitor:
                 dataz[index] = table[detector] / table[monitor]
@@ -719,7 +723,7 @@ def plot_fit(
         normalize=normalize,
         **kwargs,
     )
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(8, 12))
     ax1 = fig.add_subplot(3, 1, 1)
     ax1.errorbar(
         data["Index"],
