@@ -207,7 +207,7 @@ def fit_series(
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
     model : string, optional
-        fit model: Gaussian, Lorentian, Voigt, PseidoVoigt
+        fit model: Gaussian, Lorentzian, PseudoVoigt
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
     var_series : string or list
@@ -662,7 +662,7 @@ def plot_fit(
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
     model : string, optional
-        fit model: Gaussian, Lorentian, Voigt, PseidoVoigt
+        fit model: Gaussian, Lorentzian, PseudoVoigt
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
     var_series : string or list
@@ -715,6 +715,7 @@ def plot_fit(
     data = fit_series(
         source,
         scan_series,
+        model=model,
         output=output,
         var_series=var_series,
         positioner=positioner,
