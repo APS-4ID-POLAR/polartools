@@ -23,8 +23,11 @@ dependencies:
   - suitcase-csv
   - suitcase-json-metadata
   - xraylarch
+  - ipython
+  - numpydoc
   - pip:
     - ipython-genutils==0.2.0
     - prompt-toolkit==1.0.15
     - sphinx-rtd-theme
     - super-state-machine
+    - sphinx-copybutton
