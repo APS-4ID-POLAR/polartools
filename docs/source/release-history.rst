@@ -3,6 +3,32 @@ Release History
 ===============
 
 -------------------
+v0.2.0 (2021-03-02)
+-------------------
+
+**New features**
+
+- Absorption normalization functions.
+  
+- Daniel Haskel's `fluo` code (:func:`polartools.absorption.fluo_corr`) to correct for over-absorption in fluorescence data.
+
+- Function to plot 2D data (:func:`polartools.diffraction.plot_2d`).
+
+- Function to load a series of scans (:func:`polartools.diffraction.load_series`)
+
+**Maintenance**
+
+- All :mod:`absorption` functions now return `numpy.array`.
+
+- :func:`polartools.load_data.load databroker` now uses the databroker "v1" because it is currently faster.
+
+- Forces `databroker` >= 1.2.2, it fixes an issue after the latest `intake` update.
+
+**Pull requests**
+
+#29, 30, 31, 32, 33, 36.
+
+-------------------
 v0.1.4 (2021-02-09)
 -------------------
 
