@@ -84,10 +84,12 @@ def load_csv(scan_id, folder="", name_format="scan_{}_primary.csv"):
     return read_csv(join(folder, name_format.format(scan_id)))
 
 
-def load_databroker(scan_id, db, stream="primary", query=None):
+def load_databroker(scan_id, db, stream="primary", query=None,
+                    use_db_v1=True):
     """
     Load data of the first scan with the provided scan_id.
 
+    Currently defaults to databroker.v1 because it is faster. See issue #28.
 
     For further details, refer to the `databroker` `documentation`_.
 
@@ -103,6 +105,8 @@ def load_databroker(scan_id, db, stream="primary", query=None):
         Selects the stream from which data will be loaded.
     query : dict, optional
         Dictionary with search parameters for the database.
+    use_db_v1 : bool, optional
+        Chooses databroker API version between 'v1' or 'v2', defaults to 'v1'.
 
     Returns
     -------
@@ -111,7 +115,10 @@ def load_databroker(scan_id, db, stream="primary", query=None):
     """
 
     _db = db_query(db, query) if query else db
-    return getattr(_db.v2[scan_id], stream).read().to_dataframe()
+    if use_db_v1:
+        return db.v1[scan_id].table(stream_name=stream)
+    else:
+        return getattr(_db.v2[scan_id], stream).read().to_dataframe()
 
 
 def db_query(db, query):
@@ -179,7 +186,7 @@ def load_table(scan, source, **kwargs):
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
@@ -205,7 +212,9 @@ def load_table(scan, source, **kwargs):
     else:
         stream = kwargs.pop("stream", "primary")
         query = kwargs.pop("query", None)
-        table = load_databroker(scan, source, stream=stream, query=query)
+        use_db_v1 = kwargs.pop("use_db_v1", True)
+        table = load_databroker(scan, source, stream=stream, query=query,
+                                use_db_v1=use_db_v1)
 
     if len(kwargs) != 0:
         warn(f"The following kwargs were not used! {list(kwargs.keys())}")

@@ -123,7 +123,7 @@ def load_info(source, scan_id, info, **kwargs):
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
@@ -242,7 +242,7 @@ def fit_series(
 
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query.
+        - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
