@@ -42,27 +42,32 @@ def show_meta(db, scan_from, scan_to=None, query=None, long=False):
     for scan_number in range(scan_from, scan_to):
         try:
             meta = db_range[scan_number].metadata["start"]
-        except:
+        except KeyError:
             print(f"Scan {scan_number} not existing!")
             return
+        time_new = meta["time"]
+        time = datetime.fromtimestamp(time_new)
+        if time_new < time_old:
+            return
+        time_old = time_new
         try:
             scan_type = meta["plan_name"]
-        except:
+        except KeyError:
             scan_type = None
         try:
             motors = meta["motors"]
-        except:
+        except KeyError:
             motors = None
         try:
             plan_args = meta["plan_pattern_args"]
-        except:
+        except KeyError:
             plan_args = None
         if scan_type == "list_scan":
             scan_from = plan_args["args"][1][0]
             scan_to = plan_args["args"][1][-1]
             try:
                 scan_type2 = meta["hints"]["scan_type"]
-            except:
+            except KeyError:
                 scan_type2 = None
         else:
             scan_from = plan_args["args"][1]
@@ -73,17 +78,12 @@ def show_meta(db, scan_from, scan_to=None, query=None, long=False):
         try:
             det = hint["detectors"]
             mon = hint["monitor"]
-        except:
+        except KeyError:
             det = None
             mon = None
-        time_new = meta["time"]
-        time = datetime.fromtimestamp(time_new)
-        if time_new < time_old:
-            return
-        time_old = time_new
         try:
             status = db[scan_number].metadata["stop"]["exit_status"]
-        except:
+        except KeyError:
             status = "running"
 
         if scan_type == "list_scan":
