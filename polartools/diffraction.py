@@ -290,7 +290,7 @@ def fit_series(
     fit_result = [np.zeros(8) for i in range(int(nbp))]
 
     index = 0
-
+    kwargs_scan = kwargs.copy()
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
         stop = scan_series[series]
@@ -306,14 +306,14 @@ def fit_series(
                     scan,
                     source,
                     folder=folder,
-                    **kwargs,
+                    **kwargs_scan,
                 )
             elif var_series:
                 table = load_table(
                     scan,
                     source,
                     folder=folder,
-                    **kwargs,
+                    **kwargs_scan,
                 )
                 fit_result[index][0] = table[var_series].mean()
                 fit_result[index][1] = table[var_series].std()
@@ -322,7 +322,7 @@ def fit_series(
                     scan,
                     source,
                     folder=folder,
-                    **kwargs,
+                    **kwargs_scan,
                 )
                 fit_result[index][0] = index
                 fit_result[index][1] = 0
@@ -443,18 +443,19 @@ def load_series(
         raise ValueError(
             f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
         )
-
+    kwargs_scan = kwargs.copy()
     table = load_table(
         scan_series[1],
         source,
         folder=folder,
-        **kwargs,
+        **kwargs_scan,
     )
     data_len = len(table[detector])
     datax = [np.zeros(data_len) for i in range(int(nbp))]
     datay = [np.zeros(data_len) for i in range(int(nbp))]
     dataz = [np.zeros(data_len) for i in range(int(nbp))]
 
+    kwargs_scan = kwargs.copy()
     index = 0
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
@@ -467,7 +468,7 @@ def load_series(
                     scan,
                     source,
                     folder=folder,
-                    **kwargs,
+                    **kwargs_scan,
                 )
                 y_value = load_info(
                     source, scan, info=var_series, folder=folder, **kwargs
@@ -480,7 +481,7 @@ def load_series(
                     scan,
                     source,
                     folder=folder,
-                    **kwargs,
+                    **kwargs_scan,
                 )
                 datay[index] = table[var_series]
             else:
@@ -488,7 +489,7 @@ def load_series(
                     scan,
                     source,
                     folder=folder,
-                    **kwargs,
+                    **kwargs_scan,
                 )
                 tt = np.empty(data_len)
                 tt.fill(index)
