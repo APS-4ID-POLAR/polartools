@@ -17,6 +17,7 @@ from pandas import read_csv, DataFrame
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 from warnings import warn
+import copy
 
 try:
     from databroker.queries import TimeRange
@@ -202,22 +203,23 @@ def load_table(scan, source, **kwargs):
     :func:`polartools.load_data.load_spec`
     """
 
-    folder = kwargs.pop("folder", "")
+    _kwargs = copy.deepcopy(kwargs)
+    folder = _kwargs.pop("folder", "")
     if source == "csv":
         name_format = kwargs.pop("name_format", "scan_{}_primary.csv")
         table = load_csv(scan, folder=folder, name_format=name_format)
     elif isinstance(source, str) or isinstance(source, SpecDataFile):
         table = load_spec(scan, source, folder=folder)
     else:
-        stream = kwargs.pop("stream", "primary")
-        query = kwargs.pop("query", None)
-        use_db_v1 = kwargs.pop("use_db_v1", True)
+        stream = _kwargs.pop("stream", "primary")
+        query = _kwargs.pop("query", None)
+        use_db_v1 = _kwargs.pop("use_db_v1", True)
         table = load_databroker(
             scan, source, stream=stream, query=query, use_db_v1=use_db_v1
         )
 
-    if len(kwargs) != 0:
-        warn(f"The following kwargs were not used! {list(kwargs.keys())}")
+    if len(_kwargs) != 0:
+        warn(f"The following kwargs were not used! {list(_kwargs.keys())}")
 
     return table
 

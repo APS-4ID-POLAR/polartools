@@ -290,7 +290,7 @@ def fit_series(
     fit_result = [np.zeros(8) for i in range(int(nbp))]
 
     index = 0
-    
+
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
         stop = scan_series[series]
