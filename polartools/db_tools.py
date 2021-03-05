@@ -42,49 +42,45 @@ def show_meta(db, scan_from, scan_to=None, query=None, long=False):
     for scan_number in range(scan_from, scan_to):
         try:
             meta = db_range[scan_number].metadata["start"]
+
         except KeyError:
             print(f"Scan {scan_number} not existing!")
             return
+
         time_new = meta["time"]
         time = datetime.fromtimestamp(time_new)
         if time_new < time_old:
             return
         time_old = time_new
-        try:
-            scan_type = meta["plan_name"]
-        except KeyError:
-            scan_type = None
-        try:
-            motors = meta["motors"]
-        except KeyError:
-            motors = None
-        try:
-            plan_args = meta["plan_pattern_args"]
-        except KeyError:
-            plan_args = None
+        scan_type = meta["plan_name"] if "plan_name" in meta else None
+        motors = meta["motors"] if "motors" in meta else None
+
+        plan_args = (
+            meta["plan_pattern_args"] if "plan_pattern_args" in meta else None
+        )
+
         if scan_type == "list_scan":
             scan_from = plan_args["args"][1][0]
             scan_to = plan_args["args"][1][-1]
-            try:
-                scan_type2 = meta["hints"]["scan_type"]
-            except KeyError:
-                scan_type2 = None
+            scan_type2 = (
+                meta["hints"]["scan_type"]
+                if "scan_type" in meta["hints"]
+                else None
+            )
         else:
             scan_from = plan_args["args"][1]
             scan_to = plan_args["args"][2]
 
         number_of_points = meta["num_points"]
         hint = meta["hints"]
-        try:
-            det = hint["detectors"]
-            mon = hint["monitor"]
-        except KeyError:
-            det = None
-            mon = None
-        try:
-            status = db[scan_number].metadata["stop"]["exit_status"]
-        except KeyError:
-            status = "running"
+        det = hint["detectors"] if "detectors" in hint else None
+        mon = hint["monitor"] if "monitor" in hint else None
+        meta_stop = db[scan_number].metadata["stop"]
+        status = (
+            meta_stop["exit_status"]
+            if "exit_status" in meta_stop
+            else "running"
+        )
 
         if scan_type == "list_scan":
             print(
