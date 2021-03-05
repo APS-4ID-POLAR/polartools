@@ -290,13 +290,14 @@ def fit_series(
     fit_result = [np.zeros(8) for i in range(int(nbp))]
 
     index = 0
-    kwargs_scan = kwargs.copy()
+    
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
         stop = scan_series[series]
         step = scan_series[series + 1]
         print("Intervals: {} to {} with step {}".format(start, stop, step))
         for scan in range(start, stop + 1, step):
+            kwargs_scan = kwargs.copy()
             if var_series and var_series[0][0] == "#":
                 fit_result[index][0] = load_info(
                     source, scan, info=var_series, folder=folder, **kwargs
@@ -326,9 +327,9 @@ def fit_series(
                 )
                 fit_result[index][0] = index
                 fit_result[index][1] = 0
-            x = table[positioner]
-            y = table[detector]
-            y0 = table[monitor]
+            x = table[positioner].to_numpy()
+            y = table[detector].to_numpy()
+            y0 = table[monitor].to_numpy()
             if normalize:
                 y = y / y0
 
