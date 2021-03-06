@@ -22,7 +22,6 @@ dependencies:
   - versioneer
   - suitcase-csv
   - suitcase-json-metadata
-  - wxpython==4.0.2
   - xraylarch
   - ipython
   - numpydoc
