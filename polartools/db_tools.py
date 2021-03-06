@@ -220,12 +220,12 @@ def collect_meta(scan_numbers, db, meta_keys, query=None):
     return output
 
 
-def _flatten_list(input):
+def _flatten_list(inp):
     """Only handles lists to second level"""
     output = []
-    for inp in input:
-        if isinstance(inp, list):
-            output += [item for item in inp]
+    for item in inp:
+        if isinstance(item, list):
+            output += [i for i in item]
         else:
-            output.append(inp)
+            output.append(item)
     return output
