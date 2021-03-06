@@ -173,7 +173,29 @@ def show_meta_2(scans, db, scan_to=None, query=None, meta_keys='short'):
 
 
 def collect_meta(scan_numbers, db, meta_keys, query=None):
+    """
+    Extracts metadata of a list of scans.
 
+    Parameters
+    ----------
+    scans : iterable
+        Scan numbers or uids.
+    db : databroker database
+        Searcheable database
+    scan_to : int, optional
+        Final scan number to process. Note that this is only meaningful if
+        an integer is passed to `scans`.
+    meta_keys : iterable
+        List with metadata keys to read.
+    query : dictionary, optional
+        Search parameters.
+
+    Returns
+    -------
+    meta : dictionary
+        Metadata organized by scan number or uid (whatever is given in
+        `scans`).
+    """
     db_range = db_query(db, query=query) if query else db
     output = OrderedDict()
     for scan in scan_numbers:
