@@ -152,20 +152,26 @@ def show_meta_2(scans, db, scan_to=None, query=None, meta_keys='short'):
 
         row = [scanno]
         for key, item in values.items():
-
-            if None in item:
-                item.remove(None)
-            if len(item) == 1:
-                item = item[0]
-
             if key == "plan_pattern_args":
-                if item is not None:
-                    row.append(item['args'][-2])
-                    row.append(item['args'][-1])
+                if item[0] is not None:
+                    row.append(item[0]['args'][-2])
+                    row.append(item[0]['args'][-1])
                 else:
                     row.append(None)
                     row.append(None)
+
+            elif key == 'time':
+                time = []
+                for t in item:
+                    time.append(datetime.fromtimestamp(t).strftime(
+                        "%m/%d/%Y %H:%M:%S"))
+                row.append(time)
+
             else:
+                if None in item:
+                    item.remove(None)
+                if len(item) == 1:
+                    item = item[0]
                 row.append(item)
         table.rows.append(row)
 
@@ -206,14 +212,6 @@ def collect_meta(scan_numbers, db, meta_keys, query=None):
             output[scan] = OrderedDict()
             for key in meta_keys:
                 output[scan][key] = [start.get(key, None), stop.get(key, None)]
-
-                if key == 'time':
-                    for i in range(2):
-                        if output[scan][key][i] is not None:
-                            output[scan][key][i] = datetime.fromtimestamp(
-                                output[scan][key][i]
-                                ).strftime("%m/%d/%Y %H:%M:%S")
-
                 output[scan][key] = _flatten_list(output[scan][key])
 
         except KeyError:
