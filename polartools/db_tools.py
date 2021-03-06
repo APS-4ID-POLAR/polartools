@@ -6,13 +6,15 @@ Functions to access database information.
 """
 
 from datetime import datetime
-from .load_data import db_query
+from polartools.load_data import db_query
+from collections import OrderedDict
+from pyRestTable import Table
+from warnings import warn
 
 
 def show_meta(db, scan_from, scan_to=None, query=None, long=False):
     """
     Searches the databroker v2 database.
-
     Parameters
     ----------
     db :
@@ -25,12 +27,10 @@ def show_meta(db, scan_from, scan_to=None, query=None, long=False):
         Search parameters.
     long: boolean
         long output
-
     Returns
     -------
     output :
         List of scan metadata
-
     """
 
     db_range = db_query(db, query=query) if query else db
@@ -84,13 +84,128 @@ def show_meta(db, scan_from, scan_to=None, query=None, long=False):
 
         if scan_type == "list_scan":
             print(
-                f"#{scan_number} {scan_type}[{scan_type2}] {motors} {scan_from} {scan_to} {number_of_points} {status}"
+                f"#{scan_number} {scan_type}[{scan_type2}] {motors} "
+                f"{scan_from} {scan_to} {number_of_points} {status}"
             )
         else:
             print(
-                f"#{scan_number} {scan_type} {motors} {scan_from} {scan_to} {number_of_points} {status}"
+                f"#{scan_number} {scan_type} {motors} {scan_from} {scan_to} "
+                f"{number_of_points} {status}"
             )
 
         if long:
             print(f"        detector={det}, monitor={mon}")
             print(f"        time: {time}")
+
+
+def show_meta_2(scans, db, scan_to=None, query=None, meta_keys='short'):
+    """
+    Print metadata of scans.
+
+    Parameters
+    ----------
+    scans : int or iterable
+        Scan numbers or uids. If an integer is passed, it will process scans
+        from `scans` to `scan_to`.
+    db : databroker database
+        Searcheable database
+    scan_to : int, optional
+        Final scan number to process. Note that this is only meaningful if
+        an integer is passed to `scans`.
+    query : dictionary, optional
+        Search parameters.
+    meta_keys : string or iterable, optional
+        List with metadata keys to read. There are two preset metadata lists
+        that can be used with `meta_keys="short"` or `meta_keys="long"`.
+    """
+
+    if isinstance(scans, int):
+        if scan_to is None:
+            scan_to = scans + 1
+
+        if scan_to < scans:
+            raise ValueError("scans must be larger than scan_to, but you "
+                             f"entered: scans = {scans} and scan_to = "
+                             f"{scan_to}.")
+
+        scans = range(scans, scan_to)
+
+    if meta_keys == 'short':
+        meta_keys = ["motors", "scan_type", "plan_name", "plan_pattern_args",
+                     "num_points", "exit_status"]
+    elif meta_keys == 'long':
+        meta_keys = ["motors", "scan_type", "plan_name", "plan_pattern_args",
+                     "num_points", "exit_status", "time", "hints"]
+
+    meta = collect_meta(scans, db, meta_keys, query=query)
+    table = Table()
+
+    if "plan_pattern_args" in meta_keys:
+        index = meta_keys.index("plan_pattern_args")
+        meta_keys.remove("plan_pattern_args")
+        meta_keys.insert(index, "final pos.")
+        meta_keys.insert(index, "init. pos.")
+
+    table.labels = ['Scan #'] + list(meta_keys)
+
+    for scanno, values in meta.items():
+
+        row = [scanno]
+        for key, item in values.items():
+
+            if None in item:
+                item.remove(None)
+            if len(item) == 1:
+                item = item[0]
+
+            if key == "plan_pattern_args":
+                if item is not None:
+                    row.append(item['args'][-2])
+                    row.append(item['args'][-1])
+                else:
+                    row.append(None)
+                    row.append(None)
+            else:
+                row.append(item)
+        table.rows.append(row)
+
+    print(table.reST(fmt='grid'))
+
+
+def collect_meta(scan_numbers, db, meta_keys, query=None):
+
+    db_range = db_query(db, query=query) if query else db
+    output = OrderedDict()
+    for scan in scan_numbers:
+        try:
+            start = db_range[scan].metadata['start']
+            stop = db_range[scan].metadata.get('stop', None)
+
+            output[scan] = OrderedDict()
+            for key in meta_keys:
+                output[scan][key] = [start.get(key, None), stop.get(key, None)]
+
+                if key == 'time':
+                    for i in range(2):
+                        if output[scan][key][i] is not None:
+                            output[scan][key][i] = datetime.fromtimestamp(
+                                output[scan][key][i]
+                                ).strftime("%m/%d/%Y %H:%M:%S")
+
+                output[scan][key] = _flatten_list(output[scan][key])
+
+        except KeyError:
+            warn(f'The scan number {scan} was not found.')
+
+    return output
+
+
+def _flatten_list(input):
+    """Only handles lists to second level"""
+    output = []
+    for inp in input:
+        if isinstance(inp, list):
+            output += [item for item in inp]
+        else:
+            output.append(inp)
+    return output
