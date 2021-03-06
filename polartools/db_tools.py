@@ -211,7 +211,11 @@ def collect_meta(scan_numbers, db, meta_keys, query=None):
 
             output[scan] = OrderedDict()
             for key in meta_keys:
-                output[scan][key] = [start.get(key, None), stop.get(key, None)]
+                output[scan][key] = [start.get(key, None)]
+                if stop is None:
+                    output[scan][key] += [None]
+                else:
+                    output[scan][key] += [stop.get(key, None)]
                 output[scan][key] = _flatten_list(output[scan][key])
 
         except KeyError:
