@@ -98,7 +98,7 @@ def show_meta(db, scan_from, scan_to=None, query=None, long=False):
             print(f"        time: {time}")
 
 
-def show_meta_2(scans, db, scan_to=None, query=None, meta_keys='short'):
+def show_meta_2(scans, db, scan_to=None, query=None, meta_keys="short"):
     """
     Print metadata of scans.
 
@@ -124,18 +124,34 @@ def show_meta_2(scans, db, scan_to=None, query=None, meta_keys='short'):
             scan_to = scans + 1
 
         if scan_to < scans:
-            raise ValueError("scans must be larger than scan_to, but you "
-                             f"entered: scans = {scans} and scan_to = "
-                             f"{scan_to}.")
+            raise ValueError(
+                "scans must be larger than scan_to, but you "
+                f"entered: scans = {scans} and scan_to = "
+                f"{scan_to}."
+            )
 
         scans = range(scans, scan_to)
 
-    if meta_keys == 'short':
-        meta_keys = ["motors", "scan_type", "plan_name", "plan_pattern_args",
-                     "num_points", "exit_status"]
-    elif meta_keys == 'long':
-        meta_keys = ["motors", "scan_type", "plan_name", "plan_pattern_args",
-                     "num_points", "exit_status", "time", "hints"]
+    if meta_keys == "short":
+        meta_keys = [
+            "motors",
+            "scan_type",
+            "plan_name",
+            "plan_pattern_args",
+            "num_points",
+            "exit_status",
+        ]
+    elif meta_keys == "long":
+        meta_keys = [
+            "motors",
+            "scan_type",
+            "plan_name",
+            "plan_pattern_args",
+            "num_points",
+            "exit_status",
+            "time",
+            "hints",
+        ]
 
     meta = collect_meta(scans, db, meta_keys, query=query)
     table = Table()
@@ -146,7 +162,7 @@ def show_meta_2(scans, db, scan_to=None, query=None, meta_keys='short'):
         meta_keys.insert(index, "final pos.")
         meta_keys.insert(index, "init. pos.")
 
-    table.labels = ['Scan #'] + list(meta_keys)
+    table.labels = ["Scan #"] + list(meta_keys)
 
     for scanno, values in meta.items():
 
@@ -154,17 +170,18 @@ def show_meta_2(scans, db, scan_to=None, query=None, meta_keys='short'):
         for key, item in values.items():
             if key == "plan_pattern_args":
                 if item[0] is not None:
-                    row.append(item[0]['args'][-2])
-                    row.append(item[0]['args'][-1])
+                    row.append(item[0]["args"][-2])
+                    row.append(item[0]["args"][-1])
                 else:
                     row.append(None)
                     row.append(None)
 
-            elif key == 'time':
+            elif key == "time":
                 time = []
                 for t in item:
-                    time.append(datetime.fromtimestamp(t).strftime(
-                        "%m/%d/%Y %H:%M:%S"))
+                    time.append(
+                        datetime.fromtimestamp(t).strftime("%m/%d/%Y %H:%M:%S")
+                    )
                 row.append(time)
 
             else:
@@ -175,7 +192,7 @@ def show_meta_2(scans, db, scan_to=None, query=None, meta_keys='short'):
                 row.append(item)
         table.rows.append(row)
 
-    print(table.reST(fmt='grid'))
+    print(table.reST(fmt="grid"))
 
 
 def collect_meta(scan_numbers, db, meta_keys, query=None):
@@ -206,8 +223,8 @@ def collect_meta(scan_numbers, db, meta_keys, query=None):
     output = OrderedDict()
     for scan in scan_numbers:
         try:
-            start = db_range[scan].metadata['start']
-            stop = db_range[scan].metadata.get('stop', None)
+            start = db_range[scan].metadata["start"]
+            stop = db_range[scan].metadata.get("stop", None)
 
             output[scan] = OrderedDict()
             for key in meta_keys:
@@ -219,7 +236,7 @@ def collect_meta(scan_numbers, db, meta_keys, query=None):
                 output[scan][key] = _flatten_list(output[scan][key])
 
         except KeyError:
-            warn(f'The scan number {scan} was not found.')
+            warn(f"The scan number {scan} was not found.")
 
     return output
 

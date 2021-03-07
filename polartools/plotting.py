@@ -1,5 +1,41 @@
+"""
+Functions to load and process x-ray diffraction data.
 
-def plot_data(source,
+.. autosummary::
+    ~plot_data
+"""
+
+import numpy as np
+from warnings import warn
+import matplotlib.pyplot as plt
+from os.path import join
+from spec2nexus.spec import SpecDataFile
+from datetime import datetime
+
+from polartools.diffraction import fit_peak
+from polartools.load_data import (
+    load_table,
+    load_csv,
+    is_Bluesky_specfile,
+    db_query,
+)
+from polartools.db_tools import collect_meta
+
+_spec_default_cols = dict(
+    positioner="4C Theta",
+    detector="APD",
+    monitor="IC3",
+)
+
+_bluesky_default_cols = dict(
+    positioner="fourc_theta",
+    detector="APDSector4",
+    monitor="Ion Ch 3",
+)
+
+
+def plot_data(
+    source,
     scan_series,
     positioner=None,
     detector=None,
@@ -14,7 +50,7 @@ def plot_data(source,
     source : databroker database, name of the spec file, or 'csv'
         Note that applicable kwargs depend on this selection.
     scan_series : int, list
-        single scan 
+        single scan
         or list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
@@ -37,8 +73,8 @@ def plot_data(source,
     Plot
 
     """
-    
-    model= kwargs.pop("model","Gaussian")
+
+    model = kwargs.pop("model", "Gaussian")
     folder = kwargs.pop("folder", "")
     if isinstance(source, (str, SpecDataFile)) and source != "csv":
         if isinstance(source, str):
@@ -59,60 +95,67 @@ def plot_data(source,
     if not monitor:
         monitor = _defaults["monitor"]
 
-    plt.close('all')
-    index=0
-    if isinstance(scan_series,int):
+    plt.close("all")
+    index = 0
+    if isinstance(scan_series, int):
         fig = plt.figure(figsize=(8, 8))
-        ax = fig.add_subplot(1,1,1)
+        ax = fig.add_subplot(1, 1, 1)
         ax.clear()
-        data = load_table(scan_series,
-        source,
-        **kwargs,
+        data = load_table(
+            scan_series,
+            source,
+            **kwargs,
         )
-        if len(data.columns)==0:
+        if len(data.columns) == 0:
             raise ValueError(f"No data in scan")
-        meta=collect_meta([scan_series],source,meta_keys=['motors','hints'])
-        positioner=meta[scan_series]['motors'][0]
-        det=meta[scan_series]['hints'] if 'hints' in meta[scan_series] else None
+        meta = collect_meta(
+            [scan_series], source, meta_keys=["motors", "hints"]
+        )
+        positioner = meta[scan_series]["motors"][0]
+        det = (
+            meta[scan_series]["hints"]
+            if "hints" in meta[scan_series]
+            else None
+        )
         if det:
-            detector=det[0]['detectors'][0] 
+            detector = det[0]["detectors"][0]
 
         if fit:
-            x=data[positioner].to_numpy()
-            y=data[detector].to_numpy()
-            #print(x,y)
-            fit_data=fit_peak(x,y, model=model, scan=None, output=False)
+            x = data[positioner].to_numpy()
+            y = data[detector].to_numpy()
+            # print(x,y)
+            fit_data = fit_peak(x, y, model=model, scan=None, output=False)
             ax.plot(
-            x,
-            fit_data.best_fit,
-            color="black",
-            linewidth=2,
+                x,
+                fit_data.best_fit,
+                color="black",
+                linewidth=2,
             )
-            text1=(f"{fit_data.params['center'].value:.3f}")
-            text2=(f"{fit_data.params['fwhm'].value:.3f}")
+            text1 = f"{fit_data.params['center'].value:.3f}"
+            text2 = f"{fit_data.params['fwhm'].value:.3f}"
             ax.errorbar(
-            data[positioner],
-            data[detector],
-            color="orange",
-            marker="o",
-            linewidth=2,
-            markersize=10,
-            label=(f'#{scan_series} [{text1}, {text2}]')
+                data[positioner],
+                data[detector],
+                color="orange",
+                marker="o",
+                linewidth=2,
+                markersize=10,
+                label=(f"#{scan_series} [{text1}, {text2}]"),
             )
         else:
             ax.errorbar(
-            data[positioner],
-            data[detector],
-            color="orange",
-            marker="o",
-            linewidth=2,
-            markersize=10,
-            label=(f'#{scan_series}')
+                data[positioner],
+                data[detector],
+                color="orange",
+                marker="o",
+                linewidth=2,
+                markersize=10,
+                label=(f"#{scan_series}"),
             )
 
-    elif isinstance(scan_series,list):
+    elif isinstance(scan_series, list):
         fig = plt.figure(figsize=(8, 8))
-        ax = fig.add_subplot(1,1,1)
+        ax = fig.add_subplot(1, 1, 1)
         ax.clear()
         if len(scan_series) % 3:
             raise ValueError(
@@ -124,55 +167,57 @@ def plot_data(source,
             step = scan_series[series + 1]
             print("Intervals: {} to {} with step {}".format(start, stop, step))
             for scan in range(start, stop + 1, step):
-                data = load_table(scan,
-                source,
-                **kwargs,
+                data = load_table(
+                    scan,
+                    source,
+                    **kwargs,
                 )
-                meta=collect_meta([scan],source,meta_keys=['motors','hints'])
-                positioner=meta[scan]['motors'][0]
-                det=meta[scan]['hints'] if 'hints' in meta[scan] else None
+                meta = collect_meta(
+                    [scan], source, meta_keys=["motors", "hints"]
+                )
+                positioner = meta[scan]["motors"][0]
+                det = meta[scan]["hints"] if "hints" in meta[scan] else None
                 if det:
-                    detector=det[0]['detectors'][0] 
+                    detector = det[0]["detectors"][0]
                 if fit:
-                    x=data[positioner].to_numpy()
-                    y=data[detector].to_numpy()
-                    fit_data=fit_peak(x,y, model=model, scan=None, output=False)
-                    text1=(f"{fit_data.params['center'].value:.3f}")
-                    text2=(f"{fit_data.params['fwhm'].value:.3f}")
+                    x = data[positioner].to_numpy()
+                    y = data[detector].to_numpy()
+                    fit_data = fit_peak(
+                        x, y, model=model, scan=None, output=False
+                    )
+                    text1 = f"{fit_data.params['center'].value:.3f}"
+                    text2 = f"{fit_data.params['fwhm'].value:.3f}"
                     ax.plot(
-                    x,
-                    fit_data.best_fit,
-                    color="black",
-                    linewidth=2,
+                        x,
+                        fit_data.best_fit,
+                        color="black",
+                        linewidth=2,
                     )
 
                     ax.errorbar(
-                    data[positioner],
-                    data[detector],
-                    color=(f"C{index}"),
-                    marker="o",
-                    linewidth=2,
-                    markersize=10,
-                    label=(f'#{scan} [{text1}, {text2}]')
+                        data[positioner],
+                        data[detector],
+                        color=(f"C{index}"),
+                        marker="o",
+                        linewidth=2,
+                        markersize=10,
+                        label=(f"#{scan} [{text1}, {text2}]"),
                     )
                 else:
                     ax.errorbar(
-                    data[positioner],
-                    data[detector],
-                    color=(f"C{index}"),
-                    marker="o",
-                    linewidth=2,
-                    markersize=10,
-                    label=(f'#{scan}')
-                )
-                index+=1
+                        data[positioner],
+                        data[detector],
+                        color=(f"C{index}"),
+                        marker="o",
+                        linewidth=2,
+                        markersize=10,
+                        label=(f"#{scan}"),
+                    )
+                index += 1
     else:
-        raise ValueError(
-            f"expected str or list got '{scan_series}'"
-        )
+        raise ValueError(f"expected str or list got '{scan_series}'")
 
     ax.set_xlabel(positioner)
     ax.set_ylabel(detector)
     ax.legend()
     plt.show(block=False)
-
