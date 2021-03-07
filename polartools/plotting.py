@@ -81,11 +81,6 @@ def plot_data(
     else:
         _defaults = _bluesky_default_cols
 
-    if not positioner:
-        positioner = _defaults["positioner"]
-    if not detector:
-        detector = _defaults["detector"]
-
     plt.close("all")
     index = 0
     if isinstance(scan_series, int):
@@ -99,22 +94,16 @@ def plot_data(
         )
         if len(data.columns) == 0:
             raise ValueError(f"No data in scan {scan_series}")
-        meta = collect_meta(
-            [scan_series], source, meta_keys=["motors", "hints"]
+        positioner, detector = load_axes(
+            source,
+            scan_series,
+            positioner=positioner,
+            detector=detector,
+            defaults=_defaults,
         )
-        positioner = meta[scan_series]["motors"][0]
-        det = (
-            meta[scan_series]["hints"]
-            if "hints" in meta[scan_series]
-            else None
-        )
-        if det:
-            detector = det[0]["detectors"][0]
-
         if fit:
             x = data[positioner].to_numpy()
             y = data[detector].to_numpy()
-            # print(x,y)
             fit_data = fit_peak(x, y, model=model, scan=None, output=False)
             ax.plot(
                 x,
@@ -163,13 +152,13 @@ def plot_data(
                     source,
                     **kwargs,
                 )
-                meta = collect_meta(
-                    [scan], source, meta_keys=["motors", "hints"]
+                positioner, detector = load_axes(
+                    source,
+                    scan,
+                    positioner=positioner,
+                    detector=detector,
+                    defaults=_defaults,
                 )
-                positioner = meta[scan]["motors"][0]
-                det = meta[scan]["hints"] if "hints" in meta[scan] else None
-                if det:
-                    detector = det[0]["detectors"][0]
                 if fit:
                     x = data[positioner].to_numpy()
                     y = data[detector].to_numpy()
@@ -212,3 +201,15 @@ def plot_data(
     ax.set_ylabel(detector)
     ax.legend()
     plt.show(block=False)
+
+
+def load_axes(source, scan, positioner=None, detector=None, defaults=None):
+    meta = collect_meta([scan], source, meta_keys=["motors", "hints"])
+    if not positioner:
+        positioner = meta[scan]["motors"][0]
+    det = meta[scan]["hints"] if "hints" in meta[scan] else None
+    if not detector and det:
+        detector = det[0]["detectors"][0]
+    else:
+        detector = defaults["detector"]
+    return positioner, detector
