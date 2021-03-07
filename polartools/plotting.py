@@ -5,32 +5,25 @@ Functions to load and process x-ray diffraction data.
     ~plot_data
 """
 
-import numpy as np
-from warnings import warn
 import matplotlib.pyplot as plt
 from os.path import join
 from spec2nexus.spec import SpecDataFile
-from datetime import datetime
 
 from polartools.diffraction import fit_peak
 from polartools.load_data import (
     load_table,
-    load_csv,
     is_Bluesky_specfile,
-    db_query,
 )
 from polartools.db_tools import collect_meta
 
 _spec_default_cols = dict(
     positioner="4C Theta",
     detector="APD",
-    monitor="IC3",
 )
 
 _bluesky_default_cols = dict(
     positioner="fourc_theta",
     detector="APDSector4",
-    monitor="Ion Ch 3",
 )
 
 
@@ -92,8 +85,6 @@ def plot_data(
         positioner = _defaults["positioner"]
     if not detector:
         detector = _defaults["detector"]
-    if not monitor:
-        monitor = _defaults["monitor"]
 
     plt.close("all")
     index = 0
@@ -107,7 +98,7 @@ def plot_data(
             **kwargs,
         )
         if len(data.columns) == 0:
-            raise ValueError(f"No data in scan")
+            raise ValueError(f"No data in scan {scan_series}")
         meta = collect_meta(
             [scan_series], source, meta_keys=["motors", "hints"]
         )
