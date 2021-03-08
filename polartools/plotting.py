@@ -82,11 +82,11 @@ def plot_data(
         _defaults = _bluesky_default_cols
 
     plt.close("all")
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_subplot(1, 1, 1)
+    ax.clear()
     index = 0
     if isinstance(scan_series, int):
-        fig = plt.figure(figsize=(8, 8))
-        ax = fig.add_subplot(1, 1, 1)
-        ax.clear()
         data = load_table(
             scan_series,
             source,
@@ -134,9 +134,6 @@ def plot_data(
             )
 
     elif isinstance(scan_series, list):
-        fig = plt.figure(figsize=(8, 8))
-        ax = fig.add_subplot(1, 1, 1)
-        ax.clear()
         if len(scan_series) % 3:
             raise ValueError(
                 f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
@@ -208,8 +205,9 @@ def load_axes(source, scan, positioner=None, detector=None, defaults=None):
     if not positioner:
         positioner = meta[scan]["motors"][0]
     det = meta[scan]["hints"] if "hints" in meta[scan] else None
-    if not detector and det:
-        detector = det[0]["detectors"][0]
-    else:
-        detector = defaults["detector"]
+    if not detector: 
+        if not det:
+            detector = det[0]["detectors"][0]
+        else:
+            detector = defaults["detector"]
     return positioner, detector
