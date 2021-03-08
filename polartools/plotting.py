@@ -99,19 +99,25 @@ def plot_data(
                     source,
                     **kwargs,
                 )
-                positioner, detector = load_axes(
-                    source,
-                    scan,
-                    positioner=positioner,
-                    detector=detector,
-                    defaults=_defaults,
-                    read=False
-                ) if positioner in data.columns else load_axes(source,
-                    scan,
-                    positioner=positioner,
-                    detector=detector,
-                    defaults=_defaults,
-                    read=True)
+                positioner, detector = (
+                    load_axes(
+                        source,
+                        scan,
+                        positioner=positioner,
+                        detector=detector,
+                        defaults=_defaults,
+                        read=False,
+                    )
+                    if positioner in data.columns
+                    else load_axes(
+                        source,
+                        scan,
+                        positioner=positioner,
+                        detector=detector,
+                        defaults=_defaults,
+                        read=True,
+                    )
+                )
                 if fit:
                     x = data[positioner].to_numpy()
                     y = data[detector].to_numpy()
@@ -156,11 +162,14 @@ def plot_data(
     plt.show(block=False)
 
 
-def dbplot(source,scan,
+def dbplot(
+    source,
+    scan,
     positioner=None,
     detector=None,
     fit=False,
-    **kwargs,):
+    **kwargs,
+):
     """
     Plot and fit data.
 
@@ -192,19 +201,28 @@ def dbplot(source,scan,
     """
 
     if isinstance(scan, int):
-        scan_series=[scan,scan,1]
+        scan_series = [scan, scan, 1]
     elif isinstance(scan, list):
-        scan_series=scan
+        scan_series = scan
     else:
         raise ValueError(f"expected int or list got '{scan}'")
-    plot_data(source=source, scan_series=scan_series, positioner=positioner, detector=detector, fit=fit)
+    plot_data(
+        source=source,
+        scan_series=scan_series,
+        positioner=positioner,
+        detector=detector,
+        fit=fit,
+    )
 
-def load_axes(source, scan, positioner=None, detector=None, defaults=None,read=False):
+
+def load_axes(
+    source, scan, positioner=None, detector=None, defaults=None, read=False
+):
     meta = collect_meta([scan], source, meta_keys=["motors", "hints"])
     if not positioner or read:
         positioner = meta[scan]["motors"][0]
     det = meta[scan]["hints"] if "hints" in meta[scan] else None
-    if not detector: 
+    if not detector:
         if det:
             detector = det[0]["detectors"][0]
         else:
