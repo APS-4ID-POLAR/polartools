@@ -42,11 +42,8 @@ def plot_data(
     ----------
     source : databroker database, name of the spec file, or 'csv'
         Note that applicable kwargs depend on this selection.
-    scan_series : int, list
-        single scan
-        or list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
-    output : boolean, optional
-        Output fit parameters and plot data+fit for each scan.
+    scan_series : list
+        list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
         Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
@@ -86,54 +83,7 @@ def plot_data(
     ax = fig.add_subplot(1, 1, 1)
     ax.clear()
     index = 0
-    if isinstance(scan_series, int):
-        data = load_table(
-            scan_series,
-            source,
-            **kwargs,
-        )
-        if len(data.columns) == 0:
-            raise ValueError(f"No data in scan {scan_series}")
-        positioner, detector = load_axes(
-            source,
-            scan_series,
-            positioner=positioner,
-            detector=detector,
-            defaults=_defaults,
-        )
-        if fit:
-            x = data[positioner].to_numpy()
-            y = data[detector].to_numpy()
-            fit_data = fit_peak(x, y, model=model, scan=None, output=False)
-            ax.plot(
-                x,
-                fit_data.best_fit,
-                color="black",
-                linewidth=2,
-            )
-            text1 = f"{fit_data.params['center'].value:.3f}"
-            text2 = f"{fit_data.params['fwhm'].value:.3f}"
-            ax.errorbar(
-                data[positioner],
-                data[detector],
-                color="orange",
-                marker="o",
-                linewidth=2,
-                markersize=10,
-                label=(f"#{scan_series} [{text1}, {text2}]"),
-            )
-        else:
-            ax.errorbar(
-                data[positioner],
-                data[detector],
-                color="orange",
-                marker="o",
-                linewidth=2,
-                markersize=10,
-                label=(f"#{scan_series}"),
-            )
-
-    elif isinstance(scan_series, list):
+    if isinstance(scan_series, list):
         if len(scan_series) % 3:
             raise ValueError(
                 f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
@@ -155,7 +105,13 @@ def plot_data(
                     positioner=positioner,
                     detector=detector,
                     defaults=_defaults,
-                )
+                    read=False
+                ) if positioner in data.columns else load_axes(source,
+                    scan,
+                    positioner=positioner,
+                    detector=detector,
+                    defaults=_defaults,
+                    read=True)
                 if fit:
                     x = data[positioner].to_numpy()
                     y = data[detector].to_numpy()
@@ -192,7 +148,7 @@ def plot_data(
                     )
                 index += 1
     else:
-        raise ValueError(f"expected str or list got '{scan_series}'")
+        raise ValueError(f"expected list got '{scan_series}'")
 
     ax.set_xlabel(positioner)
     ax.set_ylabel(detector)
@@ -200,13 +156,56 @@ def plot_data(
     plt.show(block=False)
 
 
-def load_axes(source, scan, positioner=None, detector=None, defaults=None):
+def dbplot(source,scan,
+    positioner=None,
+    detector=None,
+    fit=False,
+    **kwargs,):
+    """
+    Plot and fit data.
+
+    Parameters
+    ----------
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
+    scan_series : int, list
+        single scan
+        or list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
+    positioner : string, optional
+        Name of the positioner, this needs to be the same as defined in
+        Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+    detector : string, optional
+        Detector to be read from this scan, again it needs to be the same name
+        as in Bluesky. If None is passed, it defaults to the APD detector.
+    kwargs :
+        model : string, optional
+            - fit model: Gaussian, Lorentzian, PseudoVoigt
+        `source` argument:
+            - csv -> possible kwargs: folder, name_format.
+            - spec -> possible kwargs: folder.
+            - databroker -> possible kwargs: stream, query, use_db_v1.
+
+    Output
+    -------
+    Plot
+
+    """
+
+    if isinstance(scan, int):
+        scan_series=[scan,scan,1]
+    elif isinstance(scan, list):
+        scan_series=scan
+    else:
+        raise ValueError(f"expected int or list got '{scan}'")
+    plot_data(source=source, scan_series=scan_series, positioner=positioner, detector=detector, fit=fit)
+
+def load_axes(source, scan, positioner=None, detector=None, defaults=None,read=False):
     meta = collect_meta([scan], source, meta_keys=["motors", "hints"])
-    if not positioner:
+    if not positioner or read:
         positioner = meta[scan]["motors"][0]
     det = meta[scan]["hints"] if "hints" in meta[scan] else None
     if not detector: 
-        if not det:
+        if det:
             detector = det[0]["detectors"][0]
         else:
             detector = defaults["detector"]
