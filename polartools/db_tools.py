@@ -2,15 +2,57 @@
 Functions to access database information.
 
 .. autosummary::
+    ~db_query
     ~show_meta
     ~collect_meta
 """
 
 from datetime import datetime
-from polartools.load_data import db_query
 from collections import OrderedDict
 from pyRestTable import Table
 from warnings import warn
+from databroker.queries import TimeRange
+
+
+def db_query(db, query):
+    """
+    Searches the databroker v2 database.
+
+    Parameters
+    ----------
+    db :
+        `databroker` database.
+    query: dict
+        Search parameters.
+
+    Returns
+    -------
+    _db :
+        Subset of db that satisfy the search parameters. Note that it has the
+        same format as db.
+
+    See also
+    --------
+    :func:`databroker.catalog.search`
+    """
+
+    since = query.pop("since", None)
+    until = query.pop("until", None)
+
+    if since or until:
+        if not since:
+            since = "2010"
+        if not until:
+            until = "2050"
+
+        _db = db.v2.search(TimeRange(since=since, until=until))
+    else:
+        _db = db
+
+    if len(query) != 0:
+        _db = _db.v2.search(query)
+
+    return _db
 
 
 def show_meta(scans, db, scan_to=None, query=None, meta_keys="short",
