@@ -3,6 +3,7 @@ Functions to access database information.
 
 .. autosummary::
     ~show_meta
+    ~collect_meta
 """
 
 from datetime import datetime
@@ -12,7 +13,8 @@ from pyRestTable import Table
 from warnings import warn
 
 
-def show_meta(scans, db, scan_to=None, query=None, meta_keys="short"):
+def show_meta(scans, db, scan_to=None, query=None, meta_keys="short",
+              table_fmt="plain"):
     """
     Print metadata of scans.
 
@@ -78,22 +80,16 @@ def show_meta(scans, db, scan_to=None, query=None, meta_keys="short"):
 
     table.labels = ["Scan # "] + list(meta_keys)
     for scanno, values in meta.items():
-
         row = [scanno]
-        lscan = False
-        cscan = False
         for key, item in values.items():
-            if item[0] == "list_scan" or item[0] == "slitscan":
-                lscan = True
-            if item[0] == "count":
-                cscan = True
+            # TODO: I don't like this. We need better metadata.
             if key == "plan_pattern_args":
-                if lscan:
-                    row.append(item[0]["args"][1][0])
-                    row.append(item[0]["args"][1][-1])
-                elif cscan:
+                if item[0] is None:
                     row.append(None)
                     row.append(None)
+                elif isinstance(item[0]["args"][1], list):
+                    row.append('{:0.4f}'.format(item[0]["args"][1][0]))
+                    row.append('{:0.4f}'.format(item[0]["args"][1][-1]))
                 else:
                     row.append(item[0]["args"][-2])
                     row.append(item[0]["args"][-1])
@@ -114,7 +110,7 @@ def show_meta(scans, db, scan_to=None, query=None, meta_keys="short"):
                 row.append(item)
         table.rows.append(row)
 
-    print(table.reST(fmt="plain"))
+    print(table.reST(fmt=table_fmt))
 
 
 def collect_meta(scan_numbers, db, meta_keys, query=None):
