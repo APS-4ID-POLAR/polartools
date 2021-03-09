@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 
-from .load_data import load_table, load_csv, is_Bluesky_specfile
+from polartools.load_data import load_table, load_csv, is_Bluesky_specfile
 
 
 _spec_default_cols = dict(
@@ -93,7 +93,7 @@ def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
             )
         plt.plot(xdata, ydata)
         plt.plot(xdata, fit.best_fit)
-        plt.show()
+        plt.show(block=True)
     return fit
 
 
@@ -596,7 +596,7 @@ def plot_2d(
         monitor=monitor,
         **kwargs,
     )
-
+    plt.close("all")
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     cmap = plt.get_cmap("rainbow")
@@ -637,7 +637,7 @@ def plot_2d(
 
     if output:
         plt.savefig(output, dpi=600, transparent=True)
-    plt.show()
+    plt.show(block=False)
 
 
 def plot_fit(
@@ -714,6 +714,7 @@ def plot_fit(
 
     """
 
+    plt.close("all")
     data = fit_series(
         source,
         scan_series,
@@ -770,4 +771,4 @@ def plot_fit(
     ax3.set_xlabel(x_label)
 
     print(data)
-    plt.show()
+    plt.show(block=False)
