@@ -19,10 +19,11 @@ from lmfit.models import (
     PseudoVoigtModel,
 )
 import matplotlib.pyplot as plt
+plt.ion()
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 
-from polartools.load_data import load_table, load_csv, is_Bluesky_specfile
+from .load_data import load_table, load_csv, is_Bluesky_specfile
 
 
 _spec_default_cols = dict(
@@ -634,7 +635,6 @@ def plot_2d(
 
     if output:
         plt.savefig(output, dpi=600, transparent=True)
-    plt.show(block=False)
 
 
 def plot_fit(
@@ -768,4 +768,3 @@ def plot_fit(
     ax3.set_xlabel(x_label)
 
     print(data)
-    plt.show(block=False)
