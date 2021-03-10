@@ -7,6 +7,9 @@ Functions to access database information.
     ~collect_meta
 """
 
+# Copyright (c) 2020-2021, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 from datetime import datetime
 from collections import OrderedDict
 from pyRestTable import Table

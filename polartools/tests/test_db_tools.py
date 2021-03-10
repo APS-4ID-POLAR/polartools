@@ -1,3 +1,6 @@
+# Copyright (c) 2020-2021, UChicago Argonne, LLC.
+# See LICENSE file for details.
+
 import pytest
 from polartools import db_tools
 from os.path import join

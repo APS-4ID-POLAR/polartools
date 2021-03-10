@@ -147,7 +147,8 @@ def load_info(source, scan_id, info, **kwargs):
         specscan = source.getScan(scan_id)
         if isinstance(info, str):
             raise ValueError(
-                "expect list [#P, (#Q, #U), Variable (string or line number), element number]"
+                "expect list [#P, (#Q, #U), Variable (string or line number), "
+                "element number]"
             )
 
         if info[0] == "#P":
@@ -175,7 +176,8 @@ def load_info(source, scan_id, info, **kwargs):
             value = data_array[info[2]]
         else:
             raise ValueError(
-                "expect list [#P, (#Q, #U), Variable (string or line number), element number]"
+                "expect list [#P, (#Q, #U), Variable (string or line number), "
+                "element number]"
             )
     else:
         pass
@@ -211,18 +213,19 @@ def fit_series(
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
     var_series : string or list
-        If string
+        If string:
 
-        - Varying variable for scan series to be read from scan (detector),
-                e.g. SampK (sample temperature), optional.
-        - String starting with #metadata, reads metadata from CSV baseline
+            - Varying variable for scan series to be read from scan\
+                {detector), e.g. SampK (sample temperature), optional.
+            - String starting with #metadata, reads metadata from CSV baseline
 
-        If list, information on metadata to be read: List starting with #P, #U
+        If list:
+        information on metadata to be read: List starting with #P, #U
         or #Q for motor positions, user values or Q-position, optional:
 
-        - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
-        - #U ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-        - #Q ['#Q', None, element_number], e.g. ['#Q', None, 0]
+            - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
+            - #U ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            - #Q ['#Q', None, element_number], e.g. ['#Q', None, 0]
 
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
@@ -240,9 +243,9 @@ def fit_series(
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
 
-        - csv -> possible kwargs: folder, name_format.
-        - spec -> possible kwargs: folder.
-        - databroker -> possible kwargs: stream, query, use_db_v1.
+            - csv -> possible kwargs: folder, name_format.
+            - spec -> possible kwargs: folder.
+            - databroker -> possible kwargs: stream, query, use_db_v1.
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
@@ -276,7 +279,8 @@ def fit_series(
 
     if len(scan_series) % 3:
         raise ValueError(
-            f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
+            f"expected 3*n={3*(len(scan_series)//3)} arguments, got "
+            f"{len(scan_series)}"
         )
 
     nbp = 0
@@ -368,8 +372,8 @@ def load_series(
     **kwargs,
 ):
     """
-    Load series of scans as function of variable like temperature of field which can be
-    spaced unequally. Generates input arrays for plot_2d.
+    Load series of scans as function of variable like temperature of field
+    which can be spaced unequally. Generates input arrays for plot_2d.
 
     Parameters
     ----------
@@ -377,16 +381,21 @@ def load_series(
         Note that applicable kwargs depend on this selection.
     scan_series : list, int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-    var_series: string or list
+    var_series : string or list
         string:
-            - Varying variable for scan series to be read from scan (detector),
-                e.g. SampK (sample temperature), optional.
+
+            - Varying variable for scan series to be read from scan\
+                (detector), e.g. SampK (sample temperature), optional.
             - String starting with #metadata, reads metadata from CSV baseline
-        list: Information on metadata to be read: List starting with #P, #U or #Q for
-            motor positions, user values or Q-position, optional:
-            #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
-            #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-            #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+
+        list:
+        Information on metadata to be read: List starting with #P, #U or
+        #Q for motor positions, user values or Q-position, optional.
+
+            - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -395,15 +404,19 @@ def load_series(
         Detector to be read from this scan, again it needs to be the same name
         as in Bluesky. If None is passed, it defaults to the APD detector.
     monitor : string, optional
-        Name of the monitor detector for normalization. If None is passed, data are not normalized.
-    log: boolean
+        Name of the monitor detector for normalization. If None is passed, data
+        are not normalized.
+    log : boolean
         If True, z-axis plotted in logarithmic scale.
-    kwargs:
-        The necessary kwargs are passed to the loading and fitting functions defined by the
-        `source` argument:
-            - csv        -> possible kwargs: folder, name_format, e.g. "scan_{}_primary.csv"
+    kwargs :
+        The necessary kwargs are passed to the loading and fitting functions
+        defined by the `source` argument:
+
+            - csv        -> possible kwargs: folder, name_format, e.g.\
+                "scan_{}_primary.csv"
             - spec       -> possible kwargs: folder
             - databroker -> possible kwargs: stream, query
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
@@ -441,7 +454,8 @@ def load_series(
         monitor = _defaults["monitor"]
     if len(scan_series) % 3:
         raise ValueError(
-            f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
+            f"expected 3*n={3*(len(scan_series)//3)} arguments, got "
+            f"{len(scan_series)}"
         )
 
     table = load_table(
@@ -528,14 +542,19 @@ def plot_2d(
         e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
     var_series: string or list
         string:
-            - Varying variable for scan series to be read from scan (detector),
-                e.g. SampK (sample temperature), optional.
+
+            - Varying variable for scan series to be read from scan\
+                (detector), e.g. SampK (sample temperature), optional.
             - String starting with #metadata, reads metadata from CSV baseline
-        list: Information on metadata to be read: List starting with #P, #U or #Q for
-            motor positions, user values or Q-position, optional:
-            #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
-            #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-            #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+
+        list:
+        Information on metadata to be read: List starting with #P, #U or #Q for
+        motor positions, user values or Q-position, optional:
+
+            - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -544,17 +563,21 @@ def plot_2d(
         Detector to be read from this scan, again it needs to be the same name
         as in Bluesky. If None is passed, it defaults to the APD detector.
     monitor : string, optional
-        Name of the monitor detector for normalization. If None is passed, data are not normalized.
+        Name of the monitor detector for normalization. If None is passed,
+        data are not normalized.
     log: boolean
         If True, z-axis plotted in logarithmic scale.
     output: string
         Output file for png file of plot.
     kwargs:
-        The necessary kwargs are passed to the loading and fitting functions defined by the
-        `source` argument:
-            - csv        -> possible kwargs: folder, name_format, e.g. "scan_{}_primary.csv"
+        The necessary kwargs are passed to the loading and fitting functions
+        defined by the `source` argument:
+
+            - csv        -> possible kwargs: folder, name_format, e.g.\
+                "scan_{}_primary.csv"
             - spec       -> possible kwargs: folder
             - databroker -> possible kwargs: stream, query
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
