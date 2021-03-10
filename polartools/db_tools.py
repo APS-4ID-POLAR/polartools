@@ -58,8 +58,9 @@ def db_query(db, query):
     return _db
 
 
-def show_meta(scans, db, scan_to=None, query=None, meta_keys="short",
-              table_fmt="plain"):
+def show_meta(
+    scans, db, scan_to=None, query=None, meta_keys="short", table_fmt="plain"
+):
     """
     Print metadata of scans.
 
@@ -133,8 +134,8 @@ def show_meta(scans, db, scan_to=None, query=None, meta_keys="short",
                     row.append(None)
                     row.append(None)
                 elif isinstance(item[0]["args"][1], list):
-                    row.append('{:0.4f}'.format(item[0]["args"][1][0]))
-                    row.append('{:0.4f}'.format(item[0]["args"][1][-1]))
+                    row.append("{:0.4f}".format(item[0]["args"][1][0]))
+                    row.append("{:0.4f}".format(item[0]["args"][1][-1]))
                 else:
                     row.append(item[0]["args"][-2])
                     row.append(item[0]["args"][-1])
