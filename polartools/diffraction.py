@@ -24,6 +24,7 @@ from os.path import join
 from spec2nexus.spec import SpecDataFile
 
 from .load_data import load_table, load_csv, is_Bluesky_specfile
+from .plotting import load_axes
 
 
 _spec_default_cols = dict(
@@ -331,6 +332,26 @@ def fit_series(
                 )
                 fit_result[index][0] = index
                 fit_result[index][1] = 0
+            if not isinstance(source,SpecDataFile) or isinstance(source,str) or source=='csv':
+                positioner, detector = (
+                    load_axes(
+                        source,
+                        scan,
+                        positioner=positioner,
+                        detector=detector,
+                        defaults=_defaults,
+                        read=False,
+                    )
+                    if positioner in table.columns
+                    else load_axes(
+                        source,
+                        scan,
+                        positioner=positioner,
+                        detector=detector,
+                        defaults=_defaults,
+                        read=True,
+                    )
+                )
             x = table[positioner].to_numpy()
             y = table[detector].to_numpy()
             y0 = table[monitor].to_numpy()
@@ -464,6 +485,28 @@ def load_series(
         folder=folder,
         **kwargs,
     )
+    if not isinstance(source,SpecDataFile) or isinstance(source,str) or source=='csv':
+        positioner, detector = (
+            load_axes(
+                source,
+                scan_series[1],
+                positioner=positioner,
+                detector=detector,
+                defaults=_defaults,
+                read=False,
+            )
+            if positioner in table.columns
+            else load_axes(
+                source,
+                scan_series[1],
+                positioner=positioner,
+                detector=detector,
+                defaults=_defaults,
+                read=True,
+            )
+        )
+
+
     data_len = len(table[detector])
     datax = [np.zeros(data_len) for i in range(int(nbp))]
     datay = [np.zeros(data_len) for i in range(int(nbp))]
