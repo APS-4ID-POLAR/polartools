@@ -1072,4 +1072,5 @@ def dbplot(
         positioner=positioner,
         detector=detector,
         fit=fit,
+        **kwargs
     )
