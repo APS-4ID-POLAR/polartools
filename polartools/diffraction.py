@@ -8,6 +8,9 @@ Functions to load and process x-ray diffraction data.
     ~load_series
     ~plot_2d
     ~plot_fit
+    ~load_axes
+    ~load_data
+    ~dbplot
 """
 
 import numpy as np
