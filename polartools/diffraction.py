@@ -22,6 +22,7 @@ from lmfit.models import (
     PseudoVoigtModel,
 )
 import matplotlib.pyplot as plt
+import copy
 
 plt.ion()
 from os.path import join
@@ -847,7 +848,7 @@ def plot_fit(
 
 
 def load_axes(
-    source, scan, positioner=None, detector=None, defaults=None, read=False
+    source, scan, positioner=None, detector=None, defaults=None, read=False, **kwargs
 ):
     """
     Plot and fit data.
@@ -875,13 +876,15 @@ def load_axes(
     Plot
 
     """
-    meta = collect_meta([scan], source, meta_keys=["motors", "hints"])
+    _kwargs = copy.deepcopy(kwargs)
+    query = _kwargs.pop("query", None)
+    meta = collect_meta([scan], source, meta_keys=["motors", "hints"],query=query)
     if not positioner or read:
         positioner = meta[scan]["motors"][0]
     det = meta[scan]["hints"] if "hints" in meta[scan] else None
     if not detector:
         if det:
-            detector = det[0]["detectors"][0]
+            detector = det[0]["detector"][0]
         else:
             detector = defaults["detector"]
     return positioner, detector
@@ -967,6 +970,7 @@ def plot_data(
                         detector=detector,
                         defaults=_defaults,
                         read=False,
+                        **kwargs
                     )
                     if positioner in data.columns
                     else load_axes(
@@ -976,6 +980,7 @@ def plot_data(
                         detector=detector,
                         defaults=_defaults,
                         read=True,
+                        **kwargs
                     )
                 )
                 if fit:
