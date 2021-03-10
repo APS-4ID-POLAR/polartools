@@ -19,6 +19,7 @@ from lmfit.models import (
     PseudoVoigtModel,
 )
 import matplotlib.pyplot as plt
+plt.ion()
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 
@@ -93,7 +94,7 @@ def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
             )
         plt.plot(xdata, ydata)
         plt.plot(xdata, fit.best_fit)
-        plt.show()
+        plt.show(block=True)
     return fit
 
 
@@ -330,9 +331,9 @@ def fit_series(
                 )
                 fit_result[index][0] = index
                 fit_result[index][1] = 0
-            x = table[positioner]
-            y = table[detector]
-            y0 = table[monitor]
+            x = table[positioner].to_numpy()
+            y = table[detector].to_numpy()
+            y0 = table[monitor].to_numpy()
             if normalize:
                 y = y / y0
 
@@ -457,7 +458,6 @@ def load_series(
             f"expected 3*n={3*(len(scan_series)//3)} arguments, got "
             f"{len(scan_series)}"
         )
-
     table = load_table(
         scan_series[1],
         source,
@@ -617,7 +617,7 @@ def plot_2d(
         monitor=monitor,
         **kwargs,
     )
-
+    plt.close("all")
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     cmap = plt.get_cmap("rainbow")
@@ -658,7 +658,6 @@ def plot_2d(
 
     if output:
         plt.savefig(output, dpi=600, transparent=True)
-    plt.show()
 
 
 def plot_fit(
@@ -735,6 +734,7 @@ def plot_fit(
 
     """
 
+    plt.close("all")
     data = fit_series(
         source,
         scan_series,
@@ -791,4 +791,3 @@ def plot_fit(
     ax3.set_xlabel(x_label)
 
     print(data)
-    plt.show()
