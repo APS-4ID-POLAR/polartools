@@ -19,6 +19,7 @@ from lmfit.models import (
     PseudoVoigtModel,
 )
 import matplotlib.pyplot as plt
+
 plt.ion()
 from os.path import join
 from spec2nexus.spec import SpecDataFile
@@ -332,7 +333,11 @@ def fit_series(
                 )
                 fit_result[index][0] = index
                 fit_result[index][1] = 0
-            if not isinstance(source,SpecDataFile) or isinstance(source,str) or source=='csv':
+            if (
+                not isinstance(source, SpecDataFile)
+                or isinstance(source, str)
+                or source == "csv"
+            ):
                 positioner, detector = (
                     load_axes(
                         source,
@@ -485,7 +490,11 @@ def load_series(
         folder=folder,
         **kwargs,
     )
-    if not isinstance(source,SpecDataFile) or isinstance(source,str) or source=='csv':
+    if (
+        not isinstance(source, SpecDataFile)
+        or isinstance(source, str)
+        or source == "csv"
+    ):
         positioner, detector = (
             load_axes(
                 source,
@@ -505,7 +514,6 @@ def load_series(
                 read=True,
             )
         )
-
 
     data_len = len(table[detector])
     datax = [np.zeros(data_len) for i in range(int(nbp))]

@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 
-from polartools.diffraction import fit_peak
-from polartools.load_data import (
+from .diffraction import fit_peak
+from .load_data import (
     load_table,
     is_Bluesky_specfile,
 )
