@@ -40,12 +40,6 @@ def test_spec():
     assert table.shape == (51, 16)
 
 
-def test_db_query(db):
-    query = dict(since='2020-12-18', until='2020-12-19')
-    search = load_data.db_query(db, query)
-    assert len(list(search)) == 0
-
-
 def test_is_Bluesky_specfile():
 
     folder = join('polartools', 'tests', 'data_for_test')

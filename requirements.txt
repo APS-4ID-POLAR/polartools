@@ -14,3 +14,4 @@ databroker>=1.2.2
 databroker-pack
 lmfit
 xraylarch
+pyresttable

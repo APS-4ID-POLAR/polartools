@@ -25,6 +25,7 @@ dependencies:
   - xraylarch
   - ipython
   - numpydoc
+  - pyresttable
   - pip:
     - ipython-genutils==0.2.0
     - prompt-toolkit==1.0.15

@@ -5,7 +5,6 @@ Base functions to load data from various sources.
    ~load_spec
    ~load_csv
    ~load_databroker
-   ~db_query
    ~load_table
    ~is_Bluesky_specfile
 """
@@ -17,12 +16,8 @@ from pandas import read_csv, DataFrame
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 from warnings import warn
+from .db_tools import db_query
 import copy
-
-try:
-    from databroker.queries import TimeRange
-except ModuleNotFoundError:
-    pass
 
 
 def load_spec(scan_id, spec_file, folder=""):
@@ -119,47 +114,6 @@ def load_databroker(scan_id, db, stream="primary", query=None, use_db_v1=True):
         return _db.v1[scan_id].table(stream_name=stream)
     else:
         return getattr(_db.v2[scan_id], stream).read().to_dataframe()
-
-
-def db_query(db, query):
-    """
-    Searches the databroker v2 database.
-
-    Parameters
-    ----------
-    db :
-        `databroker` database.
-    query: dict
-        Search parameters.
-
-    Returns
-    -------
-    _db :
-        Subset of db that satisfy the search parameters. Note that it has the
-        same format as db.
-
-    See also
-    --------
-    :func:`databroker.catalog.search`
-    """
-
-    since = query.pop("since", None)
-    until = query.pop("until", None)
-
-    if since or until:
-        if not since:
-            since = "2010"
-        if not until:
-            until = "2050"
-
-        _db = db.v2.search(TimeRange(since=since, until=until))
-    else:
-        _db = db
-
-    if len(query) != 0:
-        _db = _db.v2.search(query)
-
-    return _db
 
 
 def load_table(scan, source, **kwargs):
