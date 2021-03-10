@@ -3,6 +3,8 @@ Functions to load and process x-ray diffraction data.
 
 .. autosummary::
     ~plot_data
+    ~dbplot
+    ~load_axes
 """
 
 import matplotlib.pyplot as plt
@@ -218,6 +220,32 @@ def dbplot(
 def load_axes(
     source, scan, positioner=None, detector=None, defaults=None, read=False
 ):
+    """
+    Plot and fit data.
+
+    Parameters
+    ----------
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
+    scan_series : int, list
+        single scan
+        or list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
+    positioner : string, optional
+        Name of the positioner, this needs to be the same as defined in
+        Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+    detector : string, optional
+        Detector to be read from this scan, again it needs to be the same name
+        as in Bluesky. If None is passed, it defaults to the APD detector.
+    defaults : string, optional
+        Default values for positioner and detector
+    read: boolean, optional
+        Determines if positioner is read from metadata
+
+    Output
+    -------
+    Plot
+
+    """
     meta = collect_meta([scan], source, meta_keys=["motors", "hints"])
     if not positioner or read:
         positioner = meta[scan]["motors"][0]
