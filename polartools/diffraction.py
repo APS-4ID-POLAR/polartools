@@ -349,6 +349,7 @@ def fit_series(
                         detector=detector,
                         defaults=_defaults,
                         read=False,
+                        **kwargs,
                     )
                     if positioner in table.columns
                     else load_axes(
@@ -358,6 +359,7 @@ def fit_series(
                         detector=detector,
                         defaults=_defaults,
                         read=True,
+                        **kwargs,
                     )
                 )
             x = table[positioner].to_numpy()
@@ -506,6 +508,7 @@ def load_series(
                 detector=detector,
                 defaults=_defaults,
                 read=False,
+                **kwargs,
             )
             if positioner in table.columns
             else load_axes(
@@ -515,6 +518,7 @@ def load_series(
                 detector=detector,
                 defaults=_defaults,
                 read=True,
+                **kwargs,
             )
         )
 
@@ -848,7 +852,13 @@ def plot_fit(
 
 
 def load_axes(
-    source, scan, positioner=None, detector=None, defaults=None, read=False, **kwargs
+    source,
+    scan,
+    positioner=None,
+    detector=None,
+    defaults=None,
+    read=False,
+    **kwargs,
 ):
     """
     Plot and fit data.
@@ -878,7 +888,9 @@ def load_axes(
     """
     _kwargs = copy.deepcopy(kwargs)
     query = _kwargs.pop("query", None)
-    meta = collect_meta([scan], source, meta_keys=["motors", "hints"],query=query)
+    meta = collect_meta(
+        [scan], source, meta_keys=["motors", "hints"], query=query
+    )
     if not positioner or read:
         positioner = meta[scan]["motors"][0]
     det = meta[scan]["hints"] if "hints" in meta[scan] else None
@@ -941,6 +953,11 @@ def plot_data(
     else:
         _defaults = _bluesky_default_cols
 
+    if not positioner:
+        positioner = _defaults["positioner"]
+    if not detector:
+        detector = _defaults["detector"]
+
     plt.close("all")
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(1, 1, 1)
@@ -970,7 +987,7 @@ def plot_data(
                         detector=detector,
                         defaults=_defaults,
                         read=False,
-                        **kwargs
+                        **kwargs,
                     )
                     if positioner in data.columns
                     else load_axes(
@@ -980,7 +997,7 @@ def plot_data(
                         detector=detector,
                         defaults=_defaults,
                         read=True,
-                        **kwargs
+                        **kwargs,
                     )
                 )
                 if fit:
@@ -1077,5 +1094,5 @@ def dbplot(
         positioner=positioner,
         detector=detector,
         fit=fit,
-        **kwargs
+        **kwargs,
     )
