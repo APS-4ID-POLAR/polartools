@@ -580,7 +580,7 @@ def load_series(
             else:
                 dataz[index] = table[detector]
             if log:
-                dataz[index][dataz[index] == 0] = 1
+                dataz[index].replace(0, 1, inplace=True)
                 dataz[index] = np.log10(dataz[index])
             index += 1
     return datax, datay, dataz, detector, positioner
