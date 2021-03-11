@@ -92,7 +92,7 @@ def show_meta(
                 f"{scan_to}."
             )
 
-        scans = range(scans, scan_to)
+        scans = range(scans, scan_to + 1)
 
     if meta_keys == "short":
         meta_keys = [

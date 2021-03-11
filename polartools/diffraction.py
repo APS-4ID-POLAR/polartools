@@ -360,6 +360,14 @@ def fit_series(
                         **kwargs,
                     )
                 )
+            else:
+                if not positioner:
+                    positioner = _defaults["positioner"]
+                if not detector:
+                    detector = _defaults["detector"]
+                if not monitor:
+                    monitor = _defaults["monitor"]
+
             x = table[positioner].to_numpy()
             y = table[detector].to_numpy()
             if normalize:
@@ -476,7 +484,6 @@ def load_series(
 
     else:
         _defaults = _bluesky_default_cols
-
     if len(scan_series) % 3:
         raise ValueError(
             f"expected 3*n={3*(len(scan_series)//3)} arguments, got "
@@ -516,6 +523,14 @@ def load_series(
                 **kwargs,
             )
         )
+    else:
+        if not positioner:
+            positioner = _defaults["positioner"]
+        if not detector:
+            detector = _defaults["detector"]
+        if not monitor:
+            monitor = _defaults["monitor"]
+
     data_len = len(table[detector])
     datax = [np.zeros(data_len) for i in range(int(nbp))]
     datay = [np.zeros(data_len) for i in range(int(nbp))]
