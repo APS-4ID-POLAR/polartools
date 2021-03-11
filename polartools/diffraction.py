@@ -97,9 +97,12 @@ def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
             print(
                 key, "=", fit.params[key].value, "+/-", fit.params[key].stderr
             )
-        plt.plot(xdata, ydata)
-        plt.plot(xdata, fit.best_fit)
+        fig = plt.figure(figsize=(4, 4))
+        ax = fig.add_subplot(1, 1, 1)
+        ax.plot(xdata, ydata)
+        ax.plot(xdata, fit.best_fit)
         plt.show(block=True)
+
     return fit
 
 
@@ -276,13 +279,6 @@ def fit_series(
     else:
         _defaults = _bluesky_default_cols
 
-    if not positioner:
-        positioner = _defaults["positioner"]
-    if not detector:
-        detector = _defaults["detector"]
-    if not monitor:
-        monitor = _defaults["monitor"]
-
     if len(scan_series) % 3:
         raise ValueError(
             f"expected 3*n={3*(len(scan_series)//3)} arguments, got "
@@ -341,12 +337,13 @@ def fit_series(
                 or isinstance(source, str)
                 or source == "csv"
             ):
-                positioner, detector = (
+                positioner, detector, monitor = (
                     load_axes(
                         source,
                         scan,
                         positioner=positioner,
                         detector=detector,
+                        monitor=monitor,
                         defaults=_defaults,
                         read=False,
                         **kwargs,
@@ -357,6 +354,7 @@ def fit_series(
                         scan,
                         positioner=positioner,
                         detector=detector,
+                        monitor=monitor,
                         defaults=_defaults,
                         read=True,
                         **kwargs,
@@ -364,8 +362,8 @@ def fit_series(
                 )
             x = table[positioner].to_numpy()
             y = table[detector].to_numpy()
-            y0 = table[monitor].to_numpy()
             if normalize:
+                y0 = table[monitor].to_numpy()
                 y = y / y0
 
             fit = fit_peak(x, y, model=model, scan=scan, output=output)
@@ -401,6 +399,7 @@ def load_series(
     positioner=None,
     detector=None,
     monitor=None,
+    normalize=False,
     **kwargs,
 ):
     """
@@ -478,12 +477,6 @@ def load_series(
     else:
         _defaults = _bluesky_default_cols
 
-    if not positioner:
-        positioner = _defaults["positioner"]
-    if not detector:
-        detector = _defaults["detector"]
-    if not monitor:
-        monitor = _defaults["monitor"]
     if len(scan_series) % 3:
         raise ValueError(
             f"expected 3*n={3*(len(scan_series)//3)} arguments, got "
@@ -500,12 +493,13 @@ def load_series(
         or isinstance(source, str)
         or source == "csv"
     ):
-        positioner, detector = (
+        positioner, detector, monitor = (
             load_axes(
                 source,
                 scan_series[1],
                 positioner=positioner,
                 detector=detector,
+                monitor=monitor,
                 defaults=_defaults,
                 read=False,
                 **kwargs,
@@ -516,12 +510,12 @@ def load_series(
                 scan_series[1],
                 positioner=positioner,
                 detector=detector,
+                monitor=monitor,
                 defaults=_defaults,
                 read=True,
                 **kwargs,
             )
         )
-
     data_len = len(table[detector])
     datax = [np.zeros(data_len) for i in range(int(nbp))]
     datay = [np.zeros(data_len) for i in range(int(nbp))]
@@ -566,16 +560,15 @@ def load_series(
                 tt.fill(index)
                 datay[index] = tt
             datax[index] = table[positioner]
-            if monitor:
+            if normalize:
                 dataz[index] = table[detector] / table[monitor]
             else:
                 dataz[index] = table[detector]
-
             if log:
                 dataz[index][dataz[index] == 0] = 1
                 dataz[index] = np.log10(dataz[index])
             index += 1
-    return datax, datay, dataz
+    return datax, datay, dataz, detector, positioner
 
 
 def plot_2d(
@@ -585,6 +578,7 @@ def plot_2d(
     positioner=None,
     detector=None,
     monitor=None,
+    normalize=False,
     log=False,
     **kwargs,
 ):
@@ -644,28 +638,8 @@ def plot_2d(
     2D plot, png-file
 
     """
-    folder = kwargs.pop("folder", "")
     output = kwargs.pop("output", None)
-    if isinstance(source, (str, SpecDataFile)) and source != "csv":
-        if isinstance(source, str):
-            path = join(folder, source)
-            source = SpecDataFile(path)
-        if is_Bluesky_specfile(source):
-            _defaults = _bluesky_default_cols
-        else:
-            _defaults = _spec_default_cols
-
-    else:
-        _defaults = _bluesky_default_cols
-
-    if not positioner:
-        positioner = _defaults["positioner"]
-    if not detector:
-        detector = _defaults["detector"]
-    if not monitor:
-        monitor = _defaults["monitor"]
-
-    datax, datay, dataz = load_series(
+    datax, datay, dataz, detector, positioner = load_series(
         source=source,
         scan_series=scan_series,
         log=log,
@@ -673,6 +647,7 @@ def plot_2d(
         positioner=positioner,
         detector=detector,
         monitor=monitor,
+        normalize=normalize,
         **kwargs,
     )
     plt.close("all")
@@ -847,7 +822,6 @@ def plot_fit(
     else:
         x_label = var_series
     ax3.set_xlabel(x_label)
-
     print(data)
 
 
@@ -856,6 +830,7 @@ def load_axes(
     scan,
     positioner=None,
     detector=None,
+    monitor=None,
     defaults=None,
     read=False,
     **kwargs,
@@ -876,6 +851,9 @@ def load_axes(
     detector : string, optional
         Detector to be read from this scan, again it needs to be the same name
         as in Bluesky. If None is passed, it defaults to the APD detector.
+    monitor : string, optional
+        Name of the monitor detector. If None is passed, it defaults to the ion
+        chamber 3.
     defaults : string, optional
         Default values for positioner and detector
     read: boolean, optional
@@ -895,11 +873,16 @@ def load_axes(
         positioner = meta[scan]["motors"][0]
     det = meta[scan]["hints"] if "hints" in meta[scan] else None
     if not detector:
-        if det:
-            detector = det[0]["detector"][0]
-        else:
-            detector = defaults["detector"]
-    return positioner, detector
+        detector = (
+            det[0]["detectors"][0]
+            if "detectors" in det[0]
+            else defaults["detector"]
+        )
+    if not monitor:
+        monitor = (
+            det[0]["monitor"] if "monitor" in det[0] else defaults["monitor"]
+        )
+    return positioner, detector, monitor
 
 
 def plot_data(
@@ -907,7 +890,9 @@ def plot_data(
     scan_series,
     positioner=None,
     detector=None,
+    monitor=None,
     fit=False,
+    normalize=False,
     **kwargs,
 ):
     """
@@ -921,10 +906,15 @@ def plot_data(
         list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
-        Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+        Bluesky or SPEC.
     detector : string, optional
         Detector to be read from this scan, again it needs to be the same name
-        as in Bluesky. If None is passed, it defaults to the APD detector.
+        as in Bluesky.
+    monitor : string, optional
+        Monitor to be read from this scan, again it needs to be the same name
+        as in Bluesky.
+    normalize : boolean, optional
+        Normalization to selected/default monitor on/off
     kwargs :
         model : string, optional
             - fit model: Gaussian, Lorentzian, PseudoVoigt
@@ -953,11 +943,6 @@ def plot_data(
     else:
         _defaults = _bluesky_default_cols
 
-    if not positioner:
-        positioner = _defaults["positioner"]
-    if not detector:
-        detector = _defaults["detector"]
-
     plt.close("all")
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(1, 1, 1)
@@ -979,12 +964,13 @@ def plot_data(
                     source,
                     **kwargs,
                 )
-                positioner, detector = (
+                positioner, detector, monitor = (
                     load_axes(
                         source,
                         scan,
                         positioner=positioner,
                         detector=detector,
+                        monitor=monitor,
                         defaults=_defaults,
                         read=False,
                         **kwargs,
@@ -995,11 +981,14 @@ def plot_data(
                         scan,
                         positioner=positioner,
                         detector=detector,
+                        monitor=monitor,
                         defaults=_defaults,
                         read=True,
                         **kwargs,
                     )
                 )
+                if normalize:
+                    data[detector] = data[detector] / data[monitor]
                 if fit:
                     x = data[positioner].to_numpy()
                     y = data[detector].to_numpy()
@@ -1049,6 +1038,8 @@ def dbplot(
     scan,
     positioner=None,
     detector=None,
+    monitor=None,
+    normalize=False,
     fit=False,
     **kwargs,
 ):
@@ -1068,6 +1059,11 @@ def dbplot(
     detector : string, optional
         Detector to be read from this scan, again it needs to be the same name
         as in Bluesky. If None is passed, it defaults to the APD detector.
+    monitor : string, optional
+        Name of the monitor detector. If None is passed, it defaults to the ion
+        chamber 3.
+    normalize : boolean, optional
+        Normalization to selected/default monitor on/off
     kwargs :
         model : string, optional
             - fit model: Gaussian, Lorentzian, PseudoVoigt
@@ -1093,6 +1089,8 @@ def dbplot(
         scan_series=scan_series,
         positioner=positioner,
         detector=detector,
+        monitor=monitor,
         fit=fit,
+        normalize=normalize,
         **kwargs,
     )
