@@ -915,6 +915,8 @@ def plot_data(
         as in Bluesky.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    fit : boolean, optional
+        Fitting of peak using model on/off
     kwargs :
         model : string, optional
             - fit model: Gaussian, Lorentzian, PseudoVoigt
@@ -1064,6 +1066,8 @@ def dbplot(
         chamber 3.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    fit : boolean, optional
+        Fitting of peak using model on/off
     kwargs :
         model : string, optional
             - fit model: Gaussian, Lorentzian, PseudoVoigt
