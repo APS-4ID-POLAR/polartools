@@ -6,6 +6,8 @@ Functions to load and process x-ray diffraction data.
     ~load_info
     ~fit_series
     ~load_series
+    ~get_type
+    ~load_mesh
     ~plot_2d
     ~plot_fit
     ~load_axes
@@ -604,6 +606,35 @@ def load_series(
 
 
 def get_type(source, scan_id, **kwargs):
+    """
+    get_type returns type of scan and scan parameters.
+
+    Parameters
+    ----------
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
+    scan_id : int
+        scan number
+
+    kwargs :
+        The necessary kwargs are passed to the loading and fitting functions
+        defined by the `source` argument:
+            - csv        -> possible kwargs: folder, name_format, e.g.\
+                "scan_{}_primary.csv"
+            - spec       -> possible kwargs: folder
+            - databroker -> possible kwargs: stream, query
+
+        Note that a warning will be printed if the an unnecessary kwarg is
+        passed.
+    
+    Additional parameters in kwargs:
+        folder: location of scan file
+
+    Returns
+    -------
+    data : type of scan and scan parameters.
+
+    """
     _kwargs = copy.deepcopy(kwargs)
     folder = _kwargs.pop("folder", "")
     if source == "csv":
@@ -639,6 +670,38 @@ def get_type(source, scan_id, **kwargs):
 
 
 def load_mesh(scan, source, scan_range, **kwargs):
+    """
+    Load mesh generates input array for plot_2d from mesh_scan.
+
+    Parameters
+    ----------
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
+    scan_series : list, int
+        start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+    scan_range : list, int
+        scan parameters of mesh scan [x0, x1, xinterval, y0, y1, yinterval]
+
+    kwargs :
+        The necessary kwargs are passed to the loading and fitting functions
+        defined by the `source` argument:
+            - csv        -> possible kwargs: folder, name_format, e.g.\
+                "scan_{}_primary.csv"
+            - spec       -> possible kwargs: folder
+            - databroker -> possible kwargs: stream, query
+
+        Note that a warning will be printed if the an unnecessary kwarg is
+        passed.
+    
+    Additional parameters in kwargs:
+        scale : list, int
+            intensity limits: [z_min,z_max]
+
+    Returns
+    -------
+    data : arrays with x, y and z information for 2D plot and axes names
+    """
+
     folder = kwargs.pop("folder", "")
     scale = kwargs.pop("scale", [None, None])
     if source == "csv":
