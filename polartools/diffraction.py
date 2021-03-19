@@ -649,8 +649,6 @@ def load_mesh(scan, source, scan_range, **kwargs):
             path = join(folder, source)
             source = SpecDataFile(path)
         specscan = source.getScan(scan)
-    zlog = 0
-    m_label = None
 
     data = load_table(scan=scan, source=source)
     x_label = data.columns[0]
@@ -768,6 +766,7 @@ def plot_2d(
     2D plot, png-file
 
     """
+
     output = kwargs.pop("output", None)
     direction = kwargs.pop("direction", [1, 1])
     scan_type, scan_range = get_type(
