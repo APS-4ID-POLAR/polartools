@@ -760,7 +760,7 @@ def plot_2d(
             intensity limits: [z_min,z_max]
         direction : list, int
             multiply axes for inversion: [1,-1]
- 
+            
     Returns
     -------
     2D plot, png-file
