@@ -626,7 +626,7 @@ def get_type(source, scan_id, **kwargs):
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
-    
+
     Additional parameters in kwargs:
         folder: location of scan file
 
