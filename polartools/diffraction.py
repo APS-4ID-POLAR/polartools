@@ -692,7 +692,7 @@ def load_mesh(scan, source, scan_range, **kwargs):
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
-    
+
     Additional parameters in kwargs:
         scale : list, int
             intensity limits: [z_min,z_max]
