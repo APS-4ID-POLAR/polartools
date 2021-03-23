@@ -410,7 +410,7 @@ def load_series(
     detector=None,
     monitor=None,
     normalize=False,
-    scale=[0,0],
+    scale=None,
     **kwargs,
 ):
     """
@@ -588,7 +588,7 @@ def load_series(
             if log:
                 dataz[index].replace(0, 1, inplace=True)
                 dataz[index] = np.log10(dataz[index])
-            if scale[0]:
+            if scale:
                 if len(scale) > 1:
                     dataz[index].values[
                         dataz[index] < float(scale[0])
@@ -697,14 +697,13 @@ def get_type(source, scan_id, **kwargs):
 
                 if key == "hints":
                     if scan_info["scan_type"] == "grid_scan":
-                        print(item[0]["dimensions"][0][0])
                         scan_info["motor0"] = item[0]["dimensions"][0][0][0]
                         scan_info["motor1"] = item[0]["dimensions"][1][0][0]
                         scan_info["detector"] = item[0]["detectors"][0]
     return scan_info
 
 
-def load_mesh(scan, source, scan_range, log=False, scale=[0,0]):
+def load_mesh(scan, source, scan_range, log=False, scale=None):
     """
     Load mesh generates input array for plot_2d from mesh_scan.
 
@@ -767,7 +766,7 @@ def load_mesh(scan, source, scan_range, log=False, scale=[0,0]):
         if log:
             z1[ii].replace(0, 1, inplace=True)
             z1[ii] = np.log10(z1[ii])
-        if scale[0]:
+        if scale:
             if len(scale) > 1:
                 z1[ii].values[z1[ii] < float(scale[0])] = float(scale[0])
                 z1[ii].values[z1[ii] > float(scale[1])] = float(scale[1])
@@ -785,7 +784,7 @@ def plot_2d(
     monitor=None,
     normalize=False,
     log=False,
-    scale=[0,0],
+    scale=None,
     direction=[1, 1],
     output=False,
     **kwargs,
