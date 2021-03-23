@@ -410,6 +410,7 @@ def load_series(
     detector=None,
     monitor=None,
     normalize=False,
+    scale=[None, None],
     **kwargs,
 ):
     """
@@ -449,6 +450,9 @@ def load_series(
         are not normalized.
     log : boolean
         If True, z-axis plotted in logarithmic scale.
+    scale : list, int
+        intensity limits: [z_min,z_max]
+
     kwargs :
         The necessary kwargs are passed to the loading and fitting functions
         defined by the `source` argument:
@@ -475,7 +479,6 @@ def load_series(
         )
 
     folder = kwargs.pop("folder", "")
-    scale = kwargs.pop("scale", [None, None])
     if isinstance(source, (str, SpecDataFile)) and source != "csv":
         if isinstance(source, str):
             path = join(folder, source)
@@ -587,20 +590,16 @@ def load_series(
                 dataz[index] = np.log10(dataz[index])
             if scale[0]:
                 if len(scale) > 1:
-                    ii = 0
-                    for element in dataz[index]:
-                        if element > scale[1]:
-                            dataz[index][ii] = scale[1]
-                        if element < scale[0]:
-                            dataz[index][ii] = scale[0]
-                        ii += 1
+                    dataz[index].values[
+                        dataz[index] < float(scale[0])
+                    ] = float(scale[0])
+                    dataz[index].values[
+                        dataz[index] > float(scale[1])
+                    ] = float(scale[1])
                 else:
-                    ii = 0
-                    for element in dataz[index]:
-                        if element > scale[0]:
-                            dataz[index][ii] = scale[0]
-                        ii += 1
-
+                    dataz[index].values[
+                        dataz[index] > float(scale[0])
+                    ] = float(scale[0])
             index += 1
     return datax, datay, dataz, detector, positioner
 
@@ -637,6 +636,18 @@ def get_type(source, scan_id, **kwargs):
     """
     _kwargs = copy.deepcopy(kwargs)
     folder = _kwargs.pop("folder", "")
+    scan_info = {
+        "scan_type": "rel_scan",
+        "motor0": None,
+        "x0": 0,
+        "x1": 0,
+        "xint": 0,
+        "motor1": None,
+        "y0": 0,
+        "y1": 0,
+        "yint": 0,
+        "detector": None,
+    }
     if source == "csv":
         pass
         # to be implemented for csv
@@ -647,29 +658,51 @@ def get_type(source, scan_id, **kwargs):
         specscan = source.getScan(scan_id)
         scan_cmd = specscan.scanCmd.split()
         scan_type = scan_cmd[0]
+        scan_info["x0"] = scan_cmd[2]
+        scan_info["x1"] = scan_cmd[3]
+        scan_info["xint"] = scan_cmd[4]
+        scan_info["y0"] = scan_cmd[6]
+        scan_info["y1"] = scan_cmd[7]
+        scan_info["yint"] = scan_cmd[8]
         if scan_type == "mesh" or scan_type == "hklmesh":
-            scan_range = {
-                "x0": scan_cmd[2],
-                "x1": scan_cmd[3],
-                "xint": scan_cmd[4],
-                "y0": scan_cmd[6],
-                "y1": scan_cmd[7],
-                "yint": scan_cmd[8],
-            }
+            scan_info["scan_type"] = scan_type
         elif scan_type != "qxscan":
-            scan_range = {
-                "x0": scan_cmd[2],
-                "x1": scan_cmd[3],
-                "xint": scan_cmd[4],
-            }
+            scan_info["scan_type"] = scan_type
         else:
-            scan_range = {}
+            pass
     else:
-        scan_type = collect_meta(scan_id, source, ["plan_name"])
-    return scan_type, scan_range
+        scan_read = collect_meta(
+            [scan_id],
+            source,
+            ["plan_name", "plan_pattern_args", "num_points", "hints"],
+        )
+        for scanno, plan in scan_read.items():
+            for key, item in plan.items():
+                if key == "plan_name":
+                    scan_info["scan_type"] = item[0]
+                if key == "plan_pattern_args":
+                    if scan_info["scan_type"] == "grid_scan":
+                        scan_info["x0"] = item[0]["args"][1]
+                        scan_info["x1"] = item[0]["args"][2]
+                        scan_info["xint"] = item[0]["args"][3]
+                        scan_info["y0"] = item[0]["args"][5]
+                        scan_info["y1"] = item[0]["args"][6]
+                        scan_info["yint"] = item[0]["args"][7]
+                    else:
+                        scan_info["x0"] = item[0]["args"][-2]
+                        scan_info["x1"] = item[0]["args"][-1]
+                        scan_info["xint"] = item[0]["num"]
+
+                if key == "hints":
+                    if scan_info["scan_type"] == "grid_scan":
+                        print(item[0]["dimensions"][0][0])
+                        scan_info["motor0"] = item[0]["dimensions"][0][0][0]
+                        scan_info["motor1"] = item[0]["dimensions"][1][0][0]
+                        scan_info["detector"] = item[0]["detectors"][0]
+    return scan_info
 
 
-def load_mesh(scan, source, scan_range, **kwargs):
+def load_mesh(scan, source, scan_range, log=False, scale=[None, None]):
     """
     Load mesh generates input array for plot_2d from mesh_scan.
 
@@ -681,6 +714,10 @@ def load_mesh(scan, source, scan_range, **kwargs):
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
     scan_range : list, int
         scan parameters of mesh scan [x0, x1, xinterval, y0, y1, yinterval]
+    log: boolean
+        If True, z-axis plotted in logarithmic scale.
+    scale : list, int
+        intensity limits: [z_min,z_max]
 
     kwargs :
         The necessary kwargs are passed to the loading and fitting functions
@@ -702,57 +739,38 @@ def load_mesh(scan, source, scan_range, **kwargs):
     data : arrays with x, y and z information for 2D plot and axes names
     """
 
-    folder = kwargs.pop("folder", "")
-    scale = kwargs.pop("scale", [None, None])
-    if source == "csv":
-        pass
-        # to be implemented for csv
-    elif isinstance(source, str) or isinstance(source, SpecDataFile):
-        if isinstance(source, str):
-            path = join(folder, source)
-            source = SpecDataFile(path)
-        specscan = source.getScan(scan)
-
     data = load_table(scan=scan, source=source)
-    x_label = data.columns[0]
-    y_label = data.columns[1]
-    z_label = data.columns[-1]
-
-    x1 = [
-        x1[:]
-        for x1 in [[1.01] * (int(scan_range["xint"]) + 1)]
-        * (int(scan_range["yint"]) + 1)
-    ]
-    y1 = [
-        y1[:]
-        for y1 in [[1.01] * (int(scan_range["xint"]) + 1)]
-        * (int(scan_range["yint"]) + 1)
-    ]
-    z1 = [
-        z1[:]
-        for z1 in [[1.01] * (int(scan_range["xint"]) + 1)]
-        * (int(scan_range["yint"]) + 1)
-    ]
-
-    r0 = specscan.data[x_label]
-    r1 = specscan.data[y_label]
-    r2 = specscan.data[z_label]
-
-    for ii in range(0, int(scan_range["yint"]) + 1):
-        for jj in range(0, int(scan_range["xint"]) + 1):
-            x1[ii][jj] = r0[jj + ii * (1 + int(scan_range["xint"]))]
-            y1[ii][jj] = r1[jj + ii * (1 + int(scan_range["xint"]))]
-            z1[ii][jj] = r2[jj + ii * (1 + int(scan_range["xint"]))]
-
-            if scale[0]:
-                if len(scale) > 1:
-                    if z1[ii][jj] < float(scale[0]):
-                        z1[ii][jj] = float(scale[0])
-                    if z1[ii][jj] > float(scale[1]):
-                        z1[ii][jj] = float(scale[1])
-                else:
-                    if z1[ii][jj] > float(scale[0]):
-                        z1[ii][jj] = float(scale[0])
+    if scan_range["scan_type"] == "grid_scan":
+        x_label = scan_range["motor0"]
+        y_label = scan_range["motor1"]
+        z_label = scan_range["detector"]
+        xr = int(scan_range["xint"])
+        yr = int(scan_range["yint"])
+    else:
+        x_label = data.columns[0]
+        y_label = data.columns[1]
+        z_label = data.columns[-1]
+        xr = int(scan_range["xint"]) + 1
+        yr = int(scan_range["yint"]) + 1
+    x1 = [x1[:] for x1 in [[1.01] * (xr)] * (yr)]
+    y1 = [y1[:] for y1 in [[1.01] * (xr)] * (yr)]
+    z1 = [z1[:] for z1 in [[1.01] * (xr)] * (yr)]
+    r0 = data[x_label]
+    r1 = data[y_label]
+    r2 = data[z_label]
+    for ii in range(0, yr):
+        x1[ii] = r0[ii * xr : ii * xr + xr]
+        y1[ii] = r1[ii * xr : ii * xr + xr]
+        z1[ii] = r2[ii * xr : ii * xr + xr]
+        if log:
+            z1[ii].replace(0, 1, inplace=True)
+            z1[ii] = np.log10(z1[ii])
+        if scale[0]:
+            if len(scale) > 1:
+                z1[ii].values[z1[ii] < float(scale[0])] = float(scale[0])
+                z1[ii].values[z1[ii] > float(scale[1])] = float(scale[1])
+            else:
+                z1[ii].values[z1[ii] > float(scale[0])] = float(scale[0])
     return x1, y1, z1, x_label, y_label, z_label
 
 
@@ -765,6 +783,9 @@ def plot_2d(
     monitor=None,
     normalize=False,
     log=False,
+    scale=[None, None],
+    direction=[1, 1],
+    output=False,
     **kwargs,
 ):
     """
@@ -818,27 +839,22 @@ def plot_2d(
             - spec       -> possible kwargs: folder
             - databroker -> possible kwargs: stream, query
 
-        Additional parameters in kwargs:
-        scale : list, int
-            intensity limits: [z_min,z_max]
-        direction : list, int
-            multiply axes for inversion: [1,-1]
 
     Returns
     -------
     2D plot, png-file
 
     """
-
-    output = kwargs.pop("output", None)
-    direction = kwargs.pop("direction", [1, 1])
-    scan_type, scan_range = get_type(
-        source=source, scan_id=scan_series[0], **kwargs
-    )
-    if scan_type == "mesh" or scan_type == "hklmesh":
+    scan_info = get_type(source=source, scan_id=scan_series[0], **kwargs)
+    if (
+        scan_info["scan_type"] == "mesh"
+        or scan_info["scan_type"] == "hklmesh"
+        or scan_info["scan_type"] == "grid_scan"
+    ):
         datax, datay, dataz, positioner, var_series, detector = load_mesh(
-            scan_series[0], source, scan_range, **kwargs
+            scan_series[0], source, scan_info, log=log, scale=scale
         )
+
     else:
         datax, datay, dataz, detector, positioner = load_series(
             source=source,
@@ -849,6 +865,7 @@ def plot_2d(
             detector=detector,
             monitor=monitor,
             normalize=normalize,
+            scale=scale,
             **kwargs,
         )
     plt.close("all")
@@ -872,7 +889,11 @@ def plot_2d(
     ax.yaxis.set_major_locator(plt.MaxNLocator(5))
 
     nlabel = ""
-    if scan_type == "mesh" or scan_type == "hklmesh":
+    if (
+        scan_info == "mesh"
+        or scan_info == "hklmesh"
+        or scan_info["scan_type"] == "grid_scan"
+    ):
         nlabel = nlabel + (", #{}".format(scan_series[0]))
     else:
         for series in range(1, len(scan_series), 3):
