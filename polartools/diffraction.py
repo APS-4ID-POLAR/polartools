@@ -888,11 +888,10 @@ def plot_2d(
     ax.set_ylabel(y_label)
     ax.xaxis.set_major_locator(plt.MaxNLocator(3))
     ax.yaxis.set_major_locator(plt.MaxNLocator(5))
-
     nlabel = ""
     if (
-        scan_info == "mesh"
-        or scan_info == "hklmesh"
+        scan_info['scan_type'] == "mesh"
+        or scan_info['scan_type'] == "hklmesh"
         or scan_info["scan_type"] == "grid_scan"
     ):
         nlabel = nlabel + (", #{}".format(scan_series[0]))
