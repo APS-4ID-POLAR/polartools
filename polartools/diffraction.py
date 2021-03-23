@@ -410,7 +410,7 @@ def load_series(
     detector=None,
     monitor=None,
     normalize=False,
-    scale=[None, None],
+    scale=[0,0],
     **kwargs,
 ):
     """
@@ -637,6 +637,7 @@ def get_type(source, scan_id, **kwargs):
     _kwargs = copy.deepcopy(kwargs)
     folder = _kwargs.pop("folder", "")
     scan_info = {
+        "scan_no": 0,
         "scan_type": "rel_scan",
         "motor0": None,
         "x0": 0,
@@ -677,6 +678,7 @@ def get_type(source, scan_id, **kwargs):
             ["plan_name", "plan_pattern_args", "num_points", "hints"],
         )
         for scanno, plan in scan_read.items():
+            scan_info["scan_no"] = scanno
             for key, item in plan.items():
                 if key == "plan_name":
                     scan_info["scan_type"] = item[0]
@@ -702,7 +704,7 @@ def get_type(source, scan_id, **kwargs):
     return scan_info
 
 
-def load_mesh(scan, source, scan_range, log=False, scale=[None, None]):
+def load_mesh(scan, source, scan_range, log=False, scale=[0,0]):
     """
     Load mesh generates input array for plot_2d from mesh_scan.
 
@@ -783,7 +785,7 @@ def plot_2d(
     monitor=None,
     normalize=False,
     log=False,
-    scale=[None, None],
+    scale=[0,0],
     direction=[1, 1],
     output=False,
     **kwargs,
