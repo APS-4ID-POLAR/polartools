@@ -902,13 +902,13 @@ def plot_2d(
             nlabel = nlabel + (", #{}-{}".format(start, stop))
     areas = len(scan_series) / 3
     if areas < 3:
-        ax.set_title("{}{}".format(z_label, nlabel), fontsize=14)
+        ax.set_title("{}{}".format(z_label, nlabel), fontsize=12)
     elif areas < 5:
-        ax.set_title("{}{}".format(z_label, nlabel), fontsize=11)
+        ax.set_title("{}{}".format(z_label, nlabel), fontsize=10)
     else:
         ax.set_title("{}{}".format(z_label, nlabel), fontsize=8)
 
-    SIZE = 14
+    SIZE = 12
     plt.rc("font", size=SIZE)
     plt.rc("axes", titlesize=SIZE)
     plt.rc("axes", labelsize=SIZE)
@@ -917,7 +917,7 @@ def plot_2d(
     plt.rc("legend", fontsize=SIZE)
 
     if output:
-        plt.savefig(output, dpi=600, transparent=True)
+        plt.savefig(output, dpi=600, transparent=True, bbox_inches='tight')
 
 
 def plot_fit(
