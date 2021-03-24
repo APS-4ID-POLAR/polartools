@@ -662,11 +662,11 @@ def get_type(source, scan_id, **kwargs):
         scan_info["x0"] = scan_cmd[2]
         scan_info["x1"] = scan_cmd[3]
         scan_info["xint"] = scan_cmd[4]
-        scan_info["y0"] = scan_cmd[6]
-        scan_info["y1"] = scan_cmd[7]
-        scan_info["yint"] = scan_cmd[8]
         if scan_type == "mesh" or scan_type == "hklmesh":
             scan_info["scan_type"] = scan_type
+            scan_info["y0"] = scan_cmd[6]
+            scan_info["y1"] = scan_cmd[7]
+            scan_info["yint"] = scan_cmd[8]
         elif scan_type != "qxscan":
             scan_info["scan_type"] = scan_type
         else:
@@ -703,7 +703,7 @@ def get_type(source, scan_id, **kwargs):
     return scan_info
 
 
-def load_mesh(scan, source, scan_range, log=False, scale=None):
+def load_mesh(scan, source, scan_range, log=False, scale=None, **kwargs):
     """
     Load mesh generates input array for plot_2d from mesh_scan.
 
@@ -740,7 +740,7 @@ def load_mesh(scan, source, scan_range, log=False, scale=None):
     data : arrays with x, y and z information for 2D plot and axes names
     """
 
-    data = load_table(scan=scan, source=source)
+    data = load_table(scan=scan, source=source, **kwargs)
     if scan_range["scan_type"] == "grid_scan":
         x_label = scan_range["motor0"]
         y_label = scan_range["motor1"]
@@ -853,7 +853,7 @@ def plot_2d(
         or scan_info["scan_type"] == "grid_scan"
     ):
         datax, datay, dataz, positioner, var_series, detector = load_mesh(
-            scan_series[0], source, scan_info, log=log, scale=scale
+            scan_series[0], source, scan_info, log=log, scale=scale, **kwargs
         )
 
     else:
@@ -890,8 +890,8 @@ def plot_2d(
     ax.yaxis.set_major_locator(plt.MaxNLocator(5))
     nlabel = ""
     if (
-        scan_info['scan_type'] == "mesh"
-        or scan_info['scan_type'] == "hklmesh"
+        scan_info["scan_type"] == "mesh"
+        or scan_info["scan_type"] == "hklmesh"
         or scan_info["scan_type"] == "grid_scan"
     ):
         nlabel = nlabel + (", #{}".format(scan_series[0]))
@@ -917,7 +917,7 @@ def plot_2d(
     plt.rc("legend", fontsize=SIZE)
 
     if output:
-        plt.savefig(output, dpi=600, transparent=True, bbox_inches='tight')
+        plt.savefig(output, dpi=600, transparent=True, bbox_inches="tight")
 
 
 def plot_fit(
