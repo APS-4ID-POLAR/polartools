@@ -83,7 +83,7 @@ def show_meta(
 
     if isinstance(scans, int):
         if scan_to is None:
-            scan_to = scans + 1
+            scan_to = scans
 
         if scan_to < scans:
             raise ValueError(
@@ -92,7 +92,7 @@ def show_meta(
                 f"{scan_to}."
             )
 
-        scans = range(scans, scan_to + 1)
+        scans = range(scans, scan_to+1)
 
     if meta_keys == "short":
         meta_keys = [
