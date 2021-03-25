@@ -657,7 +657,7 @@ def get_type(source, scan_id, **kwargs):
             path = join(folder, source)
             source = SpecDataFile(path)
         specscan = source.getScan(scan_id)
-        if specscan == None:
+        if specscan is None:
             raise ValueError(f'Filename "{source}" not existing!')
         scan_cmd = specscan.scanCmd.split()
         scan_type = scan_cmd[0]
