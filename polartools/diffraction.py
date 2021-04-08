@@ -657,6 +657,8 @@ def get_type(source, scan_id, **kwargs):
             path = join(folder, source)
             source = SpecDataFile(path)
         specscan = source.getScan(scan_id)
+        if specscan is None:
+            raise ValueError(f'Filename "{source}" not existing!')
         scan_cmd = specscan.scanCmd.split()
         scan_type = scan_cmd[0]
         scan_info["x0"] = scan_cmd[2]
@@ -790,30 +792,28 @@ def plot_2d(
     **kwargs,
 ):
     """
-    Plot 2d: Creates 2D plot of scans as function of variable parameter
+    Plot 2d: Creates 2D plot from individual 1D scans as function of variable parameter
+    or plots a 2D mesh scan
 
     Parameters
     ----------
     source : databroker database, name of the spec file, or 'csv'
         Note that applicable kwargs depend on this selection.
     scan_series : list, int
-        start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-        e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
-    var_series: string or list
+        1D-scans:   start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+                    e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
+        mesh-scan:  scan_number, e.g. [10] will read scan #10
+    var_series: string or list, optional
         string:
-
-            - Varying variable for scan series to be read from scan\
+            - Varying variable for scan series to be read from scan
                 (detector), e.g. SampK (sample temperature), optional.
             - String starting with #metadata, reads metadata from CSV baseline
-
         list:
         Information on metadata to be read: List starting with #P, #U or #Q for
         motor positions, user values or Q-position, optional:
-
             - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
             - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
             - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
-
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -824,13 +824,13 @@ def plot_2d(
     monitor : string, optional
         Name of the monitor detector for normalization. If None is passed,
         data are not normalized.
-    log: boolean
+    log: boolean, optional
         If True, z-axis plotted in logarithmic scale.
-    scale : list, int
+    scale : list, int, optional
         intensity limits: [z_min,z_max]
-    direction : list, int
+    direction : list, int, optional
         multiply axes for inversion: [1,-1]
-    output: string
+    output: string, optional
         Output file for png file of plot.
     kwargs:
         The necessary kwargs are passed to the loading and fitting functions
@@ -839,7 +839,6 @@ def plot_2d(
                 "scan_{}_primary.csv"
             - spec       -> possible kwargs: folder
             - databroker -> possible kwargs: stream, query
-
 
     Returns
     -------
