@@ -14,7 +14,7 @@ Functions to load and process x-ray diffraction data.
     ~load_data
     ~dbplot
 """
-
+import random
 import numpy as np
 from pandas import DataFrame
 from lmfit.models import (
@@ -684,6 +684,9 @@ def get_type(source, scan_id, **kwargs):
             for key, item in plan.items():
                 if key == "plan_name":
                     scan_info["scan_type"] = item[0]
+                if key == "num_points":
+                    if not scan_info["xint"]:
+                        scan_info["xint"] = item[0]
                 if key == "plan_pattern_args":
                     if scan_info["scan_type"] == "grid_scan":
                         scan_info["x0"] = item[0]["args"][1]
@@ -695,7 +698,6 @@ def get_type(source, scan_id, **kwargs):
                     else:
                         scan_info["x0"] = item[0]["args"][-2]
                         scan_info["x1"] = item[0]["args"][-1]
-                        scan_info["xint"] = item[0]["num"]
 
                 if key == "hints":
                     if scan_info["scan_type"] == "grid_scan":
@@ -779,7 +781,7 @@ def load_mesh(scan, source, scan_range, log=False, scale=None, **kwargs):
 
 def plot_2d(
     source,
-    scan_series,
+    scans,
     var_series=None,
     positioner=None,
     detector=None,
@@ -799,10 +801,10 @@ def plot_2d(
     ----------
     source : databroker database, name of the spec file, or 'csv'
         Note that applicable kwargs depend on this selection.
-    scan_series : list, int
+    scans : list, int
         1D-scans:   start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
                     e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
-        mesh-scan:  scan_number, e.g. [10] will read scan #10
+        mesh-scan:  scan_number, e.g. 10 will read scan #10
     var_series: string or list, optional
         string:
             - Varying variable for scan series to be read from scan
@@ -845,6 +847,13 @@ def plot_2d(
     2D plot, png-file
 
     """
+    if isinstance(scans, int):
+        scan_series = [scans, scans, 1]
+    elif isinstance(scans, list):
+        scan_series = scans
+    else:
+        raise ValueError(f"expected int or list got '{scans}'")
+
     scan_info = get_type(source=source, scan_id=scan_series[0], **kwargs)
     if (
         scan_info["scan_type"] == "mesh"
@@ -1119,6 +1128,9 @@ def plot_data(
     monitor=None,
     fit=False,
     normalize=False,
+    log=False,
+    deriv=False,
+    direction=[1, 1],
     **kwargs,
 ):
     """
@@ -1141,8 +1153,14 @@ def plot_data(
         as in Bluesky.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    log: boolean
+        If True, y-axis plotted in logarithmic scale.
+    deriv : boolean, optional
+        calculated derivative
     fit : boolean, optional
-        Fitting of peak using model on/off
+        Fitting of peak using model on/off. In case of deriv=True, derivative is fitted
+    direction : list, int
+        multiply axes for inversion: [1,-1] inverts y-axis
     kwargs :
         model : string, optional
             - fit model: Gaussian, Lorentzian, PseudoVoigt
@@ -1174,12 +1192,14 @@ def plot_data(
     plt.close("all")
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(1, 1, 1)
+    if deriv:
+        ax2 = ax.twinx()
     ax.clear()
     index = 0
     if isinstance(scan_series, list):
         if len(scan_series) % 3:
             raise ValueError(
-                f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
+                f"expected 3*n={3*((len(scan_series)+1)//3)} arguments, got {len(scan_series)}"
             )
         for series in range(1, len(scan_series), 3):
             start = scan_series[series - 1]
@@ -1215,32 +1235,85 @@ def plot_data(
                         **kwargs,
                     )
                 )
+                data[positioner] = np.multiply(data[positioner], direction[0])
+                data[detector] = np.multiply(data[detector], direction[1])
                 if normalize:
                     data[detector] = data[detector] / data[monitor]
+                if log:
+                    data[detector].replace(0, 1, inplace=True)
+                    data[detector] = np.log10(data[detector])
+                x = data[positioner].to_numpy()
+                y = data[detector].to_numpy()
+                if deriv:
+                    y = np.diff(y) / np.diff(x)
+                    x = (x[:-1] + x[1:]) / 2
                 if fit:
-                    x = data[positioner].to_numpy()
-                    y = data[detector].to_numpy()
                     fit_data = fit_peak(
                         x, y, model=model, scan=None, output=False
                     )
                     text1 = f"{fit_data.params['center'].value:.3f}"
                     text2 = f"{fit_data.params['fwhm'].value:.3f}"
-                    ax.plot(
-                        x,
-                        fit_data.best_fit,
-                        color="black",
-                        linewidth=2,
-                    )
-
+                if deriv and fit:
                     ax.errorbar(
                         data[positioner],
                         data[detector],
                         color=(f"C{index}"),
                         marker="o",
                         linewidth=2,
-                        markersize=10,
+                        markersize=8,
+                        label=(f"#{scan}"),
+                    )
+                    ax2.plot(
+                        x,
+                        fit_data.best_fit,
+                        color="black",
+                        linewidth=2,
+                    )
+                    ax2.plot(
+                        x,
+                        y,
+                        color=("#{:06x}".format(random.randint(0, 16777215))),
+                        marker="o",
+                        linewidth=2,
+                        markersize=8,
+                        label=(f"#{scan}_deriv [{text1}, {text2}]"),
+                    )
+                elif fit:
+                    ax.errorbar(
+                        data[positioner],
+                        data[detector],
+                        color=(f"C{index}"),
+                        marker="o",
+                        linewidth=2,
+                        markersize=8,
                         label=(f"#{scan} [{text1}, {text2}]"),
                     )
+                    ax.plot(
+                        x,
+                        fit_data.best_fit,
+                        color="black",
+                        linewidth=2,
+                    )
+                elif deriv:
+                    ax.errorbar(
+                        data[positioner],
+                        data[detector],
+                        color=(f"C{index}"),
+                        marker="o",
+                        linewidth=2,
+                        markersize=8,
+                        label=(f"#{scan}"),
+                    )
+                    ax2.plot(
+                        x,
+                        y,
+                        color=("#{:06x}".format(random.randint(0, 16777215))),
+                        marker="o",
+                        linewidth=2,
+                        markersize=8,
+                        label=(f"#{scan}_deriv"),
+                    )
+
                 else:
                     ax.errorbar(
                         data[positioner],
@@ -1248,7 +1321,7 @@ def plot_data(
                         color=(f"C{index}"),
                         marker="o",
                         linewidth=2,
-                        markersize=10,
+                        markersize=8,
                         label=(f"#{scan}"),
                     )
                 index += 1
@@ -1257,7 +1330,9 @@ def plot_data(
 
     ax.set_xlabel(positioner)
     ax.set_ylabel(detector)
-    ax.legend()
+    ax.legend(loc=0)
+    if deriv:
+        ax2.legend(loc=4)
     plt.show(block=False)
 
 
@@ -1269,6 +1344,8 @@ def dbplot(
     monitor=None,
     normalize=False,
     fit=False,
+    deriv=False,
+    direction=[1, 1],
     **kwargs,
 ):
     """
@@ -1292,8 +1369,12 @@ def dbplot(
         chamber 3.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    deriv : boolean, optional
+        calculated derivative
     fit : boolean, optional
-        Fitting of peak using model on/off
+        Fitting of peak using model on/off. In case of deriv=True, derivative is fitted
+    direction : list, int
+        multiply axes for inversion: [1,-1] inverts y-axis
     kwargs :
         model : string, optional
             - fit model: Gaussian, Lorentzian, PseudoVoigt
@@ -1322,5 +1403,7 @@ def dbplot(
         monitor=monitor,
         fit=fit,
         normalize=normalize,
+        deriv=deriv,
+        direction=direction,
         **kwargs,
     )
