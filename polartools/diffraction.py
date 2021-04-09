@@ -46,7 +46,7 @@ _bluesky_default_cols = dict(
 )
 
 
-def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
+def fit_peak(xdata, ydata, model="Gaussian"):
     """
     Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.
 
@@ -60,10 +60,6 @@ def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
         List of y-axis values.
     model: string
         fit model: Gaussian, Lorentzian, PseudoVoigt
-    scan: integer
-        scan number of scan fitted
-    output: boolean, optional
-        Output fit parameters and plot data+fit for each scan.
 
     Returns
     -------
@@ -93,17 +89,6 @@ def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
     pars["amplitude"].set(min=0)
 
     fit = mod.fit(ydata, pars, x=xdata)
-    if output:
-        print(f"Fitting scan #{scan} with {model} model")
-        for key in fit.params:
-            print(
-                key, "=", fit.params[key].value, "+/-", fit.params[key].stderr
-            )
-        fig = plt.figure(figsize=(4, 4))
-        ax = fig.add_subplot(1, 1, 1)
-        ax.plot(xdata, ydata)
-        ax.plot(xdata, fit.best_fit)
-        plt.show(block=True)
 
     return fit
 
@@ -296,9 +281,12 @@ def fit_series(
             + 1
         )
     fit_result = [np.zeros(8) for i in range(int(nbp))]
-
+    if output:
+        plt.close("all")
+        fig = plt.figure(figsize=(8, 8))
+        ax = fig.add_subplot(1, 1, 1)
+        ax.clear()
     index = 0
-
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
         stop = scan_series[series]
@@ -376,7 +364,15 @@ def fit_series(
                 y0 = table[monitor].to_numpy()
                 y = y / y0
 
-            fit = fit_peak(x, y, model=model, scan=scan, output=output)
+            fit = fit_peak(x, y, model=model)
+            if output:
+                print(f"Fitting scan #{scan} with {model} model")
+                for key in fit.params:
+                    print(
+                        key, "=", fit.params[key].value, "+/-", fit.params[key].stderr
+                    )
+                ax.plot(x, y,color=(f"C{index}"), label=f'#{scan}')
+                ax.plot(x, fit.best_fit,color=(f"C{index}"),linestyle = 'dotted',)
 
             fit_result[index][2] = fit.params["amplitude"].value
             fit_result[index][3] = fit.params["amplitude"].stderr
@@ -385,6 +381,9 @@ def fit_series(
             fit_result[index][6] = fit.params["fwhm"].value
             fit_result[index][7] = fit.params["fwhm"].stderr
             index += 1
+    if output:
+        ax.legend(loc=0)
+        plt.show(block=False)
 
     return DataFrame(
         fit_result,
@@ -1249,7 +1248,7 @@ def plot_data(
                     x = (x[:-1] + x[1:]) / 2
                 if fit:
                     fit_data = fit_peak(
-                        x, y, model=model, scan=None, output=False
+                        x, y, model=model
                     )
                     text1 = f"{fit_data.params['center'].value:.3f}"
                     text2 = f"{fit_data.params['fwhm'].value:.3f}"
