@@ -283,9 +283,9 @@ def fit_series(
     fit_result = [np.zeros(8) for i in range(int(nbp))]
     if output:
         plt.close("all")
-        fig = plt.figure(figsize=(8, 8))
+        fig = plt.figure(figsize=(6, 8))
         ax = fig.add_subplot(1, 1, 1)
-        ax.clear()
+
     index = 0
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
@@ -369,10 +369,19 @@ def fit_series(
                 print(f"Fitting scan #{scan} with {model} model")
                 for key in fit.params:
                     print(
-                        key, "=", fit.params[key].value, "+/-", fit.params[key].stderr
+                        key,
+                        "=",
+                        fit.params[key].value,
+                        "+/-",
+                        fit.params[key].stderr,
                     )
-                ax.plot(x, y,color=(f"C{index}"), label=f'#{scan}')
-                ax.plot(x, fit.best_fit,color=(f"C{index}"),linestyle = 'dotted',)
+                ax.plot(x, y, color=(f"C{index}"), label=f"#{scan}")
+                ax.plot(
+                    x,
+                    fit.best_fit,
+                    color=(f"C{index}"),
+                    linestyle="dotted",
+                )
 
             fit_result[index][2] = fit.params["amplitude"].value
             fit_result[index][3] = fit.params["amplitude"].stderr
@@ -383,7 +392,7 @@ def fit_series(
             index += 1
     if output:
         ax.legend(loc=0)
-        plt.show(block=False)
+        # plt.show(block=False)
 
     return DataFrame(
         fit_result,
@@ -937,6 +946,7 @@ def plot_fit(
     detector=None,
     monitor=None,
     normalize=False,
+    noerror=False,
     **kwargs,
 ):
     """
@@ -980,6 +990,8 @@ def plot_fit(
         chamber 3.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    noerror : boolean, optional
+        Plotting of errorbars on/off
     kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
@@ -1016,40 +1028,66 @@ def plot_fit(
     )
     fig = plt.figure(figsize=(8, 8))
     ax1 = fig.add_subplot(3, 1, 1)
-    ax1.errorbar(
-        data["Index"],
-        data["Intensity"],
-        yerr=data["Std I"],
-        xerr=data["Std Index"],
-        color="orange",
-        marker="o",
-        linewidth=2,
-        markersize=10,
-    )
-    ax1.set_ylabel("Intensity")
     ax2 = fig.add_subplot(3, 1, 2)
-    ax2.errorbar(
-        data["Index"],
-        data["Position"],
-        yerr=data["Std P"],
-        xerr=data["Std Index"],
-        color="blue",
-        marker="o",
-        linewidth=2,
-        markersize=10,
-    )
-    ax2.set_ylabel("Position")
     ax3 = fig.add_subplot(3, 1, 3)
-    ax3.errorbar(
-        data["Index"],
-        data["Width"],
-        yerr=data["Std W"],
-        xerr=data["Std Index"],
-        color="green",
-        marker="o",
-        linewidth=2,
-        markersize=10,
-    )
+    if noerror:
+        ax1.plot(
+            data["Index"],
+            data["Intensity"],
+            color="orange",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax2.plot(
+            data["Index"],
+            data["Position"],
+            color="blue",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax3.plot(
+            data["Index"],
+            data["Width"],
+            color="green",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+    else:
+        ax1.errorbar(
+            data["Index"],
+            data["Intensity"],
+            yerr=data["Std I"],
+            xerr=data["Std Index"],
+            color="orange",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax2.errorbar(
+            data["Index"],
+            data["Position"],
+            yerr=data["Std P"],
+            xerr=data["Std Index"],
+            color="blue",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax3.errorbar(
+            data["Index"],
+            data["Width"],
+            yerr=data["Std W"],
+            xerr=data["Std Index"],
+            color="green",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+    ax1.set_ylabel("Intensity")
+    ax2.set_ylabel("Position")
     ax3.set_ylabel("FWHM")
     if isinstance(var_series, list):
         x_label = " ".join(map(str, var_series))
@@ -1247,9 +1285,7 @@ def plot_data(
                     y = np.diff(y) / np.diff(x)
                     x = (x[:-1] + x[1:]) / 2
                 if fit:
-                    fit_data = fit_peak(
-                        x, y, model=model
-                    )
+                    fit_data = fit_peak(x, y, model=model)
                     text1 = f"{fit_data.params['center'].value:.3f}"
                     text2 = f"{fit_data.params['fwhm'].value:.3f}"
                 if deriv and fit:
@@ -1271,7 +1307,9 @@ def plot_data(
                     ax2.plot(
                         x,
                         y,
-                        color=("#{:06x}".format(random.randint(0, 16777215))),
+                        color=(
+                            "#{:06x}".format(np.random.randint(0, 16777215))
+                        ),
                         marker="o",
                         linewidth=2,
                         markersize=8,
