@@ -392,7 +392,6 @@ def fit_series(
             index += 1
     if output:
         ax.legend(loc=0)
-        # plt.show(block=False)
 
     return DataFrame(
         fit_result,
@@ -1344,7 +1343,9 @@ def plot_data(
                     ax2.plot(
                         x,
                         y,
-                        color=("#{:06x}".format(random.randint(0, 16777215))),
+                        color=(
+                            "#{:06x}".format(np.random.randint(0, 16777215))
+                        ),
                         marker="o",
                         linewidth=2,
                         markersize=8,
