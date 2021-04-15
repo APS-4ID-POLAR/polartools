@@ -105,12 +105,13 @@ def load_info(source, scan_id, info, **kwargs):
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id.
     info : list
-        If SPEC, information on metadata to be read: List starting with #P, #U
-        or #Q for motor positions, user values or Q-position:
+        If SPEC, information on metadata to be read: List starting with #P, #U,
+        #Q for motor positions, user values or Q-position or general #xx:
 
         - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
         - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
         - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        - #xx like #UA etc.: ['#UA', row, element_number],
 
         If CSV, #metadata_name
     kwargs :
@@ -232,13 +233,13 @@ def fit_series(
             - String starting with #metadata, reads metadata from CSV baseline
 
         If list:
-        information on metadata to be read: List starting with #P, #U
-        or #Q for motor positions, user values or Q-position, optional:
-
-            - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
-            - #U ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-            - #Q ['#Q', None, element_number], e.g. ['#Q', None, 0]
-
+        SPEC: Information on metadata to be read: List starting with #P, #U, 
+            #Q for motor positions, user values or Q-position or general #xx:
+            - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+            - #xx like #UA etc.: ['#UA', row, element_number],
+        CSV: #metadata_name
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -454,14 +455,14 @@ def load_series(
             - String starting with #metadata, reads metadata from CSV baseline
 
         list:
-        Information on metadata to be read: List starting with #P, #U or
-        #Q for motor positions, user values or Q-position, optional.
-
-            - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
-            - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-            - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
-
-        If None, successive scans will be numbered starting from zero.
+            SPEC: Information on metadata to be read: List starting with #P, #U, 
+                #Q for motor positions, user values or Q-position or general #xx:
+                - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+                - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+                - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+                - #xx like #UA etc.: ['#UA', row, element_number],
+            CSV: #metadata_name
+        None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
         Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
@@ -835,10 +836,11 @@ def plot_2d(
             - String starting with #metadata, reads metadata from CSV baseline
         list:
         Information on metadata to be read: List starting with #P, #U or #Q for
-        motor positions, user values or Q-position, optional:
+        motor positions, user values or Q-position, or general #xx, optional:
             - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
             - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
             - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+            - #xx like #UA etc.: ['#UA', row, element_number],
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -992,6 +994,7 @@ def plot_fit(
         - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
         - #U ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
         - #Q ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        - #xx like #UA etc.: ['#UA', row, element_number]
 
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
