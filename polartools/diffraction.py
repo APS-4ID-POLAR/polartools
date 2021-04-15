@@ -14,7 +14,7 @@ Functions to load and process x-ray diffraction data.
     ~load_data
     ~dbplot
 """
-import random
+
 import numpy as np
 from pandas import DataFrame
 from lmfit.models import (
@@ -141,6 +141,7 @@ def load_info(source, scan_id, info, **kwargs):
             path = join(folder, source)
             source = SpecDataFile(path)
         specscan = source.getScan(scan_id)
+        value = ""
         if isinstance(info, str):
             raise ValueError(
                 "expect list [#P, (#Q, #U), Variable (string or line number), "
@@ -170,11 +171,26 @@ def load_info(source, scan_id, info, **kwargs):
         elif info[0] == "#Q":
             data_array = specscan.Q
             value = data_array[info[2]]
+
+        elif info[0][0] == "#":
+            data_array = specscan.raw.split("\n")
+            for element in data_array:
+                index = 0
+                if element[0 : len(info[0])] == info[0]:
+                    if index == info[1]:
+                        value = element.split()[info[2]]
+                    index += 1
         else:
             raise ValueError(
                 "expect list [#P, (#Q, #U), Variable (string or line number), "
                 "element number]"
             )
+        if not value:
+            raise ValueError(
+                "expect list [#P, (#Q, #U, #xx), Variable (string or line number), "
+                "element number]"
+            )
+
     else:
         pass
         # to be implemented for database
@@ -945,7 +961,7 @@ def plot_fit(
     detector=None,
     monitor=None,
     normalize=False,
-    noerror=False,
+    errorbar=True,
     **kwargs,
 ):
     """
@@ -1029,32 +1045,7 @@ def plot_fit(
     ax1 = fig.add_subplot(3, 1, 1)
     ax2 = fig.add_subplot(3, 1, 2)
     ax3 = fig.add_subplot(3, 1, 3)
-    if noerror:
-        ax1.plot(
-            data["Index"],
-            data["Intensity"],
-            color="orange",
-            marker="o",
-            linewidth=2,
-            markersize=10,
-        )
-        ax2.plot(
-            data["Index"],
-            data["Position"],
-            color="blue",
-            marker="o",
-            linewidth=2,
-            markersize=10,
-        )
-        ax3.plot(
-            data["Index"],
-            data["Width"],
-            color="green",
-            marker="o",
-            linewidth=2,
-            markersize=10,
-        )
-    else:
+    if errorbar:
         ax1.errorbar(
             data["Index"],
             data["Intensity"],
@@ -1085,6 +1076,31 @@ def plot_fit(
             linewidth=2,
             markersize=10,
         )
+    else:
+        ax1.plot(
+            data["Index"],
+            data["Intensity"],
+            color="orange",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax2.plot(
+            data["Index"],
+            data["Position"],
+            color="blue",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax3.plot(
+            data["Index"],
+            data["Width"],
+            color="green",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
     ax1.set_ylabel("Intensity")
     ax2.set_ylabel("Position")
     ax3.set_ylabel("FWHM")
@@ -1107,7 +1123,7 @@ def load_axes(
     **kwargs,
 ):
     """
-    Plot and fit data.
+    Load default positioner and detector for plot
 
     Parameters
     ----------
@@ -1248,29 +1264,34 @@ def plot_data(
                     source,
                     **kwargs,
                 )
-                positioner, detector, monitor = (
-                    load_axes(
-                        source,
-                        scan,
-                        positioner=positioner,
-                        detector=detector,
-                        monitor=monitor,
-                        defaults=_defaults,
-                        read=False,
-                        **kwargs,
+                if (
+                    not isinstance(source, SpecDataFile)
+                    or isinstance(source, str)
+                    or source == "csv"
+                ):
+                    positioner, detector, monitor = (
+                        load_axes(
+                            source,
+                            scan,
+                            positioner=positioner,
+                            detector=detector,
+                            monitor=monitor,
+                            defaults=_defaults,
+                            read=False,
+                            **kwargs,
+                        )
+                        if positioner in data.columns
+                        else load_axes(
+                            source,
+                            scan,
+                            positioner=positioner,
+                            detector=detector,
+                            monitor=monitor,
+                            defaults=_defaults,
+                            read=True,
+                            **kwargs,
+                        )
                     )
-                    if positioner in data.columns
-                    else load_axes(
-                        source,
-                        scan,
-                        positioner=positioner,
-                        detector=detector,
-                        monitor=monitor,
-                        defaults=_defaults,
-                        read=True,
-                        **kwargs,
-                    )
-                )
                 data[positioner] = np.multiply(data[positioner], direction[0])
                 data[detector] = np.multiply(data[detector], direction[1])
                 if normalize:
