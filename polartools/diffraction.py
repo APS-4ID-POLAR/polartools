@@ -297,7 +297,7 @@ def fit_series(
             / scan_series[series + 1]
             + 1
         )
-    fit_result = [np.zeros(8) for i in range(int(nbp))]
+    fit_result = [np.zeros(9) for i in range(int(nbp))]
     if output:
         plt.close("all")
         fig = plt.figure(figsize=(6, 8))
@@ -311,10 +311,10 @@ def fit_series(
         print("Intervals: {} to {} with step {}".format(start, stop, step))
         for scan in range(start, stop + 1, step):
             if var_series and var_series[0][0] == "#":
-                fit_result[index][0] = load_info(
+                fit_result[index][1] = load_info(
                     source, scan, info=var_series, folder=folder, **kwargs
                 )
-                fit_result[index][1] = 0
+                fit_result[index][2] = 0
                 table = load_table(
                     scan,
                     source,
@@ -328,8 +328,8 @@ def fit_series(
                     folder=folder,
                     **kwargs,
                 )
-                fit_result[index][0] = table[var_series].mean()
-                fit_result[index][1] = table[var_series].std()
+                fit_result[index][1] = table[var_series].mean()
+                fit_result[index][2] = table[var_series].std()
             else:
                 table = load_table(
                     scan,
@@ -337,8 +337,8 @@ def fit_series(
                     folder=folder,
                     **kwargs,
                 )
-                fit_result[index][0] = index
-                fit_result[index][1] = 0
+                fit_result[index][1] = index
+                fit_result[index][2] = 0
             if (
                 not isinstance(source, SpecDataFile)
                 or isinstance(source, str)
@@ -400,12 +400,13 @@ def fit_series(
                     linestyle="dotted",
                 )
 
-            fit_result[index][2] = fit.params["amplitude"].value
-            fit_result[index][3] = fit.params["amplitude"].stderr
-            fit_result[index][4] = fit.params["center"].value
-            fit_result[index][5] = fit.params["center"].stderr
-            fit_result[index][6] = fit.params["fwhm"].value
-            fit_result[index][7] = fit.params["fwhm"].stderr
+            fit_result[index][0] = scan
+            fit_result[index][3] = fit.params["amplitude"].value
+            fit_result[index][4] = fit.params["amplitude"].stderr
+            fit_result[index][5] = fit.params["center"].value
+            fit_result[index][6] = fit.params["center"].stderr
+            fit_result[index][7] = fit.params["fwhm"].value
+            fit_result[index][8] = fit.params["fwhm"].stderr
             index += 1
     if output:
         ax.legend(loc=0)
@@ -413,6 +414,7 @@ def fit_series(
     return DataFrame(
         fit_result,
         columns=[
+            "Scan #",
             "Index",
             "Std Index",
             "Intensity",
