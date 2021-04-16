@@ -233,7 +233,7 @@ def fit_series(
             - String starting with #metadata, reads metadata from CSV baseline
 
         If list:
-        SPEC: Information on metadata to be read: List starting with #P, #U, 
+        SPEC: Information on metadata to be read: List starting with #P, #U,
             #Q for motor positions, user values or Q-position or general #xx:
             - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
             - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
@@ -457,7 +457,7 @@ def load_series(
             - String starting with #metadata, reads metadata from CSV baseline
 
         list:
-            SPEC: Information on metadata to be read: List starting with #P, #U, 
+            SPEC: Information on metadata to be read: List starting with #P, #U,
                 #Q for motor positions, user values or Q-position or general #xx:
                 - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
                 - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
