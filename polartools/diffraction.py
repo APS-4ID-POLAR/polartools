@@ -175,8 +175,8 @@ def load_info(source, scan_id, info, **kwargs):
 
         elif info[0][0] == "#":
             data_array = specscan.raw.split("\n")
+            index = 0
             for element in data_array:
-                index = 0
                 if element[0 : len(info[0])] == info[0]:
                     if index == info[1]:
                         value = element.split()[info[2]]
