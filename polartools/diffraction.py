@@ -15,14 +15,10 @@ Functions to load and process x-ray diffraction data.
     ~dbplot
 """
 
+from enum import Enum
 import numpy as np
 from pandas import DataFrame
-from lmfit.models import (
-    GaussianModel,
-    LorentzianModel,
-    LinearModel,
-    PseudoVoigtModel,
-)
+import lmfit.models
 import matplotlib.pyplot as plt
 import copy
 
@@ -46,7 +42,14 @@ _bluesky_default_cols = dict(
 )
 
 
-def fit_peak(xdata, ydata, model="Gaussian"):
+class Model(Enum):
+    Gaussian = lmfit.models.GaussianModel
+    Lorentzian = lmfit.models.LorentzianModel
+    PseudoVoigt = lmfit.models.PseudoVoigtModel
+    Linear = lmfit.models.LinearModel
+
+
+def fit_peak(xdata, ydata, model=Model.Gaussian):
     """
     Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.
 
@@ -58,8 +61,8 @@ def fit_peak(xdata, ydata, model="Gaussian"):
         List of x-axis values.
     yydata : iterable
         List of y-axis values.
-    model: string
-        fit model: Gaussian, Lorentzian, PseudoVoigt
+    model: enumeration
+        fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
 
     Returns
     -------
@@ -68,21 +71,9 @@ def fit_peak(xdata, ydata, model="Gaussian"):
         https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
     """
 
-    models = {
-        "Gaussian": GaussianModel(),
-        "Lorentzian": LorentzianModel(),
-        "PseudoVoigt": PseudoVoigtModel(),
-    }
-    try:
-        peak_mod = models[model]
-    except KeyError:
-        raise ValueError(
-            f"model = {model} is invalid. Only these values are accepted: "
-            f"{list(models.keys())}"
-        )
-    background = LinearModel()
+    peak_mod = model.value()
+    background = Model.Linear.value()
     mod = peak_mod + background
-
     pars = background.make_params(intercept=ydata.min(), slope=0)
     pars += peak_mod.guess(ydata, x=xdata)
     pars["sigma"].set(min=0)
@@ -201,7 +192,6 @@ def load_info(source, scan_id, info, **kwargs):
 def fit_series(
     source,
     scan_series,
-    model="Gaussian",
     output=False,
     var_series=None,
     positioner=None,
@@ -221,8 +211,6 @@ def fit_series(
         Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-    model : string, optional
-        fit model: Gaussian, Lorentzian, PseudoVoigt
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
     var_series : string or list
@@ -262,6 +250,9 @@ def fit_series(
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
+        
+        model: enumeration
+            fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
 
     Returns
     -------
@@ -270,6 +261,7 @@ def fit_series(
         https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
     """
     # Select default parameters
+    model = kwargs.pop("model", Model.Gaussian)
     folder = kwargs.pop("folder", "")
     if isinstance(source, (str, SpecDataFile)) and source != "csv":
         if isinstance(source, str):
@@ -958,7 +950,6 @@ def plot_2d(
 def plot_fit(
     source,
     scan_series,
-    model="Gaussian",
     output=False,
     var_series=None,
     positioner=None,
@@ -979,8 +970,6 @@ def plot_fit(
         Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-    model : string, optional
-        fit model: Gaussian, Lorentzian, PseudoVoigt
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
     var_series : string or list
@@ -1020,6 +1009,9 @@ def plot_fit(
         - spec -> possible kwargs: folder.
         - databroker -> possible kwargs: stream, query.
 
+        model : string, optional
+            fit model: Gaussian, Lorentzian, PseudoVoigt
+
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
@@ -1037,7 +1029,6 @@ def plot_fit(
     data = fit_series(
         source,
         scan_series,
-        model=model,
         output=output,
         var_series=var_series,
         positioner=positioner,
@@ -1219,8 +1210,8 @@ def plot_data(
     direction : list, int
         multiply axes for inversion: [1,-1] inverts y-axis
     kwargs :
-        model : string, optional
-            - fit model: Gaussian, Lorentzian, PseudoVoigt
+        model: enumeration
+            fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
         `source` argument:
             - csv -> possible kwargs: folder, name_format.
             - spec -> possible kwargs: folder.
@@ -1232,7 +1223,7 @@ def plot_data(
 
     """
 
-    model = kwargs.pop("model", "Gaussian")
+    model = kwargs.pop("model", Model.Gaussian)
     folder = kwargs.pop("folder", "")
     if isinstance(source, (str, SpecDataFile)) and source != "csv":
         if isinstance(source, str):
