@@ -250,7 +250,7 @@ def fit_series(
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
-        
+
         model: enumeration
             fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
 
