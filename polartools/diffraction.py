@@ -46,7 +46,6 @@ class Model(Enum):
     Gaussian = lmfit.models.GaussianModel
     Lorentzian = lmfit.models.LorentzianModel
     PseudoVoigt = lmfit.models.PseudoVoigtModel
-    Linear = lmfit.models.LinearModel
 
 
 def fit_peak(xdata, ydata, model=Model.Gaussian):
@@ -72,7 +71,7 @@ def fit_peak(xdata, ydata, model=Model.Gaussian):
     """
 
     peak_mod = model.value()
-    background = Model.Linear.value()
+    background = lmfit.models.LinearModel()
     mod = peak_mod + background
     pars = background.make_params(intercept=ydata.min(), slope=0)
     pars += peak_mod.guess(ydata, x=xdata)
@@ -170,7 +169,7 @@ def load_info(source, scan_id, info, **kwargs):
             for element in data_array:
                 if element[0 : len(info[0])] == info[0]:
                     if index == info[1]:
-                        value = element.split()[info[2]]
+                        value = element.split()[info[2]+1]
                     index += 1
         else:
             raise ValueError(
