@@ -11,7 +11,7 @@ Functions to load and process x-ray diffraction data.
     ~plot_2d
     ~plot_fit
     ~load_axes
-    ~load_data
+    ~plot_data
     ~dbplot
 """
 
@@ -169,7 +169,7 @@ def load_info(source, scan_id, info, **kwargs):
             for element in data_array:
                 if element[0 : len(info[0])] == info[0]:
                     if index == info[1]:
-                        value = element.split()[info[2]+1]
+                        value = element.split()[info[2] + 1]
                     index += 1
         else:
             raise ValueError(
@@ -1287,6 +1287,14 @@ def plot_data(
                             **kwargs,
                         )
                     )
+                else:
+                    if not positioner:
+                        positioner = _defaults["positioner"]
+                    if not detector:
+                        detector = _defaults["detector"]
+                    if not monitor:
+                        monitor = _defaults["monitor"]
+
                 data[positioner] = np.multiply(data[positioner], direction[0])
                 data[detector] = np.multiply(data[detector], direction[1])
                 if normalize:
