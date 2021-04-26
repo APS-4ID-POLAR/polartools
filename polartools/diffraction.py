@@ -11,18 +11,14 @@ Functions to load and process x-ray diffraction data.
     ~plot_2d
     ~plot_fit
     ~load_axes
-    ~load_data
+    ~plot_data
     ~dbplot
 """
 
+from enum import Enum
 import numpy as np
 from pandas import DataFrame
-from lmfit.models import (
-    GaussianModel,
-    LorentzianModel,
-    LinearModel,
-    PseudoVoigtModel,
-)
+import lmfit.models
 import matplotlib.pyplot as plt
 import copy
 
@@ -46,7 +42,13 @@ _bluesky_default_cols = dict(
 )
 
 
-def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
+class Model(Enum):
+    Gaussian = lmfit.models.GaussianModel
+    Lorentzian = lmfit.models.LorentzianModel
+    PseudoVoigt = lmfit.models.PseudoVoigtModel
+
+
+def fit_peak(xdata, ydata, model=Model.Gaussian):
     """
     Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.
 
@@ -58,12 +60,8 @@ def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
         List of x-axis values.
     yydata : iterable
         List of y-axis values.
-    model: string
-        fit model: Gaussian, Lorentzian, PseudoVoigt
-    scan: integer
-        scan number of scan fitted
-    output: boolean, optional
-        Output fit parameters and plot data+fit for each scan.
+    model: enumeration
+        fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
 
     Returns
     -------
@@ -72,38 +70,15 @@ def fit_peak(xdata, ydata, model="Gaussian", scan=None, output=False):
         https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
     """
 
-    models = {
-        "Gaussian": GaussianModel(),
-        "Lorentzian": LorentzianModel(),
-        "PseudoVoigt": PseudoVoigtModel(),
-    }
-    try:
-        peak_mod = models[model]
-    except KeyError:
-        raise ValueError(
-            f"model = {model} is invalid. Only these values are accepted: "
-            f"{list(models.keys())}"
-        )
-    background = LinearModel()
+    peak_mod = model.value()
+    background = lmfit.models.LinearModel()
     mod = peak_mod + background
-
     pars = background.make_params(intercept=ydata.min(), slope=0)
     pars += peak_mod.guess(ydata, x=xdata)
     pars["sigma"].set(min=0)
     pars["amplitude"].set(min=0)
 
     fit = mod.fit(ydata, pars, x=xdata)
-    if output:
-        print(f"Fitting scan #{scan} with {model} model")
-        for key in fit.params:
-            print(
-                key, "=", fit.params[key].value, "+/-", fit.params[key].stderr
-            )
-        fig = plt.figure(figsize=(4, 4))
-        ax = fig.add_subplot(1, 1, 1)
-        ax.plot(xdata, ydata)
-        ax.plot(xdata, fit.best_fit)
-        plt.show(block=True)
 
     return fit
 
@@ -120,12 +95,13 @@ def load_info(source, scan_id, info, **kwargs):
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id.
     info : list
-        If SPEC, information on metadata to be read: List starting with #P, #U
-        or #Q for motor positions, user values or Q-position:
+        If SPEC, information on metadata to be read: List starting with #P, #U,
+        #Q for motor positions, user values or Q-position or general #xx:
 
         - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
         - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
         - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        - #xx like #UA etc.: ['#UA', row, element_number],
 
         If CSV, #metadata_name
     kwargs :
@@ -156,6 +132,7 @@ def load_info(source, scan_id, info, **kwargs):
             path = join(folder, source)
             source = SpecDataFile(path)
         specscan = source.getScan(scan_id)
+        value = ""
         if isinstance(info, str):
             raise ValueError(
                 "expect list [#P, (#Q, #U), Variable (string or line number), "
@@ -185,11 +162,26 @@ def load_info(source, scan_id, info, **kwargs):
         elif info[0] == "#Q":
             data_array = specscan.Q
             value = data_array[info[2]]
+
+        elif info[0][0] == "#":
+            data_array = specscan.raw.split("\n")
+            index = 0
+            for element in data_array:
+                if element[0 : len(info[0])] == info[0]:
+                    if index == info[1]:
+                        value = element.split()[info[2] + 1]
+                    index += 1
         else:
             raise ValueError(
                 "expect list [#P, (#Q, #U), Variable (string or line number), "
                 "element number]"
             )
+        if not value:
+            raise ValueError(
+                "expect list [#P, (#Q, #U, #xx), Variable (string or line number), "
+                "element number]"
+            )
+
     else:
         pass
         # to be implemented for database
@@ -199,7 +191,6 @@ def load_info(source, scan_id, info, **kwargs):
 def fit_series(
     source,
     scan_series,
-    model="Gaussian",
     output=False,
     var_series=None,
     positioner=None,
@@ -219,8 +210,6 @@ def fit_series(
         Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-    model : string, optional
-        fit model: Gaussian, Lorentzian, PseudoVoigt
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
     var_series : string or list
@@ -231,13 +220,13 @@ def fit_series(
             - String starting with #metadata, reads metadata from CSV baseline
 
         If list:
-        information on metadata to be read: List starting with #P, #U
-        or #Q for motor positions, user values or Q-position, optional:
-
-            - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
-            - #U ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-            - #Q ['#Q', None, element_number], e.g. ['#Q', None, 0]
-
+        SPEC: Information on metadata to be read: List starting with #P, #U,
+            #Q for motor positions, user values or Q-position or general #xx:
+            - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+            - #xx like #UA etc.: ['#UA', row, element_number],
+        CSV: #metadata_name
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -261,6 +250,9 @@ def fit_series(
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
+        model: enumeration
+            fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
+
     Returns
     -------
     fit : lmfit ModelResult class
@@ -268,6 +260,7 @@ def fit_series(
         https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
     """
     # Select default parameters
+    model = kwargs.pop("model", Model.Gaussian)
     folder = kwargs.pop("folder", "")
     if isinstance(source, (str, SpecDataFile)) and source != "csv":
         if isinstance(source, str):
@@ -295,10 +288,13 @@ def fit_series(
             / scan_series[series + 1]
             + 1
         )
-    fit_result = [np.zeros(8) for i in range(int(nbp))]
+    fit_result = [np.zeros(9) for i in range(int(nbp))]
+    if output:
+        plt.close("all")
+        fig = plt.figure(figsize=(6, 8))
+        ax = fig.add_subplot(1, 1, 1)
 
     index = 0
-
     for series in range(1, len(scan_series), 3):
         start = scan_series[series - 1]
         stop = scan_series[series]
@@ -306,10 +302,10 @@ def fit_series(
         print("Intervals: {} to {} with step {}".format(start, stop, step))
         for scan in range(start, stop + 1, step):
             if var_series and var_series[0][0] == "#":
-                fit_result[index][0] = load_info(
+                fit_result[index][1] = load_info(
                     source, scan, info=var_series, folder=folder, **kwargs
                 )
-                fit_result[index][1] = 0
+                fit_result[index][2] = 0
                 table = load_table(
                     scan,
                     source,
@@ -323,8 +319,8 @@ def fit_series(
                     folder=folder,
                     **kwargs,
                 )
-                fit_result[index][0] = table[var_series].mean()
-                fit_result[index][1] = table[var_series].std()
+                fit_result[index][1] = table[var_series].mean()
+                fit_result[index][2] = table[var_series].std()
             else:
                 table = load_table(
                     scan,
@@ -332,8 +328,8 @@ def fit_series(
                     folder=folder,
                     **kwargs,
                 )
-                fit_result[index][0] = index
-                fit_result[index][1] = 0
+                fit_result[index][1] = index
+                fit_result[index][2] = 0
             if (
                 not isinstance(source, SpecDataFile)
                 or isinstance(source, str)
@@ -376,19 +372,40 @@ def fit_series(
                 y0 = table[monitor].to_numpy()
                 y = y / y0
 
-            fit = fit_peak(x, y, model=model, scan=scan, output=output)
+            fit = fit_peak(x, y, model=model)
+            if output:
+                print(f"Fitting scan #{scan} with {model} model")
+                for key in fit.params:
+                    print(
+                        key,
+                        "=",
+                        fit.params[key].value,
+                        "+/-",
+                        fit.params[key].stderr,
+                    )
+                ax.plot(x, y, color=(f"C{index}"), label=f"#{scan}")
+                ax.plot(
+                    x,
+                    fit.best_fit,
+                    color=(f"C{index}"),
+                    linestyle="dotted",
+                )
 
-            fit_result[index][2] = fit.params["amplitude"].value
-            fit_result[index][3] = fit.params["amplitude"].stderr
-            fit_result[index][4] = fit.params["center"].value
-            fit_result[index][5] = fit.params["center"].stderr
-            fit_result[index][6] = fit.params["fwhm"].value
-            fit_result[index][7] = fit.params["fwhm"].stderr
+            fit_result[index][0] = scan
+            fit_result[index][3] = fit.params["amplitude"].value
+            fit_result[index][4] = fit.params["amplitude"].stderr
+            fit_result[index][5] = fit.params["center"].value
+            fit_result[index][6] = fit.params["center"].stderr
+            fit_result[index][7] = fit.params["fwhm"].value
+            fit_result[index][8] = fit.params["fwhm"].stderr
             index += 1
+    if output:
+        ax.legend(loc=0)
 
     return DataFrame(
         fit_result,
         columns=[
+            "Scan #",
             "Index",
             "Std Index",
             "Intensity",
@@ -431,14 +448,14 @@ def load_series(
             - String starting with #metadata, reads metadata from CSV baseline
 
         list:
-        Information on metadata to be read: List starting with #P, #U or
-        #Q for motor positions, user values or Q-position, optional.
-
-            - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
-            - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-            - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
-
-        If None, successive scans will be numbered starting from zero.
+            SPEC: Information on metadata to be read: List starting with #P, #U,
+                #Q for motor positions, user values or Q-position or general #xx:
+                - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+                - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+                - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+                - #xx like #UA etc.: ['#UA', row, element_number],
+            CSV: #metadata_name
+        None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
         Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
@@ -684,6 +701,9 @@ def get_type(source, scan_id, **kwargs):
             for key, item in plan.items():
                 if key == "plan_name":
                     scan_info["scan_type"] = item[0]
+                if key == "num_points":
+                    if not scan_info["xint"]:
+                        scan_info["xint"] = item[0]
                 if key == "plan_pattern_args":
                     if scan_info["scan_type"] == "grid_scan":
                         scan_info["x0"] = item[0]["args"][1]
@@ -695,7 +715,6 @@ def get_type(source, scan_id, **kwargs):
                     else:
                         scan_info["x0"] = item[0]["args"][-2]
                         scan_info["x1"] = item[0]["args"][-1]
-                        scan_info["xint"] = item[0]["num"]
 
                 if key == "hints":
                     if scan_info["scan_type"] == "grid_scan":
@@ -779,7 +798,7 @@ def load_mesh(scan, source, scan_range, log=False, scale=None, **kwargs):
 
 def plot_2d(
     source,
-    scan_series,
+    scans,
     var_series=None,
     positioner=None,
     detector=None,
@@ -799,10 +818,10 @@ def plot_2d(
     ----------
     source : databroker database, name of the spec file, or 'csv'
         Note that applicable kwargs depend on this selection.
-    scan_series : list, int
+    scans : list, int
         1D-scans:   start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
                     e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
-        mesh-scan:  scan_number, e.g. [10] will read scan #10
+        mesh-scan:  scan_number, e.g. 10 will read scan #10
     var_series: string or list, optional
         string:
             - Varying variable for scan series to be read from scan
@@ -810,10 +829,11 @@ def plot_2d(
             - String starting with #metadata, reads metadata from CSV baseline
         list:
         Information on metadata to be read: List starting with #P, #U or #Q for
-        motor positions, user values or Q-position, optional:
+        motor positions, user values or Q-position, or general #xx, optional:
             - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
             - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
             - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+            - #xx like #UA etc.: ['#UA', row, element_number],
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -845,6 +865,13 @@ def plot_2d(
     2D plot, png-file
 
     """
+    if isinstance(scans, int):
+        scan_series = [scans, scans, 1]
+    elif isinstance(scans, list):
+        scan_series = scans
+    else:
+        raise ValueError(f"expected int or list got '{scans}'")
+
     scan_info = get_type(source=source, scan_id=scan_series[0], **kwargs)
     if (
         scan_info["scan_type"] == "mesh"
@@ -922,13 +949,13 @@ def plot_2d(
 def plot_fit(
     source,
     scan_series,
-    model="Gaussian",
     output=False,
     var_series=None,
     positioner=None,
     detector=None,
     monitor=None,
     normalize=False,
+    errorbar=True,
     **kwargs,
 ):
     """
@@ -942,8 +969,6 @@ def plot_fit(
         Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-    model : string, optional
-        fit model: Gaussian, Lorentzian, PseudoVoigt
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
     var_series : string or list
@@ -959,6 +984,7 @@ def plot_fit(
         - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
         - #U ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
         - #Q ['#Q', None, element_number], e.g. ['#Q', None, 0]
+        - #xx like #UA etc.: ['#UA', row, element_number]
 
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
@@ -972,6 +998,8 @@ def plot_fit(
         chamber 3.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    noerror : boolean, optional
+        Plotting of errorbars on/off
     kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
@@ -979,6 +1007,9 @@ def plot_fit(
         - csv -> possible kwargs: folder, name_format.
         - spec -> possible kwargs: folder.
         - databroker -> possible kwargs: stream, query.
+
+        model : string, optional
+            fit model: Gaussian, Lorentzian, PseudoVoigt
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
@@ -997,7 +1028,6 @@ def plot_fit(
     data = fit_series(
         source,
         scan_series,
-        model=model,
         output=output,
         var_series=var_series,
         positioner=positioner,
@@ -1008,40 +1038,66 @@ def plot_fit(
     )
     fig = plt.figure(figsize=(8, 8))
     ax1 = fig.add_subplot(3, 1, 1)
-    ax1.errorbar(
-        data["Index"],
-        data["Intensity"],
-        yerr=data["Std I"],
-        xerr=data["Std Index"],
-        color="orange",
-        marker="o",
-        linewidth=2,
-        markersize=10,
-    )
-    ax1.set_ylabel("Intensity")
     ax2 = fig.add_subplot(3, 1, 2)
-    ax2.errorbar(
-        data["Index"],
-        data["Position"],
-        yerr=data["Std P"],
-        xerr=data["Std Index"],
-        color="blue",
-        marker="o",
-        linewidth=2,
-        markersize=10,
-    )
-    ax2.set_ylabel("Position")
     ax3 = fig.add_subplot(3, 1, 3)
-    ax3.errorbar(
-        data["Index"],
-        data["Width"],
-        yerr=data["Std W"],
-        xerr=data["Std Index"],
-        color="green",
-        marker="o",
-        linewidth=2,
-        markersize=10,
-    )
+    if errorbar:
+        ax1.errorbar(
+            data["Index"],
+            data["Intensity"],
+            yerr=data["Std I"],
+            xerr=data["Std Index"],
+            color="orange",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax2.errorbar(
+            data["Index"],
+            data["Position"],
+            yerr=data["Std P"],
+            xerr=data["Std Index"],
+            color="blue",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax3.errorbar(
+            data["Index"],
+            data["Width"],
+            yerr=data["Std W"],
+            xerr=data["Std Index"],
+            color="green",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+    else:
+        ax1.plot(
+            data["Index"],
+            data["Intensity"],
+            color="orange",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax2.plot(
+            data["Index"],
+            data["Position"],
+            color="blue",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+        ax3.plot(
+            data["Index"],
+            data["Width"],
+            color="green",
+            marker="o",
+            linewidth=2,
+            markersize=10,
+        )
+    ax1.set_ylabel("Intensity")
+    ax2.set_ylabel("Position")
     ax3.set_ylabel("FWHM")
     if isinstance(var_series, list):
         x_label = " ".join(map(str, var_series))
@@ -1062,7 +1118,7 @@ def load_axes(
     **kwargs,
 ):
     """
-    Plot and fit data.
+    Load default positioner and detector for plot
 
     Parameters
     ----------
@@ -1119,6 +1175,9 @@ def plot_data(
     monitor=None,
     fit=False,
     normalize=False,
+    log=False,
+    deriv=False,
+    direction=[1, 1],
     **kwargs,
 ):
     """
@@ -1141,11 +1200,17 @@ def plot_data(
         as in Bluesky.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    log: boolean
+        If True, y-axis plotted in logarithmic scale.
+    deriv : boolean, optional
+        calculated derivative
     fit : boolean, optional
-        Fitting of peak using model on/off
+        Fitting of peak using model on/off. In case of deriv=True, derivative is fitted
+    direction : list, int
+        multiply axes for inversion: [1,-1] inverts y-axis
     kwargs :
-        model : string, optional
-            - fit model: Gaussian, Lorentzian, PseudoVoigt
+        model: enumeration
+            fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
         `source` argument:
             - csv -> possible kwargs: folder, name_format.
             - spec -> possible kwargs: folder.
@@ -1157,7 +1222,7 @@ def plot_data(
 
     """
 
-    model = kwargs.pop("model", "Gaussian")
+    model = kwargs.pop("model", Model.Gaussian)
     folder = kwargs.pop("folder", "")
     if isinstance(source, (str, SpecDataFile)) and source != "csv":
         if isinstance(source, str):
@@ -1174,12 +1239,14 @@ def plot_data(
     plt.close("all")
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(1, 1, 1)
+    if deriv:
+        ax2 = ax.twinx()
     ax.clear()
     index = 0
     if isinstance(scan_series, list):
         if len(scan_series) % 3:
             raise ValueError(
-                f"expected 3*n={3*(len(scan_series)//3)} arguments, got {len(scan_series)}"
+                f"expected 3*n={3*((len(scan_series)+1)//3)} arguments, got {len(scan_series)}"
             )
         for series in range(1, len(scan_series), 3):
             start = scan_series[series - 1]
@@ -1192,55 +1259,123 @@ def plot_data(
                     source,
                     **kwargs,
                 )
-                positioner, detector, monitor = (
-                    load_axes(
-                        source,
-                        scan,
-                        positioner=positioner,
-                        detector=detector,
-                        monitor=monitor,
-                        defaults=_defaults,
-                        read=False,
-                        **kwargs,
+                if (
+                    not isinstance(source, SpecDataFile)
+                    or isinstance(source, str)
+                    or source == "csv"
+                ):
+                    positioner, detector, monitor = (
+                        load_axes(
+                            source,
+                            scan,
+                            positioner=positioner,
+                            detector=detector,
+                            monitor=monitor,
+                            defaults=_defaults,
+                            read=False,
+                            **kwargs,
+                        )
+                        if positioner in data.columns
+                        else load_axes(
+                            source,
+                            scan,
+                            positioner=positioner,
+                            detector=detector,
+                            monitor=monitor,
+                            defaults=_defaults,
+                            read=True,
+                            **kwargs,
+                        )
                     )
-                    if positioner in data.columns
-                    else load_axes(
-                        source,
-                        scan,
-                        positioner=positioner,
-                        detector=detector,
-                        monitor=monitor,
-                        defaults=_defaults,
-                        read=True,
-                        **kwargs,
-                    )
-                )
+                else:
+                    if not positioner:
+                        positioner = _defaults["positioner"]
+                    if not detector:
+                        detector = _defaults["detector"]
+                    if not monitor:
+                        monitor = _defaults["monitor"]
+
+                data[positioner] = np.multiply(data[positioner], direction[0])
+                data[detector] = np.multiply(data[detector], direction[1])
                 if normalize:
                     data[detector] = data[detector] / data[monitor]
+                if log:
+                    data[detector].replace(0, 1, inplace=True)
+                    data[detector] = np.log10(data[detector])
+                x = data[positioner].to_numpy()
+                y = data[detector].to_numpy()
+                if deriv:
+                    y = np.diff(y) / np.diff(x)
+                    x = (x[:-1] + x[1:]) / 2
                 if fit:
-                    x = data[positioner].to_numpy()
-                    y = data[detector].to_numpy()
-                    fit_data = fit_peak(
-                        x, y, model=model, scan=None, output=False
-                    )
+                    fit_data = fit_peak(x, y, model=model)
                     text1 = f"{fit_data.params['center'].value:.3f}"
                     text2 = f"{fit_data.params['fwhm'].value:.3f}"
-                    ax.plot(
-                        x,
-                        fit_data.best_fit,
-                        color="black",
-                        linewidth=2,
-                    )
-
+                if deriv and fit:
                     ax.errorbar(
                         data[positioner],
                         data[detector],
                         color=(f"C{index}"),
                         marker="o",
                         linewidth=2,
-                        markersize=10,
+                        markersize=8,
+                        label=(f"#{scan}"),
+                    )
+                    ax2.plot(
+                        x,
+                        fit_data.best_fit,
+                        color="black",
+                        linewidth=2,
+                    )
+                    ax2.plot(
+                        x,
+                        y,
+                        color=(
+                            "#{:06x}".format(np.random.randint(0, 16777215))
+                        ),
+                        marker="o",
+                        linewidth=2,
+                        markersize=8,
+                        label=(f"#{scan}_deriv [{text1}, {text2}]"),
+                    )
+                elif fit:
+                    ax.errorbar(
+                        data[positioner],
+                        data[detector],
+                        color=(f"C{index}"),
+                        marker="o",
+                        linewidth=2,
+                        markersize=8,
                         label=(f"#{scan} [{text1}, {text2}]"),
                     )
+                    ax.plot(
+                        x,
+                        fit_data.best_fit,
+                        color="black",
+                        linewidth=2,
+                    )
+                elif deriv:
+                    ax.errorbar(
+                        data[positioner],
+                        data[detector],
+                        color=(f"C{index}"),
+                        marker="o",
+                        linewidth=2,
+                        markersize=8,
+                        label=(f"#{scan}"),
+                    )
+                    ax2.plot(
+                        x,
+                        y,
+                        color=(
+                            "#{:06x}".format(np.random.randint(0, 16777215))
+                        ),
+                        marker="o",
+                        linewidth=2,
+                        markersize=8,
+                        label=(f"#{scan}_deriv"),
+                    )
+
                 else:
                     ax.errorbar(
                         data[positioner],
@@ -1248,7 +1383,7 @@ def plot_data(
                         color=(f"C{index}"),
                         marker="o",
                         linewidth=2,
-                        markersize=10,
+                        markersize=8,
                         label=(f"#{scan}"),
                     )
                 index += 1
@@ -1257,7 +1392,9 @@ def plot_data(
 
     ax.set_xlabel(positioner)
     ax.set_ylabel(detector)
-    ax.legend()
+    ax.legend(loc=0)
+    if deriv:
+        ax2.legend(loc=4)
     plt.show(block=False)
 
 
@@ -1269,6 +1406,8 @@ def dbplot(
     monitor=None,
     normalize=False,
     fit=False,
+    deriv=False,
+    direction=[1, 1],
     **kwargs,
 ):
     """
@@ -1292,8 +1431,12 @@ def dbplot(
         chamber 3.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    deriv : boolean, optional
+        calculated derivative
     fit : boolean, optional
-        Fitting of peak using model on/off
+        Fitting of peak using model on/off. In case of deriv=True, derivative is fitted
+    direction : list, int
+        multiply axes for inversion: [1,-1] inverts y-axis
     kwargs :
         model : string, optional
             - fit model: Gaussian, Lorentzian, PseudoVoigt
@@ -1322,5 +1465,7 @@ def dbplot(
         monitor=monitor,
         fit=fit,
         normalize=normalize,
+        deriv=deriv,
+        direction=direction,
         **kwargs,
     )
