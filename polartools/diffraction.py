@@ -29,6 +29,8 @@ from spec2nexus.spec import SpecDataFile
 from .load_data import load_table, load_csv, is_Bluesky_specfile
 from .db_tools import collect_meta
 
+rng=np.random.default_rng(seed=42)
+
 _spec_default_cols = dict(
     positioner="4C Theta",
     detector="APD",
@@ -77,6 +79,7 @@ def fit_peak(xdata, ydata, model=Model.Gaussian):
     pars += peak_mod.guess(ydata, x=xdata)
     pars["sigma"].set(min=0)
     pars["amplitude"].set(min=0)
+
 
     fit = mod.fit(ydata, pars, x=xdata)
 
@@ -1331,7 +1334,7 @@ def plot_data(
                         x,
                         y,
                         color=(
-                            "#{:06x}".format(np.random.randint(0, 16777215))
+                            "#{:06x}".format(rng.integers(0, 16777215))
                         ),
                         marker="o",
                         linewidth=2,
@@ -1368,7 +1371,7 @@ def plot_data(
                         x,
                         y,
                         color=(
-                            "#{:06x}".format(np.random.randint(0, 16777215))
+                            "#{:06x}".format(rng.integers(0, 16777215))
                         ),
                         marker="o",
                         linewidth=2,
