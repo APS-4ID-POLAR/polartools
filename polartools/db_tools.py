@@ -261,7 +261,7 @@ def lookup_position(db, scan, search_string="", query=None):
                     )
 
     elif not status:
-        raise ValueError(f"Scan not existing!")
+        raise ValueError("Scan not existing!")
 
     else:
         raise ValueError(
