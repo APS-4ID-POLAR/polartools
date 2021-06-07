@@ -72,12 +72,12 @@ def test_is_Bluesky_specfile():
 
 def test_db_query(db):
     query = dict(since='2020-12-18', until='2020-12-19')
-    search = db_tools.db_query(db, query)
+    search = load_data.db_query(db, query)
     assert len(list(search)) == 0
 
 
 def test_show_meta(capsys, db):
-    db_tools.show_meta(
+    load_data.show_meta(
         1049, db, meta_keys=["motors", "plan_name", "plan_pattern_args"]
     )
     captured = capsys.readouterr()
@@ -87,7 +87,7 @@ def test_show_meta(capsys, db):
 
 
 def test_collect_meta(db):
-    meta = db_tools.collect_meta(
+    meta = load_data.collect_meta(
         [1049], db, meta_keys=['scan_id', 'uid', 'time']
     )
     print(meta)
