@@ -5,6 +5,7 @@ Functions to access database information.
     ~db_query
     ~show_meta
     ~collect_meta
+    ~lookup_position
 """
 
 # Copyright (c) 2020-2021, UChicago Argonne, LLC.
@@ -15,6 +16,7 @@ from collections import OrderedDict
 from pyRestTable import Table
 from warnings import warn
 from databroker.queries import TimeRange
+from .load_data import load_databroker
 
 
 def db_query(db, query):
@@ -214,3 +216,56 @@ def _flatten_list(inp):
         else:
             output.append(item)
     return output
+
+def lookup_position(db, scan, search_string="", query=None):
+    """
+    Lookup positioner values in past scans.
+
+
+    Parameters
+    ----------
+
+    db : databroker database
+        Searcheable database
+    scan : integer
+        Scan numbers or uids.
+    search_string : string
+        Full or part of positioner name.
+    query: dict
+        Search parameters.
+
+
+    Returns
+    -------
+    output: list
+
+    """
+
+    db_range = db_query(db, query=query) if query else db
+
+    status = db_range[scan].metadata["stop"]
+    if status and status["exit_status"] == "success":
+        baseline = load_databroker(scan, db, "baseline")
+        date1 = baseline["time"][1].strftime("%m/%d/%y %H:%M:%S")
+        date2 = baseline["time"][2].strftime("%m/%d/%y %H:%M:%S")
+        print("=".center(100, "="))
+        print(f"{'Positioner':>50}{date1:>25}{date2:>25}")
+        print("-".center(100, "-"))
+        for key in baseline.keys():
+            if search_string in key:
+                if isinstance(baseline[key][1], list):
+                    print(f"{key:>50}{baseline[key][1]}{baseline[key][2]}")
+                else:
+                    print(
+                        f"{key:>50}{baseline[key][1]:>25}{baseline[key][2]:>25}"
+                    )
+
+    elif not status:
+        raise ValueError(f"Scan not existing!")
+
+    else:
+        raise ValueError(
+            f"Scan was exited with status: {status['exit_status']}. Possibly no baseline information available."
+        )
+
+    print("-".center(100, "-"))
