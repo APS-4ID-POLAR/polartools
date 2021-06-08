@@ -24,7 +24,6 @@ import copy
 from datetime import datetime
 from collections import OrderedDict
 from pyRestTable import Table
-from warnings import warn
 from databroker.queries import TimeRange
 
 
@@ -445,7 +444,7 @@ def lookup_position(db, scan, search_string="", query=None):
 
     status = db_range[scan].metadata["stop"]
     if status and status["exit_status"] == "success":
-        baseline = load_databroker(scan, db, "baseline")
+        baseline = load_databroker(scan, db, "baseline", use_db_v1=True)
         date1 = baseline["time"][1].strftime("%m/%d/%y %H:%M:%S")
         date2 = baseline["time"][2].strftime("%m/%d/%y %H:%M:%S")
         print("=".center(100, "="))
@@ -461,7 +460,7 @@ def lookup_position(db, scan, search_string="", query=None):
                     )
 
     elif not status:
-        raise ValueError("Scan not existing!")
+        raise ValueError("Possibly no baseline information available.")
 
     else:
         raise ValueError(
