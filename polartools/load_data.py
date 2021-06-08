@@ -118,10 +118,15 @@ def load_databroker(scan_id, db, stream="primary", query=None, use_db_v1=True):
 
     _db = db_query(db, query) if query else db
     if use_db_v1:
-        return _db.v1[scan_id].table(stream_name=stream)
+        if stream in _db.v1[scan_id].stream_names:
+            return _db.v1[scan_id].table(stream_name=stream)
+        else:
+            raise ValueError(f"The stream {stream} does not exist in scan {scan_id}.")
     else:
-        return getattr(_db.v2[scan_id], stream).read().to_dataframe()
-
+        try:
+            return getattr(_db.v2[scan_id], stream).read().to_dataframe()
+        except AttributeError:
+            raise ValueError(f"The stream {stream} does not exist in scan {scan_id}.")
 
 def load_table(scan, source, **kwargs):
     """
@@ -442,9 +447,8 @@ def lookup_position(db, scan, search_string="", query=None):
 
     db_range = db_query(db, query=query) if query else db
 
-    status = db_range[scan].metadata["stop"]
-    if status and status["exit_status"] == "success":
-        baseline = load_databroker(scan, db, "baseline", use_db_v1=True)
+    baseline = load_databroker(scan, db, "baseline", use_db_v1=True)
+    if len(baseline['time']) == 2:
         date1 = baseline["time"][1].strftime("%m/%d/%y %H:%M:%S")
         date2 = baseline["time"][2].strftime("%m/%d/%y %H:%M:%S")
         print("=".center(100, "="))
@@ -459,8 +463,7 @@ def lookup_position(db, scan, search_string="", query=None):
                         f"{key:>50}{baseline[key][1]:>25}{baseline[key][2]:>25}"
                     )
 
-    elif status and status['num_events'] and (status["exit_status"] == "abort" or status["exit_status"] == "fail"):
-        baseline = load_databroker(scan, db, "baseline", use_db_v1=True)
+    else:
         date1 = baseline["time"][1].strftime("%m/%d/%y %H:%M:%S")
         print("=".center(100, "="))
         print(f"{'Positioner':>50}{date1:>25}")
@@ -473,14 +476,5 @@ def lookup_position(db, scan, search_string="", query=None):
                     print(
                         f"{key:>50}{baseline[key][1]:>25}"
                     )
-    elif not status: 
-        raise ValueError(
-            f"Possibly no baseline information available."
-        )
-
-    else:
-        raise ValueError(
-            f"Scan was exited with status: {status['exit_status']}. Possibly no baseline information available."
-        )
 
     print("-".center(100, "-"))
