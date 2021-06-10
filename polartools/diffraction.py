@@ -26,7 +26,12 @@ plt.ion()
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 
-from .load_data import load_table, load_csv, is_Bluesky_specfile, collect_meta
+from .load_data import (
+    load_table,
+    load_csv,
+    is_Bluesky_specfile,
+    collect_meta,
+)
 
 rng = np.random.default_rng(seed=42)
 
@@ -291,7 +296,6 @@ def fit_series(
         )
     fit_result = [np.zeros(9) for i in range(int(nbp))]
     if output:
-        plt.close("all")
         fig = plt.figure(figsize=(6, 8))
         ax = fig.add_subplot(1, 1, 1)
 
@@ -654,6 +658,7 @@ def get_type(source, scan_id, **kwargs):
     """
     _kwargs = copy.deepcopy(kwargs)
     folder = _kwargs.pop("folder", "")
+    detector = _kwargs.pop("detector", "")
     scan_info = {
         "scan_no": 0,
         "scan_type": "rel_scan",
@@ -718,10 +723,12 @@ def get_type(source, scan_id, **kwargs):
                         scan_info["x1"] = item[0]["args"][-1]
 
                 if key == "hints":
+                    scan_info["motor0"] = item[0]["dimensions"][0][0][0]
                     if scan_info["scan_type"] == "grid_scan":
-                        scan_info["motor0"] = item[0]["dimensions"][0][0][0]
                         scan_info["motor1"] = item[0]["dimensions"][1][0][0]
-                        scan_info["detector"] = item[0]["detectors"][0]
+                    scan_info["detector"] = (
+                        detector if detector else item[0]["detectors"][0]
+                    )
     return scan_info
 
 
@@ -873,7 +880,9 @@ def plot_2d(
     else:
         raise ValueError(f"expected int or list got '{scans}'")
 
-    scan_info = get_type(source=source, scan_id=scan_series[0], **kwargs)
+    scan_info = get_type(
+        source=source, scan_id=scan_series[0], detector=detector, **kwargs
+    )
     if (
         scan_info["scan_type"] == "mesh"
         or scan_info["scan_type"] == "hklmesh"
@@ -896,7 +905,6 @@ def plot_2d(
             scale=scale,
             **kwargs,
         )
-    plt.close("all")
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     cmap = plt.get_cmap("rainbow")
@@ -1025,7 +1033,6 @@ def plot_fit(
 
     """
 
-    plt.close("all")
     data = fit_series(
         source,
         scan_series,
@@ -1237,7 +1244,6 @@ def plot_data(
     else:
         _defaults = _bluesky_default_cols
 
-    plt.close("all")
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(1, 1, 1)
     if deriv:
