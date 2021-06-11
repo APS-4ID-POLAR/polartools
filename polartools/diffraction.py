@@ -26,11 +26,12 @@ plt.ion()
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 
-from .load_data import (
+from polartools.load_data import (
     load_table,
     load_csv,
     is_Bluesky_specfile,
     collect_meta,
+    load_databroker,
 )
 
 rng = np.random.default_rng(seed=42)
@@ -110,6 +111,7 @@ def load_info(source, scan_id, info, **kwargs):
         - #xx like #UA etc.: ['#UA', row, element_number],
 
         If CSV, #metadata_name
+        If db, #baseline_information (e.g. #lakeshore340_sample)
     kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
@@ -189,8 +191,9 @@ def load_info(source, scan_id, info, **kwargs):
             )
 
     else:
-        pass
-        # to be implemented for database
+        table = load_databroker(scan_id, source, stream="baseline")
+        value = table[info[1 : len(info)]].mean()
+
     return value
 
 
