@@ -26,7 +26,7 @@ plt.ion()
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 
-from polartools.load_data import (
+from .load_data import (
     load_table,
     load_csv,
     is_Bluesky_specfile,
