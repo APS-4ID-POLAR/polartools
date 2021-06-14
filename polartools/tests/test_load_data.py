@@ -69,3 +69,29 @@ def test_is_Bluesky_specfile():
     spec_file = SpecDataFile(join(folder, 'absorption.dat'))
     result = load_data.is_Bluesky_specfile(spec_file)
     assert result is False
+
+def test_db_query(db):
+    query = dict(since='2020-12-18', until='2020-12-19')
+    search = load_data.db_query(db, query)
+    assert len(list(search)) == 0
+
+
+def test_show_meta(capsys, db):
+    load_data.show_meta(
+        1049, db, meta_keys=["motors", "plan_name", "plan_pattern_args"]
+    )
+    captured = capsys.readouterr()
+    expected = "Scan #  motors plan_name init. pos. final pos.\n"
+    expected += "1049    KBIC_x rel_scan  -20        20        \n\n"
+    assert captured.out == expected
+
+
+def test_collect_meta(db):
+    meta = load_data.collect_meta(
+        [1049], db, meta_keys=['scan_id', 'uid', 'time']
+    )
+    print(meta)
+    assert meta[1049]['scan_id'] == [1049, None]
+    assert meta[1049]['uid'] == ['befa48fc-3976-4812-8eee-688223770b46',
+                                 'f155ab58-a681-4911-9e54-0bbcb7465b22']
+    assert meta[1049]['time'] == [1608235923.9519994, 1608235933.5274835]
