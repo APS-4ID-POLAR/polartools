@@ -206,6 +206,7 @@ def fit_series(
     detector=None,
     monitor=None,
     normalize=False,
+    xrange=None,
     **kwargs,
 ):
     """
@@ -248,6 +249,8 @@ def fit_series(
         chamber 3.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    xrange: list
+        Set positioner range for fitting
     kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
@@ -373,8 +376,10 @@ def fit_series(
                     detector = _defaults["detector"]
                 if not monitor:
                     monitor = _defaults["monitor"]
-
-            x = table[positioner].to_numpy()
+            table = table.set_index(positioner)
+            if xrange:
+                table = table.loc[xrange[0] : xrange[1]]
+            x = table.index.to_numpy()
             y = table[detector].to_numpy()
             if normalize:
                 y0 = table[monitor].to_numpy()
@@ -968,6 +973,7 @@ def plot_fit(
     monitor=None,
     normalize=False,
     errorbar=True,
+    xrange=None,
     **kwargs,
 ):
     """
@@ -1010,6 +1016,8 @@ def plot_fit(
         chamber 3.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
+    xrange: list
+        Set positioner range for fitting
     noerror : boolean, optional
         Plotting of errorbars on/off
     kwargs :
@@ -1045,6 +1053,7 @@ def plot_fit(
         detector=detector,
         monitor=monitor,
         normalize=normalize,
+        xrange=xrange,
         **kwargs,
     )
     fig = plt.figure(figsize=(8, 8))
