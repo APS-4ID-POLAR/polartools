@@ -1124,7 +1124,8 @@ def plot_fit(
     else:
         x_label = var_series
     ax3.set_xlabel(x_label)
-    print(data)
+    
+    return data
 
 
 def load_axes(
