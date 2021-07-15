@@ -695,7 +695,11 @@ def get_type(source, scan_id, **kwargs):
         scan_info["x0"] = scan_cmd[2]
         scan_info["x1"] = scan_cmd[3]
         scan_info["xint"] = scan_cmd[4]
-        if scan_type == "mesh" or scan_type == "hklmesh":
+        if (
+            scan_type == "mesh"
+            or scan_type == "dichromesh"
+            or scan_type == "hklmesh"
+        ):
             scan_info["scan_type"] = scan_type
             scan_info["y0"] = scan_cmd[6]
             scan_info["y1"] = scan_cmd[7]
@@ -893,6 +897,7 @@ def plot_2d(
     )
     if (
         scan_info["scan_type"] == "mesh"
+        or scan_info["scan_type"] == "dichromesh"
         or scan_info["scan_type"] == "hklmesh"
         or scan_info["scan_type"] == "grid_scan"
     ):
@@ -934,6 +939,7 @@ def plot_2d(
     nlabel = ""
     if (
         scan_info["scan_type"] == "mesh"
+        or scan_info["scan_type"] == "dichromesh"
         or scan_info["scan_type"] == "hklmesh"
         or scan_info["scan_type"] == "grid_scan"
     ):
@@ -1124,7 +1130,7 @@ def plot_fit(
     else:
         x_label = var_series
     ax3.set_xlabel(x_label)
-    
+
     return data
 
 
