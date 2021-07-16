@@ -746,7 +746,9 @@ def get_type(source, scan_id, **kwargs):
 
 def load_mesh(scan, source, scan_range, log=False, scale=None, **kwargs):
     """
-    Load mesh generates input array for plot_2d from mesh_scan.
+    Load mesh generates input array for plot_2d from mesh scans:
+        mesh, dichromesh, hklmesh (SPEC)
+        grid_scan (BlueSky)
 
     Parameters
     ----------
@@ -845,8 +847,14 @@ def plot_2d(
     **kwargs,
 ):
     """
-    Plot 2d: Creates 2D plot from individual 1D scans as function of variable parameter
-    or plots a 2D mesh scan
+    Plot 2d: 
+    - Creates 2D plot from individual 1D scans as function of variable parameter
+    - OR -
+    - Plots a 2D mesh scan
+        Supported mesh scans:
+            mesh, dichromesh, hklmesh (SPEC)
+            grid_scan (BlueSky)
+
 
     Parameters
     ----------
