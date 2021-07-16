@@ -744,7 +744,9 @@ def get_type(source, scan_id, **kwargs):
     return scan_info
 
 
-def load_mesh(scan, source, scan_range, log=False, scale=None, **kwargs):
+def load_mesh(
+    scan, source, scan_range, log=False, scale=None, detector=None, **kwargs
+):
     """
     Load mesh generates input array for plot_2d from mesh scans:
         mesh, dichromesh, hklmesh (SPEC)
@@ -782,7 +784,6 @@ def load_mesh(scan, source, scan_range, log=False, scale=None, **kwargs):
     -------
     data : arrays with x, y and z information for 2D plot and axes names
     """
-
     data = load_table(scan=scan, source=source, **kwargs)
     if scan_range["scan_type"] == "grid_scan":
         x_label = scan_range["motor0"]
@@ -793,7 +794,7 @@ def load_mesh(scan, source, scan_range, log=False, scale=None, **kwargs):
     else:
         x_label = data.columns[0]
         y_label = data.columns[1]
-        z_label = data.columns[-1]
+        z_label = detector if detector else data.columns[-1]
         xr = int(scan_range["xint"]) + 1
         yr = int(scan_range["yint"]) + 1
     x1 = [x1[:] for x1 in [[1.01] * (xr)] * (yr)]
@@ -924,7 +925,13 @@ def plot_2d(
         or scan_info["scan_type"] == "grid_scan"
     ):
         datax, datay, dataz, positioner, var_series, detector = load_mesh(
-            scan_series[0], source, scan_info, log=log, scale=scale, **kwargs
+            scan_series[0],
+            source,
+            scan_info,
+            log=log,
+            scale=scale,
+            detector=detector,
+            **kwargs,
         )
 
     else:
