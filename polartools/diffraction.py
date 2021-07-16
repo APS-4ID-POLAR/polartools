@@ -848,7 +848,7 @@ def plot_2d(
     **kwargs,
 ):
     """
-    Plot 2d: 
+    Plot 2d:
     - Creates 2D plot from individual 1D scans as function of variable parameter
     - OR -
     - Plots a 2D mesh scan
