@@ -17,7 +17,7 @@ Functions to load and process x-ray diffraction data.
 
 from enum import Enum
 import numpy as np
-from pandas import DataFrame
+from pandas import DataFrame, Series
 import lmfit.models
 import matplotlib.pyplot as plt
 import copy
@@ -800,10 +800,24 @@ def load_mesh(scan, source, scan_range, log=False, scale=None, **kwargs):
     r0 = data[x_label]
     r1 = data[y_label]
     r2 = data[z_label]
+    xa = float(scan_range["x0"])
+    xb = float(scan_range["x1"])
+    xs = (xb - xa) / (xr - 1)
+    ya = float(scan_range["y0"])
+    yb = float(scan_range["y1"])
+    ys = (yb - ya) / (yr - 1)
     for ii in range(0, yr):
-        x1[ii] = r0[ii * xr : ii * xr + xr]
-        y1[ii] = r1[ii * xr : ii * xr + xr]
-        z1[ii] = r2[ii * xr : ii * xr + xr]
+        if len(r0[ii * xr : ii * xr + xr]) < xr:
+            x1[ii] = np.arange(xa, xb + xs / 10, xs)
+            x1[ii] = Series(x1[ii], index=range(xr * ii, xr * ii + xr))
+            y1[ii] = np.full_like(y1[ii], ya + ii * ys)
+            y1[ii] = Series(y1[ii], index=range(xr * ii, xr * ii + xr))
+            z1[ii] = np.zeros(xr)
+            z1[ii] = Series(z1[ii], index=range(xr * ii, xr * ii + xr))
+        else:
+            x1[ii] = r0[ii * xr : ii * xr + xr]
+            y1[ii] = r1[ii * xr : ii * xr + xr]
+            z1[ii] = r2[ii * xr : ii * xr + xr]
         if log:
             z1[ii].replace(0, 1, inplace=True)
             z1[ii] = np.log10(z1[ii])
