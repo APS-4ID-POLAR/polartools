@@ -745,7 +745,13 @@ def get_type(source, scan_id, **kwargs):
 
 
 def load_mesh(
-    scan, source, scan_range, log=False, scale=None, detector=None, **kwargs
+    scan,
+    source,
+    scan_range,
+    log=False,
+    mrange="reduced",
+    detector=None,
+    **kwargs,
 ):
     """
     Load mesh generates input array for plot_2d from mesh scans:
@@ -762,8 +768,8 @@ def load_mesh(
         scan parameters of mesh scan [x0, x1, xinterval, y0, y1, yinterval]
     log: boolean
         If True, z-axis plotted in logarithmic scale.
-    scale : list, int
-        intensity limits: [z_min,z_max]
+    mrange: string, list
+        reduced, full, [xmin,ymin,xmx,ymax]
 
     kwargs :
         The necessary kwargs are passed to the loading and fitting functions
@@ -797,40 +803,31 @@ def load_mesh(
         z_label = detector if detector else data.columns[-1]
         xr = int(scan_range["xint"]) + 1
         yr = int(scan_range["yint"]) + 1
-    x1 = [x1[:] for x1 in [[1.01] * (xr)] * (yr)]
-    y1 = [y1[:] for y1 in [[1.01] * (xr)] * (yr)]
-    z1 = [z1[:] for z1 in [[1.01] * (xr)] * (yr)]
-    r0 = data[x_label]
-    r1 = data[y_label]
-    r2 = data[z_label]
-    xa = float(scan_range["x0"])
-    xb = float(scan_range["x1"])
-    xs = (xb - xa) / (xr - 1)
+    x = data[x_label]
+    y = data[y_label]
+    zp = data[z_label]
+    if log:
+        zp.replace(0, 1, inplace=True)
+        zp = np.log10(zp)
+    xi = x.unique()
+    yi = y.unique()
     ya = float(scan_range["y0"])
     yb = float(scan_range["y1"])
     ys = (yb - ya) / (yr - 1)
-    for ii in range(0, yr):
-        if len(r0[ii * xr : ii * xr + xr]) < xr:
-            x1[ii] = np.arange(xa, xb + xs / 10, xs)
-            x1[ii] = Series(x1[ii], index=range(xr * ii, xr * ii + xr))
-            y1[ii] = np.full_like(y1[ii], ya + ii * ys)
-            y1[ii] = Series(y1[ii], index=range(xr * ii, xr * ii + xr))
-            z1[ii] = np.zeros(xr)
-            z1[ii] = Series(z1[ii], index=range(xr * ii, xr * ii + xr))
-        else:
-            x1[ii] = r0[ii * xr : ii * xr + xr]
-            y1[ii] = r1[ii * xr : ii * xr + xr]
-            z1[ii] = r2[ii * xr : ii * xr + xr]
-        if log:
-            z1[ii].replace(0, 1, inplace=True)
-            z1[ii] = np.log10(z1[ii])
-        if scale:
-            if len(scale) > 1:
-                z1[ii].values[z1[ii] < float(scale[0])] = float(scale[0])
-                z1[ii].values[z1[ii] > float(scale[1])] = float(scale[1])
-            else:
-                z1[ii].values[z1[ii] > float(scale[0])] = float(scale[0])
-    return x1, y1, z1, x_label, y_label, z_label
+
+    if yi.size < yr and mrange == "full":
+        app = np.arange(yi[-1] + ys, yb, ys)
+        yi = np.append(yi, app)
+        z = np.zeros((xi.size * yi.size))
+        z[: zp.size] = zp
+        z[zp.size :] = np.nan
+    else:
+        z = np.zeros((xi.size * yi.size))
+        z[: zp.size] = zp
+        z[zp.size :] = np.nan
+    zi = np.reshape(z, (yi.size, xi.size))
+
+    return xi, yi, zi, x_label, y_label, z_label
 
 
 def plot_2d(
@@ -843,6 +840,7 @@ def plot_2d(
     normalize=False,
     log=False,
     scale=None,
+    mrange="reduced",
     direction=[1, 1],
     output=False,
     **kwargs,
@@ -891,6 +889,8 @@ def plot_2d(
         If True, z-axis plotted in logarithmic scale.
     scale : list, int, optional
         intensity limits: [z_min,z_max]
+    mrange: list, optional
+        full, reduced, [xmin,ymin,xmax,ymax]
     direction : list, int, optional
         multiply axes for inversion: [1,-1]
     output: string, optional
@@ -914,7 +914,6 @@ def plot_2d(
         scan_series = scans
     else:
         raise ValueError(f"expected int or list got '{scans}'")
-
     scan_info = get_type(
         source=source, scan_id=scan_series[0], detector=detector, **kwargs
     )
@@ -929,7 +928,7 @@ def plot_2d(
             source,
             scan_info,
             log=log,
-            scale=scale,
+            mrange=mrange,
             detector=detector,
             **kwargs,
         )
@@ -944,16 +943,26 @@ def plot_2d(
             detector=detector,
             monitor=monitor,
             normalize=normalize,
-            scale=scale,
             **kwargs,
         )
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     cmap = plt.get_cmap("rainbow")
+    if scale:
+        vmin = float(scale[0])
+        vmax = float(scale[1])
+        c = ax.pcolormesh(
+            datax,
+            datay,
+            dataz,
+            vmin=vmin,
+            vmax=vmax,
+            cmap=cmap,
+            shading="auto",
+        )
+    else:
+        c = ax.pcolormesh(datax, datay, dataz, cmap=cmap, shading="auto")
 
-    datax = np.multiply(datax, direction[0])
-    datay = np.multiply(datay, direction[1])
-    c = ax.pcolormesh(datax, datay, dataz, cmap=cmap, shading="auto")
     plt.colorbar(c)
     z_label = detector
     x_label = positioner
@@ -963,8 +972,6 @@ def plot_2d(
         y_label = var_series
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    ax.xaxis.set_major_locator(plt.MaxNLocator(3))
-    ax.yaxis.set_major_locator(plt.MaxNLocator(5))
     nlabel = ""
     if (
         scan_info["scan_type"] == "mesh"
