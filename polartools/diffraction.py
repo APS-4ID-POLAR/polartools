@@ -17,7 +17,7 @@ Functions to load and process x-ray diffraction data.
 
 from enum import Enum
 import numpy as np
-from pandas import DataFrame, Series
+from pandas import DataFrame
 import lmfit.models
 import matplotlib.pyplot as plt
 import copy
@@ -795,13 +795,11 @@ def load_mesh(
         x_label = scan_range["motor0"]
         y_label = scan_range["motor1"]
         z_label = scan_range["detector"]
-        xr = int(scan_range["xint"])
         yr = int(scan_range["yint"])
     else:
         x_label = data.columns[0]
         y_label = data.columns[1]
         z_label = detector if detector else data.columns[-1]
-        xr = int(scan_range["xint"]) + 1
         yr = int(scan_range["yint"]) + 1
     x = data[x_label]
     y = data[y_label]
