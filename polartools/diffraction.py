@@ -946,21 +946,24 @@ def plot_2d(
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     cmap = plt.get_cmap("rainbow")
-    if scale:
-        vmin = float(scale[0])
-        vmax = float(scale[1])
-        c = ax.pcolormesh(
-            datax,
-            datay,
-            dataz,
-            vmin=vmin,
-            vmax=vmax,
-            cmap=cmap,
-            shading="auto",
+    datax = np.multiply(datax, direction[0])
+    datay = np.multiply(datay, direction[1])
+    if scale == None:
+        scale = (
+            np.nanpercentile(1, dataz),
+            np.nanpercentile(99, dataz)
         )
-    else:
-        c = ax.pcolormesh(datax, datay, dataz, cmap=cmap, shading="auto")
-
+    vmin = float(scale[0])
+    vmax = float(scale[1])
+    c = ax.pcolormesh(
+        datax,
+        datay,
+        dataz,
+        vmin=vmin,
+        vmax=vmax,
+        cmap=cmap,
+        shading="auto",
+    )
     plt.colorbar(c)
     z_label = detector
     x_label = positioner
