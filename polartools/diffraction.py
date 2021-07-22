@@ -948,7 +948,7 @@ def plot_2d(
     cmap = plt.get_cmap("rainbow")
     datax = np.multiply(datax, direction[0])
     datay = np.multiply(datay, direction[1])
-    if scale == None:
+    if scale is None:
         scale = (
             np.nanpercentile(1, dataz),
             np.nanpercentile(99, dataz)
