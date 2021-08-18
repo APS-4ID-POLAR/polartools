@@ -723,7 +723,10 @@ def get_type(source, scan_id, **kwargs):
                     if not scan_info["xint"]:
                         scan_info["xint"] = item[0]
                 if key == "plan_pattern_args":
-                    if scan_info["scan_type"] == "grid_scan":
+                    if (
+                        scan_info["scan_type"] == "grid_scan"
+                        or scan_info["scan_type"] == "rel_grid_scan"
+                    ):
                         scan_info["x0"] = item[0]["args"][1]
                         scan_info["x1"] = item[0]["args"][2]
                         scan_info["xint"] = item[0]["args"][3]
@@ -736,7 +739,10 @@ def get_type(source, scan_id, **kwargs):
 
                 if key == "hints":
                     scan_info["motor0"] = item[0]["dimensions"][0][0][0]
-                    if scan_info["scan_type"] == "grid_scan":
+                    if (
+                        scan_info["scan_type"] == "grid_scan"
+                        or scan_info["scan_type"] == "rel_grid_scan"
+                    ):
                         scan_info["motor1"] = item[0]["dimensions"][1][0][0]
                     scan_info["detector"] = (
                         detector if detector else item[0]["detectors"][0]
@@ -756,7 +762,7 @@ def load_mesh(
     """
     Load mesh generates input array for plot_2d from mesh scans:
         mesh, dichromesh, hklmesh (SPEC)
-        grid_scan (BlueSky)
+        grid_scan, rel_grid_scan (BlueSky)
 
     Parameters
     ----------
@@ -791,28 +797,35 @@ def load_mesh(
     data : arrays with x, y and z information for 2D plot and axes names
     """
     data = load_table(scan=scan, source=source, **kwargs)
-    if scan_range["scan_type"] == "grid_scan":
+    if (
+        scan_range["scan_type"] == "grid_scan"
+        or scan_range["scan_type"] == "rel_grid_scan"
+    ):
         x_label = scan_range["motor0"]
         y_label = scan_range["motor1"]
         z_label = scan_range["detector"]
+        xr = int(scan_range["xint"])
         yr = int(scan_range["yint"])
     else:
         x_label = data.columns[0]
         y_label = data.columns[1]
         z_label = detector if detector else data.columns[-1]
         yr = int(scan_range["yint"]) + 1
+        xr = int(scan_range["xint"]) + 1
     x = data[x_label]
     y = data[y_label]
     zp = data[z_label]
+    ya = float(scan_range["y0"])
+    yb = float(scan_range["y1"])
+    ys = (yb - ya) / (yr - 1)
     if log:
         zp.replace(0, 1, inplace=True)
         zp = np.log10(zp)
     xi = x.unique()
     yi = y.unique()
-    ya = float(scan_range["y0"])
-    yb = float(scan_range["y1"])
-    ys = (yb - ya) / (yr - 1)
-
+    if xi.size > xr:
+        xi = x[0 : xr * yr : yr]
+        yi = y[0:yr:1]
     if yi.size < yr and mrange == "full":
         app = np.arange(yi[-1] + ys, yb, ys)
         yi = np.append(yi, app)
@@ -824,7 +837,6 @@ def load_mesh(
         z[: zp.size] = zp
         z[zp.size :] = np.nan
     zi = np.reshape(z, (yi.size, xi.size))
-
     return xi, yi, zi, x_label, y_label, z_label
 
 
@@ -850,7 +862,7 @@ def plot_2d(
     - Plots a 2D mesh scan
         Supported mesh scans:
             mesh, dichromesh, hklmesh (SPEC)
-            grid_scan (BlueSky)
+            grid_scan, rel_grid_scan (BlueSky)
 
 
     Parameters
@@ -920,6 +932,7 @@ def plot_2d(
         or scan_info["scan_type"] == "dichromesh"
         or scan_info["scan_type"] == "hklmesh"
         or scan_info["scan_type"] == "grid_scan"
+        or scan_info["scan_type"] == "rel_grid_scan"
     ):
         datax, datay, dataz, positioner, var_series, detector = load_mesh(
             scan_series[0],
@@ -949,10 +962,7 @@ def plot_2d(
     datax = np.multiply(datax, direction[0])
     datay = np.multiply(datay, direction[1])
     if scale is None:
-        scale = (
-            np.nanpercentile(1, dataz),
-            np.nanpercentile(99, dataz)
-        )
+        scale = (np.nanpercentile(dataz, 1), np.nanpercentile(dataz, 99))
     vmin = float(scale[0])
     vmax = float(scale[1])
     c = ax.pcolormesh(
@@ -979,6 +989,7 @@ def plot_2d(
         or scan_info["scan_type"] == "dichromesh"
         or scan_info["scan_type"] == "hklmesh"
         or scan_info["scan_type"] == "grid_scan"
+        or scan_info["scan_type"] == "rel_grid_scan"
     ):
         nlabel = nlabel + (", #{}".format(scan_series[0]))
     else:
