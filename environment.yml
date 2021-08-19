@@ -22,11 +22,12 @@ dependencies:
   - versioneer
   - suitcase-csv
   - suitcase-json-metadata
-  - xraylarch
+#  - xraylarch
   - ipython
   - numpydoc
   - pyresttable
   - pip:
+    - xraylarch
     - ipython-genutils==0.2.0
     - prompt-toolkit==1.0.15
     - sphinx-rtd-theme
