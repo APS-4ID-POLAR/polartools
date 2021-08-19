@@ -1,32 +1,25 @@
-name: CIs
+name: Pytest and Flake8
 
 on: [push]
 
 jobs:
   build-linux:
-    name: py${{ matrix.python-version }}
-    # runs-on: ubuntu-latest
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.6', '3.7', '3.8']
+        python-version: [3.6, 3.7, 3.8, 3.9]
       max-parallel: 5
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
       with:
-        activate-environment:
-            anaconda-test-env-py-${{ matrix.python-version }}
-        auto-update-conda: true
-        channel-priority: true
-        channels: defaults,conda-forge
-        # environment-file: environment.yml
-        mamba-version: "*"
         python-version: ${{ matrix.python-version }}
-        use-only-tar-bz2: true  # required for caching
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
     - shell: bash -l {0}
       run: |
         conda info
@@ -35,37 +28,21 @@ jobs:
         conda config --show
         conda env list
         printenv | sort
-    # $CONDA is an environment variable pointing to the
-    # root of the miniconda directory
-
     - name: Install dependencies
       run: |
-        $CONDA/bin/conda env update --file environment.yml --name $ENV_NAME
-        $CONDA/bin/conda list -r --name $ENV_NAME
-      env:
-        PY_VER: ${{ matrix.python-version }}
-        ENV_NAME: anaconda-test-env-py-${{ matrix.python-version }}
-
+        conda env update --file environment.yml --name base
     - name: Lint with flake8
       run: |
-        source $CONDA/bin/activate $ENV_NAME
+        conda install flake8
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-      env:
-        PY_VER: ${{ matrix.python-version }}
-        ENV_NAME: anaconda-test-env-py-${{ matrix.python-version }}
-        
     - name: Run pytest
       run: |
-        source $CONDA/bin/activate $ENV_NAME
+        source $CONDA/bin/activate base
         databroker-unpack inplace polartools/tests/data_for_test/databroker data_3
         pytest --cov-config=.coveragerc --cov=./ --cov-report=xml
-      env:
-        PY_VER: ${{ matrix.python-version }}
-        ENV_NAME: anaconda-test-env-py-${{ matrix.python-version }}
-
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
