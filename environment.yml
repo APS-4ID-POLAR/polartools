@@ -22,7 +22,7 @@ dependencies:
   - versioneer
   - suitcase-csv
   - suitcase-json-metadata
-#  - xraylarch
+  - xraylarch<=0.9.50
   - ipython
   - numpydoc
   - pyresttable
