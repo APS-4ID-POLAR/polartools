@@ -3,7 +3,7 @@
 Python package to read and process data from the APS Polar beamline
 
 [![Python version](https://img.shields.io/pypi/pyversions/polartools.svg)](https://pypi.python.org/pypi/polartools)
-![CIs](https://github.com/APS-4ID-POLAR//polartools/workflows/CIs/badge.svg)
+![pytest](https://github.com/APS-4ID-POLAR//polartools/actions/workflows/python-package-conda.yml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/polartools/badge/?version=latest)](http://polartools.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/APS-4ID-POLAR/polartools/branch/main/graph/badge.svg?token=pniQQrvLIA)](https://codecov.io/gh/APS-4ID-POLAR/polartools)
 
