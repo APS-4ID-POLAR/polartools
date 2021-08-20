@@ -25,6 +25,7 @@ from datetime import datetime
 from collections import OrderedDict
 from pyRestTable import Table
 from databroker.queries import TimeRange
+from apstools.utils import getDatabase
 
 
 def load_spec(scan_id, spec_file, folder=""):
@@ -87,7 +88,7 @@ def load_csv(scan_id, folder="", name_format="scan_{}_primary.csv"):
     return read_csv(join(folder, name_format.format(scan_id)))
 
 
-def load_databroker(scan_id, db, stream="primary", query=None, use_db_v1=True):
+def load_databroker(scan_id, db=None, stream="primary", query=None, use_db_v1=True):
     """
     Load data of the first scan with the provided scan_id.
 
@@ -115,7 +116,7 @@ def load_databroker(scan_id, db, stream="primary", query=None, use_db_v1=True):
     data : pandas.DataFrame
         Table with the data from the primary stream.
     """
-
+    db = getDatabase(db=db)
     _db = db_query(db, query) if query else db
     if use_db_v1:
         if stream in _db.v1[scan_id].stream_names:
@@ -325,7 +326,7 @@ def show_meta(
             "hints",
         ]
 
-    meta = collect_meta(scans, db, meta_keys, query=query)
+    meta = collect_meta(scans, meta_keys, db=db, query=query)
     table = Table()
 
     if "plan_pattern_args" in meta_keys:
@@ -369,7 +370,7 @@ def show_meta(
     print(table.reST(fmt=table_fmt))
 
 
-def collect_meta(scan_numbers, db, meta_keys, query=None):
+def collect_meta(scan_numbers, meta_keys, db=None, query=None):
     """
     Extracts metadata of a list of scans.
 
@@ -393,6 +394,9 @@ def collect_meta(scan_numbers, db, meta_keys, query=None):
         Metadata organized by scan number or uid (whatever is given in
         `scans`).
     """
+    print(f"{db=}")    
+    print(f"{scan_numbers=}")
+    db = getDatabase(db=db)
     db_range = db_query(db, query=query) if query else db
     output = OrderedDict()
     for scan in scan_numbers:

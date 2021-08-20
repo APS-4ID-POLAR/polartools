@@ -26,7 +26,7 @@ plt.ion()
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 
-from .load_data import (
+from polartools.load_data import (
     load_table,
     load_csv,
     is_Bluesky_specfile,
@@ -432,8 +432,8 @@ def fit_series(
 
 
 def load_series(
-    source,
     scan_series,
+    source=None,
     log=False,
     var_series=None,
     positioner=None,
@@ -634,7 +634,7 @@ def load_series(
     return datax, datay, dataz, detector, positioner
 
 
-def get_type(source, scan_id, **kwargs):
+def get_type(scan_id, source=None, **kwargs):
     """
     get_type returns type of scan and scan parameters.
 
@@ -664,6 +664,7 @@ def get_type(source, scan_id, **kwargs):
     data : type of scan and scan parameters.
 
     """
+    print(f"{source=}")
     _kwargs = copy.deepcopy(kwargs)
     folder = _kwargs.pop("folder", "")
     detector = _kwargs.pop("detector", "")
@@ -752,8 +753,8 @@ def get_type(source, scan_id, **kwargs):
 
 def load_mesh(
     scan,
-    source,
     scan_range,
+    source=None,
     log=False,
     mrange="reduced",
     detector=None,
@@ -766,12 +767,12 @@ def load_mesh(
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
     scan_series : list, int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
     scan_range : list, int
         scan parameters of mesh scan [x0, x1, xinterval, y0, y1, yinterval]
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     log: boolean
         If True, z-axis plotted in logarithmic scale.
     mrange: string, list
@@ -841,8 +842,8 @@ def load_mesh(
 
 
 def plot_2d(
-    source,
     scans,
+    source=None,
     var_series=None,
     positioner=None,
     detector=None,
@@ -925,7 +926,7 @@ def plot_2d(
     else:
         raise ValueError(f"expected int or list got '{scans}'")
     scan_info = get_type(
-        source=source, scan_id=scan_series[0], detector=detector, **kwargs
+        scan_id=scan_series[0], source=source, detector=detector, **kwargs
     )
     if (
         scan_info["scan_type"] == "mesh"
@@ -936,8 +937,8 @@ def plot_2d(
     ):
         datax, datay, dataz, positioner, var_series, detector = load_mesh(
             scan_series[0],
-            source,
             scan_info,
+            source=source,
             log=log,
             mrange=mrange,
             detector=detector,
@@ -946,8 +947,8 @@ def plot_2d(
 
     else:
         datax, datay, dataz, detector, positioner = load_series(
-            source=source,
             scan_series=scan_series,
+            source=source,
             log=log,
             var_series=var_series,
             positioner=positioner,
