@@ -70,6 +70,7 @@ def test_is_Bluesky_specfile():
     result = load_data.is_Bluesky_specfile(spec_file)
     assert result is False
 
+
 def test_db_query(db):
     query = dict(since='2020-12-18', until='2020-12-19')
     search = load_data.db_query(db, query)
@@ -88,7 +89,7 @@ def test_show_meta(capsys, db):
 
 def test_collect_meta(db):
     meta = load_data.collect_meta(
-        [1049], db, meta_keys=['scan_id', 'uid', 'time']
+        [1049], ['scan_id', 'uid', 'time'], db=db
     )
     print(meta)
     assert meta[1049]['scan_id'] == [1049, None]
