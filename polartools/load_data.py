@@ -394,9 +394,9 @@ def collect_meta(scan_numbers, meta_keys, db=None, query=None):
         Metadata organized by scan number or uid (whatever is given in
         `scans`).
     """
-    print(f"{db=}")    
-    print(f"{scan_numbers=}")
     db = getDatabase(db=db)
+    # print(f"db = {db}")
+    # print(f"scan_numbers = {scan_numbers}")
     db_range = db_query(db, query=query) if query else db
     output = OrderedDict()
     for scan in scan_numbers:
