@@ -10,7 +10,7 @@ dependencies:
   - numpy
   - pandas
   - databroker>=1.2.2
-  - apstools
+  - apstools>=1.4.0
   - pip
   - sphinx
   - pytest
