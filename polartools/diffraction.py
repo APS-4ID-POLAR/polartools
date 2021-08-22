@@ -664,7 +664,6 @@ def get_type(scan_id, source=None, **kwargs):
     data : type of scan and scan parameters.
 
     """
-    print(f"{source=}")
     _kwargs = copy.deepcopy(kwargs)
     folder = _kwargs.pop("folder", "")
     detector = _kwargs.pop("detector", "")
@@ -712,8 +711,8 @@ def get_type(scan_id, source=None, **kwargs):
     else:
         scan_read = collect_meta(
             [scan_id],
-            source,
             ["plan_name", "plan_pattern_args", "num_points", "hints"],
+            source=source,
         )
         for scanno, plan in scan_read.items():
             scan_info["scan_no"] = scanno
@@ -1225,7 +1224,7 @@ def load_axes(
     _kwargs = copy.deepcopy(kwargs)
     query = _kwargs.pop("query", None)
     meta = collect_meta(
-        [scan], source, meta_keys=["motors", "hints"], query=query
+        [scan], meta_keys=["motors", "hints"], source=source, query=query
     )
     if not positioner or read:
         positioner = meta[scan]["motors"][0]
