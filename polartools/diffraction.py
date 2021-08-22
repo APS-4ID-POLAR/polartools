@@ -314,7 +314,11 @@ def fit_series(
         for scan in range(start, stop + 1, step):
             if var_series and var_series[0][0] == "#":
                 fit_result[index][1] = load_info(
-                    scan, source=source, info=var_series, folder=folder, **kwargs
+                    scan,
+                    source=source,
+                    info=var_series,
+                    folder=folder,
+                    **kwargs,
                 )
                 fit_result[index][2] = 0
                 table = load_table(
@@ -587,7 +591,11 @@ def load_series(
                     **kwargs,
                 )
                 y_value = load_info(
-                    scan, source=source, info=var_series, folder=folder, **kwargs
+                    scan,
+                    source=source,
+                    info=var_series,
+                    folder=folder,
+                    **kwargs,
                 )
                 tt = np.empty(data_len)
                 tt.fill(y_value)

@@ -88,7 +88,9 @@ def load_csv(scan_id, folder="", name_format="scan_{}_primary.csv"):
     return read_csv(join(folder, name_format.format(scan_id)))
 
 
-def load_databroker(scan_id, db=None, stream="primary", query=None, use_db_v1=True):
+def load_databroker(
+    scan_id, db=None, stream="primary", query=None, use_db_v1=True
+):
     """
     Load data of the first scan with the provided scan_id.
 
@@ -270,7 +272,12 @@ def db_query(db, query):
 
 
 def show_meta(
-    scans, scan_to=None, db=None, query=None, meta_keys="short", table_fmt="plain"
+    scans,
+    scan_to=None,
+    db=None,
+    query=None,
+    meta_keys="short",
+    table_fmt="plain",
 ):
     """
     Print metadata of scans.
