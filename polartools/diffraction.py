@@ -712,7 +712,7 @@ def get_type(scan_id, source=None, **kwargs):
         scan_read = collect_meta(
             [scan_id],
             ["plan_name", "plan_pattern_args", "num_points", "hints"],
-            source=source,
+            db=source,
         )
         for scanno, plan in scan_read.items():
             scan_info["scan_no"] = scanno
@@ -1224,7 +1224,7 @@ def load_axes(
     _kwargs = copy.deepcopy(kwargs)
     query = _kwargs.pop("query", None)
     meta = collect_meta(
-        [scan], meta_keys=["motors", "hints"], source=source, query=query
+        [scan], meta_keys=["motors", "hints"], db=source, query=query
     )
     if not positioner or read:
         positioner = meta[scan]["motors"][0]
