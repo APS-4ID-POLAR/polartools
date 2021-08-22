@@ -134,7 +134,7 @@ def load_databroker(scan_id, db=None, stream="primary", query=None, use_db_v1=Tr
             )
 
 
-def load_table(scan, source, **kwargs):
+def load_table(scan, source=None, **kwargs):
     """
     Automated scan table loader.
 
@@ -187,7 +187,7 @@ def load_table(scan, source, **kwargs):
         query = _kwargs.pop("query", None)
         use_db_v1 = _kwargs.pop("use_db_v1", True)
         table = load_databroker(
-            scan, source, stream=stream, query=query, use_db_v1=use_db_v1
+            scan, db=source, stream=stream, query=query, use_db_v1=use_db_v1
         )
 
     if len(_kwargs) != 0:
@@ -270,7 +270,7 @@ def db_query(db, query):
 
 
 def show_meta(
-    scans, db, scan_to=None, query=None, meta_keys="short", table_fmt="plain"
+    scans, scan_to=None, db=None, query=None, meta_keys="short", table_fmt="plain"
 ):
     """
     Print metadata of scans.
@@ -280,11 +280,11 @@ def show_meta(
     scans : int or iterable
         Scan numbers or uids. If an integer is passed, it will process scans
         from `scans` to `scan_to`.
-    db : databroker database
-        Searcheable database
     scan_to : int, optional
         Final scan number to process. Note that this is only meaningful if
         an integer is passed to `scans`.
+    db : databroker database (optional)
+        Searcheable database
     query : dictionary, optional
         Search parameters.
     meta_keys : string or iterable, optional

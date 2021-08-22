@@ -90,14 +90,12 @@ def fit_peak(xdata, ydata, model=Model.Gaussian):
     return fit
 
 
-def load_info(source, scan_id, info, **kwargs):
+def load_info(scan_id, info, source=None, **kwargs):
     """
     Load metadata variable value.
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
     scan : int
         Scan_id our uid. If scan_id is passed, it will load the last scan with
         that scan_id.
@@ -112,6 +110,8 @@ def load_info(source, scan_id, info, **kwargs):
 
         If CSV, #metadata_name
         If db, #baseline_information (e.g. #lakeshore340_sample)
+    source: databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     kwargs :
         The necessary kwargs are passed to the loading functions defined by the
         `source` argument:
@@ -191,15 +191,15 @@ def load_info(source, scan_id, info, **kwargs):
             )
 
     else:
-        table = load_databroker(scan_id, source, stream="baseline")
+        table = load_databroker(scan_id, db=source, stream="baseline")
         value = table[info[1 : len(info)]].mean()
 
     return value
 
 
 def fit_series(
-    source,
     scan_series,
+    source=None,
     output=False,
     var_series=None,
     positioner=None,
@@ -216,10 +216,10 @@ def fit_series(
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
     var_series : string or list
@@ -314,19 +314,19 @@ def fit_series(
         for scan in range(start, stop + 1, step):
             if var_series and var_series[0][0] == "#":
                 fit_result[index][1] = load_info(
-                    source, scan, info=var_series, folder=folder, **kwargs
+                    scan, source=source, info=var_series, folder=folder, **kwargs
                 )
                 fit_result[index][2] = 0
                 table = load_table(
                     scan,
-                    source,
+                    source=source,
                     folder=folder,
                     **kwargs,
                 )
             elif var_series:
                 table = load_table(
                     scan,
-                    source,
+                    source=source,
                     folder=folder,
                     **kwargs,
                 )
@@ -335,7 +335,7 @@ def fit_series(
             else:
                 table = load_table(
                     scan,
-                    source,
+                    source=source,
                     folder=folder,
                     **kwargs,
                 )
@@ -348,8 +348,8 @@ def fit_series(
             ):
                 positioner, detector, monitor = (
                     load_axes(
-                        source,
                         scan,
+                        source=source,
                         positioner=positioner,
                         detector=detector,
                         monitor=monitor,
@@ -359,8 +359,8 @@ def fit_series(
                     )
                     if positioner in table.columns
                     else load_axes(
-                        source,
                         scan,
+                        source=source,
                         positioner=positioner,
                         detector=detector,
                         monitor=monitor,
@@ -449,10 +449,10 @@ def load_series(
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
     scan_series : list, int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     var_series : string or list
         string:
 
@@ -527,7 +527,7 @@ def load_series(
         )
     table = load_table(
         scan_series[1],
-        source,
+        source=source,
         folder=folder,
         **kwargs,
     )
@@ -538,8 +538,8 @@ def load_series(
     ):
         positioner, detector, monitor = (
             load_axes(
-                source,
                 scan_series[1],
+                source=source,
                 positioner=positioner,
                 detector=detector,
                 monitor=monitor,
@@ -549,8 +549,8 @@ def load_series(
             )
             if positioner in table.columns
             else load_axes(
-                source,
                 scan_series[1],
+                source=source,
                 positioner=positioner,
                 detector=detector,
                 monitor=monitor,
@@ -582,12 +582,12 @@ def load_series(
             if var_series and var_series[0][0] == "#":
                 table = load_table(
                     scan,
-                    source,
+                    source=source,
                     folder=folder,
                     **kwargs,
                 )
                 y_value = load_info(
-                    source, scan, info=var_series, folder=folder, **kwargs
+                    scan, source=source, info=var_series, folder=folder, **kwargs
                 )
                 tt = np.empty(data_len)
                 tt.fill(y_value)
@@ -595,7 +595,7 @@ def load_series(
             elif var_series:
                 table = load_table(
                     scan,
-                    source,
+                    source=source,
                     folder=folder,
                     **kwargs,
                 )
@@ -603,7 +603,7 @@ def load_series(
             else:
                 table = load_table(
                     scan,
-                    source,
+                    source=source,
                     folder=folder,
                     **kwargs,
                 )
@@ -640,11 +640,10 @@ def get_type(scan_id, source=None, **kwargs):
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
     scan_id : int
         scan number
-
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     kwargs :
         The necessary kwargs are passed to the loading and fitting functions
         defined by the `source` argument:
@@ -796,7 +795,7 @@ def load_mesh(
     -------
     data : arrays with x, y and z information for 2D plot and axes names
     """
-    data = load_table(scan=scan, source=source, **kwargs)
+    data = load_table(scan, source=source, **kwargs)
     if (
         scan_range["scan_type"] == "grid_scan"
         or scan_range["scan_type"] == "rel_grid_scan"
@@ -867,12 +866,12 @@ def plot_2d(
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
     scans : list, int
         1D-scans:   start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
                     e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
         mesh-scan:  scan_number, e.g. 10 will read scan #10
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     var_series: string or list, optional
         string:
             - Varying variable for scan series to be read from scan
@@ -1018,8 +1017,8 @@ def plot_2d(
 
 
 def plot_fit(
-    source,
     scan_series,
+    source=None,
     output=False,
     var_series=None,
     positioner=None,
@@ -1037,10 +1036,10 @@ def plot_fit(
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
     scan_series : int
         start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     output : boolean, optional
         Output fit parameters and plot data+fit for each scan.
     var_series : string or list
@@ -1099,8 +1098,8 @@ def plot_fit(
     """
 
     data = fit_series(
-        source,
         scan_series,
+        source=source,
         output=output,
         var_series=var_series,
         positioner=positioner,
@@ -1183,8 +1182,8 @@ def plot_fit(
 
 
 def load_axes(
-    source,
     scan,
+    source=None,
     positioner=None,
     detector=None,
     monitor=None,
@@ -1197,11 +1196,11 @@ def load_axes(
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
-    scan_series : int, list
+    scan : int, list
         single scan
         or list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
         Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
@@ -1243,8 +1242,8 @@ def load_axes(
 
 
 def plot_data(
-    source,
     scan_series,
+    source=None,
     positioner=None,
     detector=None,
     monitor=None,
@@ -1260,10 +1259,10 @@ def plot_data(
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
     scan_series : list
         list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
         Bluesky or SPEC.
@@ -1330,7 +1329,7 @@ def plot_data(
             for scan in range(start, stop + 1, step):
                 data = load_table(
                     scan,
-                    source,
+                    source=source,
                     **kwargs,
                 )
                 if (
@@ -1469,8 +1468,8 @@ def plot_data(
 
 
 def dbplot(
-    source,
     scan,
+    source=None,
     positioner=None,
     detector=None,
     monitor=None,
@@ -1485,11 +1484,11 @@ def dbplot(
 
     Parameters
     ----------
-    source : databroker database, name of the spec file, or 'csv'
-        Note that applicable kwargs depend on this selection.
     scan_series : int, list
         single scan
         or list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
         Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
@@ -1528,8 +1527,8 @@ def dbplot(
     else:
         raise ValueError(f"expected int or list got '{scan}'")
     plot_data(
-        source=source,
         scan_series=scan_series,
+        source=source,
         positioner=positioner,
         detector=detector,
         monitor=monitor,
