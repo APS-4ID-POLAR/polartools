@@ -10,6 +10,7 @@ dependencies:
   - numpy
   - pandas
   - databroker>=1.2.2
+  - apstools>=1.4.0
   - pip
   - sphinx
   - pytest
@@ -27,8 +28,6 @@ dependencies:
   - numpydoc
   - pyresttable
   - pip:
-    - ipython-genutils==0.2.0
-    - prompt-toolkit==1.0.15
     - sphinx-rtd-theme
     - super-state-machine
     - sphinx-copybutton
