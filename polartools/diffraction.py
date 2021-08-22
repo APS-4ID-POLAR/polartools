@@ -1339,8 +1339,8 @@ def plot_data(
                 ):
                     positioner, detector, monitor = (
                         load_axes(
-                            source,
                             scan,
+                            source=source,
                             positioner=positioner,
                             detector=detector,
                             monitor=monitor,
@@ -1350,8 +1350,8 @@ def plot_data(
                         )
                         if positioner in data.columns
                         else load_axes(
-                            source,
                             scan,
+                            source=source,
                             positioner=positioner,
                             detector=detector,
                             monitor=monitor,
