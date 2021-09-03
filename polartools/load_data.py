@@ -25,6 +25,7 @@ from datetime import datetime
 from collections import OrderedDict
 from pyRestTable import Table
 from databroker.queries import TimeRange
+from apstools.utils import getDatabase
 
 
 def load_spec(scan_id, spec_file, folder=""):
@@ -87,7 +88,9 @@ def load_csv(scan_id, folder="", name_format="scan_{}_primary.csv"):
     return read_csv(join(folder, name_format.format(scan_id)))
 
 
-def load_databroker(scan_id, db, stream="primary", query=None, use_db_v1=True):
+def load_databroker(
+    scan_id, db=None, stream="primary", query=None, use_db_v1=True
+):
     """
     Load data of the first scan with the provided scan_id.
 
@@ -115,7 +118,7 @@ def load_databroker(scan_id, db, stream="primary", query=None, use_db_v1=True):
     data : pandas.DataFrame
         Table with the data from the primary stream.
     """
-
+    db = getDatabase(db=db)
     _db = db_query(db, query) if query else db
     if use_db_v1:
         if stream in _db.v1[scan_id].stream_names:
@@ -133,7 +136,7 @@ def load_databroker(scan_id, db, stream="primary", query=None, use_db_v1=True):
             )
 
 
-def load_table(scan, source, **kwargs):
+def load_table(scan, source=None, **kwargs):
     """
     Automated scan table loader.
 
@@ -186,7 +189,7 @@ def load_table(scan, source, **kwargs):
         query = _kwargs.pop("query", None)
         use_db_v1 = _kwargs.pop("use_db_v1", True)
         table = load_databroker(
-            scan, source, stream=stream, query=query, use_db_v1=use_db_v1
+            scan, db=source, stream=stream, query=query, use_db_v1=use_db_v1
         )
 
     if len(_kwargs) != 0:
@@ -269,7 +272,12 @@ def db_query(db, query):
 
 
 def show_meta(
-    scans, db, scan_to=None, query=None, meta_keys="short", table_fmt="plain"
+    scans,
+    scan_to=None,
+    db=None,
+    query=None,
+    meta_keys="short",
+    table_fmt="plain",
 ):
     """
     Print metadata of scans.
@@ -279,11 +287,11 @@ def show_meta(
     scans : int or iterable
         Scan numbers or uids. If an integer is passed, it will process scans
         from `scans` to `scan_to`.
-    db : databroker database
-        Searcheable database
     scan_to : int, optional
         Final scan number to process. Note that this is only meaningful if
         an integer is passed to `scans`.
+    db : databroker database (optional)
+        Searcheable database
     query : dictionary, optional
         Search parameters.
     meta_keys : string or iterable, optional
@@ -325,7 +333,7 @@ def show_meta(
             "hints",
         ]
 
-    meta = collect_meta(scans, db, meta_keys, query=query)
+    meta = collect_meta(scans, meta_keys, db=db, query=query)
     table = Table()
 
     if "plan_pattern_args" in meta_keys:
@@ -369,7 +377,7 @@ def show_meta(
     print(table.reST(fmt=table_fmt))
 
 
-def collect_meta(scan_numbers, db, meta_keys, query=None):
+def collect_meta(scan_numbers, meta_keys, db=None, query=None):
     """
     Extracts metadata of a list of scans.
 
@@ -393,6 +401,9 @@ def collect_meta(scan_numbers, db, meta_keys, query=None):
         Metadata organized by scan number or uid (whatever is given in
         `scans`).
     """
+    db = getDatabase(db=db)
+    # print(f"db = {db}")
+    # print(f"scan_numbers = {scan_numbers}")
     db_range = db_query(db, query=query) if query else db
     output = OrderedDict()
     for scan in scan_numbers:
