@@ -970,14 +970,26 @@ def plot_2d(
             **kwargs,
         )
     if bool(xcut) ^ bool(ycut):
-        fig, ax = plt.subplots(ncols=3,figsize=(10.3,4),
-                  gridspec_kw={"width_ratios":[1,0.05,1]},constrained_layout=True)
+        fig, ax = plt.subplots(
+            ncols=3,
+            figsize=(10.3, 4),
+            gridspec_kw={"width_ratios": [1, 0.05, 1]},
+            constrained_layout=True,
+        )
     elif xcut and ycut:
-        fig, ax = plt.subplots(ncols=4,figsize=(15,4),
-                  gridspec_kw={"width_ratios":[1,0.05,1,1]},constrained_layout=True)
+        fig, ax = plt.subplots(
+            ncols=4,
+            figsize=(15, 4),
+            gridspec_kw={"width_ratios": [1, 0.05, 1, 1]},
+            constrained_layout=True,
+        )
     else:
-        fig, ax = plt.subplots(ncols=2,figsize=(5.5,4),
-                  gridspec_kw={"width_ratios":[1,0.05]},constrained_layout=True)
+        fig, ax = plt.subplots(
+            ncols=2,
+            figsize=(5.5, 4),
+            gridspec_kw={"width_ratios": [1, 0.05]},
+            constrained_layout=True,
+        )
     cmap = plt.get_cmap("rainbow")
     datax = np.multiply(datax, direction[0])
     datay = np.multiply(datay, direction[1])
@@ -994,7 +1006,7 @@ def plot_2d(
         cmap=cmap,
         shading="auto",
     )
-    plt.colorbar(c,cax=ax[1])
+    plt.colorbar(c, cax=ax[1])
     z_label = detector
     x_label = positioner
     if isinstance(var_series, list):
@@ -1033,33 +1045,40 @@ def plot_2d(
     plt.rc("ytick", labelsize=SIZE)
     plt.rc("legend", fontsize=SIZE)
 
-    if datax.ndim==2: 
-        datax=datax[0,:]
-    if datay.ndim==2: 
-        datay=datay[:,0]
+    if datax.ndim == 2:
+        datax = datax[0, :]
+    if datay.ndim == 2:
+        datay = datay[:, 0]
     data = DataArray(
-        dataz, dims=('y_label', 'x_label'), coords={'x_label': datax, 'y_label': datay}
+        dataz,
+        dims=("y_label", "x_label"),
+        coords={"x_label": datax, "y_label": datay},
     )
 
-    num=2
+    num = 2
     if xcut:
         for pos in xcut:
-            color=("#{:06x}".format(rng.integers(0, 16777215)))
-            test=data.sel(x_label=pos,method='nearest')
-            ax[0].vlines(pos,datay[0],datay[-1],color=color)
-            ax[num].plot(datay,test,color=color,label=(f"{x_label}={pos}"),)
-        
+            color = "#{:06x}".format(rng.integers(0, 16777215))
+            test = data.sel(x_label=pos, method="nearest")
+            ax[0].vlines(pos, datay[0], datay[-1], color=color)
+            ax[num].plot(
+                datay,
+                test,
+                color=color,
+                label=(f"{x_label}={pos}"),
+            )
+
             ax[num].set_xlabel(y_label)
             ax[num].set_ylabel(z_label)
             ax[num].legend(loc=0)
-        num+=1
+        num += 1
     if ycut:
         for pos in ycut:
-            color=("#{:06x}".format(rng.integers(0, 16777215)))
-            test=data.sel(y_label=pos,method='nearest')
-            ax[0].hlines(pos,datax[0],datax[-1],color=color)
-            ax[num].plot(datax,test,color=color,label=(f"{y_label}={pos}"))
-        
+            color = "#{:06x}".format(rng.integers(0, 16777215))
+            test = data.sel(y_label=pos, method="nearest")
+            ax[0].hlines(pos, datax[0], datax[-1], color=color)
+            ax[num].plot(datax, test, color=color, label=(f"{y_label}={pos}"))
+
             ax[num].set_xlabel(x_label)
             ax[num].set_ylabel(z_label)
             ax[num].legend(loc=0)
