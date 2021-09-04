@@ -970,26 +970,32 @@ def plot_2d(
             **kwargs,
         )
     if bool(xcut) ^ bool(ycut):
-        fig, ax = plt.subplots(
-            ncols=3,
+        fig = plt.figure(
+            num="Plot_2d - xcut/ycut",
+            clear=True,
             figsize=(10.3, 4),
-            gridspec_kw={"width_ratios": [1, 0.05, 1]},
             constrained_layout=True,
         )
+        ax = fig.subplots(ncols=3, gridspec_kw={"width_ratios": [1, 0.05, 1]})
     elif xcut and ycut:
-        fig, ax = plt.subplots(
-            ncols=4,
+        fig = plt.figure(
+            num="Plot_2d - xcut and ycut",
+            clear=True,
             figsize=(15, 4),
-            gridspec_kw={"width_ratios": [1, 0.05, 1, 1]},
             constrained_layout=True,
+        )
+        ax = fig.subplots(
+            ncols=4, gridspec_kw={"width_ratios": [1, 0.05, 1, 1]}
         )
     else:
-        fig, ax = plt.subplots(
-            ncols=2,
+        fig = plt.figure(
+            num="Plot_2d",
+            clear=True,
             figsize=(5.5, 4),
-            gridspec_kw={"width_ratios": [1, 0.05]},
             constrained_layout=True,
         )
+        ax = fig.subplots(ncols=2, gridspec_kw={"width_ratios": [1, 0.05]})
+
     cmap = plt.get_cmap("rainbow")
     datax = np.multiply(datax, direction[0])
     datay = np.multiply(datay, direction[1])
@@ -1082,6 +1088,7 @@ def plot_2d(
             ax[num].set_xlabel(x_label)
             ax[num].set_ylabel(z_label)
             ax[num].legend(loc=0)
+    plt.get_current_fig_manager().show()
     if output:
         plt.savefig(output, dpi=600, transparent=True, bbox_inches="tight")
 
