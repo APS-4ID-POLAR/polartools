@@ -303,7 +303,7 @@ def fit_series(
         )
     fit_result = [np.zeros(9) for i in range(int(nbp))]
     if output:
-        fig = plt.figure(num='Fitting', figsize=(6, 4), clear=True)
+        fig = plt.figure(num="Fitting", figsize=(6, 4), clear=True)
         ax = fig.add_subplot(1, 1, 1)
 
     index = 0
