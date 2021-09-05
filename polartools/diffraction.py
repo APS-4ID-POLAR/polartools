@@ -303,7 +303,7 @@ def fit_series(
         )
     fit_result = [np.zeros(9) for i in range(int(nbp))]
     if output:
-        fig = plt.figure(figsize=(6, 8))
+        fig = plt.figure(num='Fitting', figsize=(6, 4), clear=True)
         ax = fig.add_subplot(1, 1, 1)
 
     index = 0
@@ -419,6 +419,7 @@ def fit_series(
             index += 1
     if output:
         ax.legend(loc=0)
+        plt.get_current_fig_manager().show()
 
     return DataFrame(
         fit_result,
@@ -1186,7 +1187,7 @@ def plot_fit(
         xrange=xrange,
         **kwargs,
     )
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(num="Plot_fit", figsize=(8, 8), clear=True)
     ax1 = fig.add_subplot(3, 1, 1)
     ax2 = fig.add_subplot(3, 1, 2)
     ax3 = fig.add_subplot(3, 1, 3)
@@ -1254,6 +1255,7 @@ def plot_fit(
     else:
         x_label = var_series
     ax3.set_xlabel(x_label)
+    plt.get_current_fig_manager().show()
 
     return data
 
@@ -1387,7 +1389,9 @@ def plot_data(
     else:
         _defaults = _bluesky_default_cols
 
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(
+        num="Plot_data", figsize=(6, 4), constrained_layout=True, clear=True
+    )
     ax = fig.add_subplot(1, 1, 1)
     if deriv:
         ax2 = ax.twinx()
@@ -1541,7 +1545,7 @@ def plot_data(
     ax.legend(loc=0)
     if deriv:
         ax2.legend(loc=4)
-    plt.show(block=False)
+    plt.get_current_fig_manager().show()
 
 
 def dbplot(
