@@ -864,6 +864,8 @@ def plot_2d(
     output=False,
     xcut=None,
     ycut=None,
+    plot2=None,
+    scale2=None,
     **kwargs,
 ):
     """
@@ -910,16 +912,20 @@ def plot_2d(
         If True, z-axis plotted in logarithmic scale.
     scale : list, int, optional
         intensity limits: [z_min,z_max]
+    scale2 : list, int, optional
+        intensity limits: [z_min,z_max] for sum if 2 plots are provided
     mrange: list, optional
         full, reduced, [xmin,ymin,xmax,ymax]
     direction : list, int, optional
         multiply axes for inversion: [1,-1]
-    output: string, optional
+    output : string, optional
         Output file for png file of plot.
-    xcut: list, optional
+    xcut : list, optional
         plot 1D cuts for x-axis values
-    ycut: list, optional
+    ycut : list, optional
         plot 1D cuts for y-axis values
+    plot2 : list, int
+        same as scans
     kwargs:
         The necessary kwargs are passed to the loading and fitting functions
         defined by the `source` argument:
@@ -958,6 +964,17 @@ def plot_2d(
             detector=detector,
             **kwargs,
         )
+        if plot2:
+            _, _, dataz2, _, _, _ = load_mesh(
+                plot2,
+                scan_info,
+                source=source,
+                log=log,
+                mrange=mrange,
+                detector=detector,
+                **kwargs,
+            )
+
     else:
         datax, datay, dataz, detector, positioner = load_series(
             scan_series=scan_series,
@@ -970,24 +987,79 @@ def plot_2d(
             normalize=normalize,
             **kwargs,
         )
+        if plot2:
+            _, _, dataz2, _, _ = load_series(
+                scan_series=plot2,
+                source=source,
+                log=log,
+                var_series=var_series,
+                positioner=positioner,
+                detector=detector,
+                monitor=monitor,
+                normalize=normalize,
+                **kwargs,
+            )
     if bool(xcut) ^ bool(ycut):
-        fig = plt.figure(
-            num="Plot_2d - xcut/ycut",
-            clear=True,
-            figsize=(10.3, 4),
-            constrained_layout=True,
+        fig = (
+            plt.figure(
+                num="Plot_2d - sum/diff - xcut/ycut",
+                clear=True,
+                figsize=(15, 4),
+                constrained_layout=True,
+            )
+            if plot2
+            else plt.figure(
+                num="Plot_2d - xcut/ycut",
+                clear=True,
+                figsize=(10.3, 4),
+                constrained_layout=True,
+            )
         )
-        ax = fig.subplots(ncols=3, gridspec_kw={"width_ratios": [1, 0.05, 1]})
+        ax = (
+            fig.subplots(
+                ncols=5, gridspec_kw={"width_ratios": [1, 0.05, 1, 0.05, 1]}
+            )
+            if plot2
+            else fig.subplots(
+                ncols=3, gridspec_kw={"width_ratios": [1, 0.05, 1]}
+            )
+        )
     elif xcut and ycut:
+        fig = (
+            plt.figure(
+                num="Plot_2d - sum/diff - xcut and ycut",
+                clear=True,
+                figsize=(20, 4),
+                constrained_layout=True,
+            )
+            if plot2
+            else plt.figure(
+                num="Plot_2d - xcut and ycut",
+                clear=True,
+                figsize=(15, 4),
+                constrained_layout=True,
+            )
+        )
+        ax = (
+            fig.subplots(
+                ncols=6, gridspec_kw={"width_ratios": [1, 0.05, 1, 0.05, 1, 1]}
+            )
+            if plot2
+            else fig.subplots(
+                ncols=4, gridspec_kw={"width_ratios": [1, 0.05, 1, 1]}
+            )
+        )
+    elif plot2:
         fig = plt.figure(
-            num="Plot_2d - xcut and ycut",
+            num="Plot_2d - sum/diff",
             clear=True,
-            figsize=(15, 4),
+            figsize=(11, 4),
             constrained_layout=True,
         )
         ax = fig.subplots(
-            ncols=4, gridspec_kw={"width_ratios": [1, 0.05, 1, 1]}
+            ncols=4, gridspec_kw={"width_ratios": [1, 0.05, 1, 0.05]}
         )
+
     else:
         fig = plt.figure(
             num="Plot_2d",
@@ -1000,28 +1072,18 @@ def plot_2d(
     cmap = plt.get_cmap("rainbow")
     datax = np.multiply(datax, direction[0])
     datay = np.multiply(datay, direction[1])
+    datazm = np.subtract(dataz, dataz2) if plot2 else dataz
+
     if scale is None:
-        scale = (np.nanpercentile(dataz, 1), np.nanpercentile(dataz, 99))
+        scale = (np.nanpercentile(datazm, 1), np.nanpercentile(datazm, 99))
     vmin = float(scale[0])
     vmax = float(scale[1])
-    c = ax[0].pcolormesh(
-        datax,
-        datay,
-        dataz,
-        vmin=vmin,
-        vmax=vmax,
-        cmap=cmap,
-        shading="auto",
-    )
-    plt.colorbar(c, cax=ax[1])
     z_label = detector
     x_label = positioner
     if isinstance(var_series, list):
         y_label = " ".join(map(str, var_series))
     else:
         y_label = var_series
-    ax[0].set_xlabel(x_label)
-    ax[0].set_ylabel(y_label)
     nlabel = ""
     if (
         scan_info["scan_type"] == "mesh"
@@ -1037,12 +1099,52 @@ def plot_2d(
             stop = scan_series[series]
             nlabel = nlabel + (", #{}-{}".format(start, stop))
     areas = len(scan_series) / 3
+
+    c = ax[0].pcolormesh(
+        datax,
+        datay,
+        datazm,
+        vmin=vmin,
+        vmax=vmax,
+        cmap=cmap,
+        shading="auto",
+    )
+    if plot2:
+        datazp = np.add(dataz2, dataz)
+
+        if scale2 is None:
+            scale2 = (
+                np.nanpercentile(datazp, 1),
+                np.nanpercentile(datazp, 99),
+            )
+        vmin = float(scale2[0])
+        vmax = float(scale2[1])
+        c1 = ax[2].pcolormesh(
+            datax,
+            datay,
+            datazp,
+            vmin=vmin,
+            vmax=vmax,
+            cmap=cmap,
+            shading="auto",
+        )
+        plt.colorbar(c1, cax=ax[3])
+        ax[2].set_xlabel(x_label)
+        ax[2].set_ylabel(y_label)
+
+    if plot2:
+        nlabel = f", #{scan_series[0]}+#{plot2}"
+        ax[2].set_title("{}{}".format(z_label, nlabel), fontsize=12)
+        nlabel = f", #{scan_series[0]}-#{plot2}"
     if areas < 3:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=12)
     elif areas < 5:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=10)
     else:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=8)
+    ax[0].set_xlabel(x_label)
+    ax[0].set_ylabel(y_label)
+    plt.colorbar(c, cax=ax[1])
 
     SIZE = 12
     plt.rc("font", size=SIZE)
@@ -1050,20 +1152,26 @@ def plot_2d(
     plt.rc("axes", labelsize=SIZE)
     plt.rc("xtick", labelsize=SIZE)
     plt.rc("ytick", labelsize=SIZE)
-    plt.rc("legend", fontsize=SIZE)
+    plt.rc("legend", fontsize=6)
 
     if datax.ndim == 2:
         datax = datax[0, :]
     if datay.ndim == 2:
         datay = datay[:, 0]
     data = DataArray(
-        dataz,
+        datazm,
         dims=("y_label", "x_label"),
         coords={"x_label": datax, "y_label": datay},
     )
+    if plot2:
+        data2 = DataArray(
+            datazp,
+            dims=("y_label", "x_label"),
+            coords={"x_label": datax, "y_label": datay},
+        )
 
-    num = 2
     if xcut:
+        num = 4 if plot2 else 2
         for pos in xcut:
             color = "#{:06x}".format(rng.integers(0, 16777215))
             test = data.sel(x_label=pos, method="nearest")
@@ -1074,21 +1182,40 @@ def plot_2d(
                 color=color,
                 label=(f"{x_label}={pos}"),
             )
+            if plot2:
+                color2 = "#{:06x}".format(rng.integers(0, 16777215))
+                test = data2.sel(x_label=pos, method="nearest")
+                ax[2].vlines(pos, datay[0], datay[-1], color=color2)
+                ax[num].plot(
+                    datay,
+                    test,
+                    color=color2,
+                    label=(f"{x_label}={pos} (sum)"),
+                )
 
             ax[num].set_xlabel(y_label)
             ax[num].set_ylabel(z_label)
             ax[num].legend(loc=0)
-        num += 1
     if ycut:
+        num = 4 if plot2 else 2
+        if xcut:
+            num += 1
         for pos in ycut:
             color = "#{:06x}".format(rng.integers(0, 16777215))
             test = data.sel(y_label=pos, method="nearest")
             ax[0].hlines(pos, datax[0], datax[-1], color=color)
             ax[num].plot(datax, test, color=color, label=(f"{y_label}={pos}"))
-
+            if plot2:
+                color2 = "#{:06x}".format(rng.integers(0, 16777215))
+                test = data2.sel(y_label=pos, method="nearest")
+                ax[2].hlines(pos, datax[0], datax[-1], color=color2)
+                ax[num].plot(
+                    datax, test, color=color2, label=(f"{y_label}={pos} (sum)")
+                )
             ax[num].set_xlabel(x_label)
             ax[num].set_ylabel(z_label)
             ax[num].legend(loc=0)
+
     plt.get_current_fig_manager().show()
     if output:
         plt.savefig(output, dpi=600, transparent=True, bbox_inches="tight")
