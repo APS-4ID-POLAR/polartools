@@ -925,7 +925,7 @@ def plot_2d(
     ycut : list, optional
         plot 1D cuts for y-axis values
     plot2 : list, int
-        same as scans
+        same as scans. Only z-values are taken. x and y used from scans
     kwargs:
         The necessary kwargs are passed to the loading and fitting functions
         defined by the `source` argument:
@@ -1133,15 +1133,28 @@ def plot_2d(
         ax[2].set_ylabel(y_label)
 
     if plot2:
-        nlabel = f", #{scan_series[0]}+#{plot2}"
-        ax[2].set_title("{}{}".format(z_label, nlabel), fontsize=12)
-        nlabel = f", #{scan_series[0]}-#{plot2}"
-    if areas < 3:
+        nlabel2 = (
+            f", #{scan_series[0]}+#{plot2}"
+            if (isinstance(scan_series, list) and isinstance(plot2, int))
+            else f", #{scan_series}+#{plot2}"
+        )
+        nlabel = (
+            f", #{scan_series[0]}-#{plot2}"
+            if (isinstance(scan_series, list) and isinstance(plot2, int))
+            else f", #{scan_series}-#{plot2}"
+        )
+    if len(z_label + nlabel) < 35:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=12)
-    elif areas < 5:
+        if plot2:
+            ax[2].set_title("{}{}".format(z_label, nlabel2), fontsize=12)
+    elif len(z_label + nlabel) < 45:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=10)
+        if plot2:
+            ax[2].set_title("{}{}".format(z_label, nlabel2), fontsize=10)
     else:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=8)
+        if plot2:
+            ax[2].set_title("{}{}".format(z_label, nlabel2), fontsize=8)
     ax[0].set_xlabel(x_label)
     ax[0].set_ylabel(y_label)
     plt.colorbar(c, cax=ax[1])
