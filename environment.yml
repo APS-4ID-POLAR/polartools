@@ -27,6 +27,8 @@ dependencies:
   - ipython
   - numpydoc
   - pyresttable
+  - area-detector-handlers
+  - dask
   - pip:
     - sphinx-rtd-theme
     - super-state-machine
