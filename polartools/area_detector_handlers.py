@@ -1,8 +1,23 @@
+"""
+Classes to enable databroker to load area detector images.
+
+Note that these have to registered ::
+
+    from databroker import catalog
+    from polartools.area_detector_handlers import LambdaHDF5Handler
+    cat = catalog['my_catalog']
+    cat.register_handler("AD_HDF5_lambda", LambdaHDF5Handler, overwrite=True)  
+
+.. autosummary::
+   ~LambdaHDF5Handler
+   ~EigerHandler
+"""
+
 # Copyright (c) 2020-2021, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
 from area_detector_handlers.handlers import AreaDetectorHDF5SingleHandler
-from area_detector_handlers.eiger import EigerHandler
+from area_detector_handlers.eiger import EigerHandler as AD_EigerHandler
 from dask.array import from_array
 from os.path import getsize
 from glob import glob
@@ -19,7 +34,7 @@ class LambdaHDF5Handler(AreaDetectorHDF5SingleHandler):
         return from_array(super().__call__(point_number))
 
 
-class MyEigerHandler(EigerHandler):
+class EigerHandler(AD_EigerHandler):
     """
     Modified Eiger handler -> APS seems to use a different file naming.
     """
