@@ -6,7 +6,7 @@ Note that these have to registered ::
     from databroker import catalog
     from polartools.area_detector_handlers import LambdaHDF5Handler
     cat = catalog['my_catalog']
-    cat.register_handler("AD_HDF5_lambda", LambdaHDF5Handler, overwrite=True)  
+    cat.register_handler("AD_HDF5_lambda", LambdaHDF5Handler, overwrite=True)
 
 .. autosummary::
    ~LambdaHDF5Handler
