@@ -21,8 +21,9 @@ Functions to load and process x-ray absorption data.
 from .load_data import load_table, is_Bluesky_specfile
 import numpy as np
 from scipy.interpolate import interp1d
-from spec2nexus.spec import (SpecDataFile, SpecDataFileNotFound,
-                             NotASpecDataFile)
+from spec2nexus.spec import (
+    SpecDataFile, SpecDataFileNotFound, NotASpecDataFile
+)
 from larch.xafs.pre_edge import _finde0
 from larch.math import index_nearest
 from xraydb import xray_line, xray_edge, material_mu
@@ -39,7 +40,7 @@ _spec_default_cols = dict(
     )
 
 _bluesky_default_cols = dict(
-    positioner='monochromator_energy',
+    positioner='energy',
     detector='Ion Ch 5',
     monitor='Ion Ch 4',
     dc_col='Lock DC',
@@ -126,13 +127,13 @@ def load_absorption(scan, source, positioner=None, detector=None, monitor=None,
 
     if transmission:
         return (
-            table[positioner].to_numpy(),
-            np.log(table[monitor]/table[detector])
+            table[positioner].values,
+            np.log(table[monitor]/table[detector]).values
             )
     else:
         return (
-            table[positioner].to_numpy(),
-            (table[detector]/table[monitor]).to_numpy()
+            table[positioner].values,
+            (table[detector]/table[monitor]).values
             )
 
 
@@ -199,8 +200,8 @@ def load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None,
     # Load data
     table = load_table(scan, source, **kwargs)
 
-    return (table[positioner].to_numpy(), table[dc_col].to_numpy(),
-            (table[ac_col] - table[acoff_col]).to_numpy())
+    return (table[positioner].values, table[dc_col].values,
+            (table[ac_col] - table[acoff_col]).values)
 
 
 def load_dichro(scan, source, positioner=None, detector=None, monitor=None,
@@ -266,11 +267,11 @@ def load_dichro(scan, source, positioner=None, detector=None, monitor=None,
             detector = _spec_default_cols['detector']
 
         table = load_table(scan, source, **kwargs)
-        x = table[positioner]
-        monp = table[monitor+'(+)']
-        detp = table[detector+'(+)']
-        monm = table[monitor+'(-)']
-        detm = table[detector+'(-)']
+        x = table[positioner].values
+        monp = table[monitor+'(+)'].values
+        detp = table[detector+'(+)'].values
+        monm = table[monitor+'(-)'].values
+        detm = table[detector+'(-)'].values
 
         if transmission:
             xanes = (np.log(monp/detp) + np.log(monm/detm))/2.
