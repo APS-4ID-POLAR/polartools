@@ -26,7 +26,9 @@ from h5py import File
 
 
 class LambdaHDF5Handler(AreaDetectorHDF5SingleHandler):
-    specs = {"AD_HDF5_lambda"} | AreaDetectorHDF5SingleHandler.specs
+    specs = (
+        {"AD_HDF5_Lambda250k_APSPolar"} | AreaDetectorHDF5SingleHandler.specs
+    )
     """
     Handler for the Lambda detector HDF5 files.
     """
