@@ -900,16 +900,11 @@ def load_dichromesh(
         x_label = scan_range["motor0"]
         y_label = scan_range["motor1"]
         z_label = scan_range["detector"]
-        xr = int(scan_range["xint"])
-        yr = int(scan_range["yint"])
     else:
         # needs to be tested for dichromesh (spec)
         x_label = data.columns[0]
         y_label = data.columns[1]
         z_label = detector if detector else data.columns[-1]
-        yr = int(scan_range["yint"]) + 1
-        xr = int(scan_range["xint"]) + 1
-
     data = (
         data.groupby([x_label, y_label, "pr2_pzt_localDC"])
         .sum()
