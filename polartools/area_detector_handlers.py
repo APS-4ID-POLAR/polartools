@@ -40,6 +40,8 @@ class EigerHandler(AD_EigerHandler):
     """
     Modified Eiger handler -> APS seems to use a different file naming.
     """
+    specs = {"AD_EIGER_APSPolar"}
+
     def __call__(self, image_num):
         '''
         This returns data contained in the file.
