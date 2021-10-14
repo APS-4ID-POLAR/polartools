@@ -1,0 +1,14 @@
+sources:
+  packed_catalog:
+    args:
+      paths:
+      - /home/sector4/4idd/gilberto/test_pack_w_img/lambda250k/documents/*.msgpack
+      root_map:
+        db6a6de29bea3db2ad841c9b50239794: external_files/db6a6de29bea3db2ad841c9b50239794
+    driver: bluesky-msgpack-catalog
+    metadata:
+      generated_by:
+        library: databroker_pack
+        version: 0.3.0
+      relative_paths:
+      - ./documents/*.msgpack
