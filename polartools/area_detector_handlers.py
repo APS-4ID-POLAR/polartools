@@ -23,15 +23,12 @@ from os.path import getsize
 from glob import glob
 from pathlib import Path
 from h5py import File
+import hdf5plugin
 
 
 class LambdaHDF5Handler(AreaDetectorHDF5SingleHandler):
-    # specs = (
-    #     {"AD_HDF5_Lambda250k_APSPolar"} | AreaDetectorHDF5SingleHandler.specs
-    # )
-    specs = (
-        {"AD_HDF5_lambda"} | AreaDetectorHDF5SingleHandler.specs
-    )
+    specs = {"AD_HDF5_Lambda250k_APSPolar"}
+
     """
     Handler for the Lambda detector HDF5 files.
     """
@@ -43,6 +40,8 @@ class EigerHandler(AD_EigerHandler):
     """
     Modified Eiger handler -> APS seems to use a different file naming.
     """
+    specs = {"AD_EIGER_APSPolar"}
+
     def __call__(self, image_num):
         '''
         This returns data contained in the file.
