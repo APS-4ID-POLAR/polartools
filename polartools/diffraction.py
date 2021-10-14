@@ -925,6 +925,7 @@ def load_dichromesh(
     zr = zp_right.values
     return xi, yi, zl, zr, x_label, y_label, z_label
 
+
 def plot_2d(
     scans,
     source=None,
@@ -1163,7 +1164,8 @@ def plot_2d(
             constrained_layout=True,
         )
         ax = fig.subplots(
-            ncols=6, gridspec_kw={"width_ratios": [1, 0.05, 1, 0.05, 1, 0.05]}
+            ncols=8,
+            gridspec_kw={"width_ratios": [1, 0.05, 1, 0.05, 1, 0.05, 1, 0.05]},
         )
     else:
         fig = plt.figure(
@@ -1276,10 +1278,27 @@ def plot_2d(
             shading="auto",
         )
         plt.colorbar(c2, cax=ax[5])
+        datazm = np.add(dataz, dataz2)
+        scale = (np.nanpercentile(datazm, 1), np.nanpercentile(datazm, 99))
+        vmin = float(scale[0])
+        vmax = float(scale[1])
+
+        c3 = ax[6].pcolormesh(
+            datax,
+            datay,
+            datazm,
+            vmin=vmin,
+            vmax=vmax,
+            cmap=cmap,
+            shading="auto",
+        )
+        plt.colorbar(c3, cax=ax[7])
         ax[2].set_xlabel(x_label)
         ax[4].set_xlabel(x_label)
         nlabel = f", #{scan_series[0]}: left circular"
         nlabel2 = f", #{scan_series[0]}: right circular"
+        ax[4].set_title("difference", fontsize=12)
+        ax[6].set_title("sum", fontsize=12)
 
     if len(z_label + nlabel) < 35:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=12)
