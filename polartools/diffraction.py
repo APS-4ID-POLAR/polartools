@@ -678,7 +678,8 @@ def get_type(scan_id, source=None, **kwargs):
     detector = _kwargs.pop("detector", "")
     scan_info = {
         "scan_no": 0,
-        "scan_type": "rel_scan",
+        "plan_name": "rel_scan",
+        "scan_type": None,
         "motor0": None,
         "x0": 0,
         "x1": 0,
@@ -700,21 +701,23 @@ def get_type(scan_id, source=None, **kwargs):
         if specscan is None:
             raise ValueError(f'Filename "{source}" not existing!')
         scan_cmd = specscan.scanCmd.split()
-        scan_type = scan_cmd[0]
+        plan_name = scan_cmd[0]
         scan_info["x0"] = scan_cmd[2]
         scan_info["x1"] = scan_cmd[3]
         scan_info["xint"] = scan_cmd[4]
-        if (
-            scan_type == "mesh"
-            or scan_type == "dichromesh"
-            or scan_type == "hklmesh"
-        ):
-            scan_info["scan_type"] = scan_type
+        if plan_name == "mesh" or plan_name == "hklmesh":
+            scan_info["plan_name"] = plan_name
             scan_info["y0"] = scan_cmd[6]
             scan_info["y1"] = scan_cmd[7]
             scan_info["yint"] = scan_cmd[8]
-        elif scan_type != "qxscan":
-            scan_info["scan_type"] = scan_type
+        elif plan_name == "dichromesh":
+            scan_info["plan_name"] = plan_name
+            scan_info["y0"] = scan_cmd[6]
+            scan_info["y1"] = scan_cmd[7]
+            scan_info["yint"] = scan_cmd[8]
+            scan_info["scan_type"] = "dichro"
+        elif plan_name != "qxscan":
+            scan_info["plan_name"] = plan_name
         else:
             pass
     else:
@@ -727,14 +730,14 @@ def get_type(scan_id, source=None, **kwargs):
             scan_info["scan_no"] = scanno
             for key, item in plan.items():
                 if key == "plan_name":
-                    scan_info["scan_type"] = item[0]
+                    scan_info["plan_name"] = item[0]
                 if key == "num_points":
                     if not scan_info["xint"]:
                         scan_info["xint"] = item[0]
                 if key == "plan_pattern_args":
                     if (
-                        scan_info["scan_type"] == "grid_scan"
-                        or scan_info["scan_type"] == "rel_grid_scan"
+                        scan_info["plan_name"] == "grid_scan"
+                        or scan_info["plan_name"] == "rel_grid_scan"
                     ):
                         scan_info["x0"] = item[0]["args"][1]
                         scan_info["x1"] = item[0]["args"][2]
@@ -749,10 +752,11 @@ def get_type(scan_id, source=None, **kwargs):
                 if key == "hints":
                     scan_info["motor0"] = item[0]["dimensions"][0][0][0]
                     if (
-                        scan_info["scan_type"] == "grid_scan"
-                        or scan_info["scan_type"] == "rel_grid_scan"
+                        scan_info["plan_name"] == "grid_scan"
+                        or scan_info["plan_name"] == "rel_grid_scan"
                     ):
                         scan_info["motor1"] = item[0]["dimensions"][1][0][0]
+                        scan_info["scan_type"] = item[0].get("scan_type", None)
                     scan_info["detector"] = (
                         detector if detector else item[0]["detectors"][0]
                     )
@@ -807,8 +811,8 @@ def load_mesh(
     """
     data = load_table(scan, source=source, **kwargs)
     if (
-        scan_range["scan_type"] == "grid_scan"
-        or scan_range["scan_type"] == "rel_grid_scan"
+        scan_range["plan_name"] == "grid_scan"
+        or scan_range["plan_name"] == "rel_grid_scan"
     ):
         x_label = scan_range["motor0"]
         y_label = scan_range["motor1"]
@@ -847,6 +851,81 @@ def load_mesh(
         z[zp.size :] = np.nan
     zi = np.reshape(z, (yi.size, xi.size))
     return xi, yi, zi, x_label, y_label, z_label
+
+
+def load_dichromesh(
+    scan,
+    scan_range,
+    source=None,
+    detector=None,
+    **kwargs,
+):
+    """
+    Load dichromesh generates input array for plot_2d from mesh scans with several polarizations per scan point:
+        dichromesh (SPEC)
+        dichro_grid_scan (BlueSky)
+
+    Parameters
+    ----------
+    scan_series : list, int
+        start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+    scan_range : list, int
+        scan parameters of mesh scan [x0, x1, xinterval, y0, y1, yinterval]
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable kwargs depend on this selection.
+    kwargs :
+        The necessary kwargs are passed to the loading and fitting functions
+        defined by the `source` argument:
+            - csv        -> possible kwargs: folder, name_format, e.g.\
+                "scan_{}_primary.csv"
+            - spec       -> possible kwargs: folder
+            - databroker -> possible kwargs: stream, query
+
+        Note that a warning will be printed if the an unnecessary kwarg is
+        passed.
+
+    Additional parameters in kwargs:
+        scale : list, int
+            intensity limits: [z_min,z_max]
+
+    Returns
+    -------
+    data : arrays with x, y and z information for 2D plot for left and right polarizatio and axes names
+    """
+    data = load_table(scan, source=source, **kwargs)
+    if (
+        scan_range["plan_name"] == "grid_scan"
+        or scan_range["plan_name"] == "rel_grid_scan"
+    ):
+        x_label = scan_range["motor0"]
+        y_label = scan_range["motor1"]
+        z_label = scan_range["detector"]
+        xr = int(scan_range["xint"])
+        yr = int(scan_range["yint"])
+    else:
+        # needs to be tested for dichromesh (spec)
+        x_label = data.columns[0]
+        y_label = data.columns[1]
+        z_label = detector if detector else data.columns[-1]
+        yr = int(scan_range["yint"]) + 1
+        xr = int(scan_range["xint"]) + 1
+
+    data = (
+        data.groupby([x_label, y_label, "pr2_pzt_localDC"])
+        .sum()
+        .unstack("pr2_pzt_localDC")[z_label]
+    )
+    left_p = data.columns[0]
+    right_p = data.columns[1]
+    zp_left = data[left_p].unstack()
+    zp_right = data[right_p].unstack()
+    xi = zp_left.index.values
+    yi = zp_left.columns.values
+    zl = zp_left.values
+    zr = zp_right.values
+    print(data)
+
+    return xi, yi, zl, zr, x_label, y_label, z_label
 
 
 def plot_2d(
@@ -949,24 +1028,24 @@ def plot_2d(
         scan_id=scan_series[0], source=source, detector=detector, **kwargs
     )
     if (
-        scan_info["scan_type"] == "mesh"
-        or scan_info["scan_type"] == "dichromesh"
-        or scan_info["scan_type"] == "hklmesh"
-        or scan_info["scan_type"] == "grid_scan"
-        or scan_info["scan_type"] == "rel_grid_scan"
+        scan_info["plan_name"] == "mesh"
+        or scan_info["plan_name"] == "dichromesh"
+        or scan_info["plan_name"] == "hklmesh"
+        or scan_info["plan_name"] == "grid_scan"
+        or scan_info["plan_name"] == "rel_grid_scan"
     ):
-        datax, datay, dataz, positioner, var_series, detector = load_mesh(
-            scan_series[0],
-            scan_info,
-            source=source,
-            log=log,
-            mrange=mrange,
-            detector=detector,
-            **kwargs,
-        )
-        if plot2:
-            _, _, dataz2, _, _, _ = load_mesh(
-                plot2,
+        if scan_info["scan_type"] == "dichro":
+            dichro = True
+            (
+                datax,
+                datay,
+                dataz,
+                dataz2,
+                positioner,
+                var_series,
+                detector,
+            ) = load_dichromesh(
+                scan_series[0],
                 scan_info,
                 source=source,
                 log=log,
@@ -974,6 +1053,26 @@ def plot_2d(
                 detector=detector,
                 **kwargs,
             )
+        else:
+            datax, datay, dataz, positioner, var_series, detector = load_mesh(
+                scan_series[0],
+                scan_info,
+                source=source,
+                log=log,
+                mrange=mrange,
+                detector=detector,
+                **kwargs,
+            )
+            if plot2:
+                _, _, dataz2, _, _, _ = load_mesh(
+                    plot2,
+                    scan_info,
+                    source=source,
+                    log=log,
+                    mrange=mrange,
+                    detector=detector,
+                    **kwargs,
+                )
 
     else:
         datax, datay, dataz, detector, positioner = load_series(
@@ -1059,7 +1158,16 @@ def plot_2d(
         ax = fig.subplots(
             ncols=4, gridspec_kw={"width_ratios": [1, 0.05, 1, 0.05]}
         )
-
+    elif dichro:
+        fig = plt.figure(
+            num="Plot_2d - dichro",
+            clear=True,
+            figsize=(20, 4),
+            constrained_layout=True,
+        )
+        ax = fig.subplots(
+            ncols=6, gridspec_kw={"width_ratios": [1, 0.05, 1, 0.05, 1, 0.05]}
+        )
     else:
         fig = plt.figure(
             num="Plot_2d",
@@ -1086,11 +1194,11 @@ def plot_2d(
         y_label = var_series
     nlabel = ""
     if (
-        scan_info["scan_type"] == "mesh"
-        or scan_info["scan_type"] == "dichromesh"
-        or scan_info["scan_type"] == "hklmesh"
-        or scan_info["scan_type"] == "grid_scan"
-        or scan_info["scan_type"] == "rel_grid_scan"
+        scan_info["plan_name"] == "mesh"
+        or scan_info["plan_name"] == "dichromesh"
+        or scan_info["plan_name"] == "hklmesh"
+        or scan_info["plan_name"] == "grid_scan"
+        or scan_info["plan_name"] == "rel_grid_scan"
     ):
         nlabel = nlabel + (", #{}".format(scan_series[0]))
     else:
@@ -1098,7 +1206,7 @@ def plot_2d(
             start = scan_series[series - 1]
             stop = scan_series[series]
             nlabel = nlabel + (", #{}-{}".format(start, stop))
-    areas = len(scan_series) / 3
+    # areas = len(scan_series) / 3
 
     c = ax[0].pcolormesh(
         datax,
@@ -1131,8 +1239,6 @@ def plot_2d(
         plt.colorbar(c1, cax=ax[3])
         ax[2].set_xlabel(x_label)
         ax[2].set_ylabel(y_label)
-
-    if plot2:
         nlabel2 = (
             f", #{scan_series[0]}+#{plot2}"
             if (isinstance(scan_series, list) and isinstance(plot2, int))
@@ -1143,17 +1249,52 @@ def plot_2d(
             if (isinstance(scan_series, list) and isinstance(plot2, int))
             else f", #{scan_series}-#{plot2}"
         )
+
+    if dichro:
+        scale = (np.nanpercentile(dataz2, 1), np.nanpercentile(dataz2, 99))
+        vmin = float(scale[0])
+        vmax = float(scale[1])
+        c1 = ax[2].pcolormesh(
+            datax,
+            datay,
+            dataz2,
+            vmin=vmin,
+            vmax=vmax,
+            cmap=cmap,
+            shading="auto",
+        )
+        plt.colorbar(c1, cax=ax[3])
+        datazm = np.subtract(dataz, dataz2)
+        scale = (np.nanpercentile(datazm, 1), np.nanpercentile(datazm, 99))
+        vmin = float(scale[0])
+        vmax = float(scale[1])
+
+        c2 = ax[4].pcolormesh(
+            datax,
+            datay,
+            datazm,
+            vmin=vmin,
+            vmax=vmax,
+            cmap=cmap,
+            shading="auto",
+        )
+        plt.colorbar(c2, cax=ax[5])
+        ax[2].set_xlabel(x_label)
+        ax[4].set_xlabel(x_label)
+        nlabel = f", #{scan_series[0]}: left circular"
+        nlabel2 = f", #{scan_series[0]}: right circular"
+
     if len(z_label + nlabel) < 35:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=12)
-        if plot2:
+        if plot2 or dichro:
             ax[2].set_title("{}{}".format(z_label, nlabel2), fontsize=12)
     elif len(z_label + nlabel) < 45:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=10)
-        if plot2:
+        if plot2 or dichro:
             ax[2].set_title("{}{}".format(z_label, nlabel2), fontsize=10)
     else:
         ax[0].set_title("{}{}".format(z_label, nlabel), fontsize=8)
-        if plot2:
+        if plot2 or dichro:
             ax[2].set_title("{}{}".format(z_label, nlabel2), fontsize=8)
     ax[0].set_xlabel(x_label)
     ax[0].set_ylabel(y_label)
