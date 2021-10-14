@@ -923,10 +923,7 @@ def load_dichromesh(
     yi = zp_left.columns.values
     zl = zp_left.values
     zr = zp_right.values
-    print(data)
-
     return xi, yi, zl, zr, x_label, y_label, z_label
-
 
 def plot_2d(
     scans,
