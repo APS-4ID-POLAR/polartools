@@ -850,18 +850,15 @@ def load_mesh(
         z[: zp.size] = zp
         z[zp.size :] = np.nan
     else:
-    
-        data = (
-        data.groupby([y_label, x_label])
-        .sum()[z_label]
-    )
+
+        data = data.groupby([y_label, x_label]).sum()[z_label]
     zp_left = data.unstack()
     yi = zp_left.index.values
     xi = zp_left.columns.values
     zi = zp_left.values
 
     return xi, yi, zi, x_label, y_label, z_label
-    
+
 
 def load_dichromesh(
     scan,
@@ -907,7 +904,7 @@ def load_dichromesh(
         scan_range["plan_name"] == "grid_scan"
         or scan_range["plan_name"] == "rel_grid_scan"
     ):
-        x_label = scan_range["motor0"] 
+        x_label = scan_range["motor0"]
         y_label = scan_range["motor1"]
         if x_label == "nanopositioner_nanox":
             x_label = "nanopositioner_nanox_user_setpoint"
@@ -1025,7 +1022,7 @@ def plot_2d(
     2D plot, png-file
 
     """
-    dichro=False
+    dichro = False
     if isinstance(scans, int):
         scan_series = [scans, scans, 1]
     elif isinstance(scans, list):
