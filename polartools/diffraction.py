@@ -816,6 +816,10 @@ def load_mesh(
     ):
         x_label = scan_range["motor0"]
         y_label = scan_range["motor1"]
+        if x_label == "nanopositioner_nanox":
+            x_label = "nanopositioner_nanox_user_setpoint"
+        if y_label == "nanopositioner_nanoy":
+            y_label = "nanopositioner_nanoy_user_setpoint"
         z_label = scan_range["detector"]
         xr = int(scan_range["xint"])
         yr = int(scan_range["yint"])
@@ -846,12 +850,18 @@ def load_mesh(
         z[: zp.size] = zp
         z[zp.size :] = np.nan
     else:
-        z = np.zeros((xi.size * yi.size))
-        z[: zp.size] = zp
-        z[zp.size :] = np.nan
-    zi = np.reshape(z, (yi.size, xi.size))
-    return xi, yi, zi, x_label, y_label, z_label
+    
+        data = (
+        data.groupby([y_label, x_label])
+        .sum()[z_label]
+    )
+    zp_left = data.unstack()
+    yi = zp_left.index.values
+    xi = zp_left.columns.values
+    zi = zp_left.values
 
+    return xi, yi, zi, x_label, y_label, z_label
+    
 
 def load_dichromesh(
     scan,
@@ -897,8 +907,12 @@ def load_dichromesh(
         scan_range["plan_name"] == "grid_scan"
         or scan_range["plan_name"] == "rel_grid_scan"
     ):
-        x_label = scan_range["motor0"]
+        x_label = scan_range["motor0"] 
         y_label = scan_range["motor1"]
+        if x_label == "nanopositioner_nanox":
+            x_label = "nanopositioner_nanox_user_setpoint"
+        if y_label == "nanopositioner_nanoy":
+            y_label = "nanopositioner_nanoy_user_setpoint"
         z_label = scan_range["detector"]
     else:
         # needs to be tested for dichromesh (spec)
@@ -914,8 +928,8 @@ def load_dichromesh(
     right_p = data.columns[1]
     zp_left = data[left_p].unstack()
     zp_right = data[right_p].unstack()
-    xi = zp_left.index.values
-    yi = zp_left.columns.values
+    yi = zp_left.index.values
+    xi = zp_left.columns.values
     zl = zp_left.values
     zr = zp_right.values
     return xi, yi, zl, zr, x_label, y_label, z_label
@@ -1011,6 +1025,7 @@ def plot_2d(
     2D plot, png-file
 
     """
+    dichro=False
     if isinstance(scans, int):
         scan_series = [scans, scans, 1]
     elif isinstance(scans, list):
@@ -1200,8 +1215,6 @@ def plot_2d(
             start = scan_series[series - 1]
             stop = scan_series[series]
             nlabel = nlabel + (", #{}-{}".format(start, stop))
-    # areas = len(scan_series) / 3
-
     c = ax[0].pcolormesh(
         datax,
         datay,
@@ -1290,6 +1303,7 @@ def plot_2d(
         plt.colorbar(c3, cax=ax[7])
         ax[2].set_xlabel(x_label)
         ax[4].set_xlabel(x_label)
+        ax[6].set_xlabel(x_label)
         nlabel = f", #{scan_series[0]}: left circular"
         nlabel2 = f", #{scan_series[0]}: right circular"
         ax[4].set_title("difference", fontsize=12)
