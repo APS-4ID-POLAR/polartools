@@ -36,6 +36,9 @@ def test_manage_databroker_database(tmpdir):
     files = glob(join(path, '*.*')) + glob(join(path, '*', '*'))
     assert len(files) == 3
 
+    # TODO: This seems to fail because of how pytest interfere with file
+    # writing: https://github.com/pytest-dev/pytest/issues/5502
+    #
     # export csv
     # path = str(tmpdir.mkdir('test_csv'))
     # clear_loggers()
