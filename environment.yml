@@ -10,7 +10,6 @@ dependencies:
   - numpy
   - pandas
   - databroker>=1.2.2
-  - apstools>=1.4.0
   - pip
   - sphinx
   - pytest
@@ -29,6 +28,7 @@ dependencies:
   - area-detector-handlers
   - dask
   - pip:
+    - apstools>=1.4.0
     - sphinx-rtd-theme
     - super-state-machine
     - sphinx-copybutton
