@@ -23,7 +23,6 @@ dependencies:
   - versioneer
   - suitcase-csv
   - suitcase-json-metadata
-  - xraylarch<=0.9.50
   - ipython
   - numpydoc
   - pyresttable
@@ -31,3 +30,4 @@ dependencies:
     - sphinx-rtd-theme
     - super-state-machine
     - sphinx-copybutton
+    - xraylarch>=0.9.56
