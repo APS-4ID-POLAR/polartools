@@ -26,6 +26,41 @@ from collections import OrderedDict
 from pyRestTable import Table
 from databroker.queries import TimeRange
 from apstools.utils import getDatabase
+from polartools.area_detector_handlers import EigerHandler, LambdaHDF5Handler
+
+# TODO: This should be just temp fix
+LambdaHDF5Handler.specs = {'AD_HDF5_lambda'} | LambdaHDF5Handler.specs
+
+DEFAULT_HANDLERS = dict(
+    AD_HDF5_Lambda250k_APSPolar=LambdaHDF5Handler,
+    AD_HDF5_lambda=LambdaHDF5Handler,  # Temporary fix
+    AD_EIGER_APSPolar=EigerHandler,
+)
+
+
+def load_catalog(name=None, query=None, handlers=DEFAULT_HANDLERS):
+    """
+    Loads a databroker catalog and register data handlers.
+
+    Parameters
+    ----------
+    name : str, optional
+        Name of the database. Defaults to 4-ID-D name.
+    handlers : dict
+        Dictionary organized as {handler_name: handler_class}. Defaults to
+        handlers used at 4-ID-D.
+
+    Returns
+    -------
+    cat : databroker catalog
+        Catalog after running the query, and registering the handler.
+    """
+    cat = getDatabase(catalog_name=name)
+    if query is not None:
+        cat = db_query(cat, query)
+    for name, handler in handlers.items():
+        cat.register_handler(name, handler, overwrite=True)
+    return cat
 
 
 def load_spec(scan_id, spec_file, folder=""):
