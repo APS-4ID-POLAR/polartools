@@ -11,8 +11,11 @@ Functions to import and export Bluesky data.
 # Copyright (c) 2021, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
-from databroker_pack import (export_catalog, write_documents_manifest,
-                             write_msgpack_catalog_file, unpack_inplace)
+from databroker_pack import (
+    export_catalog, write_documents_manifest, write_msgpack_catalog_file,
+    unpack_inplace, copy_external_files, write_external_files_manifest
+)
+
 from databroker import catalog_search_path
 from .load_data import db_query
 from os import makedirs, remove
@@ -22,22 +25,19 @@ from suitcase.utils import MultiFileManager
 from suitcase.csv import export as csv_export
 from suitcase.json_metadata import export as json_export
 from warnings import warn
+from pathlib import Path
 
 
-def to_databroker(db, folder, query=None):
+def to_databroker(db, folder, query=None, external=False):
     """
     Exports databroker database into msgpack files.
-
     WARNING: While you can pass a query dictionary here, it is advised to run
     the query and check the results before running this function as you
     may inadvertely export a very large number of scans. See
     :func:`polartools.load_data.db_query`.
-
     This is a narrow usage of the `databroker-pack` package_. Note that this
     package includes a convenient command line tool.
-
     .. _package: https://blueskyproject.io/databroker-pack/index.html
-
     Parameters
     ----------
     db :
@@ -47,14 +47,11 @@ def to_databroker(db, folder, query=None):
     query : dict, optional
         Search parameters to select a subsection of `db`. See
         :func:`polartools.load_data.db_query` for more details.
-
     Notes
     ------
     - The scans are saved in msgpack files placed in the `folder/documents` \
     folder.
-
     - `catalog.yml` and `documents_manifest.txt` are located in `folder`.
-
     See also
     --------
     :func:`polartools.load_data.db_query`
@@ -67,9 +64,26 @@ def to_databroker(db, folder, query=None):
     makedirs(folder, exist_ok=True)
     manager = MultiFileManager(folder)
 
-    artifacts, _, _, _ = export_catalog(results, manager)
+    artifacts, external_files, _, _ = export_catalog(results, manager)
     write_documents_manifest(manager, folder, artifacts["all"])
-    write_msgpack_catalog_file(manager, folder, ["./documents/*.msgpack"], {})
+
+    root_map = {}
+    if external:
+        target_directory = Path(folder, "external_files")
+        for ((_, root, unique_id), files) in external_files.items():
+            new_root, new_files, _ = copy_external_files(
+                target_directory, root, unique_id, files
+            )
+            # copying_failures.extend(copying_failures_)
+            # The root_map value will be the relative path to
+            # the data within the pack directory.
+            relative_root = new_root.relative_to(folder)
+            root_map.update({unique_id: relative_root})
+            rel_paths = [Path(f).relative_to(folder) for f in new_files]
+            write_external_files_manifest(manager, unique_id, rel_paths)
+    write_msgpack_catalog_file(
+        manager, folder, ["./documents/*.msgpack"], root_map
+    )
 
 
 def to_csv_json(db, folder, query=None, fname_format='scan_{}_',
