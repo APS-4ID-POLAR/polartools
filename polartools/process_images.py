@@ -13,7 +13,7 @@ def clean_threshold(images, threshold):
 
     Sets all value above the threshold to nan.
 
-    PARAMETERS
+    Parameters
     ----------
     images : stack of images
         Images to be cleaned.
@@ -28,6 +28,44 @@ def clean_threshold(images, threshold):
     clean_images = images.copy()
     clean_images[clean_images > threshold] = nan
     return clean_images
+
+
+def _cleanup_images(images, parameters):
+    """
+    Clean up images
+
+    Parameters
+    ----------
+    images : stack of images
+        Images to be cleaned.
+    parameters : dictionary
+        Clean up functions and arguments. Default options:
+        - {'threshold': threshold_value}
+        For custom functions, use:
+        - {'function': (myfunc, (arg1, arg2, ...))}
+        where myfunc is a function with call: myfunc(images, arg1, arg2, ...)
+        These function can be stacked. For example, the call:
+        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))}
+        will run the threshold function twice with 100 and 10 as argument, then
+        myfunc with (arg1, arg2).
+
+    Returns
+    -------
+    images : dask array
+        Processed images.
+    """
+
+    for function, args in parameters.items():
+        if function.lower() == 'threshold':
+            images = clean_threshold(images, *args)
+        else:
+            func = args.pop('function', None)
+            if func is None:
+                raise ValueError(
+                    'The custom cleanup function must be passed in '
+                    'the cleanup dictionary using the "fuction" key.'
+                )
+            images = func[0](images, *func[1])
 
 
 def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
@@ -46,11 +84,17 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
     detector_key : string
         Name of item that holds the images
     cleanup : dictionary, optional
-        Method and parameters for cleanup. The function is passed in the
-        "function" key, and it should have the call:
-        `function(images, **kwargs)`, where the remaining items of the cleanup
-        are passed as kwargs. Default is None, which will not perform any
-        cleanup.
+        Clean up functions and arguments. Available functions:
+
+        - {'threshold': threshold_value}
+        For custom functions, use:
+        - {'function': (myfunc, (arg1, arg2, ...))}
+        where myfunc is a function with call: myfunc(images, arg1, arg2, ...)
+        These function can be stacked. For example, the call:
+        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))}
+        will run the threshold function twice with 100 and 10 as argument, then
+        myfunc with (arg1, arg2).
+
     normalize : string, optional
         Name of detector that will be used to normalize data. Default is None.
     positioner : string, optional
@@ -76,16 +120,7 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
                     "was entered."
                 )
 
-            if 'threshold' in cleanup.keys():
-                images = clean_threshold(images, cleanup['threshold'])
-            else:
-                func = cleanup.pop('function', None)
-                if func is None:
-                    raise ValueError(
-                        'The custom cleanup function must be passed in '
-                        'the cleanup dictionary using the "fuction" key.'
-                    )
-                images = func(images, **cleanup)
+            images = _cleanup_images(images, cleanup)
 
         if normalize is not None:
             images[:] /= data[normalize].broadcast_like(data[detector_key])
@@ -139,6 +174,6 @@ def get_spectrum(image, curvature, biny=1):
 
 def get_spectra(images, curvature, biny=1):
     spectra = []
-    for i, image in enumerate(images):
+    for image in images:
         spectra.append(get_spectrum(image[0].compute(), curvature, biny=biny))
     return array(spectra)
