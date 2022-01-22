@@ -1,5 +1,4 @@
 import dask.array as da
-from numpy import nan, array, float64
 import numpy as np
 import matplotlib.pyplot as plt
 from ._pyrixs import (
@@ -26,7 +25,7 @@ def clean_threshold(images, threshold):
         Clean images.
     """
     clean_images = images.copy()
-    clean_images[clean_images > threshold] = nan
+    clean_images[clean_images > threshold] = np.nan
     return clean_images
 
 
@@ -44,8 +43,11 @@ def _cleanup_images(images, parameters):
         For custom functions, use:
         - {'function': (myfunc, (arg1, arg2, ...))}
         where myfunc is a function with call: myfunc(images, arg1, arg2, ...)
-        These function can be stacked. For example, the call:
-        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))}
+        These function can be stacked, but keys have to be different.
+        For example, the call:
+        {'threshold1': 100,
+        'threshold2': 10,
+        'function': (myfunc, (arg1, arg2))}
         will run the threshold function twice with 100 and 10 as argument, then
         myfunc with (arg1, arg2).
 
@@ -56,9 +58,10 @@ def _cleanup_images(images, parameters):
     """
 
     for function, args in parameters.items():
-        if function.lower() == 'threshold':
+        if 'threshold' in function.lower():
             images = clean_threshold(images, *args)
         else:
+            # TODO: Add option to run custom function multiple times
             func = args.pop('function', None)
             if func is None:
                 raise ValueError(
@@ -66,6 +69,7 @@ def _cleanup_images(images, parameters):
                     'the cleanup dictionary using the "fuction" key.'
                 )
             images = func[0](images, *func[1])
+    return images
 
 
 def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
@@ -108,10 +112,13 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
         Values of the positioner. It is only returned if positioner is not None.
     """
 
+    if isinstance(scans, (float, int)):
+        scans = [scans]
+
     output = []
     for scan in scans:
         data = cat[scan].primary.to_dask()
-        images = da.array(data[detector_key].astype(float64)).compute()
+        images = da.array(data[detector_key].astype(np.float64)).compute()
 
         if cleanup is not None:
             if not isinstance(cleanup, dict):
@@ -153,11 +160,12 @@ def get_curvature(image, binx=10, biny=1, constant_offset=None, plot=False):
         ph, binx=binx, biny=biny, CONSTANT_OFFSET=constant_offset
     )
     if plot:
+        vmax = np.nanpercentile(image, 99.99)
         _, ax = plt.subplots()
         plt.pcolor(
             image.transpose(),
             vmin=0,
-            vmax=np.nanpercentile(image, 99),
+            vmax=vmax if vmax > 0 else np.nanmax(image),
             cmap="plasma")
         plt.colorbar()
         plot_curvature(ax, curv, ph)
@@ -176,4 +184,4 @@ def get_spectra(images, curvature, biny=1):
     spectra = []
     for image in images:
         spectra.append(get_spectrum(image[0].compute(), curvature, biny=biny))
-    return array(spectra)
+    return np.array(spectra)
