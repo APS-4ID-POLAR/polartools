@@ -21,12 +21,9 @@ from pandas import DataFrame
 import lmfit.models
 import matplotlib.pyplot as plt
 import copy
-
-plt.ion()
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 from xarray import DataArray
-
 from .load_data import (
     load_table,
     load_csv,
@@ -34,6 +31,8 @@ from .load_data import (
     collect_meta,
     load_databroker,
 )
+
+plt.ion()
 
 rng = np.random.default_rng(seed=42)
 
@@ -176,7 +175,7 @@ def load_info(scan_id, info, source=None, **kwargs):
             data_array = specscan.raw.split("\n")
             index = 0
             for element in data_array:
-                if element[0 : len(info[0])] == info[0]:
+                if element[0:len(info[0])] == info[0]:
                     if index == info[1]:
                         value = element.split()[info[2] + 1]
                     index += 1
@@ -193,7 +192,7 @@ def load_info(scan_id, info, source=None, **kwargs):
 
     else:
         table = load_databroker(scan_id, db=source, stream="baseline")
-        value = table[info[1 : len(info)]].mean()
+        value = table[info[1:len(info)]].mean()
 
     return value
 
@@ -213,7 +212,9 @@ def fit_series(
     """
     Fit series of scans with chosen functional and returns fit parameters.
 
-    Uses lmfit (https://lmfit.github.io/lmfit-py/).
+    Uses lmfit_.
+
+    .. _lmfit: https://lmfit.github.io/lmfit-py/
 
     Parameters
     ----------
@@ -232,11 +233,13 @@ def fit_series(
 
         If list:
         SPEC: Information on metadata to be read: List starting with #P, #U,
-            #Q for motor positions, user values or Q-position or general #xx:
+        #Q for motor positions, user values or Q-position or general #xx:
+
             - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
             - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
             - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
-            - #xx like #UA etc.: ['#UA', row, element_number],
+            - #xx like #UA etc.: ['#UA', row, element_number].
+
         CSV: #metadata_name
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
@@ -250,7 +253,7 @@ def fit_series(
         chamber 3.
     normalize : boolean, optional
         Normalization to selected/default monitor on/off
-    xrange: list
+    xrange : list
         Set positioner range for fitting
     kwargs :
         The necessary kwargs are passed to the loading functions defined by the
@@ -263,8 +266,8 @@ def fit_series(
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
-        model: enumeration
-            fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
+        model -> fit model, options:
+        model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt.
 
     Returns
     -------
@@ -383,7 +386,7 @@ def fit_series(
                     monitor = _defaults["monitor"]
             table = table.set_index(positioner)
             if xrange:
-                table = table.loc[xrange[0] : xrange[1]]
+                table = table.loc[xrange[0]:xrange[1]]
             x = table.index.to_numpy()
             y = table[detector].to_numpy()
             if normalize:
@@ -467,13 +470,15 @@ def load_series(
             - String starting with #metadata, reads metadata from CSV baseline
 
         list:
-            SPEC: Information on metadata to be read: List starting with #P, #U,
-                #Q for motor positions, user values or Q-position or general #xx:
-                - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
-                - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
-                - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
-                - #xx like #UA etc.: ['#UA', row, element_number],
-            CSV: #metadata_name
+        SPEC: Information on metadata to be read: List starting with #P, #U,
+        #Q for motor positions, user values or Q-position or general #xx:
+
+            - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+            - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+            - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+            - #xx like #UA etc.: ['#UA', row, element_number],
+
+        CSV: #metadata_name
         None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -488,13 +493,12 @@ def load_series(
         If True, z-axis plotted in logarithmic scale.
     scale : list, int
         intensity limits: [z_min,z_max]
-
     kwargs :
         The necessary kwargs are passed to the loading and fitting functions
         defined by the `source` argument:
 
             - csv        -> possible kwargs: folder, name_format, e.g.\
-                "scan_{}_primary.csv"
+            "scan_{}_primary.csv"
             - spec       -> possible kwargs: folder
             - databroker -> possible kwargs: stream, query
 
@@ -657,21 +661,21 @@ def get_type(scan_id, source=None, **kwargs):
     kwargs :
         The necessary kwargs are passed to the loading and fitting functions
         defined by the `source` argument:
+
             - csv        -> possible kwargs: folder, name_format, e.g.\
-                "scan_{}_primary.csv"
+            "scan_{}_primary.csv"
             - spec       -> possible kwargs: folder
             - databroker -> possible kwargs: stream, query
 
         Note that a warning will be printed if the an unnecessary kwarg is
         passed.
 
-    Additional parameters in kwargs:
+        Additional parameters in kwargs:
         folder: location of scan file
 
     Returns
     -------
     data : type of scan and scan parameters.
-
     """
     _kwargs = copy.deepcopy(kwargs)
     folder = _kwargs.pop("folder", "")
@@ -793,6 +797,7 @@ def load_mesh(
     kwargs :
         The necessary kwargs are passed to the loading and fitting functions
         defined by the `source` argument:
+
             - csv        -> possible kwargs: folder, name_format, e.g.\
                 "scan_{}_primary.csv"
             - spec       -> possible kwargs: folder
@@ -841,14 +846,14 @@ def load_mesh(
     xi = x.unique()
     yi = y.unique()
     if xi.size > xr:
-        xi = x[0 : xr * yr : yr].to_numpy()
+        xi = x[0:xr * yr:yr].to_numpy()
         yi = y[0:yr:1].to_numpy()
     if yi.size < yr and mrange == "full":
         app = np.arange(yi[-1] + ys, yb, ys)
         yi = np.append(yi, app)
         z = np.zeros((xi.size * yi.size))
-        z[: zp.size] = zp
-        z[zp.size :] = np.nan
+        z[:zp.size] = zp
+        z[zp.size:] = np.nan
     else:
 
         data = data.groupby([y_label, x_label]).sum()[z_label]
@@ -868,9 +873,11 @@ def load_dichromesh(
     **kwargs,
 ):
     """
-    Load dichromesh generates input array for plot_2d from mesh scans with several polarizations per scan point:
-        dichromesh (SPEC)
-        dichro_grid_scan (BlueSky)
+    Load dichromesh generates input array for plot_2d from mesh scans with
+    several polarizations per scan point:
+
+    - dichromesh (SPEC)
+    - dichro_grid_scan (BlueSky)
 
     Parameters
     ----------
@@ -883,8 +890,9 @@ def load_dichromesh(
     kwargs :
         The necessary kwargs are passed to the loading and fitting functions
         defined by the `source` argument:
+
             - csv        -> possible kwargs: folder, name_format, e.g.\
-                "scan_{}_primary.csv"
+            "scan_{}_primary.csv"
             - spec       -> possible kwargs: folder
             - databroker -> possible kwargs: stream, query
 
@@ -953,34 +961,38 @@ def plot_2d(
 ):
     """
     Plot 2d:
-    - Creates 2D plot from individual 1D scans as function of variable parameter
-    - OR -
-    - Plots a 2D mesh scan
-        Supported mesh scans:
-            mesh, dichromesh, hklmesh (SPEC)
-            grid_scan, rel_grid_scan (BlueSky)
 
+    Creates 2D plot from individual 1D scans as function of variable parameter
+    or  plots a 2D mesh scan.
+
+    Supported mesh scans:
+        - mesh, dichromesh, hklmesh (SPEC)
+        - grid_scan, rel_grid_scan (BlueSky)
 
     Parameters
     ----------
     scans : list, int
         1D-scans:   start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
-                    e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
+        e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
         mesh-scan:  scan_number, e.g. 10 will read scan #10
     source : databroker database, name of the spec file, or 'csv'
         Note that applicable kwargs depend on this selection.
     var_series: string or list, optional
         string:
+
             - Varying variable for scan series to be read from scan
                 (detector), e.g. SampK (sample temperature), optional.
             - String starting with #metadata, reads metadata from CSV baseline
+
         list:
         Information on metadata to be read: List starting with #P, #U or #Q for
         motor positions, user values or Q-position, or general #xx, optional:
+
             - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
             - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
             - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
             - #xx like #UA etc.: ['#UA', row, element_number],
+
         If None, successive scans will be numbered starting from zero.
     positioner : string, optional
         Name of the positioner, this needs to be the same as defined in
@@ -997,7 +1009,7 @@ def plot_2d(
         intensity limits: [z_min,z_max]
     scale2 : list, int, optional
         intensity limits: [z_min,z_max] for sum if 2 plots are provided
-    mrange: list, optional
+    mrange : list, optional
         full, reduced, [xmin,ymin,xmax,ymax]
     direction : list, int, optional
         multiply axes for inversion: [1,-1]
@@ -1012,6 +1024,7 @@ def plot_2d(
     kwargs:
         The necessary kwargs are passed to the loading and fitting functions
         defined by the `source` argument:
+
             - csv        -> possible kwargs: folder, name_format, e.g.\
                 "scan_{}_primary.csv"
             - spec       -> possible kwargs: folder
