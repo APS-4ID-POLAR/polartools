@@ -1,4 +1,4 @@
-Process Images
+Process images
 --------------------
 
 .. automodule:: polartools.process_images
