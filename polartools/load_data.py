@@ -178,7 +178,7 @@ def load_table(scan, source=None, **kwargs):
     The automation is based on the source argument.
 
     - if source == 'csv' -> uses `load_csv`.
-    - else if source is a string or nexus2spec.spec.SpecDataFile -> uses \
+    - else if source is a string or nexus2spec.spec.SpecDataFile -> uses
     `load_spec`.
     - else -> uses `load_databroker`.
 
@@ -493,7 +493,6 @@ def lookup_position(db, scan, search_string="", query=None):
     Returns
     -------
     output: list
-
     """
 
     db_range = db_query(db, query=query) if query else db
