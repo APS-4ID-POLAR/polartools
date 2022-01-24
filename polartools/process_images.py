@@ -1,3 +1,14 @@
+"""
+Functions to process image files.
+
+.. autosummary::
+   ~clean_threshold
+   ~load_images
+   ~get_curvature
+   ~get_spectrum
+   ~get_spectra
+"""
+
 import dask.array as da
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,7 +42,7 @@ def clean_threshold(images, threshold):
 
 def _cleanup_images(images, parameters):
     """
-    Clean up images
+    Clean up images.
 
     Parameters
     ----------
@@ -91,10 +102,12 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
         Clean up functions and arguments. Available functions:
 
         - {'threshold': threshold_value}
+
         For custom functions, use:
-        - {'function': (myfunc, (arg1, arg2, ...))}
-        where myfunc is a function with call: myfunc(images, arg1, arg2, ...)
-        These function can be stacked. For example, the call:
+
+        - {'function': (myfunc, (arg1, arg2, ...))} \
+        where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \
+        These function can be stacked. For example, the call: \
         {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))}
         will run the threshold function twice with 100 and 10 as argument, then
         myfunc with (arg1, arg2).
@@ -111,9 +124,6 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
     positioner_values : numpy ndarray, optional
         Values of the positioner. It is only returned if positioner is not None.
     """
-
-    if isinstance(scans, (float, int)):
-        scans = [scans]
 
     output = []
     for scan in scans:
@@ -137,7 +147,7 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
     if positioner is None:
         return np.nanmean(da.stack(output), axis=0)
     else:
-        return np.nanmean(da.stack(output), axis=0), data[positioner].values
+        return np.nanmean(da.stack(output), axis=1), data[positioner].values
 
 
 def _cleanup_photon_events(photon_events):
@@ -153,10 +163,45 @@ def _get_constant_offset(image, rng=10):
 
 
 def get_curvature(image, binx=10, biny=1, constant_offset=None, plot=False):
+    """
+    Get the curvature of an image.
+
+    A second order polynomial is fit to the cross correlation of each slice
+    using the `pyrixs` algorithm. See pyrixs_ for more details. Ideally used
+    with an image with large intensity and a single peak.
+
+    .. _pyrixs: https://github.com/mpmdean/pyrixs/blob/master/pyrixs/process2d.py
+
+    Parameters
+    ----------
+    image : numpy.array or dask.array
+        Image to be used.
+    binx : integer, optional
+        Bin size in the horizontal direction in pixels. Defaults to 10.
+    biny : integer, optional
+        Bin size in the vertical direction in pixels. Defaults to 1.
+    constant_offset : integer
+        Offset for the curvature. This is only relevant for the plot, does not
+        affect the use of the curvature to extract the spectra. Defaults to
+        None, which triggers an automatic offset calculation.
+    plot : boolean
+        Flag to plot image and curvature.
+
+    Returns
+    -------
+    curvature : list
+        List of polynomial coefficients [c0, c1, c2] where:
+        y = c0 + c1.x + c2.x^2.
+
+    See also
+    --------
+    :func:`pyrixs.fit_curvature`
+    :func:`pyrixs.get_curvature_offsets`
+    """
     ph = _cleanup_photon_events(image_to_photon_events(image.transpose()))
     if constant_offset is None:
         constant_offset = _get_constant_offset(image)
-    curv = fit_curvature(
+    curvature = fit_curvature(
         ph, binx=binx, biny=biny, CONSTANT_OFFSET=constant_offset
     )
     if plot:
@@ -168,20 +213,77 @@ def get_curvature(image, binx=10, biny=1, constant_offset=None, plot=False):
             vmax=vmax if vmax > 0 else np.nanmax(image),
             cmap="plasma")
         plt.colorbar()
-        plot_curvature(ax, curv, ph)
+        plot_curvature(ax, curvature, ph)
 
-    print(f'curvature = {curv}')
+    print(f'curvature = {curvature}')
 
-    return curv
+    return curvature
 
 
 def get_spectrum(image, curvature, biny=1):
+    """
+    Extract the spectrum of a single image.
+
+    Uses the `pyrixs` extract_ function.
+
+    .. _extract: \
+        https://github.com/mpmdean/pyrixs/blob/e94531f325478ce18b88d9fb3d42068\
+            f269bd118/pyrixs/process2d.py#L325
+
+    Parameters
+    ----------
+    image : numpy.array or dask.array
+        Image to be processed.
+    curvature : iterable
+        List of polynomial coefficients [c0, c1, c2] where:
+        y = c0 + c1.x + c2.x^2.
+    biny : integer, optional
+        Bin size in the vertical direction in pixels. Defaults to 1.
+
+    Returns
+    -------
+    spectrum : same format as image input
+        Extracted 1D spectrum.
+
+    See also
+    --------
+    :func:`pyrixs.extract`
+    """
     ph = _cleanup_photon_events(image_to_photon_events(image.transpose()))
     return extract(ph, curvature, biny=biny)
 
 
 def get_spectra(images, curvature, biny=1):
+    """
+    Extract several spectrum.
+
+    Uses the `pyrixs` extract_ function.
+
+    .. _extract: \
+        https://github.com/mpmdean/pyrixs/blob/e94531f325478ce18b88d9fb3d42068\
+            f269bd118/pyrixs/process2d.py#L325
+
+    Parameters
+    ----------
+    images : iterable of numpy.array or dask.array
+        Images to be processed.
+    curvature : iterable
+        List of polynomial coefficients [c0, c1, c2] where:
+        y = c0 + c1.x + c2.x^2.
+    biny : integer, optional
+        Bin size in the vertical direction in pixels. Defaults to 1.
+
+    Returns
+    -------
+    spectra : numpy.array
+        List of 1D spectrum.
+
+    See also
+    --------
+    :func:`polartools.process_images.get_spectrum`
+    :func:`pyrixs.extract`
+    """
     spectra = []
     for image in images:
-        spectra.append(get_spectrum(image[0].compute(), curvature, biny=biny))
+        spectra.append(get_spectrum(image, curvature, biny=biny))
     return np.array(spectra)
