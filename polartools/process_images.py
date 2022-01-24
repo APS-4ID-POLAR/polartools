@@ -108,8 +108,8 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
         - {'function': (myfunc, (arg1, arg2, ...))} \
         where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \
         These function can be stacked. For example, the call: \
-        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))}
-        will run the threshold function twice with 100 and 10 as argument, then
+        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))} \
+        will run the threshold function twice with 100 and 10 as argument, then \
         myfunc with (arg1, arg2).
 
     normalize : string, optional
