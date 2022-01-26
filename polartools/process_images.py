@@ -71,7 +71,7 @@ def _cleanup_images(images, parameters):
     for function, args in parameters.items():
         if 'threshold' in function.lower():
             images = clean_threshold(images, *args)
-        elif function == 'function':
+        elif 'function' in function.lower():
             images = args[0](images, *args[1:])
         else:
             raise ValueError(
