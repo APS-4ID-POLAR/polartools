@@ -71,15 +71,13 @@ def _cleanup_images(images, parameters):
     for function, args in parameters.items():
         if 'threshold' in function.lower():
             images = clean_threshold(images, *args)
+        elif function == 'function':
+            images = args[0](images, *args[1:])
         else:
-            # TODO: Add option to run custom function multiple times
-            func = args.pop('function', None)
-            if func is None:
-                raise ValueError(
-                    'The custom cleanup function must be passed in '
-                    'the cleanup dictionary using the "fuction" key.'
-                )
-            images = func[0](images, *func[1])
+            raise ValueError(
+                "function must be either 'threshold' for preset clean method, "
+                "or 'function' for a custom clean method"
+            )
     return images
 
 
@@ -88,7 +86,14 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
     """
     Load scans with 2D images.
 
-    If multiple scans are passed, it will return the average.
+    NOTES:
+
+    - If multiple scans are passed, it will return the average.
+    - If positioner = None, it will average all images. The resulting image \
+        will have shape = (pixels_horizontal, pixels_vertical).
+    - If positioner not None, it will not average all images. The resulting \
+        image will have \
+            shape = (positioner_size, pixels_horizontal, pixels_vertical).
 
     PARAMETERS
     ----------
@@ -145,9 +150,11 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
         output.append(images)
 
     if positioner is None:
-        return np.nanmean(da.stack(output), axis=0)
+        return np.nanmean(da.stack(output), axis=(0, 1, 2))
     else:
-        return np.nanmean(da.stack(output), axis=1), data[positioner].values
+        return (
+            np.nanmean(da.stack(output), axis=(0, 2)), data[positioner].values
+        )
 
 
 def _cleanup_photon_events(photon_events):
@@ -198,19 +205,20 @@ def get_curvature(image, binx=10, biny=1, constant_offset=None, plot=False):
     :func:`pyrixs.fit_curvature`
     :func:`pyrixs.get_curvature_offsets`
     """
-    ph = _cleanup_photon_events(image_to_photon_events(image.transpose()))
+    im = image.compute()
+    ph = _cleanup_photon_events(image_to_photon_events(im.transpose()))
     if constant_offset is None:
-        constant_offset = _get_constant_offset(image)
+        constant_offset = _get_constant_offset(im)
     curvature = fit_curvature(
         ph, binx=binx, biny=biny, CONSTANT_OFFSET=constant_offset
     )
     if plot:
-        vmax = np.nanpercentile(image, 99.99)
+        vmax = np.nanpercentile(im, 99.99)
         _, ax = plt.subplots()
         plt.pcolor(
             image.transpose(),
             vmin=0,
-            vmax=vmax if vmax > 0 else np.nanmax(image),
+            vmax=vmax if vmax > 0 else np.nanmax(im),
             cmap="plasma")
         plt.colorbar()
         plot_curvature(ax, curvature, ph)
