@@ -31,14 +31,8 @@ from polartools.area_detector_handlers import EigerHandler, LambdaHDF5Handler
 # TODO: This should be just temp fix
 LambdaHDF5Handler.specs = {'AD_HDF5_lambda'} | LambdaHDF5Handler.specs
 
-DEFAULT_HANDLERS = dict(
-    AD_HDF5_Lambda250k_APSPolar=LambdaHDF5Handler,
-    AD_HDF5_lambda=LambdaHDF5Handler,  # Temporary fix
-    AD_EIGER_APSPolar=EigerHandler,
-)
 
-
-def load_catalog(name=None, query=None, handlers=DEFAULT_HANDLERS):
+def load_catalog(name=None, query=None, handlers=None):
     """
     Loads a databroker catalog and register data handlers.
 
@@ -46,9 +40,11 @@ def load_catalog(name=None, query=None, handlers=DEFAULT_HANDLERS):
     ----------
     name : str, optional
         Name of the database. Defaults to 4-ID-D name.
-    handlers : dict
-        Dictionary organized as {handler_name: handler_class}. Defaults to
-        handlers used at 4-ID-D.
+    query : dict, optional
+        Dictionary with search parameters for the database.
+    handlers : dict, optional
+        Dictionary organized as {handler_name: handler_class}. If None,
+        defaults to handlers used at 4-ID-D.
 
     Returns
     -------
@@ -58,6 +54,12 @@ def load_catalog(name=None, query=None, handlers=DEFAULT_HANDLERS):
     cat = getDatabase(catalog_name=name)
     if query is not None:
         cat = db_query(cat, query)
+    if handlers is None:
+        handlers = dict(
+                AD_HDF5_Lambda250k_APSPolar=LambdaHDF5Handler,
+                AD_HDF5_lambda=LambdaHDF5Handler,  # Temporary fix
+                AD_EIGER_APSPolar=EigerHandler,
+            )
     for name, handler in handlers.items():
         cat.register_handler(name, handler, overwrite=True)
     return cat
