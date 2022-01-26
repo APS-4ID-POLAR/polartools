@@ -86,9 +86,9 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
     """
     Load scans with 2D images.
 
-    NOTES:
+    Note that this function forces explicity outputs:
 
-    - If multiple scans are passed, it will return the average.
+    - If multiple scans are passed, it will return the average of the scans.
     - If positioner = None, it will average all images. The resulting image \
         will have shape = (pixels_horizontal, pixels_vertical).
     - If positioner not None, it will not average all images. The resulting \
