@@ -107,3 +107,27 @@ def test_get_spectra(ims):
 
     assert spectra.shape == (50, 264, 2)
     assert allclose(mean(spectra), 132.42162878787877)
+
+
+def test_process_rxes(cat):
+
+    # No positioner
+    spectrum = process_images.process_rxes(
+        [276],
+        cat,
+        "lambda250k_image",
+        [-8.28334263e-05, 1.33928571e-02, 1.64000000e+02],
+        positioner=None,
+    )
+    assert spectrum.shape == (529, 2)
+
+    # With positioner
+    spectra, positioner = process_images.process_rxes(
+        [276],
+        cat,
+        "lambda250k_image",
+        [-8.28334263e-05, 1.33928571e-02, 1.64000000e+02],
+        positioner="rxes_motors_arot",
+    )
+    assert spectra.shape == (50, 529, 2)
+    assert positioner.shape == (50,)

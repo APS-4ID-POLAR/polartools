@@ -295,3 +295,70 @@ def get_spectra(images, curvature, biny=1):
     for image in images:
         spectra.append(get_spectrum(image, curvature, biny=biny))
     return np.array(spectra)
+
+
+def process_rxes(
+    scans,
+    cat,
+    detector_key,
+    curvature,
+    cleanup=None,
+    normalize=None,
+    positioner=None,
+    biny=1
+):
+
+    """
+    Wrapper with typical RXES data processing.
+
+    PARAMETERS
+    ----------
+    scans : iterable
+        List of scan_id or uids.
+    cat : databroker catalog
+        Catalog.
+    detector_key : string
+        Name of item that holds the images
+    cleanup : dictionary, optional
+        Clean up functions and arguments. Available functions:
+
+        - {'threshold': threshold_value}
+
+        For custom functions, use:
+
+        - {'function': (myfunc, (arg1, arg2, ...))} \
+        where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \
+        These function can be stacked. For example, the call: \
+        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))} \
+        will run the threshold function twice with 100 and 10 as argument, then \
+        myfunc with (arg1, arg2).
+
+    normalize : string, optional
+        Name of detector that will be used to normalize data. Default is None.
+    positioner : string, optional
+        Name of positioner to be read. Defaults to None.
+    biny : integer, optional
+        Bin size in the vertical direction in pixels. Defaults to 1.
+
+    Returns
+    -------
+    spectrum or spectra : array
+        Processed spectrum (if positioner is None) or spectra (if positioner
+        is not None).
+    positioner_values : numpy ndarray, optional
+        Values of the positioner. It is only returned if positioner is not None.
+    """
+
+    data = load_images(
+        scans,
+        cat,
+        detector_key,
+        cleanup=cleanup,
+        normalize=normalize,
+        positioner=positioner
+    )
+
+    if positioner is None:  # "Count" scans
+        return get_spectrum(data, curvature, biny=biny)
+    else:  # Scans with a positioner
+        return(get_spectra(data[0], curvature, biny=biny), data[1])
