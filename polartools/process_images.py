@@ -319,6 +319,9 @@ def process_rxes(
         Catalog.
     detector_key : string
         Name of item that holds the images
+    curvature : iterable
+        List of polynomial coefficients [c0, c1, c2] where:
+        y = c0 + c1.x + c2.x^2.
     cleanup : dictionary, optional
         Clean up functions and arguments. Available functions:
 
@@ -362,3 +365,87 @@ def process_rxes(
         return get_spectrum(data, curvature, biny=biny)
     else:  # Scans with a positioner
         return(get_spectra(data[0], curvature, biny=biny), data[1])
+
+
+def process_rxes_mcd(
+    scans,
+    cat,
+    detector_key,
+    curvature,
+    cleanup=None,
+    normalize=None,
+    positioner=None,
+    biny=1
+):
+
+    """
+    Wrapper with typical RXES-MCD data processing.
+
+    PARAMETERS
+    ----------
+    scans : iterable
+        List of scan_id or uids.
+    cat : databroker catalog
+        Catalog.
+    detector_key : string
+        Name of item that holds the images
+    curvature : iterable
+        List of polynomial coefficients [c0, c1, c2] where:
+        y = c0 + c1.x + c2.x^2.
+    cleanup : dictionary, optional
+        Clean up functions and arguments. Available functions:
+        - {'threshold': threshold_value}
+        For custom functions, use:
+        - {'function': (myfunc, (arg1, arg2, ...))} \
+        where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \
+        These function can be stacked. For example, the call: \
+        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))} \
+        will run the threshold function twice with 100 and 10 as argument, then \
+        myfunc with (arg1, arg2).
+    normalize : string, optional
+        Name of detector that will be used to normalize data. Default is None.
+    positioner : string, optional
+        Name of positioner to be read. Defaults to None.
+    biny : integer, optional
+        Bin size in the vertical direction in pixels. Defaults to 1.
+    Returns
+    -------
+    rxes : array
+        Processed x-ray emission spectrum(if positioner is None) or spectra
+        (if positioner is not None).
+    mcd : array
+        Processed x-ray emission dichroism spectrum (if positioner is None) or
+        spectra (if positioner is not None).
+    positioner_values : numpy ndarray, optional
+        Values of the positioner. It is only returned if positioner is not None.
+    """
+
+    data = load_images(
+        scans,
+        cat,
+        detector_key,
+        cleanup=cleanup,
+        normalize=normalize,
+        positioner=positioner
+    )
+
+    def _inner_process(images):
+        ims = images.reshape((-1, 4, images.shape[1], images.shape[2]))
+        ims_plus = ims[:, [0, 3], :, :].mean(axis=1)
+        ims_minus = ims[:, [1, 2], :, :].mean(axis=1)
+
+        specs_plus = get_spectra(ims_plus, curvature, biny=biny)
+        specs_minus = get_spectra(ims_minus, curvature, biny=biny)
+
+        rxes = (specs_plus + specs_minus)/2.
+        mcd = specs_plus.copy()
+        mcd[:, :, 1] -= specs_minus[:, :, 1]
+
+        return rxes, mcd
+
+    if positioner is None:
+        rxes, mcd = _inner_process(data)
+        return rxes.mean(axis=0), mcd.mean(axis=0)
+    else:
+        rxes, mcd = _inner_process(data[0])
+        return rxes, mcd, data[1].reshape(-1, 4).mean(axis=1)
