@@ -362,9 +362,9 @@ def process_rxes(
     )
 
     if positioner is None:  # "Count" scans
-        return get_spectrum(data, curvature, biny=biny)
+        return get_spectrum(data.compute(), curvature, biny=biny)
     else:  # Scans with a positioner
-        return(get_spectra(data[0], curvature, biny=biny), data[1])
+        return(get_spectra(data[0].compute(), curvature, biny=biny), data[1])
 
 
 def process_rxes_mcd(
@@ -434,8 +434,8 @@ def process_rxes_mcd(
         ims_plus = ims[:, [0, 3], :, :].mean(axis=1)
         ims_minus = ims[:, [1, 2], :, :].mean(axis=1)
 
-        specs_plus = get_spectra(ims_plus, curvature, biny=biny)
-        specs_minus = get_spectra(ims_minus, curvature, biny=biny)
+        specs_plus = get_spectra(ims_plus.compute(), curvature, biny=biny)
+        specs_minus = get_spectra(ims_minus.compute(), curvature, biny=biny)
 
         rxes = (specs_plus + specs_minus)/2.
         mcd = specs_plus.copy()
