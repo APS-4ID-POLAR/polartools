@@ -420,7 +420,11 @@ def process_rxes_mcd(
         Values of the positioner. It is only returned if positioner is not None.
     """
 
-    data = load_images(
+    # Need to get all images...
+    if positioner is None:
+        positioner = "Time"
+
+    images, positions = load_images(
         scans,
         cat,
         detector_key,
@@ -429,23 +433,18 @@ def process_rxes_mcd(
         positioner=positioner
     )
 
-    def _inner_process(images):
-        ims = images.reshape((-1, 4, images.shape[1], images.shape[2]))
-        ims_plus = ims[:, [0, 3], :, :].mean(axis=1)
-        ims_minus = ims[:, [1, 2], :, :].mean(axis=1)
+    ims = images.reshape((-1, 4, images.shape[1], images.shape[2]))
+    ims_plus = ims[:, [0, 3], :, :].mean(axis=1)
+    ims_minus = ims[:, [1, 2], :, :].mean(axis=1)
 
-        specs_plus = get_spectra(ims_plus.compute(), curvature, biny=biny)
-        specs_minus = get_spectra(ims_minus.compute(), curvature, biny=biny)
+    specs_plus = get_spectra(ims_plus.compute(), curvature, biny=biny)
+    specs_minus = get_spectra(ims_minus.compute(), curvature, biny=biny)
 
-        rxes = (specs_plus + specs_minus)/2.
-        mcd = specs_plus.copy()
-        mcd[:, :, 1] -= specs_minus[:, :, 1]
+    rxes = (specs_plus + specs_minus)/2.
+    mcd = specs_plus.copy()
+    mcd[:, :, 1] -= specs_minus[:, :, 1]
 
-        return rxes, mcd
-
-    if positioner is None:
-        rxes, mcd = _inner_process(data)
+    if positioner == "Time":
         return rxes.mean(axis=0), mcd.mean(axis=0)
     else:
-        rxes, mcd = _inner_process(data[0])
-        return rxes, mcd, data[1].reshape(-1, 4).mean(axis=1)
+        return rxes, mcd, positions.reshape(-1, 4).mean(axis=1)
