@@ -13,6 +13,9 @@ Functions to load and process x-ray absorption data.
    ~post_edge_background
    ~post_edge_flatten
    ~fluo_corr
+   ~process_xmcd
+   ~plot_xmcd
+   ~save_xmcd
 """
 
 # Copyright (c) 2020-2021, UChicago Argonne, LLC.
@@ -29,6 +32,7 @@ from larch.math import index_nearest
 from xraydb import xray_line, xray_edge, material_mu
 from lmfit.models import PolynomialModel
 from warnings import warn
+import matplotlib.pyplot as plt
 
 _spec_default_cols = dict(
     positioner='Energy',
@@ -1050,3 +1054,200 @@ def fluo_corr(norm, formula, elem, edge, line, anginp, angout):
     norm_corr = np.array(norm)*alpha/(alpha + 1 - np.array(norm))
 
     return norm_corr
+
+
+def process_xmcd(
+    scans_plus,
+    scans_minus,
+    source,
+    xmcd_kind="dichro",
+    load_parameters=dict(),
+    normalization_parameters=dict()
+):
+    """
+    Process the XMCD scans of +/- magnetic fields.
+
+    Parameters
+    ----------
+    scans_plus : iterable
+        List of scan number or scan_id of XMCD taken using the "plus" magnetic
+        field.
+    scans_minus : iterable
+        List of scan number or scan_id of XMCD taken using the "minus" magnetic
+        field.
+    source : databroker database, name of the spec file, or 'csv'
+        Note that applicable `load_parameters` depend on this selection.
+    xmcd_kind : "dichro" or "lockin", optional
+        Type of XMCD scan used, defaults to "dichro".
+    load_parameters : dictionary
+        Parameters used to load data. Passed as kwargs to
+        `polartools.absorption.load_multi_dichro` or
+        `polartools.absorption.load_multi_lockin`.
+    normalization_parameters :  dictionary
+        Parameters used to normalized the data. Passed as kwargs to
+        `polartools.absorption.normalize_absorption`.
+
+    Returns
+    --------
+    plus : dictionary
+        XANES/XMCD taken using the "plus" magnetic field. Output of
+        `polartools.absorption.normalize_absorption` with the XMCD data added.
+    minus : dictionary
+        XANES/XMCD taken using the "minus" magnetic field. Output of
+        `polartools.absorption.normalize_absorption` with the XMCD data added.
+
+    See also
+    --------
+    :func:`polartools.absorption.load_multi_dichro`
+    :func:`polartools.absorption.load_multi_lockin`
+    :func:`polartools.absorption.normalize_absorption`
+    """
+
+    if xmcd_kind == "dichro":
+        _load_func = load_multi_dichro
+    elif xmcd_kind == "lockin":
+        _load_func = load_multi_lockin
+    else:
+        raise ValueError(
+            "The parameter 'xmcd_kind' must be either 'lockin' or 'dichro', "
+            f"but {xmcd_kind} was entered."
+        )
+
+    x, y, z, _, _ = _load_func(scans_plus, source, **load_parameters)
+    plus = normalize_absorption(x*1000, y, **normalization_parameters)
+    plus['xmcd'] = z[np.argsort(x)]/plus['edge_step']
+
+    x, y, z, _, _ = _load_func(scans_minus, source, **load_parameters)
+    minus = normalize_absorption(x*1000, y, **normalization_parameters)
+    minus['xmcd'] = z[np.argsort(x)]/minus['edge_step']
+
+    return plus, minus
+
+
+def plot_xmcd(plus, minus):
+    """
+    Plots a new figure with the combined XMCD of plus and minus fields.
+
+    Parameters
+    ----------
+    plus : dictionary
+        XANES/XMCD taken using the "plus" magnetic field. Output of the
+        normalize_absorption function.
+    minus : dictionary
+        XANES/XMCD taken using the "minus" magnetic field. Output of the
+        normalize_absorption function.
+
+    Returns
+    --------
+    fig : matplotlib.pyplot.figure
+        Figure instance.
+    axs : list
+        List of the figure axes.
+
+    See also
+    --------
+    :func:`polartools.absorption.process_xmcd`
+    :func:`polartools.absorption.normalize_absorption`
+    """
+
+    fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(
+        3, 2, figsize=(8, 9)
+    )
+
+    plt.sca(ax1)
+    plt.plot(plus['energy'], plus['mu'])
+    plt.plot(plus['energy'], plus['preedge'])
+    plt.plot(plus['energy'], plus['postedge'])
+
+    plt.axvline(x=plus['e0']+plus['pre1'], ls='--', alpha=0.5, color='C1')
+    plt.axvline(x=plus['e0']+plus['pre2'], ls='--', alpha=0.5, color='C1')
+
+    plt.axvline(x=plus['e0']+plus['post1'], ls='--', alpha=0.5, color='C2')
+    plt.axvline(x=plus['e0']+plus['post2'], ls='--', alpha=0.5, color='C2')
+
+    plt.xlabel('Energy (eV)')
+    plt.ylabel('Raw XANES')
+
+    plt.sca(ax2)
+    plt.plot(minus['energy'], minus['mu'])
+    plt.plot(minus['energy'], minus['preedge'])
+    plt.plot(minus['energy'], minus['postedge'])
+
+    plt.axvline(x=plus['e0']+plus['pre1'], ls='--', alpha=0.5, color='C1')
+    plt.axvline(x=plus['e0']+plus['pre2'], ls='--', alpha=0.5, color='C1')
+
+    plt.axvline(x=plus['e0']+plus['post1'], ls='--', alpha=0.5, color='C2')
+    plt.axvline(x=plus['e0']+plus['post2'], ls='--', alpha=0.5, color='C2')
+
+    plt.xlabel('Energy (eV)')
+    plt.ylabel('Raw XANES')
+
+    plt.sca(ax3)
+    plt.plot(plus['energy'], plus['norm'], label='H+')
+    plt.plot(minus['energy'], minus['norm'], label='H-')
+    plt.legend()
+
+    plt.xlabel('Energy (eV)')
+    plt.ylabel('Normalized XANES')
+
+    plt.sca(ax4)
+    plt.plot(plus['energy'], plus['xmcd']*100, label='H+')
+    plt.plot(minus['energy'], minus['xmcd']*100, label='H-')
+    plt.legend()
+    plt.xlabel('Energy (eV)')
+    plt.ylabel('Normalized XMCD (%)')
+
+    plt.sca(ax5)
+    plt.plot(plus['energy'], (plus['xmcd']-minus['xmcd'])/2*100)
+    plt.xlabel('Energy (eV)')
+    plt.ylabel('Normalized XMCD (%)')
+
+    plt.sca(ax6)
+    plt.plot(plus['energy'], (plus['xmcd']+minus['xmcd'])/2*100)
+    plt.xlabel('Energy (eV)')
+    plt.ylabel('Normalized Artifact (%)')
+
+    plt.tight_layout()
+
+    return fig, [ax1, ax2, ax3, ax4, ax5, ax6]
+
+
+def save_xmcd(plus, minus, file_name, header="XMCD\n", fmt="%0.5e"):
+    """
+    Saves processed XANES/XMCD data into a file.
+
+    Parameters
+    ----------
+    plus : dictionary
+        XMCD taken using the "plus" magnetic field. It needs at least three
+        keys: "energy", "norm", and "xmcd".
+    minus : dictionary
+        XMCD taken using the "minus" magnetic field. It needs at least three
+        keys: "energy", "norm", and "xmcd".
+    file_name : string
+        File name (including folder if not current).
+    header : string, optional
+        File header. Note that each line has to be finished with "\n".
+    fmt : string, optional
+        Format of the data, defaults to %0.5e
+
+    See also
+    --------
+    :func:`polartools.absorption.process_xmcd`
+    :func:`polartools.absorption.normalize_absorption`
+    """
+
+    combined = np.vstack((
+        plus['energy'],
+        (plus['norm'] + minus['norm'])/2,
+        (plus['xmcd'] - minus['xmcd'])/2,
+        (plus['xmcd'] + minus['xmcd'])/2
+    )).transpose()
+
+    header += "Energy\tXANES\tXMCD\tArtifact"
+    np.savetxt(
+        file_name,
+        combined,
+        header=header,
+        fmt=fmt
+    )
