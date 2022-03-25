@@ -5,12 +5,11 @@ channels:
   - aps-anl-tag
   - nsls2forge
 dependencies:
-  - python>=3.6.0
+  - python>=3.9.0
   - scipy
   - numpy
   - pandas
   - databroker>=1.2.2
-  - apstools>=1.4.0
   - pip
   - sphinx
   - pytest
@@ -23,11 +22,14 @@ dependencies:
   - versioneer
   - suitcase-csv
   - suitcase-json-metadata
+  - suitcase-utils=0.5.3
   - ipython
   - numpydoc
   - pyresttable
   - area-detector-handlers
   - dask
+  - hdf5plugin
+  - apstools>=1.6.0
   - pip:
     - sphinx-rtd-theme
     - super-state-machine

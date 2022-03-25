@@ -1,5 +1,5 @@
 """
-Base functions to load data from various sources.
+Functions to do pressure calibration using Au or Ag diffraction.
 
 .. autosummary::
    ~load_ag_params
