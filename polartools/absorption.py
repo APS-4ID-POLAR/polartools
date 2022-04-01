@@ -1173,11 +1173,11 @@ def plot_xmcd(plus, minus):
     plt.plot(minus['energy'], minus['preedge'])
     plt.plot(minus['energy'], minus['postedge'])
 
-    plt.axvline(x=plus['e0']+plus['pre1'], ls='--', alpha=0.5, color='C1')
-    plt.axvline(x=plus['e0']+plus['pre2'], ls='--', alpha=0.5, color='C1')
+    plt.axvline(x=minus['e0']+minus['pre1'], ls='--', alpha=0.5, color='C1')
+    plt.axvline(x=minus['e0']+minus['pre2'], ls='--', alpha=0.5, color='C1')
 
-    plt.axvline(x=plus['e0']+plus['post1'], ls='--', alpha=0.5, color='C2')
-    plt.axvline(x=plus['e0']+plus['post2'], ls='--', alpha=0.5, color='C2')
+    plt.axvline(x=minus['e0']+minus['post1'], ls='--', alpha=0.5, color='C2')
+    plt.axvline(x=minus['e0']+minus['post2'], ls='--', alpha=0.5, color='C2')
 
     plt.xlabel('Energy (eV)')
     plt.ylabel('Raw XANES')
