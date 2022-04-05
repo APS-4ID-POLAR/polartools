@@ -28,11 +28,10 @@ dependencies:
   - pyresttable
   - area-detector-handlers
   - dask
-  - wxpython
   - hdf5plugin
   - apstools>=1.6.0
+  - xraydb
   - pip:
     - sphinx-rtd-theme
     - super-state-machine
     - sphinx-copybutton
-    - xraylarch>=0.9.56

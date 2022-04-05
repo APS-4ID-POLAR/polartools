@@ -27,8 +27,7 @@ from scipy.interpolate import interp1d
 from spec2nexus.spec import (
     SpecDataFile, SpecDataFileNotFound, NotASpecDataFile
 )
-from larch.xafs.pre_edge import _finde0
-from larch.math import index_nearest
+from ._larch import finde0, index_nearest
 from xraydb import xray_line, xray_edge, material_mu
 from lmfit.models import PolynomialModel
 from warnings import warn
@@ -952,9 +951,9 @@ def _process_e0(energy, mu, e0):
 
     # Edge energy
     if e0 is None:
-        e0 = _finde0(energy, mu)
+        e0 = finde0(energy, mu)
     elif e0 < energy.min() or e0 > energy.max():
-        e0 = _finde0(energy, mu)
+        e0 = finde0(energy, mu)
         warn("e0 is not contained in the provided energy range, "
              "using e0 = {:0.2f} {}".format(e0, unit))
     else:
