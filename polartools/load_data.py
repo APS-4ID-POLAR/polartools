@@ -26,6 +26,43 @@ from collections import OrderedDict
 from pyRestTable import Table
 from databroker.queries import TimeRange
 from apstools.utils import getDatabase
+from polartools.area_detector_handlers import EigerHandler, LambdaHDF5Handler
+
+# TODO: This should be just temp fix
+LambdaHDF5Handler.specs = {'AD_HDF5_lambda'} | LambdaHDF5Handler.specs
+
+
+def load_catalog(name=None, query=None, handlers=None):
+    """
+    Loads a databroker catalog and register data handlers.
+
+    Parameters
+    ----------
+    name : str, optional
+        Name of the database. Defaults to 4-ID-D name.
+    query : dict, optional
+        Dictionary with search parameters for the database.
+    handlers : dict, optional
+        Dictionary organized as {handler_name: handler_class}. If None,
+        defaults to handlers used at 4-ID-D.
+
+    Returns
+    -------
+    cat : databroker catalog
+        Catalog after running the query, and registering the handler.
+    """
+    cat = getDatabase(catalog_name=name)
+    if query is not None:
+        cat = db_query(cat, query)
+    if handlers is None:
+        handlers = dict(
+                AD_HDF5_Lambda250k_APSPolar=LambdaHDF5Handler,
+                AD_HDF5_lambda=LambdaHDF5Handler,  # Temporary fix
+                AD_EIGER_APSPolar=EigerHandler,
+            )
+    for name, handler in handlers.items():
+        cat.register_handler(name, handler, overwrite=True)
+    return cat
 
 
 def load_spec(scan_id, spec_file, folder=""):
@@ -143,7 +180,7 @@ def load_table(scan, source=None, **kwargs):
     The automation is based on the source argument.
 
     - if source == 'csv' -> uses `load_csv`.
-    - else if source is a string or nexus2spec.spec.SpecDataFile -> uses \
+    - else if source is a string or nexus2spec.spec.SpecDataFile -> uses\
     `load_spec`.
     - else -> uses `load_databroker`.
 
@@ -458,7 +495,6 @@ def lookup_position(db, scan, search_string="", query=None):
     Returns
     -------
     output: list
-
     """
 
     db_range = db_query(db, query=query) if query else db

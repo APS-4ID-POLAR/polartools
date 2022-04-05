@@ -16,3 +16,4 @@ lmfit
 xraylarch
 pyresttable
 area-detector-handlers
+hdf5plugin
