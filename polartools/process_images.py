@@ -250,13 +250,15 @@ def get_spectrum(image, curvature, biny=1):
 
     Returns
     -------
-    spectrum : same format as image input
+    spectrum : numpy array
         Extracted 1D spectrum.
 
     See also
     --------
     :func:`pyrixs.extract`
     """
+    if isinstance(image, da.core.Array):
+        image = image.compute()
     ph = _cleanup_photon_events(image_to_photon_events(image.transpose()))
     return extract(ph, curvature, biny=biny)
 
@@ -293,6 +295,8 @@ def get_spectra(images, curvature, biny=1):
     """
     spectra = []
     for image in images:
+        if isinstance(image, da.core.Array):
+            image = image.compute()
         spectra.append(get_spectrum(image, curvature, biny=biny))
     return np.array(spectra)
 
