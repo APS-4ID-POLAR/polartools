@@ -28,6 +28,7 @@ dependencies:
   - pyresttable
   - area-detector-handlers
   - dask
+  - wxpython
   - hdf5plugin
   - apstools>=1.6.0
   - pip:

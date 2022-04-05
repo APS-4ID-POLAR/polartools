@@ -97,7 +97,7 @@ def test_get_spectrum(im):
     )
 
     assert spectrum.shape == (264, 2)
-    assert allclose(spectrum.mean().compute(), 132.42162878787877)
+    assert allclose(spectrum.mean(), 132.42162878787877)
 
 
 def test_get_spectra(ims):
