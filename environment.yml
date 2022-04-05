@@ -28,6 +28,7 @@ dependencies:
   - pyresttable
   - area-detector-handlers
   - dask
+  - wxpython
   - pip:
     - sphinx-rtd-theme
     - super-state-machine
