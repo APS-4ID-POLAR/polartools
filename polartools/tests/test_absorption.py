@@ -77,3 +77,95 @@ def test_fluo():
 
     assert allclose(norm_corr.mean(), 0.7611857565650514)
     assert allclose(norm_corr.max(), 2.6009413580639853)
+
+
+def test_process_xmcd():
+    path = join('polartools', 'tests', 'data_for_test')
+    scans = [39, 40, 41]
+    load_parameters = dict(detector='IC4', monitor='IC3', folder=path)
+    normalization_parameters = dict(
+        pre_range=[-30, -10],
+        pre_order=0,
+        post_range=[10, 30],
+        post_order=0,
+    )
+    plus, minus = absorption.process_xmcd(
+        scans,
+        scans,
+        "absorption.dat",
+        xmcd_kind="dichro",
+        load_parameters=load_parameters,
+        normalization_parameters=normalization_parameters
+    )
+
+    assert allclose(plus['xmcd'].mean(), 3.6117537051437343)
+    assert list(minus.keys()) == [
+        'energy',
+        'mu',
+        'preedge',
+        'pre1',
+        'pre2',
+        'pre_order',
+        'nvict',
+        'e0',
+        'precoefs',
+        'energy_unit',
+        'postedge',
+        'postcoefs',
+        'post1',
+        'post2',
+        'post_order',
+        'norm',
+        'edge_step',
+        'flat',
+        'flat1',
+        'flat2',
+        'flat_order',
+        'flatcoefs',
+        'flat_function',
+        'xmcd'
+    ]
+
+
+def test_plot_xmcd():
+    path = join('polartools', 'tests', 'data_for_test')
+    scans = [39, 40, 41]
+    load_parameters = dict(detector='IC4', monitor='IC3', folder=path)
+    normalization_parameters = dict(
+        pre_range=[-30, -10],
+        pre_order=0,
+        post_range=[10, 30],
+        post_order=0,
+    )
+    plus, minus = absorption.process_xmcd(
+        scans,
+        scans,
+        "absorption.dat",
+        xmcd_kind="dichro",
+        load_parameters=load_parameters,
+        normalization_parameters=normalization_parameters
+    )
+
+    _, axs = absorption.plot_xmcd(plus, minus)
+    assert len(axs) == 6
+
+
+def test_save_xmcd():
+    path = join('polartools', 'tests', 'data_for_test')
+    scans = [39, 40, 41]
+    load_parameters = dict(detector='IC4', monitor='IC3', folder=path)
+    normalization_parameters = dict(
+        pre_range=[-30, -10],
+        pre_order=0,
+        post_range=[10, 30],
+        post_order=0,
+    )
+    plus, minus = absorption.process_xmcd(
+        scans,
+        scans,
+        "absorption.dat",
+        xmcd_kind="dichro",
+        load_parameters=load_parameters,
+        normalization_parameters=normalization_parameters
+    )
+    absorption.save_xmcd(plus, minus, "xmcd_save_test.dat")
