@@ -30,6 +30,7 @@ dependencies:
   - dask
   - hdf5plugin
   - apstools>=1.6.0
+  - xraydb
   - pip:
     - sphinx-rtd-theme
     - super-state-machine
