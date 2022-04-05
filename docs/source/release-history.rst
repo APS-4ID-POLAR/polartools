@@ -3,6 +3,99 @@ Release History
 ===============
 
 -------------------
+v0.3.0 (2022-04-05)
+-------------------
+
+v0.2.4 didn't work with the pip integration again!
+
+**Maintenance**
+
+- remove dependence on `larch`.
+
+**Pull requests**
+
+#66.
+
+-------------------
+v0.2.4 (2022-04-05)
+-------------------
+
+v0.2.2 didn't work with the pip integration.
+
+**New features**
+
+- Create `process_images` module.
+  
+- Add XMCD specific functions to `absorption`.
+
+**Maintenance**
+
+- fixes to pytest.
+
+**Pull requests**
+
+#58, #62, #65
+
+-------------------
+v0.2.3 (2021-12-20)
+-------------------
+
+v0.2.2 didn't work with the pip integration.
+
+**New features**
+
+- functions to read and search the baseline.
+  
+- implement 3D plotting.
+  
+- integrate automatic Bluesky database loader from apstools.
+  
+- add area detector handlers.
+  
+- update the databroker import/export functions to handle external (image) files.
+
+**Maintenance**
+
+- fix `plot_2d` docs.
+  
+- changed how fit classes are handled in `diffraction`.
+  
+- fixes to pytest.
+  
+- fix `absorption` module to always export `numpy.array`.
+
+**Pull requests**
+
+#43, #45, #46, #47, #50, #51, #52, #53, #55, #57.
+
+-------------------
+v0.2.1 (2021-03-24)
+-------------------
+
+**New features**
+
+- Additions to diffraction module:
+  
+  - Add the option to read_mesh into plot_2d.
+
+  - Add load_axes in load_series and create fit_series.
+
+- Create db_tools module:
+
+  - Moved db_query from load_data.
+
+  - Create collect_meta and show_meta.
+
+**Maintenance**
+
+Revert to ubuntu 18.04 for Github CI.
+
+
+**Pull requests**
+
+#37, #38, #40, #41, #42.
+
+-------------------
 v0.2.0 (2021-03-02)
 -------------------
 

@@ -1227,7 +1227,8 @@ def save_xmcd(plus, minus, file_name, header="XMCD\n", fmt="%0.5e"):
     file_name : string
         File name (including folder if not current).
     header : string, optional
-        File header. Note that each line has to be finished with "\n".
+        File header. Note that each line has to be finished with the newline
+        character.
     fmt : string, optional
         Format of the data, defaults to %0.5e
 
