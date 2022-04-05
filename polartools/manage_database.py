@@ -37,7 +37,9 @@ def to_databroker(db, folder, query=None, external=False):
     :func:`polartools.load_data.db_query`.
     This is a narrow usage of the `databroker-pack` package_. Note that this
     package includes a convenient command line tool.
+
     .. _package: https://blueskyproject.io/databroker-pack/index.html
+
     Parameters
     ----------
     db :
@@ -47,11 +49,13 @@ def to_databroker(db, folder, query=None, external=False):
     query : dict, optional
         Search parameters to select a subsection of `db`. See
         :func:`polartools.load_data.db_query` for more details.
+
     Notes
     ------
     - The scans are saved in msgpack files placed in the `folder/documents` \
     folder.
     - `catalog.yml` and `documents_manifest.txt` are located in `folder`.
+
     See also
     --------
     :func:`polartools.load_data.db_query`
