@@ -13,7 +13,6 @@ suitcase-json-metadata
 databroker>=1.2.2
 databroker-pack
 lmfit
-xraylarch>=0.9.56
 pyresttable
 area-detector-handlers
 hdf5plugin
