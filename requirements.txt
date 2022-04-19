@@ -18,3 +18,4 @@ area-detector-handlers
 hdf5plugin
 dask
 xraydb
+apstools
