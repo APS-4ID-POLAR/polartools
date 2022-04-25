@@ -9,7 +9,7 @@ dependencies:
   - scipy
   - numpy
   - pandas
-  - databroker>=1.2.2
+  - databroker<2.0
   - pip
   - sphinx
   - pytest
@@ -31,9 +31,7 @@ dependencies:
   - hdf5plugin
   - apstools>=1.6.0
   - xraydb
-  - httpx
   - pip:
-    - tiled
     - sphinx-rtd-theme
     - super-state-machine
     - sphinx-copybutton
