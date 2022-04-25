@@ -9,7 +9,7 @@ dependencies:
   - scipy
   - numpy
   - pandas
-  - databroker<2.0
+  - databroker<=1.9
   - pip
   - sphinx
   - pytest
