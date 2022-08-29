@@ -419,7 +419,10 @@ def fit_series(
             index += 1
     if output:
         ax.legend(loc=0)
-        plt.get_current_fig_manager().show()
+        if hasattr(__builtins__,'__IPYTHON__'):
+            plt.get_current_fig_manager().show()
+        else:
+            plt.show()
 
     return DataFrame(
         fit_result,
@@ -1392,7 +1395,10 @@ def plot_2d(
             ax[num].set_ylabel(z_label)
             ax[num].legend(loc=0)
 
-    plt.get_current_fig_manager().show()
+    if hasattr(__builtins__,'__IPYTHON__'):
+        plt.get_current_fig_manager().show()
+    else:
+        plt.show()
     if output:
         plt.savefig(output, dpi=600, transparent=True, bbox_inches="tight")
 
@@ -1558,7 +1564,10 @@ def plot_fit(
     else:
         x_label = var_series
     ax3.set_xlabel(x_label)
-    plt.get_current_fig_manager().show()
+    if hasattr(__builtins__,'__IPYTHON__'):
+        plt.get_current_fig_manager().show()
+    else:
+        plt.show()
 
     return data
 
@@ -1848,7 +1857,10 @@ def plot_data(
     ax.legend(loc=0)
     if deriv:
         ax2.legend(loc=4)
-    plt.get_current_fig_manager().show()
+    if hasattr(__builtins__,'__IPYTHON__'):
+        plt.get_current_fig_manager().show()
+    else:
+        plt.show()
 
 
 def dbplot(
