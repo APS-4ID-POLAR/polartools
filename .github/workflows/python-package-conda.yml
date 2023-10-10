@@ -58,12 +58,8 @@ jobs:
           environment-file: environment.yml
           environment-name: anaconda-test-env-py-${{ matrix.python-version }}
           create-args: >-
-            # coveralls
-            # pytest
-            # pytest-cov
             python=${{ matrix.python-version }}
             setuptools-scm
-            # databroker-unpack
 
       - name: Initial diagnostics
         run: |
