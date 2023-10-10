@@ -62,7 +62,7 @@ jobs:
             # pytest
             # pytest-cov
             python=${{ matrix.python-version }}
-            # setuptools-scm
+            setuptools-scm
             # databroker-unpack
 
       - name: Initial diagnostics
