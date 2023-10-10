@@ -2,6 +2,10 @@ name: Pytest and Flake8
 
 on: [push]
 
+defaults:
+  run:
+    shell: bash -l {0}
+
 jobs:
 
   lint:
