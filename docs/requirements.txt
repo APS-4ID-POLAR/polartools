@@ -11,7 +11,7 @@ lmfit
 spec2nexus
 suitcase-csv
 suitcase-json-metadata
-suitcase-utils=0.5.3
+suitcase-utils==0.5.3
 ipython
 numpydoc
 pyresttable
