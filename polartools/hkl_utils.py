@@ -1,5 +1,4 @@
-# from instrument.collection import diffract
-# from gi.repository import Hkl as libhkl
+
 from hkl import cahkl
 import bluesky.plan_stubs as bps
 from hkl.user import _check_geom_selected, _geom_
@@ -47,7 +46,7 @@ def list_reflections(all_samples=False):
         print("Sample: {}".format(sample.name))
         orienting_refl = sample._orientation_reflections
         print(
-            "\n{:>2}{:>4}{:>4}{:>4}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
+            "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
                 "#",
                 "H",
                 "K",
@@ -61,13 +60,13 @@ def list_reflections(all_samples=False):
                 "orienting",
             )
         )
-        for i, ref in enumerate(sample._sample.reflections_get()):
+        for i,ref in enumerate(sample._sample.reflections_get()):
             if orienting_refl[0] == ref:
                 # or0_old = i
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
-                    "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                    "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
                         int(h),
                         int(k),
@@ -86,7 +85,7 @@ def list_reflections(all_samples=False):
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
-                    "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                    "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
                         int(h),
                         int(k),
@@ -104,7 +103,7 @@ def list_reflections(all_samples=False):
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
-                    "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
+                    "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
                         i,
                         int(h),
                         int(k),
@@ -120,8 +119,7 @@ def list_reflections(all_samples=False):
 
 
 def or_swap():
-    samples = [_geom_.calc._sample]
-    sample = samples[0]
+    sample = _geom_.calc._sample
     sample.swap_orientation_reflections()
     list_reflections()
     print("Computing UB!")
@@ -142,9 +140,7 @@ def setor0(
     k=None,
     l=None,
 ):
-    samples = [_geom_.calc._sample]
-    sample = samples[0]
-    # print(sample)
+    sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
     if (
@@ -160,11 +156,8 @@ def setor0(
     ):
         if len(orienting_refl) > 1:
             # print("True")
-            for i, ref in enumerate(sample._sample.reflections_get()):
-                # print(i,ref)
+            for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[0]:
-                    # print(i,ref,"first orienting")
-                    # index = i
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -184,8 +177,6 @@ def setor0(
             old_h = 4
             old_k = 0
             old_l = 0
-
-        # print(sample._sample.reflections_get(sample._orientation_reflections[0]))
 
         print("Enter primary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta))
@@ -237,7 +228,7 @@ def setor0(
     # print(sample._orientation_reflections)
 
     if len(orienting_refl) > 1:
-        print("Compute UB!")
+        print("Computing UB!")
         sample.compute_UB(
             sample._orientation_reflections[0],
             sample._orientation_reflections[1],
@@ -256,8 +247,7 @@ def setor1(
     k=None,
     l=None,
 ):
-    samples = [_geom_.calc._sample]
-    sample = samples[0]
+    sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
     if (
@@ -272,11 +262,8 @@ def setor1(
         and not l
     ):
         if len(orienting_refl) > 1:
-            # print("True")
-            for i, ref in enumerate(sample._sample.reflections_get()):
+            for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[1]:
-                    # index = i
-                    # print(i,ref,"second orienting")
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -346,7 +333,7 @@ def setor1(
     )
 
     if len(orienting_refl) > 1:
-        print("Compute UB!")
+        print("Computing UB!")
         sample.compute_UB(
             sample._orientation_reflections[0],
             sample._orientation_reflections[1],
@@ -355,85 +342,81 @@ def setor1(
 
 
 def set_orienting():
-    samples = [_geom_.calc._sample]
-    sample = samples[0]
-    # print(sample)
+    sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
+    #orienting_refl = sample._orientation_reflections
+    #for sample in samples:
     orienting_refl = sample._orientation_reflections
-
-    for sample in samples:
-        orienting_refl = sample._orientation_reflections
-        print(orienting_refl)
-        print(
-            "\n      {:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}".format(
-                "H",
-                "K",
-                "L",
-                "Delta",
-                "Theta",
-                "Chi",
-                "Phi",
-                "Gamma",
-                "Mu",
-                "orienting",
-            )
+    print(
+        "\n      {:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}".format(
+            "H",
+            "K",
+            "L",
+            "Delta",
+            "Theta",
+            "Chi",
+            "Phi",
+            "Gamma",
+            "Mu",
+            "orienting",
         )
-        for i, ref in enumerate(sample._sample.reflections_get()):
-            if orienting_refl[0] == ref:
-                or0_old = i
-                h, k, l = ref.hkl_get()
-                pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                print(
-                    "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
-                        i,
-                        int(h),
-                        int(k),
-                        int(l),
-                        pos[4],
-                        pos[1],
-                        pos[2],
-                        pos[3],
-                        pos[5],
-                        pos[0],
-                        "first",
-                    )
+    )
+    for i, ref in enumerate(sample._sample.reflections_get()):
+        if orienting_refl[0] == ref:
+            or0_old = i
+            h, k, l = ref.hkl_get()
+            pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
+            print(
+                "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                    i,
+                    int(h),
+                    int(k),
+                    int(l),
+                    pos[4],
+                    pos[1],
+                    pos[2],
+                    pos[3],
+                    pos[5],
+                    pos[0],
+                    "first",
                 )
-            elif orienting_refl[1] == ref:
-                or1_old = i
-                h, k, l = ref.hkl_get()
-                pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                print(
-                    "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
-                        i,
-                        int(h),
-                        int(k),
-                        int(l),
-                        pos[4],
-                        pos[1],
-                        pos[2],
-                        pos[3],
-                        pos[5],
-                        pos[0],
-                        "second",
-                    )
+            )
+        elif orienting_refl[1] == ref:
+            or1_old = i
+            h, k, l = ref.hkl_get()
+            pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
+            print(
+                "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                    i,
+                    int(h),
+                    int(k),
+                    int(l),
+                    pos[4],
+                    pos[1],
+                    pos[2],
+                    pos[3],
+                    pos[5],
+                    pos[0],
+                    "second",
                 )
-            else:
-                h, k, l = ref.hkl_get()
-                pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                print(
-                    "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
-                        i,
-                        int(h),
-                        int(k),
-                        int(l),
-                        pos[4],
-                        pos[1],
-                        pos[2],
-                        pos[3],
-                        pos[5],
-                        pos[0],
-                    )
+            )
+        else:
+            h, k, l = ref.hkl_get()
+            pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
+            print(
+                "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
+                    i,
+                    int(h),
+                    int(k),
+                    int(l),
+                    pos[4],
+                    pos[1],
+                    pos[2],
+                    pos[3],
+                    pos[5],
+                    pos[0],
                 )
+            )
 
     or0 = input("\nFirst orienting ({})? ".format(or0_old))
     if not or0:
@@ -456,15 +439,14 @@ def set_orienting():
     _geom_.forward(1, 0, 0)
 
 
-def list_orienting():
-    samples = [_geom_.calc._sample]
-    sample = samples[0]
-    # print(sample)
-    ref = sample._sample.reflections_get()
-    orienting_refl = sample._orientation_reflections
+def list_orienting(all_samples=False):
+    _check_geom_selected()
+    if all_samples:
+        samples = _geom_.calc._samples.values()
+    else:
+        samples = [_geom_.calc._sample]
     for sample in samples:
         orienting_refl = sample._orientation_reflections
-        print(orienting_refl)
         print(
             "\n      {:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}".format(
                 "H",
@@ -521,12 +503,8 @@ def list_orienting():
 
 
 def or0(h=None, k=None, l=None):
-    samples = [_geom_.calc._sample]
-    sample = samples[0]
-    # print(sample)
-    # ref=sample._sample.reflections_get()[0]
+    sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
-
     if not h and not k and not l:
         if len(orienting_refl) > 1:
             # print("True")
@@ -569,7 +547,7 @@ def or0(h=None, k=None, l=None):
     )
 
     if len(orienting_refl) > 1:
-        print("Compute UB!")
+        print("Computing UB!")
         sample.compute_UB(
             sample._orientation_reflections[0],
             sample._orientation_reflections[1],
@@ -578,12 +556,10 @@ def or0(h=None, k=None, l=None):
 
 
 def or1(h=None, k=None, l=None):
-    samples = [_geom_.calc._sample]
-    sample = samples[0]
+    sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
     if not h and not k and not l:
         if len(orienting_refl) > 1:
-            # print("True")
             for i, ref in enumerate(sample._sample.reflections_get()):
                 if ref == orienting_refl[1]:
                     hr, kr, lr = ref.hkl_get()
@@ -623,7 +599,7 @@ def or1(h=None, k=None, l=None):
     )
 
     if len(orienting_refl) > 1:
-        print("Compute UB!")
+        print("Computing UB!")
         sample.compute_UB(
             sample._orientation_reflections[0],
             sample._orientation_reflections[1],
@@ -632,8 +608,7 @@ def or1(h=None, k=None, l=None):
 
 
 def compute_UB():
-    samples = [_geom_.calc._sample]
-    sample = samples[0]
+    sample = _geom_.calc._sample
     print("Computing UB!")
     calc_UB(
         sample._orientation_reflections[0], sample._orientation_reflections[1]
