@@ -505,7 +505,8 @@ def or0(h=None, k=None, l=None):
     if not h and not k and not l:
         if len(orienting_refl) > 1:
             # print("True")
-            for i, ref in enumerate(sample._sample.reflections_get()):
+            # for i, ref in enumerate(sample._sample.reflections_get()):
+            for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[0]:
                     hr, kr, lr = ref.hkl_get()
         else:
@@ -557,7 +558,8 @@ def or1(h=None, k=None, l=None):
     orienting_refl = sample._orientation_reflections
     if not h and not k and not l:
         if len(orienting_refl) > 1:
-            for i, ref in enumerate(sample._sample.reflections_get()):
+            # for i, ref in enumerate(sample._sample.reflections_get()):
+            for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[1]:
                     hr, kr, lr = ref.hkl_get()
         else:
