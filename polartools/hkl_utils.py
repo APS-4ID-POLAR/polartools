@@ -64,10 +64,54 @@ def sampleChange(sample_key=None):
 
 def sampleList():
     """List all samples currently defined in hklpy; specify  current one."""
-    for x in list(_geom_.calc._samples.keys())[1:]:
-        print("\n======= " + x + " :")
-        print(_geom_.calc._samples[x].lattice)
-        print(_geom_.calc._samples[x].U)
+    samples = _geom_.calc._samples
+    print("")
+    for x in list(samples.keys())[1:]:
+        orienting_refl = samples[x]._orientation_reflections
+        print("Sample = {}".format(x))
+        print("Lattice: ", end="")
+        [print(num, end=" ") for num in samples[x].lattice._fields]
+        print("=", end=" ")
+        [print(num, end=" ") for num in samples[x].lattice]
+        print("")
+        for i, ref in enumerate(samples[x]._sample.reflections_get()):
+            if orienting_refl[0] == ref:
+                h, k, l = ref.hkl_get()
+                pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
+                print(
+                    "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   ".format(
+                        "or0",
+                        int(h),
+                        int(k),
+                        int(l),
+                        pos[4],
+                        pos[1],
+                        pos[2],
+                        pos[3],
+                        pos[5],
+                        pos[0],
+                    )
+                )
+            elif orienting_refl[1] == ref:
+                h, k, l = ref.hkl_get()
+                pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
+                print(
+                    "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}  ".format(
+                        "or1",
+                        int(h),
+                        int(k),
+                        int(l),
+                        pos[4],
+                        pos[1],
+                        pos[2],
+                        pos[3],
+                        pos[5],
+                        pos[0],
+                    )
+                )
+        print(
+            "======================================================================"
+        )
     print("\nCurrent sample: " + _geom_.calc.sample.name)
 
 
@@ -216,7 +260,7 @@ def setor0(
         and not l
     ):
         if len(orienting_refl) > 1:
-            # print("True")
+
             for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[0]:
                     pos = ref.geometry_get().axis_values_get(
@@ -288,7 +332,6 @@ def setor0(
     sample._orientation_reflections.insert(
         0, sample._sample.reflections_get()[-1]
     )
-    # print(sample._orientation_reflections)
 
     if len(orienting_refl) > 1:
         print("Computing UB!")
@@ -430,11 +473,10 @@ def set_orienting():
     """
     sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
-    # orienting_refl = sample._orientation_reflections
-    # for sample in samples:
     orienting_refl = sample._orientation_reflections
     print(
-        "\n      {:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}".format(
+        "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
+            "#",
             "H",
             "K",
             "L",
@@ -453,7 +495,7 @@ def set_orienting():
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
             print(
-                "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                     i,
                     int(h),
                     int(k),
@@ -472,7 +514,7 @@ def set_orienting():
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
             print(
-                "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                     i,
                     int(h),
                     int(k),
@@ -490,7 +532,7 @@ def set_orienting():
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
             print(
-                "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
+                "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}  ".format(
                     i,
                     int(h),
                     int(k),
@@ -543,7 +585,8 @@ def list_orienting(all_samples=False):
     for sample in samples:
         orienting_refl = sample._orientation_reflections
         print(
-            "\n      {:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}".format(
+            "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
+                "#",
                 "H",
                 "K",
                 "L",
@@ -558,15 +601,14 @@ def list_orienting(all_samples=False):
         )
         for i, ref in enumerate(sample._sample.reflections_get()):
             if orienting_refl[0] == ref:
-                # or0_old = i
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
-                    "{}  {:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}   {:8}".format(
+                    "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
-                        h,
-                        k,
-                        l,
+                        int(h),
+                        int(k),
+                        int(l),
                         pos[4],
                         pos[1],
                         pos[2],
@@ -577,15 +619,14 @@ def list_orienting(all_samples=False):
                     )
                 )
             elif orienting_refl[1] == ref:
-                # or1_old = i
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
-                    "{}  {:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}   {:8}".format(
+                    "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
-                        h,
-                        k,
-                        l,
+                        int(h),
+                        int(k),
+                        int(l),
                         pos[4],
                         pos[1],
                         pos[2],
@@ -611,8 +652,7 @@ def or0(h=None, k=None, l=None):
     orienting_refl = sample._orientation_reflections
     if not h and not k and not l:
         if len(orienting_refl) > 1:
-            # print("True")
-            # for i, ref in enumerate(sample._sample.reflections_get()):
+
             for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[0]:
                     hr, kr, lr = ref.hkl_get()
@@ -674,7 +714,7 @@ def or1(h=None, k=None, l=None):
     orienting_refl = sample._orientation_reflections
     if not h and not k and not l:
         if len(orienting_refl) > 1:
-            # for i, ref in enumerate(sample._sample.reflections_get()):
+
             for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[1]:
                     hr, kr, lr = ref.hkl_get()
