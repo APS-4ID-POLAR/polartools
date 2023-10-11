@@ -26,7 +26,8 @@ import bluesky.plan_stubs as bps
 
 try:
     import gi
-    gi.require_version('Hkl', '5.0')
+
+    gi.require_version("Hkl", "5.0")
     from hkl import cahkl
     from hkl.user import _check_geom_selected, _geom_
 except ModuleNotFoundError:
@@ -233,9 +234,7 @@ def setor0(
             # print("True")
             for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[0]:
-                    pos = ref.geometry_get().axis_values_get(
-                        _geom_.calc._units
-                    )
+                    pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
                     old_chi = pos[2]
@@ -356,9 +355,7 @@ def setor1(
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[1]:
-                    pos = ref.geometry_get().axis_values_get(
-                        _geom_.calc._units
-                    )
+                    pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
                     old_chi = pos[2]
@@ -943,9 +940,7 @@ def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
 
     current_sample = _geom_.calc.sample_name
     sample = _geom_.calc._samples[current_sample]
-    lattice = [
-        getattr(sample.lattice, parm) for parm in sample.lattice._fields
-    ]
+    lattice = [getattr(sample.lattice, parm) for parm in sample.lattice._fields]
 
     a = input("Lattice a ({})? ".format(lattice[0])) if not a else a
     if not a:
@@ -957,21 +952,15 @@ def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
     if not c:
         c = lattice[2]
     alpha = (
-        input("Lattice alpha ({})? ".format(lattice[3]))
-        if not alpha
-        else alpha
+        input("Lattice alpha ({})? ".format(lattice[3])) if not alpha else alpha
     )
     if not alpha:
         alpha = lattice[3]
-    beta = (
-        input("Lattice beta ({})? ".format(lattice[4])) if not beta else beta
-    )
+    beta = input("Lattice beta ({})? ".format(lattice[4])) if not beta else beta
     if not beta:
         beta = lattice[4]
     gamma = (
-        input("Lattice gamma ({})? ".format(lattice[5]))
-        if not gamma
-        else gamma
+        input("Lattice gamma ({})? ".format(lattice[5])) if not gamma else gamma
     )
     if not gamma:
         gamma = lattice[5]
