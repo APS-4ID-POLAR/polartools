@@ -23,7 +23,7 @@ from os.path import getsize
 from glob import glob
 from pathlib import Path
 from h5py import File
-import hdf5plugin
+import hdf5plugin  # noqa: F401
 
 
 class LambdaHDF5Handler(AreaDetectorHDF5SingleHandler):
