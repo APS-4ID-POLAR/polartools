@@ -31,7 +31,7 @@ jobs:
       - name: Run black
         uses: rickstaa/action-black@v1
         with:
-          black_args: ". --check"
+          black_args: ". -l 80 --check"
 
   test-matrix:
     name: Python ${{ matrix.python-version }}
