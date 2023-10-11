@@ -133,7 +133,7 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
     output = []
     for scan in scans:
         data = cat[scan].primary.to_dask()
-        images = da.array(data[detector_key].astype(np.float64)).compute()
+        images = da.array(data[detector_key]).compute().astype(np.float64)
 
         if cleanup is not None:
             if not isinstance(cleanup, dict):
@@ -368,7 +368,7 @@ def process_rxes(
     if positioner is None:  # "Count" scans
         return get_spectrum(data.compute(), curvature, biny=biny)
     else:  # Scans with a positioner
-        return(get_spectra(data[0].compute(), curvature, biny=biny), data[1])
+        return (get_spectra(data[0].compute(), curvature, biny=biny), data[1])
 
 
 def process_rxes_mcd(
