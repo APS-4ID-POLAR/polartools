@@ -1,21 +1,15 @@
 # from instrument.collection import diffract
 # from gi.repository import Hkl as libhkl
 from hkl import cahkl
-
-# import pyRestTable
-from hkl.diffract import Diffractometer
-from hkl.util import Lattice
-from bluesky import RunEngine, RunEngineInterrupted
-import bluesky.plans as bp
 import bluesky.plan_stubs as bps
-from hkl.user import calc_UB, _check_geom_selected, _geom_
+from hkl.user import _check_geom_selected, _geom_
 
 from instrument.framework import RE
 
 
 def sampleChange(sample_key=None):
     """Change current sample."""
-    if sample_key == None:
+    if sample_key is None:
         d = _geom_.calc._samples.keys()
         print("Sample keys:", list(d))
         sample_key = input(
@@ -69,8 +63,8 @@ def list_reflections(all_samples=False):
         )
         for i, ref in enumerate(sample._sample.reflections_get()):
             if orienting_refl[0] == ref:
-                or0_old = i
-                h, k, l = ref.hkl_get()
+                # or0_old = i
+                h, k, l = ref.hkl_get()  # noqa: E741
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
                     "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
@@ -88,8 +82,8 @@ def list_reflections(all_samples=False):
                     )
                 )
             elif orienting_refl[1] == ref:
-                or1_old = i
-                h, k, l = ref.hkl_get()
+                # or1_old = i
+                h, k, l = ref.hkl_get()  # noqa: E741
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
                     "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
@@ -107,7 +101,7 @@ def list_reflections(all_samples=False):
                     )
                 )
             else:
-                h, k, l = ref.hkl_get()
+                h, k, l = ref.hkl_get()  # noqa: E741
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
                     "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
@@ -170,7 +164,7 @@ def setor0(
                 # print(i,ref)
                 if ref == orienting_refl[0]:
                     # print(i,ref,"first orienting")
-                    index = i
+                    # index = i
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -218,9 +212,9 @@ def setor0(
         k = input("K = [{}]: ".format(old_k))
         if not k:
             k = old_k
-        l = input("L = [{}]: ".format(old_l))
+        l = input("L = [{}]: ".format(old_l))  # noqa: E741
         if not l:
-            l = old_l
+            l = old_l  # noqa: E741
 
     sample.add_reflection(
         float(h),
@@ -281,7 +275,7 @@ def setor1(
             # print("True")
             for i, ref in enumerate(sample._sample.reflections_get()):
                 if ref == orienting_refl[1]:
-                    index = i
+                    # index = i
                     # print(i,ref,"second orienting")
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
@@ -328,9 +322,9 @@ def setor1(
         k = input("K = [{}]: ".format(old_k))
         if not k:
             k = old_k
-        l = input("L = [{}]: ".format(old_l))
+        l = input("L = [{}]: ".format(old_l))  # noqa: E741
         if not l:
-            l = old_l
+            l = old_l  # noqa: E741
 
     sample.add_reflection(
         float(h),
@@ -387,7 +381,7 @@ def set_orienting():
         for i, ref in enumerate(sample._sample.reflections_get()):
             if orienting_refl[0] == ref:
                 or0_old = i
-                h, k, l = ref.hkl_get()
+                h, k, l = ref.hkl_get()  # noqa: E741
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
                     "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
@@ -406,7 +400,7 @@ def set_orienting():
                 )
             elif orienting_refl[1] == ref:
                 or1_old = i
-                h, k, l = ref.hkl_get()
+                h, k, l = ref.hkl_get()  # noqa: E741
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
                     "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
@@ -424,7 +418,7 @@ def set_orienting():
                     )
                 )
             else:
-                h, k, l = ref.hkl_get()
+                h, k, l = ref.hkl_get()  # noqa: E741
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
                     "{:>2}{:>4}{:>4}{:>4}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
@@ -487,8 +481,8 @@ def list_orienting():
         )
         for i, ref in enumerate(sample._sample.reflections_get()):
             if orienting_refl[0] == ref:
-                or0_old = i
-                h, k, l = ref.hkl_get()
+                # or0_old = i
+                h, k, l = ref.hkl_get()  # noqa: E741
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
                     "{}  {:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}   {:8}".format(
@@ -506,8 +500,8 @@ def list_orienting():
                     )
                 )
             elif orienting_refl[1] == ref:
-                or1_old = i
-                h, k, l = ref.hkl_get()
+                # or1_old = i
+                h, k, l = ref.hkl_get()  # noqa: E741
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 print(
                     "{}  {:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}{:8.3f}   {:8}".format(
@@ -526,7 +520,7 @@ def list_orienting():
                 )
 
 
-def or0(h=None, k=None, l=None):
+def or0(h=None, k=None, l=None):  # noqa: E741
     samples = [_geom_.calc._sample]
     sample = samples[0]
     # print(sample)
@@ -550,14 +544,14 @@ def or0(h=None, k=None, l=None):
         k = input("K ({})? ".format(kr)) if not k else k
         if not k:
             k = kr
-        l = input("L ({})? ".format(lr)) if not l else l
+        l = input("L ({})? ".format(lr)) if not l else l  # noqa: E741
         if not l:
-            l = lr
+            l = lr  # noqa: E741
 
     sample.add_reflection(
         float(h),
         float(k),
-        float(l),
+        float(l),  # noqa: E741
         position=_geom_.calc.Position(
             delta=_geom_.delta.get().user_readback,
             omega=_geom_.omega.get().user_readback,
@@ -583,7 +577,7 @@ def or0(h=None, k=None, l=None):
         _geom_.forward(1, 0, 0)
 
 
-def or1(h=None, k=None, l=None):
+def or1(h=None, k=None, l=None):  # noqa: E741
     samples = [_geom_.calc._sample]
     sample = samples[0]
     orienting_refl = sample._orientation_reflections
@@ -604,9 +598,9 @@ def or1(h=None, k=None, l=None):
         k = input("K ({})? ".format(kr)) if not k else k
         if not k:
             k = kr
-        l = input("L ({})? ".format(lr)) if not l else l
+        l = input("L ({})? ".format(lr)) if not l else l  # noqa: E741
         if not l:
-            l = lr
+            l = lr  # noqa: E741
 
     sample.add_reflection(
         float(h),
@@ -671,14 +665,14 @@ def setmode(mode=None):
         _geom_.calc.engine.mode = _geom_.calc.engine.modes[int(mode) - 1]
 
 
-def ca(h, k, l):
+def ca(h, k, l):  # noqa: E741
     pos = cahkl(h, k, l)
     print("\n   Calculated Positions:")
     print(
         "\n   H K L = {:5f} {:5f} {:5f}".format(
             h,
             k,
-            l,
+            l,  # noqa: E741
         )
     )
     print(
@@ -703,7 +697,7 @@ def ca(h, k, l):
     )
 
 
-def br(h, k, l):
+def br(h, k, l):  # noqa: E741
     RE(bps.mv(_geom_.h, float(h), _geom_.k, float(k), _geom_.l, float(l)))
 
 
