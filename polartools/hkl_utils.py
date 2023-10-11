@@ -22,13 +22,22 @@ Auxilary HKL functions.
     ~setlat
 """
 
-from hkl import cahkl
 import bluesky.plan_stubs as bps
-from hkl.user import _check_geom_selected, _geom_
+
+try:
+    import gi
+
+    gi.require_version("Hkl", "5.0")
+    from hkl import cahkl
+    from hkl.user import _check_geom_selected, _geom_
+except ModuleNotFoundError:
+    print("gi module is not installed, the hkl_utils functions will not work!")
+    cahkl = _check_geom_selected = _geom_ = None
+
 
 """
-Most of the functions below are only working for the six circle diffractometer (diffract)
-right now. This will be changed ...
+Most of the functions below are only working for the six circle diffractometer
+(diffract) right now. This will be changed ...
 """
 
 
@@ -118,6 +127,9 @@ def sampleList():
 def list_reflections(all_samples=False):
     """
     Lists all reflections in defined in hklpy.
+
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
 
     Parameters
     ----------
@@ -236,6 +248,9 @@ def setor0(
     """
     Sets the primary orientation in hklpy.
 
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
+
     Parameters
     ----------
     delta, th, chi, phi, gamma, mu : float, optional
@@ -263,9 +278,7 @@ def setor0(
 
             for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[0]:
-                    pos = ref.geometry_get().axis_values_get(
-                        _geom_.calc._units
-                    )
+                    pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
                     old_chi = pos[2]
@@ -356,6 +369,9 @@ def setor1(
     """
     Sets the primary secondary in hklpy.
 
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
+
     Parameters
     ----------
     delta, th, chi, phi, gamma, mu : float, optional
@@ -382,9 +398,7 @@ def setor1(
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[1]:
-                    pos = ref.geometry_get().axis_values_get(
-                        _geom_.calc._units
-                    )
+                    pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
                     old_chi = pos[2]
@@ -463,13 +477,11 @@ def setor1(
 
 def set_orienting():
     """
-    Change the primary secondary orienting reflections to existing reflecitons in
-    reflection list in hklpy.
+    Change the primary secondary orienting reflections to existing reflecitons
+    in reflection list in hklpy.
 
-    Parameters
-    ----------
-    None: interactive
-
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
     """
     sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
@@ -571,6 +583,9 @@ def list_orienting(all_samples=False):
     """
     Prints the two reflections used in the UB matrix.
 
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
+
     Parameters
     ----------
     all_samples : boolean, optional
@@ -642,6 +657,9 @@ def or0(h=None, k=None, l=None):
     """
     Sets the primary orientation in hklpy using the current motor positions.
 
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
+
     Parameters
     ----------
     h, k, l : float, optional
@@ -703,6 +721,9 @@ def or0(h=None, k=None, l=None):
 def or1(h=None, k=None, l=None):
     """
     Sets the secondary orientation in hklpy using the current motor positions.
+
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
 
     Parameters
     ----------
@@ -806,6 +827,9 @@ def setmode(mode=None):
     """
     Set the mode of the currently selected diffractometer.
 
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
+
     Parameters
     ----------
     mode : string, optional
@@ -889,6 +913,9 @@ def uan(delta=None, th=None):
     """
     Moves the delta and theta motors.
 
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
+
     Parameters
     ----------
     delta, th: float, optional??
@@ -906,7 +933,12 @@ def uan(delta=None, th=None):
 
 
 def wh():
-    """Retrieve information on the current reciprocal space position."""
+    """
+    Retrieve information on the current reciprocal space position.
+
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
+    """
     print(
         "\n   H K L = {:5f} {:5f} {:5f}".format(
             _geom_.calc.engine.pseudo_axes["h"],
@@ -948,9 +980,7 @@ def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
 
     current_sample = _geom_.calc.sample_name
     sample = _geom_.calc._samples[current_sample]
-    lattice = [
-        getattr(sample.lattice, parm) for parm in sample.lattice._fields
-    ]
+    lattice = [getattr(sample.lattice, parm) for parm in sample.lattice._fields]
 
     a = input("Lattice a ({})? ".format(lattice[0])) if not a else a
     if not a:
@@ -962,21 +992,15 @@ def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
     if not c:
         c = lattice[2]
     alpha = (
-        input("Lattice alpha ({})? ".format(lattice[3]))
-        if not alpha
-        else alpha
+        input("Lattice alpha ({})? ".format(lattice[3])) if not alpha else alpha
     )
     if not alpha:
         alpha = lattice[3]
-    beta = (
-        input("Lattice beta ({})? ".format(lattice[4])) if not beta else beta
-    )
+    beta = input("Lattice beta ({})? ".format(lattice[4])) if not beta else beta
     if not beta:
         beta = lattice[4]
     gamma = (
-        input("Lattice gamma ({})? ".format(lattice[5]))
-        if not gamma
-        else gamma
+        input("Lattice gamma ({})? ".format(lattice[5])) if not gamma else gamma
     )
     if not gamma:
         gamma = lattice[5]
