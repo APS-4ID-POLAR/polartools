@@ -8,3 +8,4 @@ exclude =
     polartools/_version.py,
     docs/source/conf.py
 max-line-length = 115
+ignore: E203, E741, W503
