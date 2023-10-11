@@ -32,6 +32,7 @@ dependencies:
   - apstools>=1.6.0
   - xraydb
   - scikit-image
+  - pims>=0.6.1
   - pip:
     - sphinx-rtd-theme
     - super-state-machine
