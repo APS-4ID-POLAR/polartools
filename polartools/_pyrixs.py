@@ -11,11 +11,11 @@ def poly(x, p2, p1, p0):
     """Third order polynominal function for fitting curvature.
     Returns p2*x**2 + p1*x + p0
     """
-    return p2*x**2 + p1*x + p0
+    return p2 * x**2 + p1 * x + p0
 
 
 def image_to_photon_events(image):
-    """ Convert 2D image into photon_events
+    """Convert 2D image into photon_events
     Parameters
     -----------
     image : np.array
@@ -47,13 +47,13 @@ def bin_edges_centers(minvalue, maxvalue, binsize):
     centers : array
         central value of each bin. One shorter than edges
     """
-    edges = binsize * np.arange(minvalue//binsize + 1, maxvalue//binsize)
-    centers = (edges[:-1] + edges[1:])/2
+    edges = binsize * np.arange(minvalue // binsize + 1, maxvalue // binsize)
+    centers = (edges[:-1] + edges[1:]) / 2
     return edges, centers
 
 
 def get_curvature_offsets(photon_events, binx=64, biny=0.5):
-    """ Determine the offests that define the isoenergetic line.
+    """Determine the offests that define the isoenergetic line.
     This is determined as the maximum of the cross correlation function with
     a reference taken from the center of the image.
     Parameters
@@ -80,13 +80,13 @@ def get_curvature_offsets(photon_events, binx=64, biny=0.5):
 
     H, _, _ = np.histogram2d(x, y, bins=(x_edges, y_edges), weights=intensity)
 
-    ref_column = H[H.shape[0]//2, :]
+    ref_column = H[H.shape[0] // 2, :]
 
     offsets = np.array([])
     for column in H:
-        cross_correlation = np.correlate(column, ref_column, mode='same')
+        cross_correlation = np.correlate(column, ref_column, mode="same")
         offsets = np.append(offsets, y_centers[np.argmax(cross_correlation)])
-    return x_centers, offsets - offsets[offsets.shape[0]//2]
+    return x_centers, offsets - offsets[offsets.shape[0] // 2]
 
 
 def fit_poly(x_centers, offsets):
@@ -102,9 +102,9 @@ def fit_poly(x_centers, offsets):
     """
     poly_model = lmfit.Model(poly)
     params = poly_model.make_params()
-    params['p0'].value = offsets[0]
-    params['p1'].value = 0.
-    params['p2'].value = 0.
+    params["p0"].value = offsets[0]
+    params["p1"].value = 0.0
+    params["p2"].value = 0.0
     result = poly_model.fit(offsets, x=x_centers, params=params)
     if not result.success:
         print("Fitting failed")
@@ -130,13 +130,13 @@ def fit_curvature(photon_events, binx=32, biny=0.5, CONSTANT_OFFSET=500):
     )
     result = fit_poly(x_centers, offsets)
     curvature = np.array(
-        [result.best_values['p2'], result.best_values['p1'], CONSTANT_OFFSET]
+        [result.best_values["p2"], result.best_values["p1"], CONSTANT_OFFSET]
     )
     return curvature
 
 
 def plot_curvature(ax1, curvature, photon_events):
-    """ Plot a red line defining curvature on ax1
+    """Plot a red line defining curvature on ax1
     Parameters
     ----------
     ax1 : matplotlib axes object
@@ -153,7 +153,7 @@ def plot_curvature(ax1, curvature, photon_events):
     """
     x = np.arange(np.nanmax(photon_events[:, 0]))
     y = poly(x, *curvature)
-    return ax1.plot(x, y, 'r-')
+    return ax1.plot(x, y, "r-")
 
 
 def extract(photon_events, curvature, biny=0.5):
@@ -171,7 +171,7 @@ def extract(photon_events, curvature, biny=0.5):
     x = photon_events[:, 0]
     y = photon_events[:, 1]
     intensity = photon_events[:, 2]
-    corrected_y = y - poly(x, curvature[0], curvature[1], 0.)
+    corrected_y = y - poly(x, curvature[0], curvature[1], 0.0)
     pix_edges, pix_centers = bin_edges_centers(
         np.nanmin(corrected_y), np.nanmax(corrected_y), biny
     )
