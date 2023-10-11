@@ -1,10 +1,43 @@
+"""
+Auxilary HKL functions.
+
+.. autosummary::
+    ~sampleChange
+    ~sampleList
+    ~list_reflections
+    ~or_swap
+    ~setor0
+    ~setor1
+    ~set_orienting
+    ~list_orienting
+    ~or0
+    ~or1
+    ~compute_UB
+    ~calc_UB
+    ~setmode
+    ~ca
+    ~br
+    ~uan
+    ~wh
+    ~setlat
+"""
+
 from hkl import cahkl
 import bluesky.plan_stubs as bps
 from hkl.user import _check_geom_selected, _geom_
 
 
 def sampleChange(sample_key=None):
-    """Change current sample."""
+    """
+    Change selected sample in hklpy.
+
+    Parameters
+    ----------
+    sample_key : string, optional
+        Name of the sample as set in hklpy. If None it will ask for which
+        sample.
+    """
+
     if sample_key is None:
         d = _geom_.calc._samples.keys()
         print("Sample keys:", list(d))
@@ -25,7 +58,7 @@ def sampleChange(sample_key=None):
 
 
 def sampleList():
-    """List all samples currently defined in fourc; specify  current one."""
+    """List all samples currently defined in hklpy; specify  current one."""
     for x in list(_geom_.calc._samples.keys())[1:]:
         print("\n======= " + x + " :")
         print(_geom_.calc._samples[x].lattice)
@@ -34,6 +67,15 @@ def sampleList():
 
 
 def list_reflections(all_samples=False):
+    """
+    Lists all reflections in defined in hklpy.
+
+    Parameters
+    ----------
+    all_samples : boolean, optional
+        If True, it will list the reflections for all samples, if False, only
+        the current sample. Defaults to False.
+    """
     _check_geom_selected()
     if all_samples:
         samples = _geom_.calc._samples.values()
@@ -116,6 +158,7 @@ def list_reflections(all_samples=False):
 
 
 def or_swap():
+    """Swaps the two orientation reflections in hklpy."""
     sample = _geom_.calc._sample
     sample.swap_orientation_reflections()
     list_reflections()
@@ -137,6 +180,18 @@ def setor0(
     k=None,
     l=None,
 ):
+    """
+    Sets the primary orientation in hklpy.
+
+    Parameters
+    ----------
+    delta, th, chi, phi, gamma, mu : float, optional
+        Values of motor positions for current reflection. If None, it will ask
+        for it.
+    h, k, l : float, optional
+        Values of H, K, L positions for current reflection. If None, it will ask
+        for it.
+    """
     sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
@@ -244,6 +299,18 @@ def setor1(
     k=None,
     l=None,
 ):
+    """
+    Sets the primary secondary in hklpy.
+
+    Parameters
+    ----------
+    delta, th, chi, phi, gamma, mu : float, optional
+        Values of motor positions for current reflection. If None, it will ask
+        for it.
+    h, k, l : float, optional
+        Values of H, K, L positions for current reflection. If None, it will ask
+        for it.
+    """
     sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
@@ -339,6 +406,9 @@ def setor1(
 
 
 def set_orienting():
+    """
+    GF: Not sure what this function does.
+    """
     sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
     # orienting_refl = sample._orientation_reflections
@@ -437,6 +507,15 @@ def set_orienting():
 
 
 def list_orienting(all_samples=False):
+    """
+    Prints the two reflections used in the UB matrix.
+
+    Parameters
+    ----------
+    all_samples : boolean, optional
+        If True, it will print the reflections of all samples, if False, only of
+        the current one.
+    """
     _check_geom_selected()
     if all_samples:
         samples = _geom_.calc._samples.values()
@@ -500,6 +579,15 @@ def list_orienting(all_samples=False):
 
 
 def or0(h=None, k=None, l=None):
+    """
+    Sets the primary orientation in hklpy using the current motor positions.
+
+    Parameters
+    ----------
+    h, k, l : float, optional
+        Values of H, K, L positions for current reflection. If None, it will ask
+        for it.
+    """
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
     if not h and not k and not l:
@@ -554,6 +642,15 @@ def or0(h=None, k=None, l=None):
 
 
 def or1(h=None, k=None, l=None):
+    """
+    Sets the secondary orientation in hklpy using the current motor positions.
+
+    Parameters
+    ----------
+    h, k, l : float, optional
+        Values of H, K, L positions for current reflection. If None, it will ask
+        for it.
+    """
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
     if not h and not k and not l:
@@ -607,6 +704,18 @@ def or1(h=None, k=None, l=None):
 
 
 def compute_UB():
+    """
+    Calculates the UB matrix.
+
+    This fixes one issue with the hklpy calc_UB in that using wh() right after
+    will not work, it needs to run one calculation first.
+
+    Parameters
+    ----------
+    h, k, l : float, optional
+        Values of H, K, L positions for current reflection. If None, it will ask
+        for it.
+    """
     sample = _geom_.calc._sample
     print("Computing UB!")
     calc_UB(
@@ -616,7 +725,18 @@ def compute_UB():
 
 
 def calc_UB(r1, r2, wavelength=None, output=False):
-    """Compute the UB matrix with two reflections."""
+    """
+    Compute the UB matrix with two reflections.
+
+    Parameters
+    ----------
+    r1, r2 : hklpy reflections
+        Orienting reflections from hklpy.
+    wavelength : float, optional
+        This is not used...
+    output : boolean
+        Toggle to decide whether to print the UB matrix.
+    """
     _check_geom_selected()
     _geom_.calc.sample.compute_UB(r1, r2)
     if output:
@@ -624,6 +744,14 @@ def calc_UB(r1, r2, wavelength=None, output=False):
 
 
 def setmode(mode=None):
+    """
+    Set the mode of the currently selected diffractometer.
+
+    Parameters
+    ----------
+    mode : string, optional
+        Mode to be selected. If None, it will ask.
+    """
     current_mode = _geom_.calc.engine.mode
     for index, item in enumerate(_geom_.calc.engine.modes):
         print("{:2d}. {}".format(index + 1, item))
@@ -640,6 +768,15 @@ def setmode(mode=None):
 
 
 def ca(h, k, l):
+    """
+    Calculate the motors position of a reflection.
+
+    Parameters
+    ----------
+    h, k, l : float
+        H, K, and L values.
+    """
+
     pos = cahkl(h, k, l)
     print("\n   Calculated Positions:")
     print(
@@ -672,12 +809,36 @@ def ca(h, k, l):
 
 
 def br(h, k, l):
+    """
+    Move the motors to a reciprocal space point.
+
+    Parameters
+    ----------
+    h, k, l : float
+        H, K, and L values.
+
+    Returns
+    -------
+    Generator for the bluesky Run Engine.
+    """
     yield from bps.mv(
         _geom_.h, float(h), _geom_.k, float(k), _geom_.l, float(l)
     )
 
 
 def uan(delta=None, th=None):
+    """
+    Moves the delta and theta motors.
+
+    Parameters
+    ----------
+    delta, th: float, optional??
+        Delta and th motor angles to be moved to.
+
+    Returns
+    -------
+    Generator for the bluesky Run Engine.
+    """
     if not delta or not th:
         raise ValueError("Usage: uan(delta,th)")
     else:
@@ -686,6 +847,7 @@ def uan(delta=None, th=None):
 
 
 def wh():
+    """Retrieve information on the current reciprocal space position."""
     print(
         "\n   H K L = {:5f} {:5f} {:5f}".format(
             _geom_.calc.engine.pseudo_axes["h"],
@@ -716,6 +878,15 @@ def wh():
 
 
 def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
+    """
+    Set the lattice constants.
+
+    Parameters
+    ----------
+    a, b, c, alpha, beta, gamma : float, optional
+        Lattice constants. If None, it will ask for input.
+    """
+
     current_sample = _geom_.calc.sample_name
     sample = _geom_.calc._samples[current_sample]
     lattice = [getattr(sample.lattice, parm) for parm in sample.lattice._fields]
