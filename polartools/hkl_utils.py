@@ -1,9 +1,6 @@
-
 from hkl import cahkl
 import bluesky.plan_stubs as bps
 from hkl.user import _check_geom_selected, _geom_
-
-from instrument.framework import RE
 
 
 def sampleChange(sample_key=None):
@@ -60,7 +57,7 @@ def list_reflections(all_samples=False):
                 "orienting",
             )
         )
-        for i,ref in enumerate(sample._sample.reflections_get()):
+        for i, ref in enumerate(sample._sample.reflections_get()):
             if orienting_refl[0] == ref:
                 # or0_old = i
                 h, k, l = ref.hkl_get()
@@ -344,8 +341,8 @@ def setor1(
 def set_orienting():
     sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
-    #orienting_refl = sample._orientation_reflections
-    #for sample in samples:
+    # orienting_refl = sample._orientation_reflections
+    # for sample in samples:
     orienting_refl = sample._orientation_reflections
     print(
         "\n      {:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}{:8}".format(
@@ -673,15 +670,17 @@ def ca(h, k, l):
 
 
 def br(h, k, l):
-    RE(bps.mv(_geom_.h, float(h), _geom_.k, float(k), _geom_.l, float(l)))
+    yield from bps.mv(
+        _geom_.h, float(h), _geom_.k, float(k), _geom_.l, float(l)
+    )
 
 
 def uan(delta=None, th=None):
     if not delta or not th:
-        print("Usage: uan(delta,th)")
+        raise ValueError("Usage: uan(delta,th)")
     else:
-        RE(bps.mv(_geom_.delta, delta, _geom_.omega, th))
         print("Moving to (delta,th)=({},{})".format(delta, th))
+        yield from bps.mv(_geom_.delta, delta, _geom_.omega, th)
 
 
 def wh():
