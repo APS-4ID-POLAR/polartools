@@ -170,7 +170,7 @@ def _cleanup_photon_events(photon_events):
 def _get_constant_offset(image, rng=10):
     timg = image.transpose()
     pos = int(timg.shape[1] / 2)
-    col = np.nanmean(timg[:, pos - rng: pos + rng], axis=1)
+    col = np.nanmean(timg[:, pos - rng : pos + rng], axis=1)
     return np.where(col == np.nanmax(col))[0][0]
 
 

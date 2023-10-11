@@ -175,7 +175,7 @@ def load_info(scan_id, info, source=None, **kwargs):
             data_array = specscan.raw.split("\n")
             index = 0
             for element in data_array:
-                if element[0: len(info[0])] == info[0]:
+                if element[0 : len(info[0])] == info[0]:
                     if index == info[1]:
                         value = element.split()[info[2] + 1]
                     index += 1
@@ -192,7 +192,7 @@ def load_info(scan_id, info, source=None, **kwargs):
 
     else:
         table = load_databroker(scan_id, db=source, stream="baseline")
-        value = table[info[1: len(info)]].mean()
+        value = table[info[1 : len(info)]].mean()
 
     return value
 
@@ -386,7 +386,7 @@ def fit_series(
                     monitor = _defaults["monitor"]
             table = table.set_index(positioner)
             if xrange:
-                table = table.loc[xrange[0]: xrange[1]]
+                table = table.loc[xrange[0] : xrange[1]]
             x = table.index.to_numpy()
             y = table[detector].to_numpy()
             if normalize:
@@ -849,14 +849,14 @@ def load_mesh(
     xi = x.unique()
     yi = y.unique()
     if xi.size > xr:
-        xi = x[0: xr * yr: yr].to_numpy()
+        xi = x[0 : xr * yr : yr].to_numpy()
         yi = y[0:yr:1].to_numpy()
     if yi.size < yr and mrange == "full":
         app = np.arange(yi[-1] + ys, yb, ys)
         yi = np.append(yi, app)
         z = np.zeros((xi.size * yi.size))
         z[: zp.size] = zp
-        z[zp.size:] = np.nan
+        z[zp.size :] = np.nan
     else:
         data = data.groupby([y_label, x_label]).sum()[z_label]
     zp_left = data.unstack()
