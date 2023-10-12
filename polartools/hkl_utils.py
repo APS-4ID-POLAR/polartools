@@ -235,7 +235,6 @@ def or_swap():
 
 
 def setor0(*args):
-
     """
     Sets the primary orientation in hklpy.
 
