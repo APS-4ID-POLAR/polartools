@@ -79,11 +79,11 @@ def sampleList():
         orienting_refl = samples[x]._orientation_reflections
         print("Sample = {}".format(x))
         print("Lattice: ", end="")
-        [print(num, end=" ") for num in samples[x].lattice._fields]
+        (print(num, end=" ") for num in samples[x].lattice._fields)
         print("=", end=" ")
-        [print(num, end=" ") for num in samples[x].lattice]
+        (print(num, end=" ") for num in samples[x].lattice)
         print("")
-        for i, ref in enumerate(samples[x]._sample.reflections_get()):
+        for ref in samples[x]._sample.reflections_get():
             if orienting_refl[0] == ref:
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
