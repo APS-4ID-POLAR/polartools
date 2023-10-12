@@ -29,7 +29,7 @@ try:
 
     gi.require_version("Hkl", "5.0")
     from hkl import cahkl
-    from hkl.user import show_selected_diffractometer, _check_geom_selected, _geom_
+    from hkl.user import _check_geom_selected, _geom_
 except ModuleNotFoundError:
     print("gi module is not installed, the hkl_utils functions will not work!")
     cahkl = _check_geom_selected = _geom_ = None
@@ -234,17 +234,8 @@ def or_swap():
     _geom_.forward(1, 0, 0)
 
 
-def setor0(
-    delta=None,
-    th=None,
-    chi=None,
-    phi=None,
-    gamma=None,
-    mu=None,
-    h=None,
-    k=None,
-    l=None,
- ):
+def setor0(*args):
+
     """
     Sets the primary orientation in hklpy.
 
@@ -260,32 +251,14 @@ def setor0(
         Values of H, K, L positions for current reflection. If None, it will ask
         for it.
     """
-   
-    print("Diffracometer", end=" = ")
-    show_selected_diffractometer()
-
-    """
-    if show_selected_diffractometer() =="diffract" and len(args==6): 
-        delta,th,chi,phi,gamma,mu = args 
-    else:
-        delta,th,chi,phi,gamma,mu = None
-    """
 
     sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
 
-    if (
-        not delta
-        and not th
-        and not chi
-        and not phi
-        and not gamma
-        and not mu
-        and not h
-        and not k
-        and not l
-    ):
+    if _geom_.name == "diffract" and len(args) == 9:
+        h, k, l, delta, th, chi, phi, gamma, mu = args
+    else:
         if len(orienting_refl) > 1:
 
             for ref in sample._sample.reflections_get():
