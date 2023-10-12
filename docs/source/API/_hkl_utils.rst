@@ -1,4 +1,4 @@
-Pressure calibration
+HKL Utils
 --------------------
 
 .. automodule:: polartools.hkl_utils
