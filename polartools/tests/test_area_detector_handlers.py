@@ -17,6 +17,9 @@ def test_lambda250k():
     tmp = area_detector_handlers.LambdaHDF5Handler
     tmp.specs = {"AD_HDF5_lambda"}
     cat.register_handler("AD_HDF5_lambda", tmp, overwrite=True)
-    assert (
-        cat[276].primary.read()['lambda250k_image'].shape == (50, 1, 516, 516)
+    assert cat[276].primary.read()["lambda250k_image"].shape == (
+        50,
+        1,
+        516,
+        516,
     )

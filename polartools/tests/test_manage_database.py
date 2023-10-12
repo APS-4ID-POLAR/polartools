@@ -6,34 +6,34 @@ from os.path import join
 from glob import glob
 from databroker import catalog
 
-CATALOG_NAME = 'data_1'
+CATALOG_NAME = "data_1"
 
 
 def clear_loggers():
     """Remove handlers from all loggers"""
     import logging
-    loggers = [logging.getLogger()] + list(logging.Logger.manager.loggerDict.values())
+
+    loggers = [logging.getLogger()] + list(
+        logging.Logger.manager.loggerDict.values()
+    )
     for logger in loggers:
-        handlers = getattr(logger, 'handlers', [])
+        handlers = getattr(logger, "handlers", [])
         for handler in handlers:
             logger.removeHandler(handler)
 
 
 def test_manage_databroker_database(tmpdir):
-
     # load databroker
-    path = join('polartools', 'tests', 'data_for_test', 'databroker')
-    manage_database.from_databroker_inplace(
-        path, CATALOG_NAME, catalog
-        )
+    path = join("polartools", "tests", "data_for_test", "databroker")
+    manage_database.from_databroker_inplace(path, CATALOG_NAME, catalog)
     catalog.force_reload()
     assert CATALOG_NAME in list(catalog)
 
     # export databroker
     db = catalog[CATALOG_NAME]
-    path = str(tmpdir.mkdir('test_db'))
+    path = str(tmpdir.mkdir("test_db"))
     manage_database.to_databroker(db, path, query=dict(scan_id=1049))
-    files = glob(join(path, '*.*')) + glob(join(path, '*', '*'))
+    files = glob(join(path, "*.*")) + glob(join(path, "*", "*"))
     assert len(files) == 3
 
     # TODO: This seems to fail because of how pytest interfere with file

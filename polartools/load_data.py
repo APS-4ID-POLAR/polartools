@@ -29,7 +29,7 @@ from apstools.utils import getDatabase
 from polartools.area_detector_handlers import EigerHandler, LambdaHDF5Handler
 
 # TODO: This should be just temp fix
-LambdaHDF5Handler.specs = {'AD_HDF5_lambda'} | LambdaHDF5Handler.specs
+LambdaHDF5Handler.specs = {"AD_HDF5_lambda"} | LambdaHDF5Handler.specs
 
 
 def load_catalog(name=None, query=None, handlers=None):
@@ -56,10 +56,10 @@ def load_catalog(name=None, query=None, handlers=None):
         cat = db_query(cat, query)
     if handlers is None:
         handlers = dict(
-                AD_HDF5_Lambda250k_APSPolar=LambdaHDF5Handler,
-                AD_HDF5_lambda=LambdaHDF5Handler,  # Temporary fix
-                AD_EIGER_APSPolar=EigerHandler,
-            )
+            AD_HDF5_Lambda250k_APSPolar=LambdaHDF5Handler,
+            AD_HDF5_lambda=LambdaHDF5Handler,  # Temporary fix
+            AD_EIGER_APSPolar=EigerHandler,
+        )
     for name, handler in handlers.items():
         cat.register_handler(name, handler, overwrite=True)
     return cat

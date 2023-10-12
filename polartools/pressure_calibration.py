@@ -12,8 +12,7 @@ Functions to do pressure calibration using Au or Ag diffraction.
 # Copyright (c) 2020, UChicago Argonne, LLC
 # See LICENSE file.
 
-from numpy import (sin, exp, log, pi, sqrt, array, linspace, nanmax, nanmin,
-                   copy)
+from numpy import sin, exp, log, pi, sqrt, array, linspace, nanmax, nanmin, copy
 from scipy.interpolate import interp1d
 from .load_data import load_table
 from lmfit.models import LinearModel, PseudoVoigtModel
@@ -37,20 +36,46 @@ def load_ag_params(temperature):
         Volume, K and K' calibration parameters.
     """
     if temperature > 500:
-        raise ValueError(f'temperature must be < 500 K, but {temperature} \
-        was entered.')
+        raise ValueError(
+            f"temperature must be < 500 K, but {temperature} \
+        was entered."
+        )
 
     # Data from paper
-    v0 = [16.8439, 16.8439, 16.8512, 16.8815, 16.9210, 16.9644, 17.0099,
-          17.057, 17.1055, 17.1553, 17.2063, 17.2585]
-    k0 = [110.85, 110.85, 110.31, 108.68, 106.83, 104.91, 102.96, 101.0, 99.03,
-          97.05, 95.07, 93.07]
+    v0 = [
+        16.8439,
+        16.8439,
+        16.8512,
+        16.8815,
+        16.9210,
+        16.9644,
+        17.0099,
+        17.057,
+        17.1055,
+        17.1553,
+        17.2063,
+        17.2585,
+    ]
+    k0 = [
+        110.85,
+        110.85,
+        110.31,
+        108.68,
+        106.83,
+        104.91,
+        102.96,
+        101.0,
+        99.03,
+        97.05,
+        95.07,
+        93.07,
+    ]
     kp0 = [6, 6, 6.01, 6.03, 6.05, 6.08, 6.12, 6.15, 6.19, 6.22, 6.26, 6.3]
     temp0 = [0, 10, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
 
-    v0_out = float(interp1d(temp0, v0, kind='linear')(temperature))
-    k0_out = float(interp1d(temp0, k0, kind='linear')(temperature))
-    kp0_out = float(interp1d(temp0, kp0, kind='linear')(temperature))
+    v0_out = float(interp1d(temp0, v0, kind="linear")(temperature))
+    k0_out = float(interp1d(temp0, k0, kind="linear")(temperature))
+    kp0_out = float(interp1d(temp0, kp0, kind="linear")(temperature))
     return v0_out, k0_out, kp0_out
 
 
@@ -73,26 +98,75 @@ def load_au_params(temperature):
     """
 
     if temperature > 500:
-        raise ValueError(f'temperature must be < 500 K, but {temperature} \
-        was entered.')
+        raise ValueError(
+            f"temperature must be < 500 K, but {temperature} \
+        was entered."
+        )
 
     # Data from paper
-    v0 = [16.7905, 16.7906, 16.7984, 16.8238, 16.8550, 16.8885, 16.9232,
-          16.959, 16.9956, 17.0329, 17.071, 17.1098]
-    k0 = [180.93, 180.93, 179.94, 177.51, 174.86, 172.16, 169.43, 166.7,
-          163.96, 161.21, 158.46, 155.7]
-    kp0 = [6.08, 6.08, 6.09, 6.11, 6.13, 6.15, 6.17, 6.20, 6.23, 6.25, 6.28,
-           6.31]
+    v0 = [
+        16.7905,
+        16.7906,
+        16.7984,
+        16.8238,
+        16.8550,
+        16.8885,
+        16.9232,
+        16.959,
+        16.9956,
+        17.0329,
+        17.071,
+        17.1098,
+    ]
+    k0 = [
+        180.93,
+        180.93,
+        179.94,
+        177.51,
+        174.86,
+        172.16,
+        169.43,
+        166.7,
+        163.96,
+        161.21,
+        158.46,
+        155.7,
+    ]
+    kp0 = [
+        6.08,
+        6.08,
+        6.09,
+        6.11,
+        6.13,
+        6.15,
+        6.17,
+        6.20,
+        6.23,
+        6.25,
+        6.28,
+        6.31,
+    ]
     temp0 = [0, 10, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500]
 
-    v0_out = float(interp1d(temp0, v0, kind='linear')(temperature))
-    k0_out = float(interp1d(temp0, k0, kind='linear')(temperature))
-    kp0_out = float(interp1d(temp0, kp0, kind='linear')(temperature))
+    v0_out = float(interp1d(temp0, v0, kind="linear")(temperature))
+    k0_out = float(interp1d(temp0, k0, kind="linear")(temperature))
+    kp0_out = float(interp1d(temp0, kp0, kind="linear")(temperature))
     return v0_out, k0_out, kp0_out
 
 
-def _generate_initial_guess(params, x, y, center, sigma, amplitude, fraction,
-                            fit_fraction, slope, intercept, fit_slope):
+def _generate_initial_guess(
+    params,
+    x,
+    y,
+    center,
+    sigma,
+    amplitude,
+    fraction,
+    fit_fraction,
+    slope,
+    intercept,
+    fit_slope,
+):
     """
     Adds initial guess to the lmfit parameters.
 
@@ -152,38 +226,49 @@ def _generate_initial_guess(params, x, y, center, sigma, amplitude, fraction,
     if not center:
         index = y == nanmax(y)
         center = x[index][0]
-    params['center'].set(center, min=nanmin(x), max=nanmax(x))
+    params["center"].set(center, min=nanmin(x), max=nanmax(x))
 
     if not sigma:
-        sigma = (nanmax(x)-nanmin(x))/10
-    params['sigma'].set(sigma, min=0)
+        sigma = (nanmax(x) - nanmin(x)) / 10
+    params["sigma"].set(sigma, min=0)
 
     if not amplitude:
-        amplitude = nanmax(y)*sigma*sqrt(pi/log(2))
-    params['amplitude'].set(amplitude, min=0)
+        amplitude = nanmax(y) * sigma * sqrt(pi / log(2))
+    params["amplitude"].set(amplitude, min=0)
 
     if not fraction:
         fraction = 0.5
     if (fraction < 0) or (fraction > 1):
-        print(f'WARNING: fraction must be 0 <= fraction <= 1, but you provided\
-         fraction = {fraction}. Using fraction = 0.5.')
+        print(
+            f"WARNING: fraction must be 0 <= fraction <= 1, but you provided\
+         fraction = {fraction}. Using fraction = 0.5."
+        )
         fraction = 0.5
-    params['fraction'].set(fraction, min=0, max=1, vary=fit_fraction)
+    params["fraction"].set(fraction, min=0, max=1, vary=fit_fraction)
 
     if not slope:
-        slope = (y[-1]-y[0])/(x[-1]-x[0])
-    params['slope'].set(slope, vary=fit_slope)
+        slope = (y[-1] - y[0]) / (x[-1] - x[0])
+    params["slope"].set(slope, vary=fit_slope)
 
     if not intercept:
         intercept = x[0]
-    params['intercept'].set(intercept)
+    params["intercept"].set(intercept)
 
     return params
 
 
-def fit_bragg_peak(x, y, center=None, sigma=None, amplitude=None, fraction=None,
-                   fit_fraction=True, slope=None, intercept=None,
-                   fit_slope=True):
+def fit_bragg_peak(
+    x,
+    y,
+    center=None,
+    sigma=None,
+    amplitude=None,
+    fraction=None,
+    fit_fraction=True,
+    slope=None,
+    intercept=None,
+    fit_slope=True,
+):
     """
     Fit Bragg peak with a pseudo-voigt function.
 
@@ -227,15 +312,26 @@ def fit_bragg_peak(x, y, center=None, sigma=None, amplitude=None, fraction=None,
     model = PseudoVoigtModel() + LinearModel()
     params = model.make_params()
 
-    params = _generate_initial_guess(params, x, y, center, sigma, amplitude,
-                                     fraction, fit_fraction,  slope, intercept,
-                                     fit_slope)
+    params = _generate_initial_guess(
+        params,
+        x,
+        y,
+        center,
+        sigma,
+        amplitude,
+        fraction,
+        fit_fraction,
+        slope,
+        intercept,
+        fit_slope,
+    )
 
     return model.fit(y, params=params, x=x)
 
 
-def calculate_tth(pressure, temperature, energy, bragg_peak, calibrant,
-                  tth_off=0.0):
+def calculate_tth(
+    pressure, temperature, energy, bragg_peak, calibrant, tth_off=0.0
+):
     """
     Calculate the two theta of Au or Ag Bragg peak of given a pressure.
 
@@ -265,16 +361,18 @@ def calculate_tth(pressure, temperature, energy, bragg_peak, calibrant,
     """
 
     tth_ref = linspace(1e-2, 180, 10000)
-    pressure_ref = calculate_pressure(tth_ref, temperature, energy, bragg_peak,
-                                      calibrant, tth_off=tth_off)
+    pressure_ref = calculate_pressure(
+        tth_ref, temperature, energy, bragg_peak, calibrant, tth_off=tth_off
+    )
 
     tth = interp1d(pressure_ref, tth_ref)(pressure)
 
     return float(tth) if tth.size == 1 else tth
 
 
-def calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
-                       tth_off=0.0):
+def calculate_pressure(
+    tth, temperature, energy, bragg_peak, calibrant, tth_off=0.0
+):
     """
     Calculate the pressure using diffraction from Au or Ag.
 
@@ -304,48 +402,65 @@ def calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
     """
     # Constants
     afg = 2337  # GPa.AA^5
-    h = 4.135667662E-15  # eV.s
-    c = 299792458E10  # AA/s
+    h = 4.135667662e-15  # eV.s
+    c = 299792458e10  # AA/s
 
     # Loading parameters
-    if calibrant == 'Au':
+    if calibrant == "Au":
         z = 79
         v0, k0, kp0 = load_au_params(temperature)
-    elif calibrant == 'Ag':
+    elif calibrant == "Ag":
         z = 47
         v0, k0, kp0 = load_ag_params(temperature)
     else:
-        raise ValueError(f'calibrant must be "Au" or "Ag", but {calibrant} was\
-        entered')
+        raise ValueError(
+            f'calibrant must be "Au" or "Ag", but {calibrant} was\
+        entered'
+        )
 
     # If it's not a number it will turn tth into a numpy.array
     if not isinstance(tth, (int, float)):
         tth = array(tth)
 
     # Calculate atomic volume
-    lamb = h*c/energy/1000.
-    d = lamb/2/sin((tth-tth_off)/2.*pi/180.)
-    a = d*sqrt(bragg_peak[0]**2+bragg_peak[1]**2+bragg_peak[2]**2)
-    v = a**3/4.
+    lamb = h * c / energy / 1000.0
+    d = lamb / 2 / sin((tth - tth_off) / 2.0 * pi / 180.0)
+    a = d * sqrt(bragg_peak[0] ** 2 + bragg_peak[1] ** 2 + bragg_peak[2] ** 2)
+    v = a**3 / 4.0
 
     # Calculate pressure
-    x = (v/v0)**0.3333
-    pfg0 = afg*(z/v0)**1.6666
-    c0 = -1*log(3*k0/pfg0)
-    c2 = (3/2)*(kp0-3)-c0
-    pressure = 3*k0*(1-x)/x**5*exp(c0*(1-x))*(1+c2*x*(1-x))
+    x = (v / v0) ** 0.3333
+    pfg0 = afg * (z / v0) ** 1.6666
+    c0 = -1 * log(3 * k0 / pfg0)
+    c2 = (3 / 2) * (kp0 - 3) - c0
+    pressure = (
+        3 * k0 * (1 - x) / x**5 * exp(c0 * (1 - x)) * (1 + c2 * x * (1 - x))
+    )
 
     return pressure
 
 
-def xrd_calibrate_pressure(scan, source, bragg_peak=(1, 1, 1),
-                           calibrant='Au', temperature=300,
-                           energy='monochromator_energy',
-                           positioner='huber_tth', detector='APDSector4',
-                           monitor=None, center=None, sigma=None,
-                           amplitude=None, fraction=None, fit_fraction=True,
-                           slope=None, intercept=None, fit_slope=True,
-                           tth_offset=0.0, **kwargs):
+def xrd_calibrate_pressure(
+    scan,
+    source,
+    bragg_peak=(1, 1, 1),
+    calibrant="Au",
+    temperature=300,
+    energy="monochromator_energy",
+    positioner="huber_tth",
+    detector="APDSector4",
+    monitor=None,
+    center=None,
+    sigma=None,
+    amplitude=None,
+    fraction=None,
+    fit_fraction=True,
+    slope=None,
+    intercept=None,
+    fit_slope=True,
+    tth_offset=0.0,
+    **kwargs,
+):
     """
     Calibrate pressure using x-ray diffraction.
 
@@ -435,23 +550,33 @@ def xrd_calibrate_pressure(scan, source, bragg_peak=(1, 1, 1),
     if monitor:
         y /= table[monitor]
 
-    fit = fit_bragg_peak(x, y, center=center, sigma=sigma, amplitude=amplitude,
-                         fraction=fraction, fit_fraction=fit_fraction,
-                         slope=slope, intercept=intercept, fit_slope=fit_slope)
+    fit = fit_bragg_peak(
+        x,
+        y,
+        center=center,
+        sigma=sigma,
+        amplitude=amplitude,
+        fraction=fraction,
+        fit_fraction=fit_fraction,
+        slope=slope,
+        intercept=intercept,
+        fit_slope=fit_slope,
+    )
 
-    tth = fit.best_values['center']
+    tth = fit.best_values["center"]
 
     # TODO: we can probably add the option to search both 'baseline' and
     # 'primary' streams here.
     if isinstance(temperature, str):
         temperature = load_table(
-            scan, source, stream='baseline', name_format='scan_{}_primary.csv'
-            )[temperature].mean()
+            scan, source, stream="baseline", name_format="scan_{}_primary.csv"
+        )[temperature].mean()
 
     if isinstance(energy, str):
         energy = load_table(
-            scan, source, stream='baseline', name_format='scan_{}_primary.csv'
-            )[energy].mean()
+            scan, source, stream="baseline", name_format="scan_{}_primary.csv"
+        )[energy].mean()
 
-    return calculate_pressure(tth, temperature, energy, bragg_peak, calibrant,
-                              tth_off=tth_offset)
+    return calculate_pressure(
+        tth, temperature, energy, bragg_peak, calibrant, tth_off=tth_offset
+    )

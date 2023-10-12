@@ -5,11 +5,11 @@ channels:
   - aps-anl-tag
   - nsls2forge
 dependencies:
-  - python>=3.9.0
+  - python >=3.8, <=3.11
   - scipy
   - numpy
   - pandas
-  - databroker<=1.9
+  - databroker<=1.2.5
   - pip
   - sphinx
   - pytest
@@ -31,6 +31,8 @@ dependencies:
   - hdf5plugin
   - apstools>=1.6.0
   - xraydb
+  - scikit-image
+  - pims>=0.6.1
   - pip:
     - sphinx-rtd-theme
     - super-state-machine

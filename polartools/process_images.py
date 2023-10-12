@@ -13,7 +13,10 @@ import dask.array as da
 import numpy as np
 import matplotlib.pyplot as plt
 from ._pyrixs import (
-    image_to_photon_events, plot_curvature, fit_curvature, extract
+    image_to_photon_events,
+    plot_curvature,
+    fit_curvature,
+    extract,
 )
 
 
@@ -69,9 +72,9 @@ def _cleanup_images(images, parameters):
     """
 
     for function, args in parameters.items():
-        if 'threshold' in function.lower():
+        if "threshold" in function.lower():
             images = clean_threshold(images, *args)
-        elif 'function' in function.lower():
+        elif "function" in function.lower():
             images = args[0](images, *args[1:])
         else:
             raise ValueError(
@@ -81,8 +84,9 @@ def _cleanup_images(images, parameters):
     return images
 
 
-def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
-                positioner=None):
+def load_images(
+    scans, cat, detector_key, cleanup=None, normalize=None, positioner=None
+):
     """
     Load scans with 2D images.
 
@@ -133,7 +137,7 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
     output = []
     for scan in scans:
         data = cat[scan].primary.to_dask()
-        images = da.array(data[detector_key].astype(np.float64)).compute()
+        images = da.array(data[detector_key]).compute().astype(np.float64)
 
         if cleanup is not None:
             if not isinstance(cleanup, dict):
@@ -153,7 +157,8 @@ def load_images(scans, cat, detector_key, cleanup=None, normalize=None,
         return np.nanmean(da.stack(output), axis=(0, 1, 2))
     else:
         return (
-            np.nanmean(da.stack(output), axis=(0, 2)), data[positioner].values
+            np.nanmean(da.stack(output), axis=(0, 2)),
+            data[positioner].values,
         )
 
 
@@ -164,8 +169,8 @@ def _cleanup_photon_events(photon_events):
 
 def _get_constant_offset(image, rng=10):
     timg = image.transpose()
-    pos = int(timg.shape[1]/2)
-    col = np.nanmean(timg[:, pos-rng:pos+rng], axis=1)
+    pos = int(timg.shape[1] / 2)
+    col = np.nanmean(timg[:, pos - rng : pos + rng], axis=1)
     return np.where(col == np.nanmax(col))[0][0]
 
 
@@ -219,11 +224,12 @@ def get_curvature(image, binx=10, biny=1, constant_offset=None, plot=False):
             image.transpose(),
             vmin=0,
             vmax=vmax if vmax > 0 else np.nanmax(im),
-            cmap="plasma")
+            cmap="plasma",
+        )
         plt.colorbar()
         plot_curvature(ax, curvature, ph)
 
-    print(f'curvature = {curvature}')
+    print(f"curvature = {curvature}")
 
     return curvature
 
@@ -309,9 +315,8 @@ def process_rxes(
     cleanup=None,
     normalize=None,
     positioner=None,
-    biny=1
+    biny=1,
 ):
-
     """
     Wrapper with typical RXES data processing.
 
@@ -362,13 +367,13 @@ def process_rxes(
         detector_key,
         cleanup=cleanup,
         normalize=normalize,
-        positioner=positioner
+        positioner=positioner,
     )
 
     if positioner is None:  # "Count" scans
         return get_spectrum(data.compute(), curvature, biny=biny)
     else:  # Scans with a positioner
-        return(get_spectra(data[0].compute(), curvature, biny=biny), data[1])
+        return (get_spectra(data[0].compute(), curvature, biny=biny), data[1])
 
 
 def process_rxes_mcd(
@@ -379,9 +384,8 @@ def process_rxes_mcd(
     cleanup=None,
     normalize=None,
     positioner=None,
-    biny=1
+    biny=1,
 ):
-
     """
     Wrapper with typical RXES-MCD data processing.
 
@@ -434,7 +438,7 @@ def process_rxes_mcd(
         detector_key,
         cleanup=cleanup,
         normalize=normalize,
-        positioner=positioner
+        positioner=positioner,
     )
 
     ims = images.reshape((-1, 4, images.shape[1], images.shape[2]))
@@ -444,7 +448,7 @@ def process_rxes_mcd(
     specs_plus = get_spectra(ims_plus.compute(), curvature, biny=biny)
     specs_minus = get_spectra(ims_minus.compute(), curvature, biny=biny)
 
-    rxes = (specs_plus + specs_minus)/2.
+    rxes = (specs_plus + specs_minus) / 2.0
     mcd = specs_plus.copy()
     mcd[:, :, 1] -= specs_minus[:, :, 1]
 

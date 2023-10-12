@@ -175,7 +175,7 @@ def load_info(scan_id, info, source=None, **kwargs):
             data_array = specscan.raw.split("\n")
             index = 0
             for element in data_array:
-                if element[0:len(info[0])] == info[0]:
+                if element[0 : len(info[0])] == info[0]:
                     if index == info[1]:
                         value = element.split()[info[2] + 1]
                     index += 1
@@ -192,7 +192,7 @@ def load_info(scan_id, info, source=None, **kwargs):
 
     else:
         table = load_databroker(scan_id, db=source, stream="baseline")
-        value = table[info[1:len(info)]].mean()
+        value = table[info[1 : len(info)]].mean()
 
     return value
 
@@ -386,7 +386,7 @@ def fit_series(
                     monitor = _defaults["monitor"]
             table = table.set_index(positioner)
             if xrange:
-                table = table.loc[xrange[0]:xrange[1]]
+                table = table.loc[xrange[0] : xrange[1]]
             x = table.index.to_numpy()
             y = table[detector].to_numpy()
             if normalize:
@@ -422,7 +422,7 @@ def fit_series(
             index += 1
     if output:
         ax.legend(loc=0)
-        if hasattr(__builtins__,'__IPYTHON__'):
+        if hasattr(__builtins__, "__IPYTHON__"):
             plt.get_current_fig_manager().show()
         else:
             plt.show()
@@ -637,16 +637,16 @@ def load_series(
                 dataz[index] = np.log10(dataz[index])
             if scale:
                 if len(scale) > 1:
-                    dataz[index].values[
-                        dataz[index] < float(scale[0])
-                    ] = float(scale[0])
-                    dataz[index].values[
-                        dataz[index] > float(scale[1])
-                    ] = float(scale[1])
+                    dataz[index].values[dataz[index] < float(scale[0])] = float(
+                        scale[0]
+                    )
+                    dataz[index].values[dataz[index] > float(scale[1])] = float(
+                        scale[1]
+                    )
                 else:
-                    dataz[index].values[
-                        dataz[index] > float(scale[0])
-                    ] = float(scale[0])
+                    dataz[index].values[dataz[index] > float(scale[0])] = float(
+                        scale[0]
+                    )
             index += 1
     return datax, datay, dataz, detector, positioner
 
@@ -849,16 +849,15 @@ def load_mesh(
     xi = x.unique()
     yi = y.unique()
     if xi.size > xr:
-        xi = x[0:xr * yr:yr].to_numpy()
+        xi = x[0 : xr * yr : yr].to_numpy()
         yi = y[0:yr:1].to_numpy()
     if yi.size < yr and mrange == "full":
         app = np.arange(yi[-1] + ys, yb, ys)
         yi = np.append(yi, app)
         z = np.zeros((xi.size * yi.size))
-        z[:zp.size] = zp
-        z[zp.size:] = np.nan
+        z[: zp.size] = zp
+        z[zp.size :] = np.nan
     else:
-
         data = data.groupby([y_label, x_label]).sum()[z_label]
     zp_left = data.unstack()
     yi = zp_left.index.values
@@ -1408,7 +1407,7 @@ def plot_2d(
             ax[num].set_ylabel(z_label)
             ax[num].legend(loc=0)
 
-    if hasattr(__builtins__,'__IPYTHON__'):
+    if hasattr(__builtins__, "__IPYTHON__"):
         plt.get_current_fig_manager().show()
     else:
         plt.show()
@@ -1577,7 +1576,7 @@ def plot_fit(
     else:
         x_label = var_series
     ax3.set_xlabel(x_label)
-    if hasattr(__builtins__,'__IPYTHON__'):
+    if hasattr(__builtins__, "__IPYTHON__"):
         plt.get_current_fig_manager().show()
     else:
         plt.show()
@@ -1870,7 +1869,7 @@ def plot_data(
     ax.legend(loc=0)
     if deriv:
         ax2.legend(loc=4)
-    if hasattr(__builtins__,'__IPYTHON__'):
+    if hasattr(__builtins__, "__IPYTHON__"):
         plt.get_current_fig_manager().show()
     else:
         plt.show()

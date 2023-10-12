@@ -41,7 +41,6 @@ def test_spec():
 
 
 def test_is_Bluesky_specfile():
-
     folder = join("polartools", "tests", "data_for_test")
 
     # Tests with spec loading within polartools.

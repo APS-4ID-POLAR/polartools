@@ -1,4 +1,3 @@
-
 # Copyright (c) 2022, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
@@ -25,7 +24,10 @@ def cat():
 @pytest.fixture
 def im(cat):
     return process_images.load_images(
-        [276], cat, "lambda250k_image", cleanup=dict(threshold=(100,)),
+        [276],
+        cat,
+        "lambda250k_image",
+        cleanup=dict(threshold=(100,)),
     )
 
 
@@ -36,19 +38,20 @@ def ims(cat):
         cat,
         "lambda250k_image",
         cleanup=dict(threshold=(100,)),
-        positioner="rxes_motors_arot"
+        positioner="rxes_motors_arot",
     )
 
 
 def test_load_image(cat):
-
     # with threshold cleanup and normalization, no positioner
     image = process_images.load_images(
         [276],
         cat,
         "lambda250k_image",
-        cleanup=dict(threshold=(100,),),
-        normalize='Ion Ch 4'
+        cleanup=dict(
+            threshold=(100,),
+        ),
+        normalize="Ion Ch 4",
     )
 
     assert image.shape == (516, 516)
@@ -56,10 +59,7 @@ def test_load_image(cat):
 
     # Only positioner
     images, positioner = process_images.load_images(
-        [276],
-        cat,
-        "lambda250k_image",
-        positioner="rxes_motors_arot"
+        [276], cat, "lambda250k_image", positioner="rxes_motors_arot"
     )
 
     assert images.shape == (50, 516, 516)
@@ -76,8 +76,8 @@ def test_load_image(cat):
     image = process_images.load_images(
         [276],
         cat,
-        'lambda250k_image',
-        cleanup=dict(function=(custom_clean, (100,)))
+        "lambda250k_image",
+        cleanup=dict(function=(custom_clean, (100,))),
     )
 
     assert allclose(nanmax(image), 100)
@@ -86,14 +86,12 @@ def test_load_image(cat):
 def test_get_curvature(im):
     curvature = process_images.get_curvature(im, binx=64)
 
-    assert allclose(
-        curvature, [-8.28334263e-05, 1.33928571e-02, 1.64000000e+02]
-    )
+    assert allclose(curvature, [-8.28334263e-05, 1.33928571e-02, 1.64000000e02])
 
 
 def test_get_spectrum(im):
     spectrum = process_images.get_spectrum(
-        im, [-8.28334263e-05, 1.33928571e-02, 1.64000000e+02], biny=2
+        im, [-8.28334263e-05, 1.33928571e-02, 1.64000000e02], biny=2
     )
 
     assert spectrum.shape == (264, 2)
@@ -102,7 +100,7 @@ def test_get_spectrum(im):
 
 def test_get_spectra(ims):
     spectra = process_images.get_spectra(
-        ims[0], [-8.28334263e-05, 1.33928571e-02, 1.64000000e+02], biny=2
+        ims[0], [-8.28334263e-05, 1.33928571e-02, 1.64000000e02], biny=2
     )
 
     assert spectra.shape == (50, 264, 2)
@@ -110,13 +108,12 @@ def test_get_spectra(ims):
 
 
 def test_process_rxes(cat):
-
     # No positioner
     spectrum = process_images.process_rxes(
         [276],
         cat,
         "lambda250k_image",
-        [-8.28334263e-05, 1.33928571e-02, 1.64000000e+02],
+        [-8.28334263e-05, 1.33928571e-02, 1.64000000e02],
         positioner=None,
     )
     assert spectrum.shape == (529, 2)
@@ -126,7 +123,7 @@ def test_process_rxes(cat):
         [276],
         cat,
         "lambda250k_image",
-        [-8.28334263e-05, 1.33928571e-02, 1.64000000e+02],
+        [-8.28334263e-05, 1.33928571e-02, 1.64000000e02],
         positioner="rxes_motors_arot",
     )
     assert spectra.shape == (50, 529, 2)
