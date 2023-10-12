@@ -252,7 +252,7 @@ def setor0(*args):
     """
 
     sample = _geom_.calc._sample
-    ref = sample._sample.reflections_get()
+    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
 
     if _geom_.name == "diffract" and len(args) == 9:
@@ -365,7 +365,7 @@ def setor1(
         for it.
     """
     sample = _geom_.calc._sample
-    ref = sample._sample.reflections_get()
+    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
     if (
         not delta
