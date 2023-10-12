@@ -467,7 +467,7 @@ def set_orienting():
     in future releases.
     """
     sample = _geom_.calc._sample
-    ref = sample._sample.reflections_get()
+    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
     print(
         "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
