@@ -3,6 +3,25 @@ Release History
 ===============
 
 -------------------
+v0.4.0 (2023-10-12)
+-------------------
+
+**New features**
+
+- Create `hkl_utils` module.
+
+**Maintenance**
+
+- Fix bug in image processing for python >= 3.9.
+- Update the readthedocs documentation build process.
+- Remove defunct LGTM support, adds CodeQL.
+- Update pytest and flake8 workflow.
+
+**Pull requests**
+
+#68, #70, #71, #72, #73, #74
+
+-------------------
 v0.3.0 (2022-04-05)
 -------------------
 
