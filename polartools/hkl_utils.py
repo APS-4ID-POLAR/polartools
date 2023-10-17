@@ -79,11 +79,11 @@ def sampleList():
         orienting_refl = samples[x]._orientation_reflections
         print("Sample = {}".format(x))
         print("Lattice: ", end="")
-        [print(num, end=" ") for num in samples[x].lattice._fields]
+        (print(num, end=" ") for num in samples[x].lattice._fields)
         print("=", end=" ")
-        [print(num, end=" ") for num in samples[x].lattice]
+        (print(num, end=" ") for num in samples[x].lattice)
         print("")
-        for i, ref in enumerate(samples[x]._sample.reflections_get()):
+        for ref in samples[x]._sample.reflections_get():
             if orienting_refl[0] == ref:
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
@@ -235,7 +235,6 @@ def or_swap():
 
 
 def setor0(*args):
-
     """
     Sets the primary orientation in hklpy.
 
@@ -253,7 +252,7 @@ def setor0(*args):
     """
 
     sample = _geom_.calc._sample
-    ref = sample._sample.reflections_get()
+    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
 
     if _geom_.name == "diffract" and len(args) == 9:
@@ -357,7 +356,7 @@ def setor1(*args):
     """
 
     sample = _geom_.calc._sample
-    ref = sample._sample.reflections_get()
+    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
 
     if _geom_.name == "diffract" and len(args) == 9:
@@ -452,7 +451,7 @@ def set_orienting():
     in future releases.
     """
     sample = _geom_.calc._sample
-    ref = sample._sample.reflections_get()
+    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
     print(
         "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
