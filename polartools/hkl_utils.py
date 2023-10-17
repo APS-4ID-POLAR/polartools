@@ -339,17 +339,7 @@ def setor0(*args):
         _geom_.forward(1, 0, 0)
 
 
-def setor1(
-    delta=None,
-    th=None,
-    chi=None,
-    phi=None,
-    gamma=None,
-    mu=None,
-    h=None,
-    k=None,
-    l=None,
-):
+def setor1(*args):
     """
     Sets the primary secondary in hklpy.
 
@@ -365,20 +355,14 @@ def setor1(
         Values of H, K, L positions for current reflection. If None, it will ask
         for it.
     """
+
     sample = _geom_.calc._sample
     ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
-    if (
-        not delta
-        and not th
-        and not chi
-        and not phi
-        and not gamma
-        and not mu
-        and not h
-        and not k
-        and not l
-    ):
+
+    if _geom_.name == "diffract" and len(args) == 9:
+        h, k, l, delta, th, chi, phi, gamma, mu = args
+    else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
                 if ref == orienting_refl[1]:
@@ -912,7 +896,6 @@ def uan(delta=None, th=None):
     else:
         print("Moving to (delta,th)=({},{})".format(delta, th))
         yield from bps.mv(_geom_.delta, delta, _geom_.omega, th)
-
 
 def wh():
     """
