@@ -9,6 +9,7 @@ Auxilary HKL functions.
     ~setor0
     ~setor1
     ~set_orienting
+    ~del_reflection
     ~list_orienting
     ~or0
     ~or1
@@ -20,9 +21,12 @@ Auxilary HKL functions.
     ~uan
     ~wh
     ~setlat
+    ~read_config
+    ~write_config
 """
 
 import bluesky.plan_stubs as bps
+import pathlib
 
 try:
     import gi
@@ -30,6 +34,7 @@ try:
     gi.require_version("Hkl", "5.0")
     from hkl import cahkl
     from hkl.user import _check_geom_selected, _geom_
+    from hkl.configuration import DiffractometerConfiguration
 except ModuleNotFoundError:
     print("gi module is not installed, the hkl_utils functions will not work!")
     cahkl = _check_geom_selected = _geom_ = None
@@ -550,7 +555,7 @@ def set_orienting():
     _geom_.forward(1, 0, 0)
 
 
-def del_reflections():
+def del_reflection():
     """
     Delete existing reflection from in reflection list in hklpy.
 
@@ -637,9 +642,13 @@ def del_reflections():
         print("No reflection removed")
     elif int(remove) == or0_old or int(remove) == or1_old:
         print("Orienting reflection not removable!")
-        print("Use 'set_orienting()' to first to select different orienting reflection.")
+        print(
+            "Use 'set_orienting()' first to select different orienting reflection."
+        )
     else:
-        sample._sample.del_reflection(sample._sample.reflections_get()[int(remove)])
+        sample._sample.del_reflection(
+            sample._sample.reflections_get()[int(remove)]
+        )
 
 
 def list_orienting(all_samples=False):
@@ -1091,6 +1100,32 @@ def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
         )
         _geom_.forward(1, 0, 0)
 
-def write_config(method='File'):
-    if method == 'File':
-        print("Write file")
+
+def write_config(method="File"):
+    config = DiffractometerConfiguration(_geom_)
+    # config_file = pathlib.Path("diffractometer-config.json")
+    settings = config.export("json")
+    if method == "File":
+        print("Write configuration file")
+        with open("diffractometer-config.json", "w") as f:
+            f.write(settings)
+
+
+def read_config(method="File"):
+    config = DiffractometerConfiguration(_geom_)
+    if pathlib.Path("diffractometer-config.json").exists():
+        if method == "File":
+            print(
+                "Read configuration file '{}'.".format(
+                    "diffractometer-config.json"
+                )
+            )
+            method = input("Method ([o]verwrite/[a]ppend)? ")
+            if method == "a":
+                config.restore(
+                    pathlib.Path("diffractometer-config.json"), clear=False
+                )
+            elif method == "o":
+                config.restore(
+                    pathlib.Path("diffractometer-config.json"), clear=True
+                )
