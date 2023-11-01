@@ -550,6 +550,117 @@ def set_orienting():
     _geom_.forward(1, 0, 0)
 
 
+def del_reflections():
+    """
+    Delete existing reflection from in reflection list in hklpy.
+
+    WARNING: This function will only work with six circles. This will be fixed
+    in future releases.
+    """
+    sample = _geom_.calc._sample
+    # ref = sample._sample.reflections_get()
+    orienting_refl = sample._orientation_reflections
+    print(
+        "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
+            "#",
+            "H",
+            "K",
+            "L",
+            "Delta",
+            "Theta",
+            "Chi",
+            "Phi",
+            "Gamma",
+            "Mu",
+            "orienting",
+        )
+    )
+    for i, ref in enumerate(sample._sample.reflections_get()):
+        if orienting_refl[0] == ref:
+            or0_old = i
+            h, k, l = ref.hkl_get()
+            pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
+            print(
+                "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                    i,
+                    int(h),
+                    int(k),
+                    int(l),
+                    pos[4],
+                    pos[1],
+                    pos[2],
+                    pos[3],
+                    pos[5],
+                    pos[0],
+                    "first",
+                )
+            )
+        elif orienting_refl[1] == ref:
+            or1_old = i
+            h, k, l = ref.hkl_get()
+            pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
+            print(
+                "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                    i,
+                    int(h),
+                    int(k),
+                    int(l),
+                    pos[4],
+                    pos[1],
+                    pos[2],
+                    pos[3],
+                    pos[5],
+                    pos[0],
+                    "second",
+                )
+            )
+        else:
+            h, k, l = ref.hkl_get()
+            pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
+            print(
+                "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}  ".format(
+                    i,
+                    int(h),
+                    int(k),
+                    int(l),
+                    pos[4],
+                    pos[1],
+                    pos[2],
+                    pos[3],
+                    pos[5],
+                    pos[0],
+                )
+            )
+
+    remove = input("\nRemove reflection # ")
+    if not remove:
+        print("No reflection removed")
+    elif int(remove) == or0_old or int(remove) == or1_old:
+        print("Orienting reflection not removable!")
+        print("Use 'set_orienting()' to first to select different orienting reflection.")
+    else:
+        sample._sample.del_reflection(sample._sample.reflections_get()[int(remove)])
+    """    
+    or1 = input("Second orienting ({})? ".format(or1_old))
+    if not or1:
+        or1 = or1_old
+    sample._orientation_reflections.pop(0)
+    sample._orientation_reflections.insert(
+        0, sample._sample.reflections_get()[int(or0)]
+    )
+    sample._orientation_reflections.pop(1)
+    sample._orientation_reflections.insert(
+        1, sample._sample.reflections_get()[int(or1)]
+    )
+    print("Computing UB!")
+    sample.compute_UB(
+        sample._orientation_reflections[0], sample._orientation_reflections[1]
+    )
+    """
+
+    #_geom_.forward(1, 0, 0)
+
+
 def list_orienting(all_samples=False):
     """
     Prints the two reflections used in the UB matrix.
