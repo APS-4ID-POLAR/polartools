@@ -1105,10 +1105,13 @@ def write_config(method="File"):
     config = DiffractometerConfiguration(_geom_)
     # config_file = pathlib.Path("diffractometer-config.json")
     settings = config.export("json")
-    if method == "File":
-        print("Write configuration file")
-        with open("diffractometer-config.json", "w") as f:
-            f.write(settings)
+    if pathlib.Path("diffractometer-config.json").exists():
+        value = input("Overwrite existing configuration file (y/[n])? ")
+        if value == "y":
+            if method == "File":
+                print("Writing configuration file.")
+                with open("diffractometer-config.json", "w") as f:
+                    f.write(settings)
 
 
 def read_config(method="File"):
