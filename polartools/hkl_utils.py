@@ -256,7 +256,7 @@ def setor0(*args):
     orienting_refl = sample._orientation_reflections
 
     if _geom_.name == "diffract" and len(args) == 9:
-        h, k, l, delta, th, chi, phi, gamma, mu = args
+        delta, th, chi, phi, gamma, mu, h, k, l = args
     else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
@@ -362,7 +362,7 @@ def setor1(*args):
     orienting_refl = sample._orientation_reflections
 
     if _geom_.name == "diffract" and len(args) == 9:
-        h, k, l, delta, th, chi, phi, gamma, mu = args
+        delta, th, chi, phi, gamma, mu, h, k, l = args
     else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
@@ -640,25 +640,6 @@ def del_reflections():
         print("Use 'set_orienting()' to first to select different orienting reflection.")
     else:
         sample._sample.del_reflection(sample._sample.reflections_get()[int(remove)])
-    """    
-    or1 = input("Second orienting ({})? ".format(or1_old))
-    if not or1:
-        or1 = or1_old
-    sample._orientation_reflections.pop(0)
-    sample._orientation_reflections.insert(
-        0, sample._sample.reflections_get()[int(or0)]
-    )
-    sample._orientation_reflections.pop(1)
-    sample._orientation_reflections.insert(
-        1, sample._sample.reflections_get()[int(or1)]
-    )
-    print("Computing UB!")
-    sample.compute_UB(
-        sample._orientation_reflections[0], sample._orientation_reflections[1]
-    )
-    """
-
-    #_geom_.forward(1, 0, 0)
 
 
 def list_orienting(all_samples=False):
@@ -1109,3 +1090,7 @@ def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
             sample._orientation_reflections[1],
         )
         _geom_.forward(1, 0, 0)
+
+def write_config(method='File'):
+    if method == 'File':
+        print("Write file")
