@@ -1135,3 +1135,41 @@ def read_config(method="File"):
                 config.restore(
                     pathlib.Path("diffractometer-config.json"), clear=True
                 )
+
+
+from inspect import getmembers, isfunction
+from polartools import (
+    hkl_utils,
+    load_data,
+    diffraction,
+    absorption,
+    pressure_calibration,
+    process_images,
+    area_detector_handlers,
+    manage_database,
+)
+from apstools import utils
+
+
+def functions(select="all"):
+    if select == "all":
+        packages = [
+            hkl_utils,
+            load_data,
+            diffraction,
+            absorption,
+            pressure_calibration,
+            process_images,
+            area_detector_handlers,
+            manage_database,
+            utils,
+        ]
+    elif select == "diffraction":
+        packages = [hkl_utils, load_data, diffraction, utils]
+    for item in packages:
+        list = getmembers(item, isfunction)
+        print("-" * len(item.__name__))
+        print(item.__name__)
+        print("-" * len(item.__name__))
+        for funct in list:
+            print(funct[0])
