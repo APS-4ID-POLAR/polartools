@@ -1189,9 +1189,9 @@ def functions(select=None):
         ]
 
     for item in packages:
-        list = getmembers(item, isfunction)
+        function_list = getmembers(item, isfunction)
         print("-" * len(item.__name__))
         print(item.__name__)
         print("-" * len(item.__name__))
-        for funct in list:
+        for funct in function_list:
             print(funct[0])
