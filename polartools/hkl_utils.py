@@ -1101,13 +1101,16 @@ def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
         _geom_.forward(1, 0, 0)
 
 
-def write_config(method="File"):
+def write_config(method="File", overwrite=False):
     config = DiffractometerConfiguration(_geom_)
     # config_file = pathlib.Path("diffractometer-config.json")
     settings = config.export("json")
     if pathlib.Path("diffractometer-config.json").exists():
-        value = input("Overwrite existing configuration file (y/[n])? ")
-        if value == "y":
+        if not overwrite:
+            value = input("Overwrite existing configuration file (y/[n])? ")
+            if value == "y":
+                overwrite = True
+        if overwrite:
             if method == "File":
                 print("Writing configuration file.")
                 with open("diffractometer-config.json", "w") as f:
