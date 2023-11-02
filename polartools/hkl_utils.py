@@ -23,6 +23,7 @@ Auxilary HKL functions.
     ~setlat
     ~read_config
     ~write_config
+    ~functions
 """
 import bluesky.plan_stubs as bps
 import pathlib
@@ -1102,6 +1103,16 @@ def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
 
 
 def write_config(method="File", overwrite=False):
+    """
+    Write configuration from file in current directory.
+
+    Parameters
+    ----------
+    method: string, optional
+        right now only "File" possible, but later PV or other
+    overwrite: Boolean, optional
+        asks if existing file hould be overwritten
+    """
     config = DiffractometerConfiguration(_geom_)
     # config_file = pathlib.Path("diffractometer-config.json")
     settings = config.export("json")
@@ -1118,6 +1129,14 @@ def write_config(method="File", overwrite=False):
 
 
 def read_config(method="File"):
+    """
+    Read configuration from file in current directory.
+
+    Parameters
+    ----------
+    method: string, optional
+        right now only "File" possible, but later PV or other
+    """
     config = DiffractometerConfiguration(_geom_)
     if pathlib.Path("diffractometer-config.json").exists():
         if method == "File":
@@ -1138,7 +1157,6 @@ def read_config(method="File"):
 
 
 def functions(select=None):
-
     """
     List available functions.
 
