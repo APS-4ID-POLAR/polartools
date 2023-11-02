@@ -1149,6 +1149,7 @@ from polartools import (
     manage_database,
 )
 from apstools import utils
+from hklpy.hkl import user, util
 
 
 def functions(select="all"):
@@ -1163,9 +1164,14 @@ def functions(select="all"):
             area_detector_handlers,
             manage_database,
             utils,
+            user,
+            util,
         ]
     elif select == "diffraction":
         packages = [hkl_utils, load_data, diffraction, utils]
+    elif select == "hklpy":
+        packages = [user, util]
+
     for item in packages:
         list = getmembers(item, isfunction)
         print("-" * len(item.__name__))
