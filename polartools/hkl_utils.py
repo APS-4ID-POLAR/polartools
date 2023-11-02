@@ -24,7 +24,6 @@ Auxilary HKL functions.
     ~read_config
     ~write_config
 """
-
 import bluesky.plan_stubs as bps
 import pathlib
 
@@ -42,8 +41,6 @@ from polartools import (
 from apstools import utils
 from hklpy.hkl import user, util
 
-
-
 try:
     import gi
 
@@ -54,7 +51,6 @@ try:
 except ModuleNotFoundError:
     print("gi module is not installed, the hkl_utils functions will not work!")
     cahkl = _check_geom_selected = _geom_ = None
-
 
 """
 Most of the functions below are only working for the six circle diffractometer
@@ -1152,6 +1148,7 @@ def read_config(method="File"):
                     pathlib.Path("diffractometer-config.json"), clear=True
                 )
 
+
 def functions(select="all"):
     if select == "all":
         packages = [
@@ -1172,7 +1169,9 @@ def functions(select="all"):
     elif select == "hklpy":
         packages = [user, util]
     else:
-        raise ValueError(f"select has to be 'all', 'diffraction', or 'hklpy', but {select} was entered.")
+        raise ValueError(
+            f"select has to be 'all', 'diffraction', or 'hklpy', but {select} was entered."
+        )
 
     for item in packages:
         list = getmembers(item, isfunction)
