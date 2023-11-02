@@ -28,6 +28,22 @@ Auxilary HKL functions.
 import bluesky.plan_stubs as bps
 import pathlib
 
+from inspect import getmembers, isfunction
+from polartools import (
+    hkl_utils,
+    load_data,
+    diffraction,
+    absorption,
+    pressure_calibration,
+    process_images,
+    area_detector_handlers,
+    manage_database,
+)
+from apstools import utils
+from hklpy.hkl import user, util
+
+
+
 try:
     import gi
 
@@ -1136,22 +1152,6 @@ def read_config(method="File"):
                     pathlib.Path("diffractometer-config.json"), clear=True
                 )
 
-
-from inspect import getmembers, isfunction
-from polartools import (
-    hkl_utils,
-    load_data,
-    diffraction,
-    absorption,
-    pressure_calibration,
-    process_images,
-    area_detector_handlers,
-    manage_database,
-)
-from apstools import utils
-from hklpy.hkl import user, util
-
-
 def functions(select="all"):
     if select == "all":
         packages = [
@@ -1171,6 +1171,8 @@ def functions(select="all"):
         packages = [hkl_utils, load_data, diffraction, utils]
     elif select == "hklpy":
         packages = [user, util]
+    else:
+        raise ValueError(f"select has to be 'all', 'diffraction', or 'hklpy', but {select} was entered.")
 
     for item in packages:
         list = getmembers(item, isfunction)
