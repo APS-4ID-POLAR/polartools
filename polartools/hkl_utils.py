@@ -1137,8 +1137,25 @@ def read_config(method="File"):
                 )
 
 
-def functions(select="all"):
-    if select == "all":
+def functions(select=None):
+
+    """
+    List available functions.
+
+    Parameters
+    ----------
+    select: string, optional
+        available choices: diffraction, absorption and hklpy
+        if None, functions of all vailable packages are shown
+    """
+
+    if select == "absorption":
+        packages = [absorption]
+    elif select == "diffraction":
+        packages = [hkl_utils, load_data, diffraction, utils]
+    elif select == "hklpy":
+        packages = [user, util]
+    else:
         packages = [
             hkl_utils,
             load_data,
@@ -1152,14 +1169,6 @@ def functions(select="all"):
             user,
             util,
         ]
-    elif select == "diffraction":
-        packages = [hkl_utils, load_data, diffraction, utils]
-    elif select == "hklpy":
-        packages = [user, util]
-    else:
-        raise ValueError(
-            f"select has to be 'all', 'diffraction', or 'hklpy', but {select} was entered."
-        )
 
     for item in packages:
         list = getmembers(item, isfunction)
