@@ -125,10 +125,10 @@ def sampleList():
                             int(h),
                             int(k),
                             int(l),
-                            pos[4],
+                            pos[3],
+                            pos[0],
                             pos[1],
                             pos[2],
-                            pos[3],
                         )
                     )
                 else:
@@ -161,10 +161,10 @@ def sampleList():
                             int(h),
                             int(k),
                             int(l),
-                            pos[4],
+                            pos[3],
+                            pos[0],
                             pos[1],
                             pos[2],
-                            pos[3],
                         )
                     )
                 else:
