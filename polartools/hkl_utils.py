@@ -1016,7 +1016,7 @@ def setlat(*args):
         gamma = (input("Lattice gamma ({})? ".format(lattice[5]))) or lattice[5]
     else:
         raise ValueError(
-            f"either no arguments or a, b, c, alpha, beta, gamma need to be provided."
+            "either no arguments or a, b, c, alpha, beta, gamma need to be provided."
         )
 
     _geom_.calc.sample.lattice = (
