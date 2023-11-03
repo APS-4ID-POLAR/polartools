@@ -96,44 +96,77 @@ def sampleList():
     for x in list(samples.keys())[1:]:
         orienting_refl = samples[x]._orientation_reflections
         print("Sample = {}".format(x))
-        print("Lattice: ", end="")
+        print("Lattice:", end=" ")
         print(*samples[x].lattice._fields, sep=", ", end=" = ")
         print(*samples[x].lattice, sep=", ")
         for ref in samples[x]._sample.reflections_get():
             if orienting_refl[0] == ref:
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                print(
-                    "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   ".format(
-                        "or0",
-                        int(h),
-                        int(k),
-                        int(l),
-                        pos[4],
-                        pos[1],
-                        pos[2],
-                        pos[3],
-                        pos[5],
-                        pos[0],
+                if _geom_.name == "diffract":
+                    print(
+                        "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   ".format(
+                            "or0",
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[4],
+                            pos[1],
+                            pos[2],
+                            pos[3],
+                            pos[5],
+                            pos[0],
+                        )
                     )
-                )
+                elif _geom_.name == "e4c":
+                    print(
+                        "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   ".format(
+                            "or0",
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[4],
+                            pos[1],
+                            pos[2],
+                            pos[3],
+                       )
+                    )
+                else:
+                    raise ValueError("Geometry {} not supported.".format(_geom_.name))
+
             elif orienting_refl[1] == ref:
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                print(
-                    "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}  ".format(
-                        "or1",
-                        int(h),
-                        int(k),
-                        int(l),
-                        pos[4],
-                        pos[1],
-                        pos[2],
-                        pos[3],
-                        pos[5],
-                        pos[0],
+                if _geom_.name == "diffract":
+                    print(
+                        "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}  ".format(
+                            "or1",
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[4],
+                            pos[1],
+                            pos[2],
+                            pos[3],
+                            pos[5],
+                            pos[0],
+                        )
                     )
-                )
+                elif _geom_.name == "e4c":
+                    print(
+                        "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}  ".format(
+                            "or1",
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[4],
+                            pos[1],
+                            pos[2],
+                            pos[3],
+                        )
+                    )
+                else:
+                    raise ValueError("Geometry {} not supported.".format(_geom_.name))
         print(
             "======================================================================"
         )
