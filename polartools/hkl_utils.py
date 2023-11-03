@@ -73,16 +73,16 @@ def sampleChange(sample_key=None):
     if sample_key is None:
         d = _geom_.calc._samples.keys()
         print("Sample keys:", list(d))
-        sample_key = input(
-            "\nEnter sample key [{}]: ".format(_geom_.calc.sample.name)
+        sample_key = (
+            input("\nEnter sample key [{}]: ".format(_geom_.calc.sample.name))
+            or _geom_.calc.sample.name
         )
-        if not sample_key:
-            sample_key = _geom_.calc.sample.name
     try:
         _geom_.calc.sample = _geom_.calc._samples[
             sample_key
         ]  # define the current sample
         print("\nCurrent sample: " + _geom_.calc.sample.name)
+        # to be done: check if orienting reflections exist
         compute_UB()
 
     except KeyError:
@@ -300,33 +300,15 @@ def setor0(*args):
             old_l = 0
 
         print("Enter primary-reflection angles:")
-        delta = input("Delta = [{:6.2f}]: ".format(old_delta))
-        if not delta:
-            delta = old_delta
-        th = input("Theta = [{:6.2f}]: ".format(old_th))
-        if not th:
-            th = old_th
-        chi = input("Chi = [{:6.2f}]: ".format(old_chi))
-        if not chi:
-            chi = old_chi
-        phi = input("Phi = [{:6.2f}]: ".format(old_phi))
-        if not phi:
-            phi = old_phi
-        gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma))
-        if not gamma:
-            gamma = old_gamma
-        mu = input("Mu = [{:6.2f}]: ".format(old_mu))
-        if not mu:
-            mu = old_mu
-        h = input("H = [{}]: ".format(old_h))
-        if not h:
-            h = old_h
-        k = input("K = [{}]: ".format(old_k))
-        if not k:
-            k = old_k
-        l = input("L = [{}]: ".format(old_l))
-        if not l:
-            l = old_l
+        delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
+        th = input("Theta = [{:6.2f}]: ".format(old_th)) or old_th
+        chi = input("Chi = [{:6.2f}]: ".format(old_chi)) or old_chi
+        phi = input("Phi = [{:6.2f}]: ".format(old_phi)) or old_phi
+        gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
+        mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
+        h = input("H = [{}]: ".format(old_h)) or old_h
+        k = input("K = [{}]: ".format(old_k)) or old_k
+        l = input("L = [{}]: ".format(old_l)) or old_l
 
     sample.add_reflection(
         float(h),
@@ -404,33 +386,15 @@ def setor1(*args):
             old_l = 0
 
         print("Enter secondary-reflection angles:")
-        delta = input("Delta = [{:6.2f}]: ".format(old_delta))
-        if not delta:
-            delta = old_delta
-        th = input("Theta = [{:6.2f}]: ".format(old_th))
-        if not th:
-            th = old_th
-        chi = input("Chi = [{:6.2f}]: ".format(old_chi))
-        if not chi:
-            chi = old_chi
-        phi = input("Phi = [{:6.2f}]: ".format(old_phi))
-        if not phi:
-            phi = old_phi
-        gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma))
-        if not gamma:
-            gamma = old_gamma
-        mu = input("Mu = [{:6.2f}]: ".format(old_mu))
-        if not mu:
-            mu = old_mu
-        h = input("H = [{}]: ".format(old_h))
-        if not h:
-            h = old_h
-        k = input("K = [{}]: ".format(old_k))
-        if not k:
-            k = old_k
-        l = input("L = [{}]: ".format(old_l))
-        if not l:
-            l = old_l
+        delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
+        th = input("Theta = [{:6.2f}]: ".format(old_th)) or old_th
+        chi = input("Chi = [{:6.2f}]: ".format(old_chi)) or old_chi
+        phi = input("Phi = [{:6.2f}]: ".format(old_phi)) or old_phi
+        gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
+        mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
+        h = input("H = [{}]: ".format(old_h)) or old_h
+        k = input("K = [{}]: ".format(old_k)) or old_k
+        l = input("L = [{}]: ".format(old_l)) or old_l
 
     sample.add_reflection(
         float(h),
@@ -543,12 +507,8 @@ def set_orienting():
                 )
             )
 
-    or0 = input("\nFirst orienting ({})? ".format(or0_old))
-    if not or0:
-        or0 = or0_old
+    or0 = input("\nFirst orienting ({})? ".format(or0_old)) or or0_old
     or1 = input("Second orienting ({})? ".format(or1_old))
-    if not or1:
-        or1 = or1_old
     sample._orientation_reflections.pop(0)
     sample._orientation_reflections.insert(
         0, sample._sample.reflections_get()[int(or0)]
@@ -758,17 +718,9 @@ def or0(h=None, k=None, l=None):
             hr = 2
             kr = 0
             lr = 0
-
-        h = input("H ({})? ".format(hr)) if not h else h
-        if not h:
-            h = hr
-        k = input("K ({})? ".format(kr)) if not k else k
-        if not k:
-            k = kr
-        l = input("L ({})? ".format(lr)) if not l else l
-        if not l:
-            l = lr
-
+        h = (input("H ({})? ".format(hr)) if not h else h) or hr
+        k = (input("K ({})? ".format(kr)) if not k else k) or kr
+        l = (input("L ({})? ".format(lr)) if not l else l) or lr
     sample.add_reflection(
         float(h),
         float(k),
@@ -822,17 +774,9 @@ def or1(h=None, k=None, l=None):
             hr = 0
             kr = 2
             lr = 0
-
-        h = input("H ({})? ".format(hr)) if not h else h
-        if not h:
-            h = hr
-        k = input("K ({})? ".format(kr)) if not k else k
-        if not k:
-            k = kr
-        l = input("L ({})? ".format(lr)) if not l else l
-        if not l:
-            l = lr
-
+        h = (input("H ({})? ".format(hr)) if not h else h) or hr
+        k = (input("K ({})? ".format(kr)) if not k else k) or kr
+        l = (input("L ({})? ".format(lr)) if not l else l) or lr
     sample.add_reflection(
         float(h),
         float(k),
@@ -923,9 +867,9 @@ def setmode(mode=None):
         _geom_.calc.engine.mode = _geom_.calc.engine.modes[int(mode) - 1]
         print("\nSet mode to {}".format(mode))
     else:
-        mode = input("\nMode ({})? ".format(current_index + 1))
-        if not mode:
-            mode = current_index - 1
+        mode = input("\nMode ({})? ".format(current_index + 1)) or (
+            current_index + 1
+        )
         _geom_.calc.engine.mode = _geom_.calc.engine.modes[int(mode) - 1]
 
 
@@ -1047,7 +991,7 @@ def wh():
     )
 
 
-def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
+def setlat(*args):
     """
     Set the lattice constants.
 
@@ -1061,28 +1005,19 @@ def setlat(a=None, b=None, c=None, alpha=None, beta=None, gamma=None):
     sample = _geom_.calc._samples[current_sample]
     lattice = [getattr(sample.lattice, parm) for parm in sample.lattice._fields]
 
-    a = input("Lattice a ({})? ".format(lattice[0])) if not a else a
-    if not a:
-        a = lattice[0]
-    b = input("Lattice b ({})? ".format(lattice[1])) if not b else b
-    if not b:
-        b = lattice[1]
-    c = input("Lattice c ({})? ".format(lattice[2])) if not c else c
-    if not c:
-        c = lattice[2]
-    alpha = (
-        input("Lattice alpha ({})? ".format(lattice[3])) if not alpha else alpha
-    )
-    if not alpha:
-        alpha = lattice[3]
-    beta = input("Lattice beta ({})? ".format(lattice[4])) if not beta else beta
-    if not beta:
-        beta = lattice[4]
-    gamma = (
-        input("Lattice gamma ({})? ".format(lattice[5])) if not gamma else gamma
-    )
-    if not gamma:
-        gamma = lattice[5]
+    if len(args) == 6:
+        a, b, c, alpha, beta, gamma = args
+    elif len(args) == 0:
+        a = (input("Lattice a ({})? ".format(lattice[0]))) or lattice[0]
+        b = (input("Lattice b ({})? ".format(lattice[1]))) or lattice[1]
+        c = (input("Lattice c ({})? ".format(lattice[2]))) or lattice[2]
+        alpha = (input("Lattice alpha ({})? ".format(lattice[3]))) or lattice[3]
+        beta = (input("Lattice beta ({})? ".format(lattice[4]))) or lattice[4]
+        gamma = (input("Lattice gamma ({})? ".format(lattice[5]))) or lattice[5]
+    else:
+        raise ValueError(
+            f"either no arguments or a, b, c, alpha, beta, gamma need to be provided."
+        )
 
     _geom_.calc.sample.lattice = (
         float(a),
