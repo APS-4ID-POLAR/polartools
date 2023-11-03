@@ -129,10 +129,12 @@ def sampleList():
                             pos[1],
                             pos[2],
                             pos[3],
-                       )
+                        )
                     )
                 else:
-                    raise ValueError("Geometry {} not supported.".format(_geom_.name))
+                    raise ValueError(
+                        "Geometry {} not supported.".format(_geom_.name)
+                    )
 
             elif orienting_refl[1] == ref:
                 h, k, l = ref.hkl_get()
@@ -166,7 +168,9 @@ def sampleList():
                         )
                     )
                 else:
-                    raise ValueError("Geometry {} not supported.".format(_geom_.name))
+                    raise ValueError(
+                        "Geometry {} not supported.".format(_geom_.name)
+                    )
         print(
             "======================================================================"
         )
