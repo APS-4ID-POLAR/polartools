@@ -506,7 +506,7 @@ def set_orienting():
             )
 
     or0 = input("\nFirst orienting ({})? ".format(or0_old)) or or0_old
-    or1 = input("Second orienting ({})? ".format(or1_old))
+    or1 = input("Second orienting ({})? ".format(or1_old)) or or1_old
     sample._orientation_reflections.pop(0)
     sample._orientation_reflections.insert(
         0, sample._sample.reflections_get()[int(or0)]
