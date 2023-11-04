@@ -198,77 +198,151 @@ def list_reflections(all_samples=False):
     for sample in samples:
         print("Sample: {}".format(sample.name))
         orienting_refl = sample._orientation_reflections
-        print(
-            "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
-                "#",
-                "H",
-                "K",
-                "L",
-                "Delta",
-                "Theta",
-                "Chi",
-                "Phi",
-                "Gamma",
-                "Mu",
-                "orienting",
+        if _geom_.name == "diffract":
+            print(
+                "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
+                    "#",
+                    "H",
+                    "K",
+                    "L",
+                    "Delta",
+                    "Theta",
+                    "Chi",
+                    "Phi",
+                    "Gamma",
+                    "Mu",
+                    "orienting",
+                )
             )
-        )
+        elif _geom_.name == "e4c":
+            print(
+                "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
+                    "#",
+                    "H",
+                    "K",
+                    "L",
+                    "Two Theta",
+                    "Theta",
+                    "Chi",
+                    "Phi",
+                    "orienting",
+                )
+            )
+        else:
+            raise ValueError("Geometry {} not supported.".format(_geom_.name))
+
         for i, ref in enumerate(sample._sample.reflections_get()):
             if orienting_refl[0] == ref:
                 # or0_old = i
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                print(
-                    "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
-                        i,
-                        int(h),
-                        int(k),
-                        int(l),
-                        pos[4],
-                        pos[1],
-                        pos[2],
-                        pos[3],
-                        pos[5],
-                        pos[0],
-                        "first",
+                if _geom_.name == "diffract":
+                    print(
+                        "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                            i,
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[4],
+                            pos[1],
+                            pos[2],
+                            pos[3],
+                            pos[5],
+                            pos[0],
+                            "first",
+                        )
                     )
-                )
+                elif _geom_.name == "e4c":
+                    print(
+                        "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                            i,
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[3],
+                            pos[0],
+                            pos[1],
+                            pos[2],
+                            "first",
+                        )
+                    )
+                else:
+                    raise ValueError(
+                        "Geometry {} not supported.".format(_geom_.name)
+                    )
             elif orienting_refl[1] == ref:
                 # or1_old = i
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                print(
-                    "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
-                        i,
-                        int(h),
-                        int(k),
-                        int(l),
-                        pos[4],
-                        pos[1],
-                        pos[2],
-                        pos[3],
-                        pos[5],
-                        pos[0],
-                        "second",
+                if _geom_.name == "diffract":
+                    print(
+                        "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                            i,
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[4],
+                            pos[1],
+                            pos[2],
+                            pos[3],
+                            pos[5],
+                            pos[0],
+                            "second",
+                        )
                     )
-                )
+                elif _geom_.name == "e4c":
+                    print(
+                        "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
+                            i,
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[3],
+                            pos[0],
+                            pos[1],
+                            pos[2],
+                            "second",
+                        )
+                    )
+                else:
+                    raise ValueError(
+                        "Geometry {} not supported.".format(_geom_.name)
+                    )
             else:
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                print(
-                    "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
-                        i,
-                        int(h),
-                        int(k),
-                        int(l),
-                        pos[4],
-                        pos[1],
-                        pos[2],
-                        pos[3],
-                        pos[5],
-                        pos[0],
+                if _geom_.name == "diffract":
+                    print(
+                        "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
+                            i,
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[4],
+                            pos[1],
+                            pos[2],
+                            pos[3],
+                            pos[5],
+                            pos[0],
+                        )
                     )
-                )
+                if _geom_.name == "e4c":
+                    print(
+                        "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
+                            i,
+                            int(h),
+                            int(k),
+                            int(l),
+                            pos[3],
+                            pos[0],
+                            pos[1],
+                            pos[2],
+                        )
+                    )
+                else:
+                    raise ValueError(
+                        "Geometry {} not supported.".format(_geom_.name)
+                    )
         if len(samples) > 1 and all_samples:
             print(
                 "============================================================================"
