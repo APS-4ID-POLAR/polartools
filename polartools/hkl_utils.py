@@ -30,8 +30,9 @@ import bluesky.plan_stubs as bps
 import pathlib
 import sys
 
+"""
 from inspect import getmembers, isfunction
-"""from polartools import (
+from polartools import (
     hkl_utils,
     load_data,
     diffraction,
@@ -42,8 +43,10 @@ from inspect import getmembers, isfunction
     manage_database,
 )
 from apstools import utils
-"""
+
 from hklpy.hkl import user, util
+"""
+
 from instrument.framework import RE
 import fileinput
 
@@ -66,7 +69,7 @@ Most of the functions below are only working for the six circle diffractometer
 """
 
 
-def set_experiment(user=None, proposal_id=None, sample=None):
+def set_experiment(username=None, proposal_id=None, sample=None):
     """
     Set experiment parameters.
 
