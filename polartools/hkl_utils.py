@@ -31,7 +31,7 @@ import pathlib
 import sys
 
 from inspect import getmembers, isfunction
-from polartools import (
+"""from polartools import (
     hkl_utils,
     load_data,
     diffraction,
@@ -42,6 +42,7 @@ from polartools import (
     manage_database,
 )
 from apstools import utils
+"""
 from hklpy.hkl import user, util
 from instrument.framework import RE
 import fileinput
