@@ -29,24 +29,6 @@ Auxilary HKL functions.
 import bluesky.plan_stubs as bps
 import pathlib
 import sys
-
-"""
-from inspect import getmembers, isfunction
-from polartools import (
-    hkl_utils,
-    load_data,
-    diffraction,
-    absorption,
-    pressure_calibration,
-    process_images,
-    area_detector_handlers,
-    manage_database,
-)
-from apstools import utils
-
-from hklpy.hkl import user, util
-"""
-
 from instrument.framework import RE
 import fileinput
 
@@ -69,7 +51,7 @@ Most of the functions below are only working for the six circle diffractometer
 """
 
 
-def set_experiment(username=None, proposal_id=None, sample=None):
+def set_experiment(user=None, proposal_id=None, sample=None):
     """
     Set experiment parameters.
 
@@ -1280,6 +1262,23 @@ def read_config(method="File"):
                     pathlib.Path("diffractometer-config.json"), clear=True
                 )
 
+
+"""
+from inspect import getmembers, isfunction
+from polartools import (
+    hkl_utils,
+    load_data,
+    diffraction,
+    absorption,
+    pressure_calibration,
+    process_images,
+    area_detector_handlers,
+    manage_database,
+)
+from apstools import utils
+
+from hklpy.hkl import user, util
+"""
 
 """def list_functions(select=None):
 
