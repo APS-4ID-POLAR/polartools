@@ -63,6 +63,8 @@ path = pathlib.Path("startup_experiment.py")
 Most of the functions below are only working for the six circle diffractometer
 (diffract) right now. This will be changed ...
 """
+
+
 def set_experiment(user=None, proposal_id=None, sample=None):
     """
     Set experiment parameters.
@@ -73,11 +75,11 @@ def set_experiment(user=None, proposal_id=None, sample=None):
     proposal_id: integer, optional
     sample: string, optional
     """
-    #print("User = {}".format(_user))
+    # print("User = {}".format(_user))
     _user = user if user else RE.md["user"]
     _proposal_id = proposal_id if proposal_id else RE.md["proposal_id"]
     _sample = sample if sample else RE.md["sample"]
-    #print("User = {}".format(_user))
+    # print("User = {}".format(_user))
     user = _user if user else input(f"User [{_user}]: ") or _user
     proposal_id = (
         _proposal_id
@@ -89,7 +91,7 @@ def set_experiment(user=None, proposal_id=None, sample=None):
     RE.md["user"] = user
     RE.md["proposal_id"] = proposal_id
     RE.md["sample"] = sample
-    #print("Path ",path.name)
+    # print("Path ",path.name)
 
     if path.exists():
         for line in fileinput.input([path.name], inplace=True):
