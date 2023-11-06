@@ -2,6 +2,7 @@
 Auxilary HKL functions.
 
 .. autosummary::
+    ~set_experiment
     ~sampleChange
     ~sampleList
     ~list_reflections
@@ -27,6 +28,7 @@ Auxilary HKL functions.
 """
 import bluesky.plan_stubs as bps
 import pathlib
+import sys
 
 from inspect import getmembers, isfunction
 from polartools import (
@@ -41,6 +43,8 @@ from polartools import (
 )
 from apstools import utils
 from hklpy.hkl import user, util
+from instrument.framework import RE
+import fileinput
 
 try:
     import gi
@@ -53,10 +57,56 @@ except ModuleNotFoundError:
     print("gi module is not installed, the hkl_utils functions will not work!")
     cahkl = _check_geom_selected = _geom_ = None
 
+path = pathlib.Path("startup_experiment.py")
+
 """
 Most of the functions below are only working for the six circle diffractometer
 (diffract) right now. This will be changed ...
 """
+def set_experiment(user=None, proposal_id=None, sample=None):
+    """
+    Set experiment parameters.
+
+    Parameters
+    ----------
+    user : string, optional
+    proposal_id: integer, optional
+    sample: string, optional
+    """
+    #print("User = {}".format(_user))
+    _user = user if user else RE.md["user"]
+    _proposal_id = proposal_id if proposal_id else RE.md["proposal_id"]
+    _sample = sample if sample else RE.md["sample"]
+    #print("User = {}".format(_user))
+    user = _user if user else input(f"User [{_user}]: ") or _user
+    proposal_id = (
+        _proposal_id
+        if proposal_id
+        else input(f"Proposal ID [{_proposal_id}]: ") or _proposal_id
+    )
+    sample = _sample if sample else input(f"Sample [{_sample}]: ") or _sample
+
+    RE.md["user"] = user
+    RE.md["proposal_id"] = proposal_id
+    RE.md["sample"] = sample
+    #print("Path ",path.name)
+
+    if path.exists():
+        for line in fileinput.input([path.name], inplace=True):
+            if line.strip().startswith("RE.md['user']"):
+                line = f"RE.md['user']='{user}'\n"
+            if line.strip().startswith("RE.md['proposal_id']"):
+                line = f"RE.md['proposal_id']='{proposal_id}'\n"
+            if line.strip().startswith("RE.md['sample']"):
+                line = f"RE.md['sample']='{sample}'\n"
+            sys.stdout.write(line)
+    else:
+        f = open(path.name, "w")
+        f.write("from instrument.collection import RE\n")
+        f.write(f"RE.md['user']='{user}'\n")
+        f.write(f"RE.md['proposal_id']='{proposal_id}'\n")
+        f.write(f"RE.md['sample']='{sample}'\n")
+        f.close()
 
 
 def sampleChange(sample_key=None):
@@ -326,7 +376,7 @@ def list_reflections(all_samples=False):
                             pos[0],
                         )
                     )
-                if _geom_.name == "e4c":
+                elif _geom_.name == "e4c":
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
                             i,
