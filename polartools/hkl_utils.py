@@ -24,7 +24,7 @@ Auxilary HKL functions.
     ~setlat
     ~read_config
     ~write_config
-    ~functions
+    ~list_functions
 """
 import bluesky.plan_stubs as bps
 import pathlib
@@ -170,7 +170,7 @@ def sampleList():
                             pos[0],
                         )
                     )
-                elif _geom_.name == "e4c":
+                elif _geom_.name == "fourc":
                     print(
                         "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   ".format(
                             "or0",
@@ -206,7 +206,7 @@ def sampleList():
                             pos[0],
                         )
                     )
-                elif _geom_.name == "e4c":
+                elif _geom_.name == "fourc":
                     print(
                         "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}  ".format(
                             "or1",
@@ -266,7 +266,7 @@ def list_reflections(all_samples=False):
                     "orienting",
                 )
             )
-        elif _geom_.name == "e4c":
+        elif _geom_.name == "fourc":
             print(
                 "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
                     "#",
@@ -304,7 +304,7 @@ def list_reflections(all_samples=False):
                             "first",
                         )
                     )
-                elif _geom_.name == "e4c":
+                elif _geom_.name == "fourc":
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                             i,
@@ -342,7 +342,7 @@ def list_reflections(all_samples=False):
                             "second",
                         )
                     )
-                elif _geom_.name == "e4c":
+                elif _geom_.name == "fourc":
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                             i,
@@ -378,7 +378,7 @@ def list_reflections(all_samples=False):
                             pos[0],
                         )
                     )
-                elif _geom_.name == "e4c":
+                elif _geom_.name == "fourc":
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
                             i,
@@ -436,10 +436,12 @@ def setor0(*args):
 
     if _geom_.name == "diffract" and len(args) == 9:
         delta, th, chi, phi, gamma, mu, h, k, l = args
+    elif _geom_.name == "fourc" and len(args) == 7:
+        delta, th, chi, phi, h, k, l = args
     else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
-                if ref == orienting_refl[0]:
+                if ref == orienting_refl[0] and _geom_.name == "diffract":
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -448,42 +450,65 @@ def setor0(*args):
                     old_gamma = pos[5]
                     old_mu = pos[0]
                     old_h, old_k, old_l = ref.hkl_get()
+                elif ref == orienting_refl[0] and _geom_.name == "fourc":
+                    pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
+                    old_delta = pos[3]
+                    old_th = pos[0]
+                    old_chi = pos[1]
+                    old_phi = pos[2]
+                    old_h, old_k, old_l = ref.hkl_get()
 
         else:
             old_delta = 60
             old_th = 30
             old_chi = 0
             old_phi = 0
-            old_gamma = 0
-            old_mu = 0
             old_h = 4
             old_k = 0
             old_l = 0
+            if _geom_.name == "diffract":
+                old_gamma = 0
+                old_mu = 0
 
         print("Enter primary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
         th = input("Theta = [{:6.2f}]: ".format(old_th)) or old_th
         chi = input("Chi = [{:6.2f}]: ".format(old_chi)) or old_chi
         phi = input("Phi = [{:6.2f}]: ".format(old_phi)) or old_phi
-        gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
-        mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
+        if _geom_.name == "diffract":
+            gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
+            mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
 
-    sample.add_reflection(
-        float(h),
-        float(k),
-        float(l),
-        position=_geom_.calc.Position(
-            delta=float(delta),
-            omega=float(th),
-            chi=float(chi),
-            phi=float(phi),
-            gamma=float(gamma),
-            mu=float(mu),
-        ),
-    )
+    if _geom_.name == "diffract":
+        sample.add_reflection(
+            float(h),
+            float(k),
+            float(l),
+            position=_geom_.calc.Position(
+                delta=float(delta),
+                omega=float(th),
+                chi=float(chi),
+                phi=float(phi),
+                gamma=float(gamma),
+                mu=float(mu),
+            ),
+        )
+        if _geom_.name == "fourc":
+            sample.add_reflection(
+                float(h),
+                float(k),
+                float(l),
+                position=_geom_.calc.Position(
+                    delta=float(delta),
+                    omega=float(th),
+                    chi=float(chi),
+                    phi=float(phi),
+                ),
+            )
+
     if len(orienting_refl) > 1:
         sample._orientation_reflections.pop(0)
     sample._orientation_reflections.insert(
@@ -1252,16 +1277,8 @@ def read_config(method="File"):
                 )
 
 
-def functions(select=None):
-    """
-    List available functions.
+"""def list_functions(select=None):
 
-    Parameters
-    ----------
-    select: string, optional
-        available choices: diffraction, absorption and hklpy
-        if None, functions of all vailable packages are shown
-    """
 
     if select == "absorption":
         packages = [absorption]
@@ -1291,3 +1308,4 @@ def functions(select=None):
         print("-" * len(item.__name__))
         for funct in function_list:
             print(funct[0])
+"""
