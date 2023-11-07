@@ -666,7 +666,6 @@ def set_orienting():
     else:
         raise ValueError("Geometry {} not supported.".format(_geom_.name))
 
-
     for i, ref in enumerate(sample._sample.reflections_get()):
         if orienting_refl[0] == ref:
             or0_old = i
@@ -839,7 +838,6 @@ def del_reflection():
         )
     else:
         raise ValueError("Geometry {} not supported.".format(_geom_.name))
-
 
     for i, ref in enumerate(sample._sample.reflections_get()):
         if orienting_refl[0] == ref:
@@ -1020,8 +1018,6 @@ def list_orienting(all_samples=False):
             )
         else:
             raise ValueError("Geometry {} not supported.".format(_geom_.name))
-
-
 
     for i, ref in enumerate(sample._sample.reflections_get()):
         if orienting_refl[0] == ref:
@@ -1346,11 +1342,7 @@ def ca(h, k, l):
             )
         )
     if _geom_.name == "fourc":
-        print(
-            "\n{:>9}{:>9}{:>9}{:>9}".format(
-                "Delta", "Theta", "Chi", "Phi"
-            )
-        )
+        print("\n{:>9}{:>9}{:>9}{:>9}".format("Delta", "Theta", "Chi", "Phi"))
         print(
             "{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}".format(
                 pos[3],
@@ -1443,9 +1435,7 @@ def wh():
         )
     elif _geom_.name == "fourc":
         print(
-            "\n{:>11}{:>9}{:>9}{:>9}".format(
-                "Two Theta", "Theta", "Chi", "Phi"
-            )
+            "\n{:>11}{:>9}{:>9}{:>9}".format("Two Theta", "Theta", "Chi", "Phi")
         )
         print(
             "{:>11.3f}{:>9.3f}{:>9.3f}{:>9.3f}".format(
@@ -1453,9 +1443,9 @@ def wh():
                 _geom_.omega.get()[0],
                 _geom_.chi.get()[0],
                 _geom_.phi.get()[0],
-
             )
         )
+
 
 def setlat(*args):
     """
