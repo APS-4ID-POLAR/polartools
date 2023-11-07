@@ -24,7 +24,6 @@ Auxilary HKL functions.
     ~setlat
     ~read_config
     ~write_config
-    ~list_functions
 """
 import bluesky.plan_stubs as bps
 import pathlib
@@ -452,7 +451,7 @@ def setor0(*args):
             old_h = 4
             old_k = 0
             old_l = 0
-            #if _geom_.name == "diffract":
+            # if _geom_.name == "diffract":
             old_gamma = 0
             old_mu = 0
 
@@ -567,7 +566,7 @@ def setor1(*args):
             old_h = 4
             old_k = 0
             old_l = 0
-            #if _geom_.name == "diffract":
+            # if _geom_.name == "diffract":
             old_gamma = 0
             old_mu = 0
 
@@ -1511,9 +1510,13 @@ def write_config(method="File", overwrite=False):
         asks if existing file hould be overwritten
     """
     config = DiffractometerConfiguration(_geom_)
-    # config_file = pathlib.Path("diffractometer-config.json")
+    if _geom_.name == "diffract":
+        config_file = pathlib.Path("diffract-config.json")
+    elif _geom_.name == "fourc":
+        config_file = pathlib.Path("fourc-config.json")
+
     settings = config.export("json")
-    if pathlib.Path("diffractometer-config.json").exists():
+    if config_file.exists():
         if not overwrite:
             value = input("Overwrite existing configuration file (y/[n])? ")
             if value == "y":
@@ -1521,8 +1524,13 @@ def write_config(method="File", overwrite=False):
         if overwrite:
             if method == "File":
                 print("Writing configuration file.")
-                with open("diffractometer-config.json", "w") as f:
+                with open(config_file.name, "w") as f:
                     f.write(settings)
+    else:
+        if method == "File":
+            print("Writing configuration file.")
+            with open(config_file.name, "w") as f:
+                f.write(settings)
 
 
 def read_config(method="File"):
@@ -1535,22 +1543,18 @@ def read_config(method="File"):
         right now only "File" possible, but later PV or other
     """
     config = DiffractometerConfiguration(_geom_)
-    if pathlib.Path("diffractometer-config.json").exists():
+    if _geom_.name == "diffract":
+        config_file = pathlib.Path("diffract-config.json")
+    elif _geom_.name == "fourc":
+        config_file = pathlib.Path("fourc-config.json")
+    if config_file.exists():
         if method == "File":
-            print(
-                "Read configuration file '{}'.".format(
-                    "diffractometer-config.json"
-                )
-            )
+            print("Read configuration file '{}'.".format(config_file.name))
             method = input("Method ([o]verwrite/[a]ppend)? ")
             if method == "a":
-                config.restore(
-                    pathlib.Path("diffractometer-config.json"), clear=False
-                )
+                config.restore(config_file, clear=False)
             elif method == "o":
-                config.restore(
-                    pathlib.Path("diffractometer-config.json"), clear=True
-                )
+                config.restore(config_file, clear=True)
 
 
 """
