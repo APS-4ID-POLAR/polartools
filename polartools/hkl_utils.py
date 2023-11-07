@@ -452,9 +452,9 @@ def setor0(*args):
             old_h = 4
             old_k = 0
             old_l = 0
-            if _geom_.name == "diffract":
-                old_gamma = 0
-                old_mu = 0
+            #if _geom_.name == "diffract":
+            old_gamma = 0
+            old_mu = 0
 
         print("Enter primary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
@@ -464,6 +464,9 @@ def setor0(*args):
         if _geom_.name == "diffract":
             gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
+        else:
+            gamma = old_gamma
+            mu = old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
@@ -482,7 +485,7 @@ def setor0(*args):
                 mu=float(mu),
             ),
         )
-    if _geom_.name == "fourc":
+    elif _geom_.name == "fourc":
         sample.add_reflection(
             float(h),
             float(k),
@@ -564,9 +567,9 @@ def setor1(*args):
             old_h = 4
             old_k = 0
             old_l = 0
-            if _geom_.name == "diffract":
-                old_gamma = 0
-                old_mu = 0
+            #if _geom_.name == "diffract":
+            old_gamma = 0
+            old_mu = 0
 
         print("Enter secondary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
@@ -576,6 +579,9 @@ def setor1(*args):
         if _geom_.name == "diffract":
             gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
+        else:
+            gamma = old_gamma
+            mu = old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
@@ -594,7 +600,7 @@ def setor1(*args):
                 mu=float(mu),
             ),
         )
-    if _geom_.name == "fourc":
+    elif _geom_.name == "fourc":
         sample.add_reflection(
             float(h),
             float(k),
