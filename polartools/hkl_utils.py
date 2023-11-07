@@ -31,9 +31,6 @@ import bluesky.plan_stubs as bps
 import pathlib
 
 try:
-    # import gi
-    # gi.require_version("Hkl", "5.0")
-    #import hkl
     from hkl import cahkl
     from hkl.user import _check_geom_selected, _geom_
     from hkl.configuration import DiffractometerConfiguration
