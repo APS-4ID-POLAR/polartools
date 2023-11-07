@@ -1332,12 +1332,12 @@ def ca(h, k, l):
     )
     if _geom_.name == "diffract":
         print(
-            "\n{:9}{:9}{:9}{:9}{:9}{:9}".format(
+            "\n{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}".format(
                 "Delta", "Theta", "Chi", "Phi", "Gamma", "Mu"
             )
         )
         print(
-            "{:9.3f}{:9.3f}{:9.3f}{:9.3f}{:9.3f}{:9.3f}".format(
+            "{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}".format(
                 pos[4],
                 pos[1],
                 pos[2],
