@@ -40,6 +40,7 @@ except ModuleNotFoundError:
 
 path_startup = pathlib.Path("startup_experiment.py")
 
+
 def sampleChange(sample_key=None):
     """
     Change selected sample in hklpy.
@@ -1512,6 +1513,7 @@ def update_lattice(lattice_constant=None):
         )
     )
 
+
 def write_config(method="File", overwrite=False):
     """
     Write configuration from file in current directory.
@@ -1545,6 +1547,7 @@ def write_config(method="File", overwrite=False):
             print("Writing configuration file.")
             with open(config_file.name, "w") as f:
                 f.write(settings)
+
 
 def read_config(method="File"):
     """
