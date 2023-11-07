@@ -22,6 +22,7 @@ Auxilary HKL functions.
     ~uan
     ~wh
     ~setlat
+    ~update_lattice
     ~read_config
     ~write_config
     ~list_functions
@@ -48,9 +49,9 @@ from instrument.framework import RE
 import fileinput
 
 try:
-    import gi
-
-    gi.require_version("Hkl", "5.0")
+    #import gi
+    #gi.require_version("Hkl", "5.0")
+    import hkl
     from hkl import cahkl
     from hkl.user import _check_geom_selected, _geom_
     from hkl.configuration import DiffractometerConfiguration
@@ -1493,6 +1494,85 @@ def setlat(*args):
             sample._orientation_reflections[1],
         )
         _geom_.forward(1, 0, 0)
+
+def update_lattice(lattice_constant=None):
+    """
+    Update lattice constants.
+
+    Parameters
+    ----------
+    lattice_constant: string, optional
+        a, b or c or auto (default)
+    """
+
+    current_sample = _geom_.calc.sample_name
+    sample = _geom_.calc._samples[current_sample]
+    lattice = [getattr(sample.lattice, parm) for parm in sample.lattice._fields]
+    a = lattice[0]
+    b = lattice[1]
+    c = lattice[2]
+    alpha = lattice[3]
+    beta = lattice[4]
+    gamma = lattice[5]
+    hh=_geom_.calc.engine.pseudo_axes["h"]
+    kk=_geom_.calc.engine.pseudo_axes["k"]
+    ll=_geom_.calc.engine.pseudo_axes["l"]
+
+    if (round(hh) == 0 and round(kk) == 0):
+        lattice_auto = "c"
+    elif (round(hh) == 0 and round(ll) == 0):
+        lattice_auto = "b"
+    elif (round(kk) == 0 and round(ll) == 0):
+        lattice_auto = "a"
+    else:
+        lattice_auto = None
+    if not lattice_constant:
+        lattice_constant = (input("Lattice parameter (a, b, or c or [auto])? ") or lattice_auto)
+    else:
+        print("Specify lattice parameter 'a', 'b' or 'c' or none")
+    if lattice_constant =="a" and round(hh) > 0: 
+       a=a/hh*round(hh)
+    elif lattice_constant =="b" and round(kk) > 0: 
+        b=b/kk*round(kk)
+    elif lattice_constant =="c" and round(ll) >0: 
+        c=c/ll*round(ll)
+    else:
+        raise ValueError(
+            "Auto calc not possible."
+        )
+    print("Refining lattice parameter {}".format(lattice_constant))
+    _geom_.calc.sample.lattice = (
+        float(a),
+        float(b),
+        float(c),
+        float(alpha),
+        float(beta),
+        float(gamma),
+    )
+    orienting_refl = sample._orientation_reflections
+    if len(orienting_refl) > 1:
+        print("Compute UB!")
+        sample.compute_UB(
+            sample._orientation_reflections[0],
+            sample._orientation_reflections[1],
+        )
+        _geom_.forward(1, 0, 0)
+    print(
+        "\n   H K L = {:5.4f} {:5.4f} {:5.4f}".format(
+            _geom_.calc.engine.pseudo_axes["h"],
+            _geom_.calc.engine.pseudo_axes["k"],
+            _geom_.calc.engine.pseudo_axes["l"],
+        )
+    )
+    lattice = [getattr(sample.lattice, parm) for parm in sample.lattice._fields]
+    print(
+        "   a, b, c, alpha, beta, gamma = {:5.4f} {:5.4f} {:5.4f} {:5.4f} {:5.4f} {:5.4f}".format(
+            lattice[0],
+            lattice[1],
+            lattice[2],lattice[3],lattice[4],lattice[5],
+        )
+    )
+
 
 
 def write_config(method="File", overwrite=False):
