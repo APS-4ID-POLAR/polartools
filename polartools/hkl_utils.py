@@ -60,6 +60,7 @@ except ModuleNotFoundError:
 
 path_startup = pathlib.Path("startup_experiment.py")
 
+
 def set_experiment(name=None, proposal_id=None, sample=None):
     """
     Set experiment parameters.
@@ -456,7 +457,7 @@ def setor0(*args):
             old_h = 4
             old_k = 0
             old_l = 0
-            if _geom_.name == "diffract":  
+            if _geom_.name == "diffract":
                 old_gamma = 0
                 old_mu = 0
 
@@ -567,7 +568,7 @@ def setor1(*args):
             old_h = 0
             old_k = 4
             old_l = 0
-            if _geom_.name == "diffract":  
+            if _geom_.name == "diffract":
                 old_gamma = 0
                 old_mu = 0
 
