@@ -33,7 +33,7 @@ import pathlib
 try:
     # import gi
     # gi.require_version("Hkl", "5.0")
-    import hkl
+    #import hkl
     from hkl import cahkl
     from hkl.user import _check_geom_selected, _geom_
     from hkl.configuration import DiffractometerConfiguration
@@ -1471,11 +1471,11 @@ def update_lattice(lattice_constant=None):
         )
     else:
         print("Specify lattice parameter 'a', 'b' or 'c' or none")
-    if lattice_constant == "a" and round(hh) > 0:
+    if lattice_constant == "a" and abs(round(hh)) > 0:
         a = a / hh * round(hh)
-    elif lattice_constant == "b" and round(kk) > 0:
+    elif lattice_constant == "b" and abs(round(kk)) > 0:
         b = b / kk * round(kk)
-    elif lattice_constant == "c" and round(ll) > 0:
+    elif lattice_constant == "c" and abs(round(ll)) > 0:
         c = c / ll * round(ll)
     else:
         raise ValueError("Auto calc not possible.")
