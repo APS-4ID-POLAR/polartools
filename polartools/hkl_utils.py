@@ -25,28 +25,10 @@ Auxilary HKL functions.
     ~update_lattice
     ~read_config
     ~write_config
-    ~list_functions
 """
-from inspect import getmembers, isfunction
-from polartools import (
-    hkl_utils,
-    load_data,
-    diffraction,
-    absorption,
-    pressure_calibration,
-    process_images,
-    area_detector_handlers,
-    manage_database,
-)
-from apstools import utils
-
-from hklpy.hkl import user, util
 
 import bluesky.plan_stubs as bps
 import pathlib
-import sys
-from instrument.framework import RE
-import fileinput
 
 try:
     # import gi
@@ -60,50 +42,6 @@ except ModuleNotFoundError:
     cahkl = _check_geom_selected = _geom_ = None
 
 path_startup = pathlib.Path("startup_experiment.py")
-
-
-def set_experiment(name=None, proposal_id=None, sample=None):
-    """
-    Set experiment parameters.
-
-    Parameters
-    ----------
-    name : string, optional
-    proposal_id: integer, optional
-    sample: string, optional
-    """
-    _name = name if name else RE.md["user"]
-    _proposal_id = proposal_id if proposal_id else RE.md["proposal_id"]
-    _sample = sample if sample else RE.md["sample"]
-    name = _name if name else input(f"User [{_name}]: ") or _name
-    proposal_id = (
-        _proposal_id
-        if proposal_id
-        else input(f"Proposal ID [{_proposal_id}]: ") or _proposal_id
-    )
-    sample = _sample if sample else input(f"Sample [{_sample}]: ") or _sample
-
-    RE.md["user"] = name
-    RE.md["proposal_id"] = proposal_id
-    RE.md["sample"] = sample
-
-    if path_startup.exists():
-        for line in fileinput.input([path_startup.name], inplace=True):
-            if line.strip().startswith("RE.md['user']"):
-                line = f"RE.md['user']='{name}'\n"
-            if line.strip().startswith("RE.md['proposal_id']"):
-                line = f"RE.md['proposal_id']='{proposal_id}'\n"
-            if line.strip().startswith("RE.md['sample']"):
-                line = f"RE.md['sample']='{sample}'\n"
-            sys.stdout.write(line)
-    else:
-        f = open(path_startup.name, "w")
-        f.write("from instrument.collection import RE\n")
-        f.write(f"RE.md['user']='{name}'\n")
-        f.write(f"RE.md['proposal_id']='{proposal_id}'\n")
-        f.write(f"RE.md['sample']='{sample}'\n")
-        f.close()
-
 
 def sampleChange(sample_key=None):
     """
@@ -149,7 +87,7 @@ def sampleList():
             if orienting_refl[0] == ref:
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                if _geom_.name == "diffract":
+                if len(_geom_.calc.physical_axes) == 6:
                     print(
                         "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   ".format(
                             "or0",
@@ -164,7 +102,7 @@ def sampleList():
                             pos[0],
                         )
                     )
-                elif _geom_.name == "fourc":
+                elif len(_geom_.calc.physical_axes) == 4:
                     print(
                         "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   ".format(
                             "or0",
@@ -185,7 +123,7 @@ def sampleList():
             elif orienting_refl[1] == ref:
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                if _geom_.name == "diffract":
+                if len(_geom_.calc.physical_axes) == 6:
                     print(
                         "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}  ".format(
                             "or1",
@@ -200,7 +138,7 @@ def sampleList():
                             pos[0],
                         )
                     )
-                elif _geom_.name == "fourc":
+                elif len(_geom_.calc.physical_axes) == 4:
                     print(
                         "{:>3}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}  ".format(
                             "or1",
@@ -244,7 +182,7 @@ def list_reflections(all_samples=False):
     for sample in samples:
         print("Sample: {}".format(sample.name))
         orienting_refl = sample._orientation_reflections
-        if _geom_.name == "diffract":
+        if len(_geom_.calc.physical_axes) == 6:
             print(
                 "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
                     "#",
@@ -260,7 +198,7 @@ def list_reflections(all_samples=False):
                     "orienting",
                 )
             )
-        elif _geom_.name == "fourc":
+        elif len(_geom_.calc.physical_axes) == 4:
             print(
                 "\n{:>2}{:>4}{:>3}{:>3}{:>12}{:>9}{:>9}{:>9}   {:<12}".format(
                     "#",
@@ -281,7 +219,7 @@ def list_reflections(all_samples=False):
             if orienting_refl[0] == ref:
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                if _geom_.name == "diffract":
+                if len(_geom_.calc.physical_axes) == 6:
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                             i,
@@ -297,7 +235,7 @@ def list_reflections(all_samples=False):
                             "first",
                         )
                     )
-                elif _geom_.name == "fourc":
+                elif len(_geom_.calc.physical_axes) == 4:
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                             i,
@@ -319,7 +257,7 @@ def list_reflections(all_samples=False):
                 # or1_old = i
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                if _geom_.name == "diffract":
+                if len(_geom_.calc.physical_axes) == 6:
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                             i,
@@ -335,7 +273,7 @@ def list_reflections(all_samples=False):
                             "second",
                         )
                     )
-                elif _geom_.name == "fourc":
+                elif len(_geom_.calc.physical_axes) == 4:
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                             i,
@@ -356,7 +294,7 @@ def list_reflections(all_samples=False):
             else:
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-                if _geom_.name == "diffract":
+                if len(_geom_.calc.physical_axes) == 6:
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
                             i,
@@ -371,7 +309,7 @@ def list_reflections(all_samples=False):
                             pos[0],
                         )
                     )
-                elif _geom_.name == "fourc":
+                elif len(_geom_.calc.physical_axes) == 4:
                     print(
                         "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
                             i,
@@ -458,7 +396,7 @@ def setor0(*args):
             old_h = 4
             old_k = 0
             old_l = 0
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 old_gamma = 0
                 old_mu = 0
 
@@ -467,14 +405,14 @@ def setor0(*args):
         th = input("Theta = [{:6.2f}]: ".format(old_th)) or old_th
         chi = input("Chi = [{:6.2f}]: ".format(old_chi)) or old_chi
         phi = input("Phi = [{:6.2f}]: ".format(old_phi)) or old_phi
-        if _geom_.name == "diffract":
+        if len(_geom_.calc.physical_axes) == 6:
             gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
 
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         sample.add_reflection(
             float(h),
             float(k),
@@ -488,7 +426,7 @@ def setor0(*args):
                 mu=float(mu),
             ),
         )
-    elif _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         sample.add_reflection(
             float(h),
             float(k),
@@ -569,7 +507,7 @@ def setor1(*args):
             old_h = 0
             old_k = 4
             old_l = 0
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 old_gamma = 0
                 old_mu = 0
 
@@ -578,14 +516,14 @@ def setor1(*args):
         th = input("Theta = [{:6.2f}]: ".format(old_th)) or old_th
         chi = input("Chi = [{:6.2f}]: ".format(old_chi)) or old_chi
         phi = input("Phi = [{:6.2f}]: ".format(old_phi)) or old_phi
-        if _geom_.name == "diffract":
+        if len(_geom_.calc.physical_axes) == 6:
             gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
 
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         sample.add_reflection(
             float(h),
             float(k),
@@ -599,7 +537,7 @@ def setor1(*args):
                 mu=float(mu),
             ),
         )
-    elif _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         sample.add_reflection(
             float(h),
             float(k),
@@ -637,7 +575,7 @@ def set_orienting():
     _check_geom_selected()
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         print(
             "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
                 "#",
@@ -653,7 +591,7 @@ def set_orienting():
                 "orienting",
             )
         )
-    elif _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         print(
             "\n{:>2}{:>4}{:>3}{:>3}{:>12}{:>9}{:>9}{:>9}   {:<12}".format(
                 "#",
@@ -675,7 +613,7 @@ def set_orienting():
             or0_old = i
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -691,7 +629,7 @@ def set_orienting():
                         "first",
                     )
                 )
-            elif _geom_.name == "fourc":
+            elif len(_geom_.calc.physical_axes) == 4:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -713,7 +651,7 @@ def set_orienting():
             or1_old = i
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -729,7 +667,7 @@ def set_orienting():
                         "second",
                     )
                 )
-            elif _geom_.name == "fourc":
+            elif len(_geom_.calc.physical_axes) == 4:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -750,7 +688,7 @@ def set_orienting():
         else:
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
                         i,
@@ -765,7 +703,7 @@ def set_orienting():
                         pos[0],
                     )
                 )
-            elif _geom_.name == "fourc":
+            elif len(_geom_.calc.physical_axes) == 4:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
                         i,
@@ -809,7 +747,7 @@ def del_reflection():
     """
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         print(
             "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
                 "#",
@@ -825,7 +763,7 @@ def del_reflection():
                 "orienting",
             )
         )
-    elif _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         print(
             "\n{:>2}{:>4}{:>3}{:>3}{:>12}{:>9}{:>9}{:>9}   {:<12}".format(
                 "#",
@@ -847,7 +785,7 @@ def del_reflection():
             or0_old = i
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -863,7 +801,7 @@ def del_reflection():
                         "first",
                     )
                 )
-            elif _geom_.name == "fourc":
+            elif len(_geom_.calc.physical_axes) == 4:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -885,7 +823,7 @@ def del_reflection():
             or1_old = i
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -901,7 +839,7 @@ def del_reflection():
                         "second",
                     )
                 )
-            elif _geom_.name == "fourc":
+            elif len(_geom_.calc.physical_axes) == 4:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -922,7 +860,7 @@ def del_reflection():
         else:
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
                         i,
@@ -937,7 +875,7 @@ def del_reflection():
                         pos[0],
                     )
                 )
-            elif _geom_.name == "fourc":
+            elif len(_geom_.calc.physical_axes) == 4:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f} ".format(
                         i,
@@ -989,7 +927,7 @@ def list_orienting(all_samples=False):
         samples = [_geom_.calc._sample]
     for sample in samples:
         orienting_refl = sample._orientation_reflections
-        if _geom_.name == "diffract":
+        if len(_geom_.calc.physical_axes) == 6:
             print(
                 "\n{:>2}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}   {:<12}".format(
                     "#",
@@ -1005,7 +943,7 @@ def list_orienting(all_samples=False):
                     "orienting",
                 )
             )
-        elif _geom_.name == "fourc":
+        elif len(_geom_.calc.physical_axes) == 4:
             print(
                 "\n{:>2}{:>4}{:>3}{:>3}{:>12}{:>9}{:>9}{:>9}   {:<12}".format(
                     "#",
@@ -1026,7 +964,7 @@ def list_orienting(all_samples=False):
         if orienting_refl[0] == ref:
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -1042,7 +980,7 @@ def list_orienting(all_samples=False):
                         "first",
                     )
                 )
-            elif _geom_.name == "fourc":
+            elif len(_geom_.calc.physical_axes) == 4:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -1063,7 +1001,7 @@ def list_orienting(all_samples=False):
         elif orienting_refl[1] == ref:
             h, k, l = ref.hkl_get()
             pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
-            if _geom_.name == "diffract":
+            if len(_geom_.calc.physical_axes) == 6:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -1079,7 +1017,7 @@ def list_orienting(all_samples=False):
                         "second",
                     )
                 )
-            elif _geom_.name == "fourc":
+            elif len(_geom_.calc.physical_axes) == 4:
                 print(
                     "{:>2}{:>4}{:>3}{:>3}{:>12.3f}{:>9.3f}{:>9.3f}{:>9.3f}   {:<12} ".format(
                         i,
@@ -1126,7 +1064,7 @@ def or0(h=None, k=None, l=None):
         h = (input("H ({})? ".format(hr)) if not h else h) or hr
         k = (input("K ({})? ".format(kr)) if not k else k) or kr
         l = (input("L ({})? ".format(lr)) if not l else l) or lr
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         sample.add_reflection(
             float(h),
             float(k),
@@ -1140,7 +1078,7 @@ def or0(h=None, k=None, l=None):
                 mu=_geom_.mu.get().user_readback,
             ),
         )
-    if _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         sample.add_reflection(
             float(h),
             float(k),
@@ -1195,7 +1133,7 @@ def or1(h=None, k=None, l=None):
         h = (input("H ({})? ".format(hr)) if not h else h) or hr
         k = (input("K ({})? ".format(kr)) if not k else k) or kr
         l = (input("L ({})? ".format(lr)) if not l else l) or lr
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         sample.add_reflection(
             float(h),
             float(k),
@@ -1209,7 +1147,7 @@ def or1(h=None, k=None, l=None):
                 mu=_geom_.mu.get().user_readback,
             ),
         )
-    if _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         sample.add_reflection(
             float(h),
             float(k),
@@ -1328,7 +1266,7 @@ def ca(h, k, l):
             _geom_.calc.wavelength, _geom_.calc.energy
         )
     )
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         print(
             "\n{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}".format(
                 "Delta", "Theta", "Chi", "Phi", "Gamma", "Mu"
@@ -1344,7 +1282,7 @@ def ca(h, k, l):
                 pos[0],
             )
         )
-    if _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         print("\n{:>9}{:>9}{:>9}{:>9}".format("Delta", "Theta", "Chi", "Phi"))
         print(
             "{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}".format(
@@ -1393,10 +1331,10 @@ def uan(delta=None, th=None):
     if not delta or not th:
         raise ValueError("Usage: uan(delta/tth,th)")
     else:
-        if _geom_.name == "diffract":
+        if len(_geom_.calc.physical_axes) == 6:
             print("Moving to (delta,th)=({},{})".format(delta, th))
             yield from bps.mv(_geom_.delta, delta, _geom_.omega, th)
-        elif _geom_.name == "fourc":
+        elif len(_geom_.calc.physical_axes) == 4:
             print("Moving to (tth,th)=({},{})".format(delta, th))
             yield from bps.mv(_geom_.tth, delta, _geom_.omega, th)
 
@@ -1420,7 +1358,7 @@ def wh():
             _geom_.calc.wavelength, _geom_.calc.energy
         )
     )
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         print(
             "\n{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}".format(
                 "Delta", "Theta", "Chi", "Phi", "Gamma", "Mu"
@@ -1436,7 +1374,7 @@ def wh():
                 _geom_.mu.get()[0],
             )
         )
-    elif _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         print(
             "\n{:>11}{:>9}{:>9}{:>9}".format("Two Theta", "Theta", "Chi", "Phi")
         )
@@ -1577,7 +1515,6 @@ def update_lattice(lattice_constant=None):
         )
     )
 
-
 def write_config(method="File", overwrite=False):
     """
     Write configuration from file in current directory.
@@ -1590,9 +1527,9 @@ def write_config(method="File", overwrite=False):
         asks if existing file hould be overwritten
     """
     config = DiffractometerConfiguration(_geom_)
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         config_file = pathlib.Path("diffract-config.json")
-    elif _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         config_file = pathlib.Path("fourc-config.json")
 
     settings = config.export("json")
@@ -1612,7 +1549,6 @@ def write_config(method="File", overwrite=False):
             with open(config_file.name, "w") as f:
                 f.write(settings)
 
-
 def read_config(method="File"):
     """
     Read configuration from file in current directory.
@@ -1623,9 +1559,9 @@ def read_config(method="File"):
         right now only "File" possible, but later PV or other
     """
     config = DiffractometerConfiguration(_geom_)
-    if _geom_.name == "diffract":
+    if len(_geom_.calc.physical_axes) == 6:
         config_file = pathlib.Path("diffract-config.json")
-    elif _geom_.name == "fourc":
+    elif len(_geom_.calc.physical_axes) == 4:
         config_file = pathlib.Path("fourc-config.json")
     if config_file.exists():
         if method == "File":
@@ -1635,43 +1571,3 @@ def read_config(method="File"):
                 config.restore(config_file, clear=False)
             elif method == "o":
                 config.restore(config_file, clear=True)
-
-
-def list_functions(select=None):
-    """
-    List available functions
-
-    select: string, optional
-        None: all packages
-        "absorption": functions related to absorption experiments
-        "diffraction": functions related to diffraction experiments
-        "hklpy": functions related to reciprocal space
-    """
-    if select == "absorption":
-        packages = [absorption]
-    elif select == "diffraction":
-        packages = [hkl_utils, load_data, diffraction, utils]
-    elif select == "hklpy":
-        packages = [user, util]
-    else:
-        packages = [
-            hkl_utils,
-            load_data,
-            diffraction,
-            absorption,
-            pressure_calibration,
-            process_images,
-            area_detector_handlers,
-            manage_database,
-            utils,
-            user,
-            util,
-        ]
-
-    for item in packages:
-        function_list = getmembers(item, isfunction)
-        print("-" * len(item.__name__))
-        print(item.__name__)
-        print("-" * len(item.__name__))
-        for funct in function_list:
-            print(funct[0])
