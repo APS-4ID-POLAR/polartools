@@ -367,7 +367,10 @@ def setor0(*args):
     else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
-                if ref == orienting_refl[0] and len(_geom_.calc.physical_axes) == 6:
+                if (
+                    ref == orienting_refl[0]
+                    and len(_geom_.calc.physical_axes) == 6
+                ):
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -376,7 +379,10 @@ def setor0(*args):
                     old_gamma = pos[5]
                     old_mu = pos[0]
                     old_h, old_k, old_l = ref.hkl_get()
-                elif ref == orienting_refl[0] and len(_geom_.calc.physical_axes) == 4:
+                elif (
+                    ref == orienting_refl[0]
+                    and len(_geom_.calc.physical_axes) == 4
+                ):
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[3]
                     old_th = pos[0]
@@ -478,7 +484,10 @@ def setor1(*args):
     else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
-                if ref == orienting_refl[1] and len(_geom_.calc.physical_axes) == 6:
+                if (
+                    ref == orienting_refl[1]
+                    and len(_geom_.calc.physical_axes) == 6
+                ):
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -487,7 +496,10 @@ def setor1(*args):
                     old_gamma = pos[5]
                     old_mu = pos[0]
                     old_h, old_k, old_l = ref.hkl_get()
-                elif ref == orienting_refl[1] and len(_geom_.calc.physical_axes) == 4:
+                elif (
+                    ref == orienting_refl[1]
+                    and len(_geom_.calc.physical_axes) == 4
+                ):
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[3]
                     old_th = pos[0]
@@ -1279,7 +1291,9 @@ def ca(h, k, l):
             )
         )
     elif len(_geom_.calc.physical_axes) == 4:
-        print("\n{:>9}{:>9}{:>9}{:>9}".format("Two Theta", "Theta", "Chi", "Phi"))
+        print(
+            "\n{:>9}{:>9}{:>9}{:>9}".format("Two Theta", "Theta", "Chi", "Phi")
+        )
         print(
             "{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}".format(
                 pos[3],
