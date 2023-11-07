@@ -35,8 +35,7 @@ try:
     from hkl.user import _check_geom_selected, _geom_
     from hkl.configuration import DiffractometerConfiguration
 except ModuleNotFoundError:
-    print("gi module is not installed, the hkl_utils functions will not work!")
-    cahkl = _check_geom_selected = _geom_ = None
+    print("Some module did not load!")
 
 path_startup = pathlib.Path("startup_experiment.py")
 
@@ -188,10 +187,10 @@ def list_reflections(all_samples=False):
                     "K",
                     "L",
                     "Delta",
-                    "Theta",
+                    "Eta",
                     "Chi",
                     "Phi",
-                    "Gamma",
+                    "Nu",
                     "Mu",
                     "orienting",
                 )
@@ -252,7 +251,6 @@ def list_reflections(all_samples=False):
                         "Geometry {} not supported.".format(_geom_.name)
                     )
             elif orienting_refl[1] == ref:
-                # or1_old = i
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 if len(_geom_.calc.physical_axes) == 6:
@@ -362,14 +360,14 @@ def setor0(*args):
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
 
-    if _geom_.name == "diffract" and len(args) == 9:
+    if len(_geom_.calc.physical_axes) == 6 and len(args) == 9:
         delta, th, chi, phi, gamma, mu, h, k, l = args
-    elif _geom_.name == "fourc" and len(args) == 7:
+    elif len(_geom_.calc.physical_axes) == 4 and len(args) == 7:
         delta, th, chi, phi, h, k, l = args
     else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
-                if ref == orienting_refl[0] and _geom_.name == "diffract":
+                if ref == orienting_refl[0] and len(_geom_.calc.physical_axes) == 6:
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -378,7 +376,7 @@ def setor0(*args):
                     old_gamma = pos[5]
                     old_mu = pos[0]
                     old_h, old_k, old_l = ref.hkl_get()
-                elif ref == orienting_refl[0] and _geom_.name == "fourc":
+                elif ref == orienting_refl[0] and len(_geom_.calc.physical_axes) == 4:
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[3]
                     old_th = pos[0]
@@ -400,11 +398,11 @@ def setor0(*args):
 
         print("Enter primary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
-        th = input("Theta = [{:6.2f}]: ".format(old_th)) or old_th
+        th = input("Eta = [{:6.2f}]: ".format(old_th)) or old_th
         chi = input("Chi = [{:6.2f}]: ".format(old_chi)) or old_chi
         phi = input("Phi = [{:6.2f}]: ".format(old_phi)) or old_phi
         if len(_geom_.calc.physical_axes) == 6:
-            gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
+            gamma = input("Nu = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
@@ -473,14 +471,14 @@ def setor1(*args):
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
 
-    if _geom_.name == "diffract" and len(args) == 9:
+    if len(_geom_.calc.physical_axes) == 6 and len(args) == 9:
         delta, th, chi, phi, gamma, mu, h, k, l = args
-    elif _geom_.name == "fourc" and len(args) == 7:
+    elif len(_geom_.calc.physical_axes) == 4 and len(args) == 7:
         delta, th, chi, phi, h, k, l = args
     else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
-                if ref == orienting_refl[1] and _geom_.name == "diffract":
+                if ref == orienting_refl[1] and len(_geom_.calc.physical_axes) == 6:
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -489,7 +487,7 @@ def setor1(*args):
                     old_gamma = pos[5]
                     old_mu = pos[0]
                     old_h, old_k, old_l = ref.hkl_get()
-                elif ref == orienting_refl[1] and _geom_.name == "fourc":
+                elif ref == orienting_refl[1] and len(_geom_.calc.physical_axes) == 4:
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[3]
                     old_th = pos[0]
@@ -511,11 +509,11 @@ def setor1(*args):
 
         print("Enter secondary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
-        th = input("Theta = [{:6.2f}]: ".format(old_th)) or old_th
+        th = input("Eta = [{:6.2f}]: ".format(old_th)) or old_th
         chi = input("Chi = [{:6.2f}]: ".format(old_chi)) or old_chi
         phi = input("Phi = [{:6.2f}]: ".format(old_phi)) or old_phi
         if len(_geom_.calc.physical_axes) == 6:
-            gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
+            gamma = input("Nu = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
@@ -581,10 +579,10 @@ def set_orienting():
                 "K",
                 "L",
                 "Delta",
-                "Theta",
+                "Eta",
                 "Chi",
                 "Phi",
-                "Gamma",
+                "Nu",
                 "Mu",
                 "orienting",
             )
@@ -753,10 +751,10 @@ def del_reflection():
                 "K",
                 "L",
                 "Delta",
-                "Theta",
+                "Eta",
                 "Chi",
                 "Phi",
-                "Gamma",
+                "Nu",
                 "Mu",
                 "orienting",
             )
@@ -933,10 +931,10 @@ def list_orienting(all_samples=False):
                     "K",
                     "L",
                     "Delta",
-                    "Theta",
+                    "Eta",
                     "Chi",
                     "Phi",
-                    "Gamma",
+                    "Nu",
                     "Mu",
                     "orienting",
                 )
@@ -1267,7 +1265,7 @@ def ca(h, k, l):
     if len(_geom_.calc.physical_axes) == 6:
         print(
             "\n{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}".format(
-                "Delta", "Theta", "Chi", "Phi", "Gamma", "Mu"
+                "Delta", "Eta", "Chi", "Phi", "Nu", "Mu"
             )
         )
         print(
@@ -1281,7 +1279,7 @@ def ca(h, k, l):
             )
         )
     elif len(_geom_.calc.physical_axes) == 4:
-        print("\n{:>9}{:>9}{:>9}{:>9}".format("Delta", "Theta", "Chi", "Phi"))
+        print("\n{:>9}{:>9}{:>9}{:>9}".format("Two Theta", "Theta", "Chi", "Phi"))
         print(
             "{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}".format(
                 pos[3],
@@ -1330,7 +1328,7 @@ def uan(delta=None, th=None):
         raise ValueError("Usage: uan(delta/tth,th)")
     else:
         if len(_geom_.calc.physical_axes) == 6:
-            print("Moving to (delta,th)=({},{})".format(delta, th))
+            print("Moving to (delta,eta)=({},{})".format(delta, th))
             yield from bps.mv(_geom_.delta, delta, _geom_.omega, th)
         elif len(_geom_.calc.physical_axes) == 4:
             print("Moving to (tth,th)=({},{})".format(delta, th))
@@ -1359,7 +1357,7 @@ def wh():
     if len(_geom_.calc.physical_axes) == 6:
         print(
             "\n{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}".format(
-                "Delta", "Theta", "Chi", "Phi", "Gamma", "Mu"
+                "Delta", "Eta", "Chi", "Phi", "Nu", "Mu"
             )
         )
         print(
