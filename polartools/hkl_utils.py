@@ -430,11 +430,8 @@ def setor0(*args):
         delta, th, chi, phi, h, k, l = args
     else:
         if len(orienting_refl) > 1:
-            print("test1")
             for ref in sample._sample.reflections_get():
-                print("test2",_geom_.name)
                 if ref == orienting_refl[0] and _geom_.name == "diffract":
-                    print("test3")
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -443,15 +440,12 @@ def setor0(*args):
                     old_gamma = pos[5]
                     old_mu = pos[0]
                     old_h, old_k, old_l = ref.hkl_get()
-                    print(old_gamma)
                 elif ref == orienting_refl[0] and _geom_.name == "fourc":
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[3]
                     old_th = pos[0]
                     old_chi = pos[1]
                     old_phi = pos[2]
-                    old_gamma = 0
-                    old_mu = 0
                     old_h, old_k, old_l = ref.hkl_get()
 
         else:
@@ -462,8 +456,9 @@ def setor0(*args):
             old_h = 4
             old_k = 0
             old_l = 0
-            old_gamma = 0
-            old_mu = 0
+            if _geom_.name == "diffract":  
+                old_gamma = 0
+                old_mu = 0
 
         print("Enter primary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
@@ -473,9 +468,6 @@ def setor0(*args):
         if _geom_.name == "diffract":
             gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
-        else:
-            gamma = old_gamma
-            mu = old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
@@ -565,8 +557,6 @@ def setor1(*args):
                     old_th = pos[0]
                     old_chi = pos[1]
                     old_phi = pos[2]
-                    old_gamma = 0
-                    old_mu = 0
                     old_h, old_k, old_l = ref.hkl_get()
 
         else:
@@ -577,8 +567,9 @@ def setor1(*args):
             old_h = 0
             old_k = 4
             old_l = 0
-            old_gamma = 0
-            old_mu = 0
+            if _geom_.name == "diffract":  
+                old_gamma = 0
+                old_mu = 0
 
         print("Enter secondary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
@@ -588,9 +579,6 @@ def setor1(*args):
         if _geom_.name == "diffract":
             gamma = input("Gamma = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
-        else:
-            gamma = old_gamma
-            mu = old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
