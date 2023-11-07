@@ -49,8 +49,8 @@ from instrument.framework import RE
 import fileinput
 
 try:
-    #import gi
-    #gi.require_version("Hkl", "5.0")
+    # import gi
+    # gi.require_version("Hkl", "5.0")
     import hkl
     from hkl import cahkl
     from hkl.user import _check_geom_selected, _geom_
@@ -1495,6 +1495,7 @@ def setlat(*args):
         )
         _geom_.forward(1, 0, 0)
 
+
 def update_lattice(lattice_constant=None):
     """
     Update lattice constants.
@@ -1514,32 +1515,32 @@ def update_lattice(lattice_constant=None):
     alpha = lattice[3]
     beta = lattice[4]
     gamma = lattice[5]
-    hh=_geom_.calc.engine.pseudo_axes["h"]
-    kk=_geom_.calc.engine.pseudo_axes["k"]
-    ll=_geom_.calc.engine.pseudo_axes["l"]
+    hh = _geom_.calc.engine.pseudo_axes["h"]
+    kk = _geom_.calc.engine.pseudo_axes["k"]
+    ll = _geom_.calc.engine.pseudo_axes["l"]
 
-    if (round(hh) == 0 and round(kk) == 0):
+    if round(hh) == 0 and round(kk) == 0:
         lattice_auto = "c"
-    elif (round(hh) == 0 and round(ll) == 0):
+    elif round(hh) == 0 and round(ll) == 0:
         lattice_auto = "b"
-    elif (round(kk) == 0 and round(ll) == 0):
+    elif round(kk) == 0 and round(ll) == 0:
         lattice_auto = "a"
     else:
         lattice_auto = None
     if not lattice_constant:
-        lattice_constant = (input("Lattice parameter (a, b, or c or [auto])? ") or lattice_auto)
+        lattice_constant = (
+            input("Lattice parameter (a, b, or c or [auto])? ") or lattice_auto
+        )
     else:
         print("Specify lattice parameter 'a', 'b' or 'c' or none")
-    if lattice_constant =="a" and round(hh) > 0: 
-       a=a/hh*round(hh)
-    elif lattice_constant =="b" and round(kk) > 0: 
-        b=b/kk*round(kk)
-    elif lattice_constant =="c" and round(ll) >0: 
-        c=c/ll*round(ll)
+    if lattice_constant == "a" and round(hh) > 0:
+        a = a / hh * round(hh)
+    elif lattice_constant == "b" and round(kk) > 0:
+        b = b / kk * round(kk)
+    elif lattice_constant == "c" and round(ll) > 0:
+        c = c / ll * round(ll)
     else:
-        raise ValueError(
-            "Auto calc not possible."
-        )
+        raise ValueError("Auto calc not possible.")
     print("Refining lattice parameter {}".format(lattice_constant))
     _geom_.calc.sample.lattice = (
         float(a),
@@ -1569,10 +1570,12 @@ def update_lattice(lattice_constant=None):
         "   a, b, c, alpha, beta, gamma = {:5.4f} {:5.4f} {:5.4f} {:5.4f} {:5.4f} {:5.4f}".format(
             lattice[0],
             lattice[1],
-            lattice[2],lattice[3],lattice[4],lattice[5],
+            lattice[2],
+            lattice[3],
+            lattice[4],
+            lattice[5],
         )
     )
-
 
 
 def write_config(method="File", overwrite=False):
