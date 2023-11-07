@@ -1194,7 +1194,7 @@ def or1(h=None, k=None, l=None):
         h = (input("H ({})? ".format(hr)) if not h else h) or hr
         k = (input("K ({})? ".format(kr)) if not k else k) or kr
         l = (input("L ({})? ".format(lr)) if not l else l) or lr
-    if _geom_.name == "fourc":
+    if _geom_.name == "diffract":
         sample.add_reflection(
             float(h),
             float(k),
