@@ -60,12 +60,6 @@ except ModuleNotFoundError:
 
 path_startup = pathlib.Path("startup_experiment.py")
 
-"""
-Most of the functions below are only working for the six circle diffractometer
-(diffract) right now. This will be changed ...
-"""
-
-
 def set_experiment(name=None, proposal_id=None, sample=None):
     """
     Set experiment parameters.
@@ -1574,7 +1568,15 @@ def read_config(method="File"):
 
 
 def list_functions(select=None):
+    """
+    List available functions
 
+    select: string, optional
+        None: all packages
+        "absorption": functions related to absorption experiments
+        "diffraction": functions related to diffraction experiments
+        "hklpy": functions related to reciprocal space
+    """
     if select == "absorption":
         packages = [absorption]
     elif select == "diffraction":
