@@ -24,7 +24,23 @@ Auxilary HKL functions.
     ~setlat
     ~read_config
     ~write_config
+    ~list_functions
 """
+from inspect import getmembers, isfunction
+from polartools import (
+    hkl_utils,
+    load_data,
+    diffraction,
+    absorption,
+    pressure_calibration,
+    process_images,
+    area_detector_handlers,
+    manage_database,
+)
+from apstools import utils
+
+from hklpy.hkl import user, util
+
 import bluesky.plan_stubs as bps
 import pathlib
 import sys
@@ -42,7 +58,7 @@ except ModuleNotFoundError:
     print("gi module is not installed, the hkl_utils functions will not work!")
     cahkl = _check_geom_selected = _geom_ = None
 
-path = pathlib.Path("startup_experiment.py")
+path_startup = pathlib.Path("startup_experiment.py")
 
 """
 Most of the functions below are only working for the six circle diffractometer
@@ -50,22 +66,22 @@ Most of the functions below are only working for the six circle diffractometer
 """
 
 
-def set_experiment(user=None, proposal_id=None, sample=None):
+def set_experiment(name=None, proposal_id=None, sample=None):
     """
     Set experiment parameters.
 
     Parameters
     ----------
-    user : string, optional
+    name : string, optional
     proposal_id: integer, optional
     sample: string, optional
     """
     # print("User = {}".format(_user))
-    _user = user if user else RE.md["user"]
+    _name = name if name else RE.md["user"]
     _proposal_id = proposal_id if proposal_id else RE.md["proposal_id"]
     _sample = sample if sample else RE.md["sample"]
-    # print("User = {}".format(_user))
-    user = _user if user else input(f"User [{_user}]: ") or _user
+    # print("User = {}".format(_name))
+    name = _name if name else input(f"User [{_name}]: ") or _name
     proposal_id = (
         _proposal_id
         if proposal_id
@@ -73,24 +89,24 @@ def set_experiment(user=None, proposal_id=None, sample=None):
     )
     sample = _sample if sample else input(f"Sample [{_sample}]: ") or _sample
 
-    RE.md["user"] = user
+    RE.md["user"] = name
     RE.md["proposal_id"] = proposal_id
     RE.md["sample"] = sample
     # print("Path ",path.name)
 
-    if path.exists():
-        for line in fileinput.input([path.name], inplace=True):
+    if path_startup.exists():
+        for line in fileinput.input([path_startup.name], inplace=True):
             if line.strip().startswith("RE.md['user']"):
-                line = f"RE.md['user']='{user}'\n"
+                line = f"RE.md['user']='{name}'\n"
             if line.strip().startswith("RE.md['proposal_id']"):
                 line = f"RE.md['proposal_id']='{proposal_id}'\n"
             if line.strip().startswith("RE.md['sample']"):
                 line = f"RE.md['sample']='{sample}'\n"
             sys.stdout.write(line)
     else:
-        f = open(path.name, "w")
+        f = open(path_startup.name, "w")
         f.write("from instrument.collection import RE\n")
-        f.write(f"RE.md['user']='{user}'\n")
+        f.write(f"RE.md['user']='{name}'\n")
         f.write(f"RE.md['proposal_id']='{proposal_id}'\n")
         f.write(f"RE.md['sample']='{sample}'\n")
         f.close()
@@ -1557,25 +1573,7 @@ def read_config(method="File"):
                 config.restore(config_file, clear=True)
 
 
-"""
-from inspect import getmembers, isfunction
-from polartools import (
-    hkl_utils,
-    load_data,
-    diffraction,
-    absorption,
-    pressure_calibration,
-    process_images,
-    area_detector_handlers,
-    manage_database,
-)
-from apstools import utils
-
-from hklpy.hkl import user, util
-"""
-
-"""def list_functions(select=None):
-
+def list_functions(select=None):
 
     if select == "absorption":
         packages = [absorption]
@@ -1605,4 +1603,3 @@ from hklpy.hkl import user, util
         print("-" * len(item.__name__))
         for funct in function_list:
             print(funct[0])
-"""
