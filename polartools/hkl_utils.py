@@ -70,11 +70,9 @@ def set_experiment(name=None, proposal_id=None, sample=None):
     proposal_id: integer, optional
     sample: string, optional
     """
-    # print("User = {}".format(_user))
     _name = name if name else RE.md["user"]
     _proposal_id = proposal_id if proposal_id else RE.md["proposal_id"]
     _sample = sample if sample else RE.md["sample"]
-    # print("User = {}".format(_name))
     name = _name if name else input(f"User [{_name}]: ") or _name
     proposal_id = (
         _proposal_id
@@ -86,7 +84,6 @@ def set_experiment(name=None, proposal_id=None, sample=None):
     RE.md["user"] = name
     RE.md["proposal_id"] = proposal_id
     RE.md["sample"] = sample
-    # print("Path ",path.name)
 
     if path_startup.exists():
         for line in fileinput.input([path_startup.name], inplace=True):
@@ -280,7 +277,6 @@ def list_reflections(all_samples=False):
 
         for i, ref in enumerate(sample._sample.reflections_get()):
             if orienting_refl[0] == ref:
-                # or0_old = i
                 h, k, l = ref.hkl_get()
                 pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                 if _geom_.name == "diffract":
@@ -426,7 +422,6 @@ def setor0(*args):
     """
     _check_geom_selected()
     sample = _geom_.calc._sample
-    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
 
     if _geom_.name == "diffract" and len(args) == 9:
@@ -435,8 +430,11 @@ def setor0(*args):
         delta, th, chi, phi, h, k, l = args
     else:
         if len(orienting_refl) > 1:
+            print("test1")
             for ref in sample._sample.reflections_get():
+                print("test2",_geom_.name)
                 if ref == orienting_refl[0] and _geom_.name == "diffract":
+                    print("test3")
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[4]
                     old_th = pos[1]
@@ -445,12 +443,15 @@ def setor0(*args):
                     old_gamma = pos[5]
                     old_mu = pos[0]
                     old_h, old_k, old_l = ref.hkl_get()
+                    print(old_gamma)
                 elif ref == orienting_refl[0] and _geom_.name == "fourc":
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[3]
                     old_th = pos[0]
                     old_chi = pos[1]
                     old_phi = pos[2]
+                    old_gamma = 0
+                    old_mu = 0
                     old_h, old_k, old_l = ref.hkl_get()
 
         else:
@@ -461,7 +462,6 @@ def setor0(*args):
             old_h = 4
             old_k = 0
             old_l = 0
-            # if _geom_.name == "diffract":
             old_gamma = 0
             old_mu = 0
 
@@ -541,7 +541,6 @@ def setor1(*args):
 
     _check_geom_selected()
     sample = _geom_.calc._sample
-    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
 
     if _geom_.name == "diffract" and len(args) == 9:
@@ -566,6 +565,8 @@ def setor1(*args):
                     old_th = pos[0]
                     old_chi = pos[1]
                     old_phi = pos[2]
+                    old_gamma = 0
+                    old_mu = 0
                     old_h, old_k, old_l = ref.hkl_get()
 
         else:
@@ -576,7 +577,6 @@ def setor1(*args):
             old_h = 0
             old_k = 4
             old_l = 0
-            # if _geom_.name == "diffract":
             old_gamma = 0
             old_mu = 0
 
@@ -646,7 +646,6 @@ def set_orienting():
     """
     _check_geom_selected()
     sample = _geom_.calc._sample
-    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
     if _geom_.name == "diffract":
         print(
@@ -819,7 +818,6 @@ def del_reflection():
     in future releases.
     """
     sample = _geom_.calc._sample
-    # ref = sample._sample.reflections_get()
     orienting_refl = sample._orientation_reflections
     if _geom_.name == "diffract":
         print(
