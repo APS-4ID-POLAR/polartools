@@ -446,7 +446,7 @@ def setor0(*args):
         else:
             old_delta = 60
             old_th = 30
-            old_chi = 0
+            old_chi = 90
             old_phi = 0
             old_h = 4
             old_k = 0
@@ -563,8 +563,8 @@ def setor1(*args):
             old_th = 30
             old_chi = 0
             old_phi = 0
-            old_h = 4
-            old_k = 0
+            old_h = 0
+            old_k = 4
             old_l = 0
             # if _geom_.name == "diffract":
             old_gamma = 0
