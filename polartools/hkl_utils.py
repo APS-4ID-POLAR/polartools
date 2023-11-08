@@ -2,7 +2,6 @@
 Auxilary HKL functions.
 
 .. autosummary::
-    ~set_experiment
     ~sampleChange
     ~sampleList
     ~list_reflections
