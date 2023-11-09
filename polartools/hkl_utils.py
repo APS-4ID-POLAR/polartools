@@ -1588,8 +1588,10 @@ def read_config(method="File"):
             method = input("Method ([o]verwrite/[a]ppend)? ")
             if method == "a":
                 config.restore(config_file, clear=False)
+                print("Appending stored reflections.")
             elif method == "o":
                 config.restore(config_file, clear=True)
+                print("Overwriting all reflections with stored reflections.")
             else:
                 raise ValueError("Either overwrite or append.")
         else:
