@@ -397,9 +397,8 @@ def setor0(*args):
             old_h = 4
             old_k = 0
             old_l = 0
-            if len(_geom_.calc.physical_axes) == 6:
-                old_gamma = 0
-                old_mu = 0
+            old_gamma = 0
+            old_mu = 0
 
         print("Enter primary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
@@ -409,6 +408,9 @@ def setor0(*args):
         if len(_geom_.calc.physical_axes) == 6:
             gamma = input("Nu = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
+        else:
+            gamma = old_gamma
+            mu = old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
@@ -514,9 +516,8 @@ def setor1(*args):
             old_h = 0
             old_k = 4
             old_l = 0
-            if len(_geom_.calc.physical_axes) == 6:
-                old_gamma = 0
-                old_mu = 0
+            old_gamma = 0
+            old_mu = 0
 
         print("Enter secondary-reflection angles:")
         delta = input("Delta = [{:6.2f}]: ".format(old_delta)) or old_delta
@@ -526,6 +527,9 @@ def setor1(*args):
         if len(_geom_.calc.physical_axes) == 6:
             gamma = input("Nu = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
+        else:
+            gamma = old_gamma
+            mu = old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
@@ -1541,18 +1545,19 @@ def write_config(method="File", overwrite=False):
         config_file = pathlib.Path("diffract-config.json")
     elif len(_geom_.calc.physical_axes) == 4:
         config_file = pathlib.Path("fourc-config.json")
-
+    else:
+        raise ValueError("Geometry not supported.")
     settings = config.export("json")
     if config_file.exists():
-        if not overwrite:
-            value = input("Overwrite existing configuration file (y/[n])? ")
-            if value == "y":
-                overwrite = True
         if overwrite:
             if method == "File":
                 print("Writing configuration file.")
                 with open(config_file.name, "w") as f:
                     f.write(settings)
+        else:
+            value = input("Overwrite existing configuration file (y/[n])? ")
+            if value == "y":
+                overwrite = True
     else:
         if method == "File":
             print("Writing configuration file.")
@@ -1574,6 +1579,9 @@ def read_config(method="File"):
         config_file = pathlib.Path("diffract-config.json")
     elif len(_geom_.calc.physical_axes) == 4:
         config_file = pathlib.Path("fourc-config.json")
+    else:
+        raise ValueError("Geometry not supported.")
+
     if config_file.exists():
         if method == "File":
             print("Read configuration file '{}'.".format(config_file.name))
@@ -1582,3 +1590,9 @@ def read_config(method="File"):
                 config.restore(config_file, clear=False)
             elif method == "o":
                 config.restore(config_file, clear=True)
+            else:
+                raise ValueError("Either overwrite or append.")
+        else:
+            raise ValueError("Method not supported yet.")
+    else:
+        raise ValueError("No config file found.")
