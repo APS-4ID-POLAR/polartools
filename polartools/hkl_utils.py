@@ -72,10 +72,9 @@ def sampleChange(sample_key=None):
 def sampleList():
     """List all samples currently defined in hklpy; specify  current one."""
     samples = _geom_.calc._samples
-    print("")
     for x in list(samples.keys())[1:]:
         orienting_refl = samples[x]._orientation_reflections
-        print("Sample = {}".format(x))
+        print("\nSample = {}".format(x))
         print("Lattice:", end=" ")
         print(*samples[x].lattice._fields, sep=", ", end=" = ")
         print(*samples[x].lattice, sep=", ")
@@ -171,6 +170,7 @@ def list_reflections(all_samples=False):
         the current sample. Defaults to False.
     """
     _check_geom_selected()
+    print("_geom_ = {}".format(_geom_))
     if all_samples:
         samples = _geom_.calc._samples.values()
     else:
@@ -408,9 +408,6 @@ def setor0(*args):
         if len(_geom_.calc.physical_axes) == 6:
             gamma = input("Nu = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
-        else:
-            gamma = old_gamma
-            mu = old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
@@ -527,9 +524,6 @@ def setor1(*args):
         if len(_geom_.calc.physical_axes) == 6:
             gamma = input("Nu = [{:6.2f}]: ".format(old_gamma)) or old_gamma
             mu = input("Mu = [{:6.2f}]: ".format(old_mu)) or old_mu
-        else:
-            gamma = old_gamma
-            mu = old_mu
         h = input("H = [{}]: ".format(old_h)) or old_h
         k = input("K = [{}]: ".format(old_k)) or old_k
         l = input("L = [{}]: ".format(old_l)) or old_l
@@ -1557,7 +1551,7 @@ def write_config(method="File", overwrite=False):
             if method == "File":
                 with open(config_file.name, "w") as f:
                     f.write(settings)
-                print("Writing configuration file {}.".format(config_file.nme))
+                print("Writing configuration file {}.".format(config_file.name))
     else:
         if method == "File":
             print("Writing configuration file.")
