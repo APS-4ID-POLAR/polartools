@@ -1549,15 +1549,15 @@ def write_config(method="File", overwrite=False):
         raise ValueError("Geometry not supported.")
     settings = config.export("json")
     if config_file.exists():
-        if overwrite:
-            if method == "File":
-                print("Writing configuration file.")
-                with open(config_file.name, "w") as f:
-                    f.write(settings)
-        else:
+        if not overwrite:
             value = input("Overwrite existing configuration file (y/[n])? ")
             if value == "y":
                 overwrite = True
+        if overwrite:
+            if method == "File":
+                with open(config_file.name, "w") as f:
+                    f.write(settings)
+                print("Writing configuration file {}.".format(config_file.nme))
     else:
         if method == "File":
             print("Writing configuration file.")
