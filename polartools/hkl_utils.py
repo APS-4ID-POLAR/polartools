@@ -31,7 +31,7 @@ import pathlib
 
 try:
     from hkl import cahkl
-    from hkl.user import _check_geom_selected, _geom_
+    from hkl.user import _check_geom_selected, current_diffractometer
     from hkl.configuration import DiffractometerConfiguration
 except ModuleNotFoundError:
     print("Some module did not load!")
@@ -49,6 +49,7 @@ def sampleChange(sample_key=None):
         Name of the sample as set in hklpy. If None it will ask for which
         sample.
     """
+    _geom_ = current_diffractometer()
 
     if sample_key is None:
         d = _geom_.calc._samples.keys()
@@ -71,6 +72,9 @@ def sampleChange(sample_key=None):
 
 def sampleList():
     """List all samples currently defined in hklpy; specify  current one."""
+
+    _geom_ = current_diffractometer()
+
     samples = _geom_.calc._samples
     for x in list(samples.keys())[1:]:
         orienting_refl = samples[x]._orientation_reflections
@@ -169,8 +173,9 @@ def list_reflections(all_samples=False):
         If True, it will list the reflections for all samples, if False, only
         the current sample. Defaults to False.
     """
+    _geom_ = current_diffractometer()
     _check_geom_selected()
-    print("_geom_ = {}".format(_geom_))
+
     if all_samples:
         samples = _geom_.calc._samples.values()
     else:
@@ -329,6 +334,7 @@ def list_reflections(all_samples=False):
 
 def or_swap():
     """Swaps the two orientation reflections in hklpy."""
+    _geom_ = current_diffractometer()
     sample = _geom_.calc._sample
     sample.swap_orientation_reflections()
     list_reflections()
@@ -355,6 +361,7 @@ def setor0(*args):
         Values of H, K, L positions for current reflection. If None, it will ask
         for it.
     """
+    _geom_ = current_diffractometer()
     _check_geom_selected()
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
@@ -471,6 +478,7 @@ def setor1(*args):
         for it.
     """
 
+    _geom_ = current_diffractometer()
     _check_geom_selected()
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
@@ -577,6 +585,7 @@ def set_orienting():
     WARNING: This function will only work with six circles. This will be fixed
     in future releases.
     """
+    _geom_ = current_diffractometer()
     _check_geom_selected()
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
@@ -750,6 +759,7 @@ def del_reflection():
     WARNING: This function will only work with six circles. This will be fixed
     in future releases.
     """
+    _geom_ = current_diffractometer()
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
     if len(_geom_.calc.physical_axes) == 6:
@@ -925,6 +935,7 @@ def list_orienting(all_samples=False):
         If True, it will print the reflections of all samples, if False, only of
         the current one.
     """
+    _geom_ = current_diffractometer()
     _check_geom_selected()
     if all_samples:
         samples = _geom_.calc._samples.values()
@@ -1055,6 +1066,7 @@ def or0(h=None, k=None, l=None):
         Values of H, K, L positions for current reflection. If None, it will ask
         for it.
     """
+    _geom_ = current_diffractometer()
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
     if not h and not k and not l:
@@ -1124,6 +1136,7 @@ def or1(h=None, k=None, l=None):
         Values of H, K, L positions for current reflection. If None, it will ask
         for it.
     """
+    _geom_ = current_diffractometer()
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
     if not h and not k and not l:
@@ -1193,6 +1206,7 @@ def compute_UB():
         Values of H, K, L positions for current reflection. If None, it will ask
         for it.
     """
+    _geom_ = current_diffractometer()
     sample = _geom_.calc._sample
     print("Computing UB!")
     calc_UB(
@@ -1214,6 +1228,7 @@ def calc_UB(r1, r2, wavelength=None, output=False):
     output : boolean
         Toggle to decide whether to print the UB matrix.
     """
+    _geom_ = current_diffractometer()
     _check_geom_selected()
     _geom_.calc.sample.compute_UB(r1, r2)
     if output:
@@ -1232,6 +1247,7 @@ def setmode(mode=None):
     mode : string, optional
         Mode to be selected. If None, it will ask.
     """
+    _geom_ = current_diffractometer()
     current_mode = _geom_.calc.engine.mode
     for index, item in enumerate(_geom_.calc.engine.modes):
         print("{:2d}. {}".format(index + 1, item))
@@ -1256,7 +1272,7 @@ def ca(h, k, l):
     h, k, l : float
         H, K, and L values.
     """
-
+    _geom_ = current_diffractometer()
     pos = cahkl(h, k, l)
     print("\n   Calculated Positions:")
     print(
@@ -1314,6 +1330,7 @@ def br(h, k, l):
     -------
     Generator for the bluesky Run Engine.
     """
+    _geom_ = current_diffractometer()
     yield from bps.mv(
         _geom_.h, float(h), _geom_.k, float(k), _geom_.l, float(l)
     )
@@ -1335,6 +1352,7 @@ def uan(delta=None, th=None):
     -------
     Generator for the bluesky Run Engine.
     """
+    _geom_ = current_diffractometer()
     if not delta or not th:
         raise ValueError("Usage: uan(delta/tth,th)")
     else:
@@ -1353,6 +1371,7 @@ def wh():
     WARNING: This function will only work with six circles. This will be fixed
     in future releases.
     """
+    _geom_ = current_diffractometer()
     print(
         "\n   H K L = {:5f} {:5f} {:5f}".format(
             _geom_.calc.engine.pseudo_axes["h"],
@@ -1405,6 +1424,7 @@ def setlat(*args):
         Lattice constants. If None, it will ask for input.
     """
 
+    _geom_ = current_diffractometer()
     current_sample = _geom_.calc.sample_name
     sample = _geom_.calc._samples[current_sample]
     lattice = [getattr(sample.lattice, parm) for parm in sample.lattice._fields]
@@ -1451,6 +1471,7 @@ def update_lattice(lattice_constant=None):
         a, b or c or auto (default)
     """
 
+    _geom_ = current_diffractometer()
     current_sample = _geom_.calc.sample_name
     sample = _geom_.calc._samples[current_sample]
     lattice = [getattr(sample.lattice, parm) for parm in sample.lattice._fields]
@@ -1534,6 +1555,7 @@ def write_config(method="File", overwrite=False):
     overwrite: Boolean, optional
         asks if existing file hould be overwritten
     """
+    _geom_ = current_diffractometer()
     config = DiffractometerConfiguration(_geom_)
     if len(_geom_.calc.physical_axes) == 6:
         config_file = pathlib.Path("diffract-config.json")
@@ -1568,6 +1590,7 @@ def read_config(method="File"):
     method: string, optional
         right now only "File" possible, but later PV or other
     """
+    _geom_ = current_diffractometer()
     config = DiffractometerConfiguration(_geom_)
     if len(_geom_.calc.physical_axes) == 6:
         config_file = pathlib.Path("diffract-config.json")
