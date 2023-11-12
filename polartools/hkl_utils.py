@@ -447,9 +447,7 @@ def setor0(*args):
     sample._orientation_reflections.insert(
         0, sample._sample.reflections_get()[-1]
     )
-
-    if len(orienting_refl) > 1:
-        compute_UB()
+    compute_UB()
 
 
 def setor1(*args):
@@ -558,9 +556,7 @@ def setor1(*args):
     sample._orientation_reflections.insert(
         1, sample._sample.reflections_get()[-1]
     )
-
-    if len(orienting_refl) > 1:
-        compute_UB()
+    compute_UB()
 
 
 def set_orienting():
@@ -1095,9 +1091,7 @@ def or0(h=None, k=None, l=None):
     sample._orientation_reflections.insert(
         0, sample._sample.reflections_get()[-1]
     )
-
-    if len(orienting_refl) > 1:
-        compute_UB()
+    compute_UB()
 
 
 def or1(h=None, k=None, l=None):
@@ -1160,9 +1154,7 @@ def or1(h=None, k=None, l=None):
     sample._orientation_reflections.insert(
         1, sample._sample.reflections_get()[-1]
     )
-
-    if len(orienting_refl) > 1:
-        compute_UB()
+    compute_UB()
 
 
 def compute_UB():
@@ -1180,14 +1172,19 @@ def compute_UB():
     """
     _geom_ = current_diffractometer()
     sample = _geom_.calc._sample
-    print("Computing UB!")
-    calc_UB(
-        sample._orientation_reflections[0], sample._orientation_reflections[1]
-    )
-    # calculate reflection to update values. solutions for 1st
-    # orienting reflections always exist
-    first_orienting = sample._orientation_reflections[0].hkl_get()
-    _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+    orienting_refl = sample._orientation_reflections
+    if len(orienting_refl) > 1:
+        calc_UB(
+            sample._orientation_reflections[0],
+            sample._orientation_reflections[1],
+        )
+        print("Computing UB!")
+        # calculate reflection to update values. solutions for 1st
+        # orienting reflections always exist
+        first_orienting = sample._orientation_reflections[0].hkl_get()
+        _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+    else:
+        raise ValueError("Orienting reflections missing.")
 
 
 def calc_UB(r1, r2, wavelength=None, output=False):
@@ -1447,9 +1444,7 @@ def setlat(*args):
         float(beta),
         float(gamma),
     )
-    orienting_refl = sample._orientation_reflections
-    if len(orienting_refl) > 1:
-        compute_UB()
+    compute_UB()
 
 
 def update_lattice(lattice_constant=None):
@@ -1507,9 +1502,7 @@ def update_lattice(lattice_constant=None):
         float(beta),
         float(gamma),
     )
-    orienting_refl = sample._orientation_reflections
-    if len(orienting_refl) > 1:
-        compute_UB()
+    compute_UB()
     print(
         "\n   H K L = {:5.4f} {:5.4f} {:5.4f}".format(
             _geom_.calc.engine.pseudo_axes["h"],
@@ -1578,9 +1571,6 @@ def read_config(method="File"):
     """
     _geom_ = current_diffractometer()
     config = DiffractometerConfiguration(_geom_)
-    sample = _geom_.calc._sample
-    orienting_refl = sample._orientation_reflections
-
     if len(_geom_.calc.physical_axes) == 6:
         config_file = pathlib.Path("diffract-config.json")
     elif len(_geom_.calc.physical_axes) == 4:
@@ -1595,13 +1585,11 @@ def read_config(method="File"):
             if method == "a":
                 config.restore(config_file, clear=False)
                 print("Appending stored reflections.")
-                if len(orienting_refl) > 1:
-                    compute_UB()
+                compute_UB()
             elif method == "o":
                 config.restore(config_file, clear=True)
                 print("Overwriting all reflections with stored reflections.")
-                if len(orienting_refl) > 1:
-                    compute_UB()
+                compute_UB()
             else:
                 raise ValueError("Either overwrite or append.")
         else:
