@@ -1312,7 +1312,7 @@ def br(h, k, l):
     pos = cahkl(h, k, l)
     if len(_geom_.calc.physical_axes) == 6:
         print(
-            "\n Delta, Eta, Chi, Phi, Nu, Mu --> {}, {}, {}, {}, {}, {}}".format(
+            "\n Delta, Eta, Chi, Phi, Nu, Mu --> {}, {}, {}, {}, {}, {}".format(
                 pos[4],
                 pos[1],
                 pos[2],
@@ -1448,7 +1448,8 @@ def setlat(*args):
         float(gamma),
     )
     orienting_refl = sample._orientation_reflections
-    compute_UB()
+    if len(orienting_refl) > 1:
+        compute_UB()
 
 
 def update_lattice(lattice_constant=None):
