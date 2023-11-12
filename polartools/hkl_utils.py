@@ -338,13 +338,7 @@ def or_swap():
     sample = _geom_.calc._sample
     sample.swap_orientation_reflections()
     list_reflections()
-    print("Computing UB!")
-    sample.compute_UB(
-        sample._orientation_reflections[0], sample._orientation_reflections[1]
-    )
-    # calculate reflection to update values. solutions for 1st orienting reflections always exist
-    first_orienting = sample._orientation_reflections[0].hkl_get()
-    _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+    compute_UB()
 
 
 def setor0(*args):
@@ -455,14 +449,7 @@ def setor0(*args):
     )
 
     if len(orienting_refl) > 1:
-        print("Computing UB!")
-        sample.compute_UB(
-            sample._orientation_reflections[0],
-            sample._orientation_reflections[1],
-        )
-        # calculate reflection to update values. solutions for 1st orienting reflections always exist
-        first_orienting = sample._orientation_reflections[0].hkl_get()
-        _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+        compute_UB()
 
 
 def setor1(*args):
@@ -573,14 +560,7 @@ def setor1(*args):
     )
 
     if len(orienting_refl) > 1:
-        print("Computing UB!")
-        sample.compute_UB(
-            sample._orientation_reflections[0],
-            sample._orientation_reflections[1],
-        )
-        # calculate reflection to update values. solutions for 1st orienting reflections always exist
-        first_orienting = sample._orientation_reflections[0].hkl_get()
-        _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+        compute_UB()
 
 
 def set_orienting():
@@ -751,13 +731,7 @@ def set_orienting():
     sample._orientation_reflections.insert(
         1, sample._sample.reflections_get()[int(or1)]
     )
-    print("Computing UB!")
-    sample.compute_UB(
-        sample._orientation_reflections[0], sample._orientation_reflections[1]
-    )
-    # calculate reflection to update values. solutions for 1st orienting reflections always exist
-    first_orienting = sample._orientation_reflections[0].hkl_get()
-    _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+    compute_UB()
 
 
 def del_reflection():
@@ -1123,14 +1097,7 @@ def or0(h=None, k=None, l=None):
     )
 
     if len(orienting_refl) > 1:
-        print("Computing UB!")
-        sample.compute_UB(
-            sample._orientation_reflections[0],
-            sample._orientation_reflections[1],
-        )
-        # calculate reflection to update values. solutions for 1st orienting reflections always exist
-        first_orienting = sample._orientation_reflections[0].hkl_get()
-        _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+        compute_UB()
 
 
 def or1(h=None, k=None, l=None):
@@ -1195,14 +1162,7 @@ def or1(h=None, k=None, l=None):
     )
 
     if len(orienting_refl) > 1:
-        print("Computing UB!")
-        sample.compute_UB(
-            sample._orientation_reflections[0],
-            sample._orientation_reflections[1],
-        )
-        # calculate reflection to update values. solutions for 1st orienting reflections always exist
-        first_orienting = sample._orientation_reflections[0].hkl_get()
-        _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+        compute_UB()
 
 
 def compute_UB():
@@ -1224,7 +1184,8 @@ def compute_UB():
     calc_UB(
         sample._orientation_reflections[0], sample._orientation_reflections[1]
     )
-    # calculate reflection to update values. solutions for 1st orienting reflections always exist
+    # calculate reflection to update values. solutions for 1st
+    # orienting reflections always exist
     first_orienting = sample._orientation_reflections[0].hkl_get()
     _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
 
@@ -1351,7 +1312,7 @@ def br(h, k, l):
     pos = cahkl(h, k, l)
     if len(_geom_.calc.physical_axes) == 6:
         print(
-            "\n Delta, Eta, Chi, Phi, Nu, Mu --> {:>6.3f}, {:>6.3f}, {:>6.3f}, {:>6.3f}, {:>6.3f}, {:>6.3f}".format(
+            "\n Delta, Eta, Chi, Phi, Nu, Mu --> {}, {}, {}, {}, {}, {}}".format(
                 pos[4],
                 pos[1],
                 pos[2],
@@ -1362,7 +1323,7 @@ def br(h, k, l):
         )
     elif len(_geom_.calc.physical_axes) == 4:
         print(
-            "Two Theta, Theta, Chi, Phi --> {:>6.3f}, {:>6.3f}, {:>6.3f}, {:>6.3f}".format(
+            "Two Theta, Theta, Chi, Phi --> {}, {}, {}, {}".format(
                 pos[3],
                 pos[0],
                 pos[1],
@@ -1487,15 +1448,7 @@ def setlat(*args):
         float(gamma),
     )
     orienting_refl = sample._orientation_reflections
-    if len(orienting_refl) > 1:
-        print("Compute UB!")
-        sample.compute_UB(
-            sample._orientation_reflections[0],
-            sample._orientation_reflections[1],
-        )
-        # calculate reflection to update values. solutions for 1st orienting reflections always exist
-        first_orienting = sample._orientation_reflections[0].hkl_get()
-        _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+    compute_UB()
 
 
 def update_lattice(lattice_constant=None):
@@ -1555,14 +1508,7 @@ def update_lattice(lattice_constant=None):
     )
     orienting_refl = sample._orientation_reflections
     if len(orienting_refl) > 1:
-        print("Compute UB!")
-        sample.compute_UB(
-            sample._orientation_reflections[0],
-            sample._orientation_reflections[1],
-        )
-        # calculate reflection to update values. solutions for 1st orienting reflections always exist
-        first_orienting = sample._orientation_reflections[0].hkl_get()
-        _geom_.forward(first_orienting.h, first_orienting.k, first_orienting.l)
+        compute_UB()
     print(
         "\n   H K L = {:5.4f} {:5.4f} {:5.4f}".format(
             _geom_.calc.engine.pseudo_axes["h"],
@@ -1649,28 +1595,12 @@ def read_config(method="File"):
                 config.restore(config_file, clear=False)
                 print("Appending stored reflections.")
                 if len(orienting_refl) > 1:
-                    print("Compute UB!")
-                    sample.compute_UB(
-                        sample._orientation_reflections[0],
-                        sample._orientation_reflections[1],
-                    )
-                first_orienting = sample._orientation_reflections[0].hkl_get()
-                _geom_.forward(
-                    first_orienting.h, first_orienting.k, first_orienting.l
-                )
+                    compute_UB()
             elif method == "o":
                 config.restore(config_file, clear=True)
                 print("Overwriting all reflections with stored reflections.")
                 if len(orienting_refl) > 1:
-                    print("Compute UB!")
-                    sample.compute_UB(
-                        sample._orientation_reflections[0],
-                        sample._orientation_reflections[1],
-                    )
-                first_orienting = sample._orientation_reflections[0].hkl_get()
-                _geom_.forward(
-                    first_orienting.h, first_orienting.k, first_orienting.l
-                )
+                    compute_UB()
             else:
                 raise ValueError("Either overwrite or append.")
         else:
