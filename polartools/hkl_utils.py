@@ -441,7 +441,8 @@ def setor0(*args):
                 phi=float(phi),
             ),
         )
-
+    else:
+        raise ValueError("Unsupported geometry {} ".format(_geom_))
     if len(orienting_refl) > 1:
         sample._orientation_reflections.pop(0)
     sample._orientation_reflections.insert(
@@ -551,6 +552,8 @@ def setor1(*args):
                 phi=float(phi),
             ),
         )
+    else:
+        raise ValueError("Unsupported geometry {} ".format(_geom_))
     if len(orienting_refl) > 1:
         sample._orientation_reflections.pop(1)
     sample._orientation_reflections.insert(
