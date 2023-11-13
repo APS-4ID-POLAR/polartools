@@ -1565,7 +1565,7 @@ def write_config(method="File", overwrite=False):
 
 def read_config(method="File"):
     """
-    Read configuration from file in current directory.
+    Read configuration from file in current directory for geometries 'difract' (6-circle) or 'fourc'.
 
     Parameters
     ----------
