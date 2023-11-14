@@ -436,7 +436,7 @@ def setor0(*args):
             float(l),
             position=_geom_.calc.Position(
                 tth=float(delta),
-                omega=float(th),
+                theta=float(th),
                 chi=float(chi),
                 phi=float(phi),
             ),
@@ -547,7 +547,7 @@ def setor1(*args):
             float(l),
             position=_geom_.calc.Position(
                 tth=float(delta),
-                omega=float(th),
+                theta=float(th),
                 chi=float(chi),
                 phi=float(phi),
             ),
