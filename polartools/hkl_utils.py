@@ -1083,7 +1083,7 @@ def or0(h=None, k=None, l=None):
             float(l),
             position=_geom_.calc.Position(
                 tth=_geom_.tth.get().user_readback,
-                omega=_geom_.omega.get().user_readback,
+                theta=_geom_.omega.get().user_readback,
                 chi=_geom_.chi.get().user_readback,
                 phi=_geom_.phi.get().user_readback,
             ),
@@ -1146,7 +1146,7 @@ def or1(h=None, k=None, l=None):
             float(l),
             position=_geom_.calc.Position(
                 tth=_geom_.tth.get().user_readback,
-                omega=_geom_.omega.get().user_readback,
+                theta=_geom_.omega.get().user_readback,
                 chi=_geom_.chi.get().user_readback,
                 phi=_geom_.phi.get().user_readback,
             ),
