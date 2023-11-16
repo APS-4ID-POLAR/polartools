@@ -154,6 +154,17 @@ def load_au_params(temperature):
     return v0_out, k0_out, kp0_out
 
 
+def load_pt_params():
+
+    # Bohr radius
+    a0 = 0.5291772109  # \AA
+    v0 = 101.9 * a0**3
+    bt = 266
+    btp = 5.81
+    alphat = 0.261
+    return v0, bt, btp, alphat
+
+
 def _generate_initial_guess(
     params,
     x,
@@ -370,13 +381,34 @@ def calculate_tth(
     return float(tth) if tth.size == 1 else tth
 
 
+def _calculate_pressure_AuAg(v, v0, k0, kp0, z):
+    afg = 2337  # GPa.AA^5
+
+    x = (v / v0) ** 0.3333
+    pfg0 = afg * (z / v0) ** 1.6666
+    c0 = -1 * log(3 * k0 / pfg0)
+    c2 = (3 / 2) * (kp0 - 3) - c0
+
+    return 3 * k0 * (1 - x) / x**5 * exp(c0 * (1 - x)) * (1 + c2 * x * (1 - x))
+
+
+def _calculate_pressure_Pt(v, v0, bt, btp, alphat, dt):
+    x = (v / v0)**(1 / 3)
+    pt = 3 * bt
+    eta = 1.5 * (btp - 1)
+    return pt * ((1 - x) / x**2) * exp(eta * (1 - x)) + alphat * bt * dt
+
+
 def calculate_pressure(
     tth, temperature, energy, bragg_peak, calibrant, tth_off=0.0
 ):
     """
-    Calculate the pressure using diffraction from Au or Ag.
+    Calculate the pressure using diffraction from Au, Ag, or Pt.
 
-    See Holzapfel et al., J. Phys. Chem. Ref. Data 30, 515 (2001) for more
+    For Au and Ag see Holzapfel et al., J. Phys. Chem. Ref. Data 30, 515 (2001)
+    for more details.
+
+    For Pt see Holmes et al., J. Appl. Phys. 66, 2962–2967 (1989) for more
     details.
 
     Parameters
@@ -390,7 +422,7 @@ def calculate_pressure(
     bragg_peak : iterable
         List containing the Bragg peak indices [H, K, L].
     calibrant : string
-        Selects the calibrant used. Options are 'Au' or 'Ag'.
+        Selects the calibrant used. Options are 'Au', 'Ag', or 'Pt'.
     tth_off : float, optional
         Offset between the reference two theta and the measured value.
 
@@ -401,22 +433,8 @@ def calculate_pressure(
         passed to tth.
     """
     # Constants
-    afg = 2337  # GPa.AA^5
     h = 4.135667662e-15  # eV.s
     c = 299792458e10  # AA/s
-
-    # Loading parameters
-    if calibrant == "Au":
-        z = 79
-        v0, k0, kp0 = load_au_params(temperature)
-    elif calibrant == "Ag":
-        z = 47
-        v0, k0, kp0 = load_ag_params(temperature)
-    else:
-        raise ValueError(
-            f'calibrant must be "Au" or "Ag", but {calibrant} was\
-        entered'
-        )
 
     # If it's not a number it will turn tth into a numpy.array
     if not isinstance(tth, (int, float)):
@@ -428,16 +446,21 @@ def calculate_pressure(
     a = d * sqrt(bragg_peak[0] ** 2 + bragg_peak[1] ** 2 + bragg_peak[2] ** 2)
     v = a**3 / 4.0
 
-    # Calculate pressure
-    x = (v / v0) ** 0.3333
-    pfg0 = afg * (z / v0) ** 1.6666
-    c0 = -1 * log(3 * k0 / pfg0)
-    c2 = (3 / 2) * (kp0 - 3) - c0
-    pressure = (
-        3 * k0 * (1 - x) / x**5 * exp(c0 * (1 - x)) * (1 + c2 * x * (1 - x))
-    )
-
-    return pressure
+    # Loading parameters
+    if calibrant == "Au" or calibrant == "Ag":
+        v0, k0, kp0 = load_au_params(temperature)
+        return _calculate_pressure_AuAg(v, v0, k0, kp0, 79)
+    elif calibrant == "Ag":
+        v0, k0, kp0 = load_ag_params(temperature)
+        return _calculate_pressure_AuAg(v, v0, k0, kp0, 47)
+    elif calibrant == "Pt":
+        v0, bt, btp, alphat = load_pt_params()
+        return _calculate_pressure_Pt(v, v0, bt, btp, alphat, temperature - 300)
+    else:
+        raise ValueError(
+            f'calibrant must be "Au", "Ag" or "Pt", but {calibrant} was\
+        entered'
+        )
 
 
 def xrd_calibrate_pressure(
