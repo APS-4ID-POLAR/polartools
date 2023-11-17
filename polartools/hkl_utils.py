@@ -1539,12 +1539,7 @@ def write_config(method="File", overwrite=False):
     """
     _geom_ = current_diffractometer()
     config = DiffractometerConfiguration(_geom_)
-    #if len(_geom_.calc.physical_axes) == 6:
     config_file = pathlib.Path("{}-config.json".format(_geom_.name))
-    #elif len(_geom_.calc.physical_axes) == 4:
-    #    config_file = pathlib.Path("fourc-config.json")
-    #else:
-    #    raise ValueError("Geometry not supported.")
     settings = config.export("json")
     if config_file.exists():
         if not overwrite:
@@ -1574,12 +1569,7 @@ def read_config(method="File"):
     """
     _geom_ = current_diffractometer()
     config = DiffractometerConfiguration(_geom_)
-    if len(_geom_.calc.physical_axes) == 6:
-        config_file = pathlib.Path("diffract-config.json")
-    elif len(_geom_.calc.physical_axes) == 4:
-        config_file = pathlib.Path("fourc-config.json")
-    else:
-        raise ValueError("Geometry not supported.")
+    config_file = pathlib.Path("{}-config.json".format(_geom_.name))
 
     if config_file.exists():
         if method == "File":
