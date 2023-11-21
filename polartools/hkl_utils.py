@@ -436,7 +436,7 @@ def setor0(*args):
             float(l),
             position=_geom_.calc.Position(
                 tth=float(delta),
-                omega=float(th),
+                theta=float(th),
                 chi=float(chi),
                 phi=float(phi),
             ),
@@ -547,7 +547,7 @@ def setor1(*args):
             float(l),
             position=_geom_.calc.Position(
                 tth=float(delta),
-                omega=float(th),
+                theta=float(th),
                 chi=float(chi),
                 phi=float(phi),
             ),
@@ -1083,7 +1083,7 @@ def or0(h=None, k=None, l=None):
             float(l),
             position=_geom_.calc.Position(
                 tth=_geom_.tth.get().user_readback,
-                omega=_geom_.omega.get().user_readback,
+                theta=_geom_.omega.get().user_readback,
                 chi=_geom_.chi.get().user_readback,
                 phi=_geom_.phi.get().user_readback,
             ),
@@ -1146,7 +1146,7 @@ def or1(h=None, k=None, l=None):
             float(l),
             position=_geom_.calc.Position(
                 tth=_geom_.tth.get().user_readback,
-                omega=_geom_.omega.get().user_readback,
+                theta=_geom_.omega.get().user_readback,
                 chi=_geom_.chi.get().user_readback,
                 phi=_geom_.phi.get().user_readback,
             ),
@@ -1539,12 +1539,7 @@ def write_config(method="File", overwrite=False):
     """
     _geom_ = current_diffractometer()
     config = DiffractometerConfiguration(_geom_)
-    if len(_geom_.calc.physical_axes) == 6:
-        config_file = pathlib.Path("diffract-config.json")
-    elif len(_geom_.calc.physical_axes) == 4:
-        config_file = pathlib.Path("fourc-config.json")
-    else:
-        raise ValueError("Geometry not supported.")
+    config_file = pathlib.Path("{}-config.json".format(_geom_.name))
     settings = config.export("json")
     if config_file.exists():
         if not overwrite:
@@ -1574,12 +1569,7 @@ def read_config(method="File"):
     """
     _geom_ = current_diffractometer()
     config = DiffractometerConfiguration(_geom_)
-    if len(_geom_.calc.physical_axes) == 6:
-        config_file = pathlib.Path("diffract-config.json")
-    elif len(_geom_.calc.physical_axes) == 4:
-        config_file = pathlib.Path("fourc-config.json")
-    else:
-        raise ValueError("Geometry not supported.")
+    config_file = pathlib.Path("{}-config.json".format(_geom_.name))
 
     if config_file.exists():
         if method == "File":
