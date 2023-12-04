@@ -361,7 +361,6 @@ def setor0(*args):
     _check_geom_selected()
     sample = _geom_.calc._sample
     orienting_refl = sample._orientation_reflections
-
     if len(_geom_.calc.physical_axes) == 6 and len(args) == 9:
         delta, th, chi, phi, gamma, mu, h, k, l = args
     elif len(_geom_.calc.physical_axes) == 4 and len(args) == 7:
@@ -395,7 +394,7 @@ def setor0(*args):
         else:
             old_delta = 60
             old_th = 30
-            old_chi = 90
+            old_chi = 0
             old_phi = 0
             old_h = 4
             old_k = 0
@@ -421,12 +420,12 @@ def setor0(*args):
             float(k),
             float(l),
             position=_geom_.calc.Position(
-                delta=float(delta),
+                mu=float(mu),
                 omega=float(th),
                 chi=float(chi),
                 phi=float(phi),
                 gamma=float(gamma),
-                mu=float(mu),
+                delta=float(delta),
             ),
         )
     elif len(_geom_.calc.physical_axes) == 4:
@@ -506,7 +505,7 @@ def setor1(*args):
         else:
             old_delta = 60
             old_th = 30
-            old_chi = 0
+            old_chi = 90
             old_phi = 0
             old_h = 0
             old_k = 4
@@ -1553,7 +1552,7 @@ def write_config(method="File", overwrite=False):
                 print("Writing configuration file {}.".format(config_file.name))
     else:
         if method == "File":
-            print("Writing configuration file.")
+            print("Writing configuration file {}.".format(config_file.name))
             with open(config_file.name, "w") as f:
                 f.write(settings)
 
