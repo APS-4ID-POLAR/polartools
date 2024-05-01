@@ -24,7 +24,7 @@ import copy
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 from xarray import DataArray
-from .load_data import (
+from .polartools.load_data import (
     load_table,
     load_csv,
     is_Bluesky_specfile,
@@ -921,25 +921,37 @@ def load_dichromesh(
         if y_label == "nanopositioner_nanoy":
             y_label = "nanopositioner_nanoy_user_setpoint"
         z_label = scan_range["detector"]
+        data = (
+            data.groupby([x_label, y_label, "pr2_pzt_localDC"])
+            .sum()
+            .unstack("pr2_pzt_localDC")[z_label]
+        )
+        left_p = data.columns[0]
+        right_p = data.columns[1]
+        zp_left = data[left_p].unstack()
+        zp_right = data[right_p].unstack()
+        yi = zp_left.index.values
+        xi = zp_left.columns.values
+        zl = zp_left.values
+        zr = zp_right.values
     else:
         # needs to be tested for dichromesh (spec)
         x_label = data.columns[0]
         y_label = data.columns[1]
         z_label = detector if detector else data.columns[-1]
-    data = (
-        data.groupby([x_label, y_label, "pr2_pzt_localDC"])
-        .sum()
-        .unstack("pr2_pzt_localDC")[z_label]
-    )
-    left_p = data.columns[0]
-    right_p = data.columns[1]
-    zp_left = data[left_p].unstack()
-    zp_right = data[right_p].unstack()
-    yi = zp_left.index.values
-    xi = zp_left.columns.values
-    zl = zp_left.values
-    zr = zp_right.values
-    return xi, yi, zl, zr, x_label, y_label, z_label
+        xi = data[x_label].unique()
+        yi = data[y_label].unique()
+        zl = data[z_label]        
+        z = np.zeros((xi.size*yi.size))
+        z[:zl.size] = zl
+        z[zl.size:] = np.nan
+        zi = np.reshape(z, (yi.size, xi.size))
+        zr = zi
+
+        vmax = np.nanpercentile(zi, 99.1)
+        vmin = np.nanpercentile(zi, 0.1)
+        
+    return xi, yi, zi, zr, x_label, y_label, z_label
 
 
 def plot_2d(
