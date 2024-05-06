@@ -948,9 +948,6 @@ def load_dichromesh(
         zi = np.reshape(z, (yi.size, xi.size))
         zr = zi
 
-        vmax = np.nanpercentile(zi, 99.1)
-        vmin = np.nanpercentile(zi, 0.1)
-
     return xi, yi, zi, zr, x_label, y_label, z_label
 
 
