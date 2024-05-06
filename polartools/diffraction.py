@@ -941,16 +941,16 @@ def load_dichromesh(
         z_label = detector if detector else data.columns[-1]
         xi = data[x_label].unique()
         yi = data[y_label].unique()
-        zl = data[z_label]        
-        z = np.zeros((xi.size*yi.size))
-        z[:zl.size] = zl
-        z[zl.size:] = np.nan
+        zl = data[z_label]
+        z = np.zeros((xi.size * yi.size))
+        z[: zl.size] = zl
+        z[zl.size :] = np.nan
         zi = np.reshape(z, (yi.size, xi.size))
         zr = zi
 
         vmax = np.nanpercentile(zi, 99.1)
         vmin = np.nanpercentile(zi, 0.1)
-        
+
     return xi, yi, zi, zr, x_label, y_label, z_label
 
 
