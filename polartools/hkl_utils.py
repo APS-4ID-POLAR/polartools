@@ -1509,7 +1509,9 @@ def freeze(*args):
         _geom_.calc._engine.engine.parameters_values_set([h2, k2, l2, psi], 1)
         print("Psi = {}".format(psi))
     elif _geom_.calc.engine.mode == "4-circles constant phi horizontal":
-        print("freeze phi not yet implemented")
+        print(
+            "Freeze phi not implemented. Move phi to desired position instead."
+        )
     else:
         raise ValueError(
             "Function not available in mode '{}'".format(
