@@ -21,6 +21,8 @@ Auxilary HKL functions.
     ~uan
     ~wh
     ~setlat
+    ~setaz
+    ~freeze
     ~update_lattice
     ~read_config
     ~write_config
@@ -1447,6 +1449,74 @@ def setlat(*args):
         float(gamma),
     )
     compute_UB()
+
+
+def setaz(*args):
+    _check_geom_selected()
+    if (
+        len(_geom_.calc.physical_axes) == 4
+        and _geom_.calc.engine.mode == "psi constant"
+    ):
+        _h2, _k2, _l2, psi = _geom_.calc._engine.engine.parameters_values_get(1)
+        if len(args) == 3:
+            h2, k2, l2 = args
+        elif len(args) == 0:
+            h2 = int((input("H = ({})? ".format(_h2))) or _h2)
+            k2 = int((input("K = ({})? ".format(_k2))) or _k2)
+            l2 = int((input("L = ({})? ".format(_l2))) or _l2)
+
+        else:
+            raise ValueError(
+                "either no arguments or h, k, l need to be provided."
+            )
+        _geom_.calc._engine.engine.parameters_values_set([h2, k2, l2], 1)
+        _geom_for_psi_.calc._engine.engine.parameters_values_set(
+            [h2, k2, l2], 1
+        )
+        print("Azimuth = {} {} {} with Psi fixed at {}".format(h2, k2, l2, psi))
+    elif len(_geom_.calc.physical_axes) == 6:
+        mode_temp = _geom_.calc.engine.mode
+        _geom_.calc.engine.mode = "psi constant horizontal"
+        _h2, _k2, _l2, psi = _geom_.calc._engine.engine.parameters_values_get(1)
+        if len(args) == 3:
+            h2, k2, l2 = args
+            _geom_.calc._engine.engine.parameters_values_set([h2, k2, l2], 1)
+        elif len(args) == 0:
+            h2 = int((input("H = ({})? ".format(_h2))) or _h2)
+            k2 = int((input("K = ({})? ".format(_k2))) or _k2)
+            l2 = int((input("L = ({})? ".format(_l2))) or _l2)
+            _geom_.calc._engine.engine.parameters_values_set([h2, k2, l2], 1)
+        else:
+            raise ValueError(
+                "either no arguments or h, k, l need to be provided."
+            )
+        _geom_.calc.engine.mode = mode_temp
+        print("Azimuth = {} {} {} with Psi fixed at {}".format(h2, k2, l2, psi))
+
+    else:
+        raise ValueError(
+            "Function not available in mode '{}'".format(
+                _geom_.calc.engine.mode
+            )
+        )
+
+
+def freeze(*args):
+    _check_geom_selected()
+    if _geom_.calc.engine.mode == "psi constant horizontal":
+        h2, k2, l2, psi = _geom_.calc._engine.engine.parameters_values_get(1)
+        if len(args) == 1:
+            psi = args[0]
+        _geom_.calc._engine.engine.parameters_values_set([h2, k2, l2, psi], 1)
+        print("Psi = {}".format(psi))
+    elif _geom_.calc.engine.mode == "4-circles constant phi horizontal":
+        print("freeze phi not yet implemented")
+    else:
+        raise ValueError(
+            "Function not available in mode '{}'".format(
+                _geom_.calc.engine.mode
+            )
+        )
 
 
 def update_lattice(lattice_constant=None):
