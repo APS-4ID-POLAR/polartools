@@ -1452,6 +1452,7 @@ def setlat(*args):
 
 
 def setaz(*args):
+    _geom_ = current_diffractometer()
     _check_geom_selected()
     if (
         len(_geom_.calc.physical_axes) == 4
@@ -1470,9 +1471,6 @@ def setaz(*args):
                 "either no arguments or h, k, l need to be provided."
             )
         _geom_.calc._engine.engine.parameters_values_set([h2, k2, l2], 1)
-        _geom_for_psi_.calc._engine.engine.parameters_values_set(
-            [h2, k2, l2], 1
-        )
         print("Azimuth = {} {} {} with Psi fixed at {}".format(h2, k2, l2, psi))
     elif len(_geom_.calc.physical_axes) == 6:
         mode_temp = _geom_.calc.engine.mode
@@ -1502,6 +1500,7 @@ def setaz(*args):
 
 
 def freeze(*args):
+    _geom_ = current_diffractometer()
     _check_geom_selected()
     if _geom_.calc.engine.mode == "psi constant horizontal":
         h2, k2, l2, psi = _geom_.calc._engine.engine.parameters_values_get(1)
