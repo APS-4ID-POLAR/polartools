@@ -18,4 +18,4 @@ Python package to read and process data from the APS Polar beamline
 -   Documentation: https://polartools.readthedocs.io
 
 
-I'm changing this.
+I'm changing this. Black.
