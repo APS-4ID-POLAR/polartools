@@ -45,6 +45,7 @@ import fileinput
 import logging
 
 logger = logging.getLogger(__name__)
+from apstools import pbar_manager
 
 try:
     # import gi
@@ -59,6 +60,10 @@ try:
     from hkl.configuration import DiffractometerConfiguration
     from hkl.diffract import Diffractometer
     from instrument.devices.polar_diffractometer import polar, polar_psi
+    from bluesky import RunEngineInterrupted
+    from bluesky.utils import ProgressBarManager
+    import asyncio
+    from bluesky.plan_stubs import mv
 except ModuleNotFoundError:
     print("gi module is not installed, the hkl_utils functions will not work!")
     cahkl = _check_geom_selected = _geom_ = None
@@ -69,7 +74,7 @@ except ModuleNotFoundError:
 # _geom_for_q_ = None # geometry for q calculation
 
 path_startup = pathlib.Path("startup_experiment.py")
-
+pbar_manager = ProgressBarManager()
 
 def current_diffractometer():
     """Return the currently-selected diffractometer (or ``None``)."""
