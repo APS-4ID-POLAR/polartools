@@ -1455,7 +1455,6 @@ def render(pieces, style):
 
 
 class VersioneerBadRootError(Exception):
-
     """The project root directory is unknown or missing key files."""
 
 
