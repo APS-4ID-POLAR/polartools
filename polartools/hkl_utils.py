@@ -64,8 +64,8 @@ except ModuleNotFoundError:
 path_startup = pathlib.Path("startup_experiment.py")
 pbar_manager = ProgressBarManager()
 logger = logging.getLogger(__name__)
-_geom_ = None  
-_geom_for_psi_ = None 
+_geom_for_psi_ = None
+
 
 def select_engine_for_psi(instrument=None):
     """Name the diffractometer to be used."""
