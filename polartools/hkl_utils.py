@@ -34,7 +34,6 @@ Auxilary HKL functions.
     ~read_config
 """
 
-
 from hkl.util import Lattice
 
 import bluesky.plan_stubs as bps
@@ -65,7 +64,8 @@ except ModuleNotFoundError:
 path_startup = pathlib.Path("startup_experiment.py")
 pbar_manager = ProgressBarManager()
 logger = logging.getLogger(__name__)
-
+_geom_ = None  # selected diffractometer geometry
+_geom_for_psi_ = None # geometry for psi calculation
 
 def select_engine_for_psi(instrument=None):
     """Name the diffractometer to be used."""
