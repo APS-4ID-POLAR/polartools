@@ -68,6 +68,7 @@ logger = logging.getLogger(__name__)
 
 def select_engine_for_psi(instrument=None):
     """Name the diffractometer to be used."""
+    global _geom_for_psi_
     if instrument is None or isinstance(instrument, Diffractometer):
         _geom_for_psi_ = instrument
     else:
