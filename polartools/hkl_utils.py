@@ -34,10 +34,6 @@ Auxilary HKL functions.
     ~read_config
 """
 
-
-from apstools import utils
-
-from hkl import user, util
 from hkl.util import Lattice
 
 import bluesky.plan_stubs as bps
@@ -55,7 +51,12 @@ try:
     # gi.require_version("Hkl", "5.0")
     import hkl
     from hkl import cahkl
-    from hkl.user import _check_geom_selected, _geom_,  select_diffractometer, current_diffractometer
+    from hkl.user import (
+        _check_geom_selected,
+        _geom_,
+        select_diffractometer,
+        current_diffractometer,
+    )
     from hkl.configuration import DiffractometerConfiguration
     from hkl.diffract import Diffractometer
     from instrument.devices.polar_diffractometer import polar, polar_psi
@@ -64,9 +65,9 @@ except ModuleNotFoundError:
     cahkl = _check_geom_selected = _geom_ = None
 
 
-#_geom_ = None  # selected diffractometer geometry
-#_geom_for_psi_ = None # geometry for psi calculation
-#_geom_for_q_ = None # geometry for q calculation
+# _geom_ = None  # selected diffractometer geometry
+# _geom_for_psi_ = None # geometry for psi calculation
+# _geom_for_q_ = None # geometry for q calculation
 
 path_startup = pathlib.Path("startup_experiment.py")
 
@@ -75,6 +76,7 @@ def current_diffractometer():
     """Return the currently-selected diffractometer (or ``None``)."""
     return _geom_
 
+
 def select_engine_for_psi(instrument=None):
     """Name the diffractometer to be used."""
     global _geom_for_psi_
@@ -82,6 +84,7 @@ def select_engine_for_psi(instrument=None):
         _geom_for_psi_ = instrument
     else:
         raise TypeError(f"{instrument} must be a 'Diffractometer' subclass")
+
 
 def engine_for_psi():
     """Return the currently-selected psi calc engine (or ``None``)."""
@@ -139,7 +142,9 @@ def sampleNew(*args):
     if len(args) == 7:
         nm, a, b, c, alpha, beta, gamma = args
     elif len(args) == 0:
-        nm = (input("Sample name ({})? ".format(current_sample))) or current_sample
+        nm = (
+            input("Sample name ({})? ".format(current_sample))
+        ) or current_sample
         a = (input("Lattice a ({})? ".format(lattice[0]))) or lattice[0]
         b = (input("Lattice b ({})? ".format(lattice[1]))) or lattice[1]
         c = (input("Lattice c ({})? ".format(lattice[2]))) or lattice[2]
@@ -153,17 +158,25 @@ def sampleNew(*args):
 
     if nm in _geom_.calc._samples:
         logger.warning(
-            (
-                "Sample '%s' is already defined."
-            ),
+            ("Sample '%s' is already defined."),
             nm,
         )
     else:
-        lattice = Lattice(a=float(a), b=float(b), c=float(c), alpha=float(alpha), beta=float(beta), gamma=float(gamma))
+        lattice = Lattice(
+            a=float(a),
+            b=float(b),
+            c=float(c),
+            alpha=float(alpha),
+            beta=float(beta),
+            gamma=float(gamma),
+        )
         _geom_.calc.new_sample(nm, lattice=lattice)
 
         sample = _geom_.calc._sample
-        sample.add_reflection(0,0,2,
+        sample.add_reflection(
+            0,
+            0,
+            2,
             position=_geom_.calc.Position(
                 gamma=40,
                 mu=20,
@@ -174,8 +187,12 @@ def sampleNew(*args):
             ),
         )
         sample._orientation_reflections.insert(
-            0, sample._sample.reflections_get()[-1])
-        sample.add_reflection(2,0,0,
+            0, sample._sample.reflections_get()[-1]
+        )
+        sample.add_reflection(
+            2,
+            0,
+            0,
             position=_geom_.calc.Position(
                 gamma=40,
                 mu=20,
@@ -194,7 +211,6 @@ def sampleNew(*args):
             sample._orientation_reflections[1],
         )
         _geom_.forward(1, 0, 0)
-
 
 
 def sampleChange(sample_key=None):
@@ -227,6 +243,7 @@ def sampleChange(sample_key=None):
     except KeyError:
         print("Not a valid sample key")
 
+
 def sampleRemove(sample_key=None):
     """
     Remove selected sample in hklpy.
@@ -241,9 +258,7 @@ def sampleRemove(sample_key=None):
     if sample_key is None:
         d = _geom_.calc._samples.keys()
         print("Sample keys:", list(d))
-        sample_key = (
-            input("\nEnter sample key to remove: ")
-        )
+        sample_key = input("\nEnter sample key to remove: ")
         if sample_key == _geom_.calc.sample.name:
             print("The current sample cannot be removed.")
             sample_key = " "
@@ -267,7 +282,7 @@ def _sampleList():
         print("Lattice:", end=" ")
         print(*samples[x].lattice._fields, sep=", ", end=" = ")
         print(*samples[x].lattice, sep=", ")
-        if len(orienting_refl)>1:
+        if len(orienting_refl) > 1:
             print(
                 "\n{:>3}{:>4}{:>3}{:>3}{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}".format(
                     "#",
@@ -283,7 +298,7 @@ def _sampleList():
                 )
             )
         for ref in samples[x]._sample.reflections_get():
-            if len(orienting_refl)>1:
+            if len(orienting_refl) > 1:
                 if orienting_refl[0] == ref:
                     h, k, l = ref.hkl_get()
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
@@ -544,6 +559,7 @@ def or_swap():
     )
     _geom_.forward(1, 0, 0)
 
+
 def setor0(*args):
     """
     Sets the primary orientation in hklpy.
@@ -650,7 +666,6 @@ def setor0(*args):
             sample._orientation_reflections[1],
         )
         _geom_.forward(1, 0, 0)
-
 
 
 def setor1(*args):
@@ -760,8 +775,6 @@ def setor1(*args):
             sample._orientation_reflections[1],
         )
         _geom_.forward(1, 0, 0)
-
-
 
 
 def set_orienting():
@@ -1374,6 +1387,7 @@ def or1(h=None, k=None, l=None):
         )
         _geom_.forward(1, 0, 0)
 
+
 def compute_UB():
     """
     Calculates the UB matrix.
@@ -1470,11 +1484,13 @@ def ca(h, k, l):
         f"\n{''.join(f'{v:>10.3f}' for v in pos)}"
     )
 
+
 def _ensure_idle():
-    if  RE.state != 'idle':
-        print('The RunEngine invoked by magics cannot be resumed.')
-        print('Aborting...')
+    if RE.state != "idle":
+        print("The RunEngine invoked by magics cannot be resumed.")
+        print("Aborting...")
         RE.abort()
+
 
 def ubr(h, k, l):
     """
@@ -1489,9 +1505,7 @@ def ubr(h, k, l):
     -------
     """
     _geom_ = current_diffractometer()
-    plan = mv(
-        _geom_.h, float(h), _geom_.k, float(k), _geom_.l, float(l)
-    )
+    plan = mv(_geom_.h, float(h), _geom_.k, float(k), _geom_.l, float(l))
     RE.waiting_hook = pbar_manager
     try:
         RE(plan)
@@ -1558,7 +1572,6 @@ def uan(*args):
     return None
 
 
-
 def an(delta=None, th=None):
     """
     Moves the delta and theta motors.
@@ -1591,6 +1604,7 @@ def an(delta=None, th=None):
 
 def _wh_old():
     import numpy as np
+
     """
     Retrieve information on the current reciprocal space position.
 
@@ -1599,7 +1613,7 @@ def _wh_old():
     """
     _geom_ = current_diffractometer()
     _geom_for_psi_ = engine_for_psi()
-    #_geom_for_psi_.calc.sample.UB=_geom_.calc._sample.UB
+    # _geom_for_psi_.calc.sample.UB=_geom_.calc._sample.UB
     _geom_for_psi_.UB.put(_geom_.UB.get())
 
     print(
@@ -1619,9 +1633,7 @@ def _wh_old():
             _geom_for_psi_.inverse(0).psi,
         )
     )
-    _h2, _k2, _l2 = _geom_for_psi_.calc._engine.engine.parameters_values_get(
-            1
-            )
+    _h2, _k2, _l2 = _geom_for_psi_.calc._engine.engine.parameters_values_get(1)
     print(
         "   PSI reference vector = {:3.3f} {:3.3f} {:3.3f}".format(
             _h2,
@@ -1629,13 +1641,23 @@ def _wh_old():
             _l2,
         )
     )
-    tth_from_q = 2*np.emath.arcsin(_geom_for_q_.inverse(0).q/4/np.pi*12.39842/_geom_.calc.energy)*180/np.pi
+    tth_from_q = (
+        2
+        * np.emath.arcsin(
+            _geom_for_q_.inverse(0).q
+            / 4
+            / np.pi
+            * 12.39842
+            / _geom_.calc.energy
+        )
+        * 180
+        / np.pi
+    )
     print(
         "\n   Q = {:5f}  tth = {:5f}".format(
             _geom_for_q_.inverse(0).q, tth_from_q
         )
     )
- 
 
 
 def _wh():
@@ -1645,7 +1667,7 @@ def _wh():
     """
     _geom_ = current_diffractometer()
     _geom_for_psi_ = engine_for_psi()
-    _geom_for_psi_.calc.sample.UB=_geom_.calc._sample.UB 
+    _geom_for_psi_.calc.sample.UB = _geom_.calc._sample.UB
     print(
         "\n   H K L = {:5f} {:5f} {:5f}".format(
             _geom_.calc.engine.pseudo_axes["h"],
@@ -1654,7 +1676,11 @@ def _wh():
         )
     )
 
-    print("   Azimuth = {:6.4f}".format(_geom_for_psi_.inverse(0).psi,))
+    print(
+        "   Azimuth = {:6.4f}".format(
+            _geom_for_psi_.inverse(0).psi,
+        )
+    )
     print(
         "   Lambda (Energy) = {:6.4f} \u212B ({:6.4f} keV)".format(
             _geom_.calc.wavelength, _geom_.calc.energy
@@ -1676,7 +1702,7 @@ def _wh():
                 _geom_.tau.position,
             )
         )
- 
+
     elif _geom_.name == "fourc":
         print(
             "\n{:>11}{:>9}{:>9}{:>9}".format("Two Theta", "Theta", "Chi", "Phi")
@@ -1736,62 +1762,53 @@ def setlat(*args):
         )
         _geom_.forward(1, 0, 0)
 
+
 def setaz(*args):
     _geom_ = current_diffractometer()
     _geom_for_psi_ = engine_for_psi()
     _check_geom_selected()
-    if  len(_geom_.calc.physical_axes) == 4 :
-        mode_temp=_geom_.calc.engine.mode
+    if len(_geom_.calc.physical_axes) == 4:
+        mode_temp = _geom_.calc.engine.mode
         _geom_.calc.engine.mode = "psi_constant"
-        _h2, _k2, _l2, psi = _geom_.calc._engine.engine.parameters_values_get(
-            1
-        )
+        _h2, _k2, _l2, psi = _geom_.calc._engine.engine.parameters_values_get(1)
         if len(args) == 3:
             h2, k2, l2 = args
         elif len(args) == 0:
             h2 = int((input("H = ({})? ".format(_h2))) or _h2)
             k2 = int((input("K = ({})? ".format(_k2))) or _k2)
             l2 = int((input("L = ({})? ".format(_l2))) or _l2)
-        
+
         else:
             raise ValueError(
                 "either no arguments or h, k, l need to be provided."
             )
-        _geom_.calc._engine.engine.parameters_values_set(
-            [h2, k2, l2], 1
-        )
+        _geom_.calc._engine.engine.parameters_values_set([h2, k2, l2], 1)
         _geom_for_psi_.calc._engine.engine.parameters_values_set(
             [h2, k2, l2], 1
         )
         print("Azimuth = {} {} {} with Psi fixed at {}".format(h2, k2, l2, psi))
-    elif  len(_geom_.calc.physical_axes) == 6 :
-        mode_temp=_geom_.calc.engine.mode
-        _geom_.calc.engine.mode = "psi constant horizontal"      
-        _h2, _k2, _l2, psi = _geom_.calc._engine.engine.parameters_values_get(
-            1
-            )
+    elif len(_geom_.calc.physical_axes) == 6:
+        mode_temp = _geom_.calc.engine.mode
+        _geom_.calc.engine.mode = "psi constant horizontal"
+        _h2, _k2, _l2, psi = _geom_.calc._engine.engine.parameters_values_get(1)
         if len(args) == 3:
             h2, k2, l2 = args
         elif len(args) == 0:
             h2 = int((input("H = ({})? ".format(_h2))) or _h2)
             k2 = int((input("K = ({})? ".format(_k2))) or _k2)
             l2 = int((input("L = ({})? ".format(_l2))) or _l2)
-            _geom_.calc._engine.engine.parameters_values_set(
-                [h2, k2, l2], 1
-                )
+            _geom_.calc._engine.engine.parameters_values_set([h2, k2, l2], 1)
             _geom_.calc.engine.mode = mode_temp
         else:
             raise ValueError(
                 "either no arguments or h, k, l need to be provided."
             )
-        _geom_.calc._engine.engine.parameters_values_set(
-            [h2, k2, l2], 1
-        )
+        _geom_.calc._engine.engine.parameters_values_set([h2, k2, l2], 1)
         _geom_for_psi_.calc._engine.engine.parameters_values_set(
             [h2, k2, l2], 1
         )
         print("Azimuth = {} {} {} with Psi fixed at {}".format(h2, k2, l2, psi))
-    
+
     else:
         raise ValueError(
             "Function not available in mode '{}'".format(
@@ -1816,7 +1833,6 @@ def freeze(*args):
                 _geom_.calc.engine.mode
             )
         )
-
 
 
 def update_lattice(lattice_constant=None):
@@ -1966,24 +1982,27 @@ select_engine_for_psi(polar_psi)
 
 class whClass:
     """
-   _wh function used without parenthesis   
+    _wh function used without parenthesis
     """
 
     def __repr__(self):
         print("")
         _wh()
         return ""
-        
+
+
 wh = whClass()
+
 
 class sampleListClass:
     """
-    _sampleList function used without parenthesis   
+    _sampleList function used without parenthesis
     """
 
     def __repr__(self):
         print("")
         _sampleList()
-        return ("")
-        
+        return ""
+
+
 sampleList = sampleListClass()
