@@ -68,7 +68,6 @@ logger = logging.getLogger(__name__)
 
 def select_engine_for_psi(instrument=None):
     """Name the diffractometer to be used."""
-    global _geom_for_psi_
     if instrument is None or isinstance(instrument, Diffractometer):
         _geom_for_psi_ = instrument
     else:
@@ -572,7 +571,7 @@ def setor0(*args):
     if _geom_.name == "polar" and len(args) == 9:
         gamma, mu, chi, phi, delta, tau, h, k, l = args
     elif _geom_.name == "fourc" and len(args) == 7:
-        delta, th, chi, phi, h, k, l = args
+        delta, mu, chi, phi, h, k, l = args
     else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
@@ -679,9 +678,9 @@ def setor1(*args):
     orienting_refl = sample._orientation_reflections
 
     if _geom_.name == "polar" and len(args) == 9:
-        delta, th, chi, phi, gamma, mu, h, k, l = args
+        delta, mu, chi, phi, gamma, tau, h, k, l = args
     elif _geom_.name == "fourc" and len(args) == 7:
-        delta, th, chi, phi, h, k, l = args
+        delta, mu, chi, phi, h, k, l = args
     else:
         if len(orienting_refl) > 1:
             for ref in sample._sample.reflections_get():
