@@ -49,7 +49,6 @@ logger = logging.getLogger(__name__)
 try:
     # import gi
     # gi.require_version("Hkl", "5.0")
-    import hkl
     from hkl import cahkl
     from hkl.user import (
         _check_geom_selected,
@@ -599,7 +598,7 @@ def setor0(*args):
                 elif ref == orienting_refl[0] and _geom_.name == "fourc":
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[3]
-                    old_th = pos[0]
+                    old_mu = pos[0]
                     old_chi = pos[1]
                     old_phi = pos[2]
                     old_h, old_k, old_l = ref.hkl_get()
@@ -647,7 +646,7 @@ def setor0(*args):
             float(l),
             position=_geom_.calc.Position(
                 tth=float(delta),
-                omega=float(th),
+                omega=float(mu),
                 chi=float(chi),
                 phi=float(phi),
             ),
@@ -708,7 +707,7 @@ def setor1(*args):
                 elif ref == orienting_refl[1] and _geom_.name == "fourc":
                     pos = ref.geometry_get().axis_values_get(_geom_.calc._units)
                     old_delta = pos[3]
-                    old_th = pos[0]
+                    old_mu = pos[0]
                     old_chi = pos[1]
                     old_phi = pos[2]
                     old_h, old_k, old_l = ref.hkl_get()
@@ -757,7 +756,7 @@ def setor1(*args):
             float(l),
             position=_geom_.calc.Position(
                 tth=float(delta),
-                omega=float(th),
+                omega=float(mu),
                 chi=float(chi),
                 phi=float(phi),
             ),
@@ -1552,7 +1551,6 @@ def uan(*args):
     """
     _geom_ = current_diffractometer()
     if len(args) != 2:
-        delta, th = args
         raise ValueError("Usage: uan(delta/tth,eta/th)")
     else:
         delta, th = args
@@ -1572,7 +1570,7 @@ def uan(*args):
     return None
 
 
-def an(delta=None, th=None):
+def an(*args):
     """
     Moves the delta and theta motors.
 
@@ -1590,7 +1588,6 @@ def an(delta=None, th=None):
     """
     _geom_ = current_diffractometer()
     if len(args) != 2:
-        delta, th = args
         raise ValueError("Usage: uan(delta/tth,eta/th)")
     else:
         delta, th = args
@@ -1600,64 +1597,6 @@ def an(delta=None, th=None):
         elif len(_geom_.calc.physical_axes) == 4:
             print("Moving to (tth,th)=({},{})".format(delta, th))
             yield from bps.mv(_geom_.tth, delta, _geom_.omega, th)
-
-
-def _wh_old():
-    import numpy as np
-
-    """
-    Retrieve information on the current reciprocal space position.
-
-    WARNING: This function will only work with six circles. This will be fixed
-    in future releases.
-    """
-    _geom_ = current_diffractometer()
-    _geom_for_psi_ = engine_for_psi()
-    # _geom_for_psi_.calc.sample.UB=_geom_.calc._sample.UB
-    _geom_for_psi_.UB.put(_geom_.UB.get())
-
-    print(
-        f"\n   {' '.join(_geom_.pseudo_positioners._fields).upper()}"
-        f" = {', '.join([f'{v.position:5f}' for v in _geom_.pseudo_positioners])}"
-    )
-    print(
-        f"\n   Lambda (Energy) = {_geom_.calc.wavelength:6.4f} \u212b"
-        f" ({_geom_.calc.energy:6.4f}) keV"
-    )
-    print(
-        f"\n{''.join(f'{k:>10}' for k in _geom_.real_positioners._fields)}"
-        f"\n{''.join(f'{v.position:>10.3f}' for v in _geom_.real_positioners)}"
-    )
-    print(
-        "\n   PSI = {:5.4f} ".format(
-            _geom_for_psi_.inverse(0).psi,
-        )
-    )
-    _h2, _k2, _l2 = _geom_for_psi_.calc._engine.engine.parameters_values_get(1)
-    print(
-        "   PSI reference vector = {:3.3f} {:3.3f} {:3.3f}".format(
-            _h2,
-            _k2,
-            _l2,
-        )
-    )
-    tth_from_q = (
-        2
-        * np.emath.arcsin(
-            _geom_for_q_.inverse(0).q
-            / 4
-            / np.pi
-            * 12.39842
-            / _geom_.calc.energy
-        )
-        * 180
-        / np.pi
-    )
-    print(
-        "\n   Q = {:5f}  tth = {:5f}".format(
-            _geom_for_q_.inverse(0).q, tth_from_q
-        )
-    )
 
 
 def _wh():
