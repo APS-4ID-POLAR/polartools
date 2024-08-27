@@ -35,7 +35,6 @@ Auxilary HKL functions.
 """
 
 from hkl.util import Lattice
-
 import bluesky.plan_stubs as bps
 import pathlib
 import sys
@@ -1469,11 +1468,32 @@ def ca(h, k, l):
         f"\n   Lambda (Energy) = {_geom_.calc.wavelength:6.4f} \u212b"
         f" ({_geom_.calc.energy:6.4f}) keV"
     )
-    print(
-        f"\n{''.join(f'{k:>10}' for k in _geom_.real_positioners._fields)}"
-        f"\n{''.join(f'{v:>10.3f}' for v in pos)}"
-    )
-
+    if _geom_.name == "polar":
+        print(
+            "\n{:>9}{:>9}{:>9}{:>9}{:>9}{:>9}".format(
+                "Gamma", "Mu", "Chi", "Phi", "Delta", "Tau"
+            )
+        )
+        print(
+            "{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}".format(
+                pos[4],
+                pos[1],
+                pos[2],
+                pos[3],
+                pos[5],
+                pos[0],
+            )
+        )
+    if _geom_.name == "fourc":
+        print("\n{:>9}{:>9}{:>9}{:>9}".format("Delta", "Theta", "Chi", "Phi"))
+        print(
+            "{:>9.3f}{:>9.3f}{:>9.3f}{:>9.3f}".format(
+                pos[3],
+                pos[0],
+                pos[1],
+                pos[2],
+            )
+        )
 
 def _ensure_idle():
     if RE.state != "idle":
