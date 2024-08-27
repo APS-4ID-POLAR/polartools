@@ -1495,6 +1495,7 @@ def ca(h, k, l):
             )
         )
 
+
 def _ensure_idle():
     if RE.state != "idle":
         print("The RunEngine invoked by magics cannot be resumed.")
