@@ -331,7 +331,7 @@ def show_meta(
     db : databroker database
         Searcheable database
     last : int
-        last number of scans to be displayed   
+        last number of scans to be displayed
     db : databroker database (optional)
         Searcheable database
     query : dictionary, optional
@@ -354,12 +354,10 @@ def show_meta(
 
         scans = range(scans, scan_to + 1)
     elif scans is None:
-        scans = range(-1*last, 0) if last else range(-10, 0)
+        scans = range(-1 * last, 0) if last else range(-10, 0)
         if not last:
             last = 10
         print("List of the {} most recent scans:".format(last))
-
-        
 
     if meta_keys == "short":
         meta_keys = [
