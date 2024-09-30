@@ -309,8 +309,9 @@ def db_query(db, query):
 
 
 def show_meta(
-    scans,
+    scans=None,
     scan_to=None,
+    last=None,
     db=None,
     query=None,
     meta_keys="short",
@@ -327,6 +328,10 @@ def show_meta(
     scan_to : int, optional
         Final scan number to process. Note that this is only meaningful if
         an integer is passed to `scans`.
+    db : databroker database
+        Searcheable database
+    last : int
+        last number of scans to be displayed   
     db : databroker database (optional)
         Searcheable database
     query : dictionary, optional
@@ -348,11 +353,18 @@ def show_meta(
             )
 
         scans = range(scans, scan_to + 1)
+    elif scans is None:
+        scans = range(-1*last, 0) if last else range(-10, 0)
+        if not last:
+            last = 10
+        print("List of the {} most recent scans:".format(last))
+
+        
 
     if meta_keys == "short":
         meta_keys = [
+            "scan_id",
             "motors",
-            "scan_type",
             "plan_name",
             "plan_pattern_args",
             "num_points",
@@ -360,6 +372,7 @@ def show_meta(
         ]
     elif meta_keys == "long":
         meta_keys = [
+            "scan_id",
             "motors",
             "scan_type",
             "plan_name",
@@ -379,9 +392,9 @@ def show_meta(
         meta_keys.insert(index, "final pos.")
         meta_keys.insert(index, "init. pos.")
 
-    table.labels = ["Scan # "] + list(meta_keys)
+    table.labels = list(meta_keys)
     for scanno, values in meta.items():
-        row = [scanno]
+        row = []
         for key, item in values.items():
             # TODO: I don't like this. We need better metadata.
             if key == "plan_pattern_args":
@@ -420,13 +433,10 @@ def collect_meta(scan_numbers, meta_keys, db=None, query=None):
 
     Parameters
     ----------
-    scans : iterable
-        Scan numbers or uids.
+    scan_numbers : list
+        List of scan number range to be displayed
     db : databroker database
         Searcheable database
-    scan_to : int, optional
-        Final scan number to process. Note that this is only meaningful if
-        an integer is passed to `scans`.
     meta_keys : iterable
         List with metadata keys to read.
     query : dictionary, optional
