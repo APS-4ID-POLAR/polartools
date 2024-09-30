@@ -388,7 +388,7 @@ def show_meta(
         meta_keys.insert(index, "init. pos.")
 
     table.labels = list(meta_keys)
-    for number, values in meta.items():
+    for _, values in meta.items():
         row = []
         for key, item in values.items():
             # TODO: I don't like this. We need better metadata.
