@@ -359,8 +359,8 @@ def show_meta(
     if meta_keys == "short":
         meta_keys = [
             "scan_id",
-            "motors",
             "plan_name",
+            "motors",
             "plan_pattern_args",
             "num_points",
             "exit_status",
@@ -368,9 +368,9 @@ def show_meta(
     elif meta_keys == "long":
         meta_keys = [
             "scan_id",
-            "motors",
             "scan_type",
             "plan_name",
+            "motors",
             "plan_pattern_args",
             "num_points",
             "exit_status",
