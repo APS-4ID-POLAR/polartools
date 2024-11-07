@@ -33,6 +33,7 @@ dependencies:
   - xraydb
   - scikit-image
   - pims>=0.6.1
+  - imageio
   - pip:
     - sphinx-rtd-theme
     - super-state-machine
