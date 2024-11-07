@@ -1,6 +1,6 @@
 name: Pytest and Flake8
 
-on: [push, workflow_dispatch]
+on: [push]
 
 defaults:
   run:
