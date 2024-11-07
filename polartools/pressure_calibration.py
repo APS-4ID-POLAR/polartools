@@ -508,7 +508,7 @@ def xrd_calibrate_pressure(
     bragg_peak : iterable, optional
         List containing the Bragg peak indices [H, K, L].
     calibrant : string, optional
-        Selects the calibrant used. Options are 'Au' or 'Ag'.
+        Selects the calibrant used. Options are 'Au', 'Ag', or 'Pt'.
     temperature : float or string, optional
         A string can only be passed if using databroker. In this case it will
         read the temperature from the database baseline stream. If float is
