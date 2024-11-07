@@ -8,6 +8,7 @@ from polartools.pressure_calibration import (
 from numpy import allclose
 from os.path import join
 from spec2nexus.spec import SpecDataFile
+from pytest import raises
 
 
 # TODO: These tests are not great as they rely on fitting the data...
@@ -47,3 +48,12 @@ def test_xrd_calibrate_pressure_Ag():
 def test_xrd_calculate_pressure_Pt():
     pressure = calculate_pressure(11, 300, 30, [1, 1, 1], "Pt")
     assert allclose(pressure, 60.2033739, atol=1e-5)
+
+
+def test_wrong_calibrant():
+    calibrant = "bla"
+    with raises(ValueError) as excinfo:
+        _ = calculate_pressure(11, 300, 30, [1, 1, 1], calibrant)
+    assert str(excinfo.value) == (
+        f'Calibrant must be "Au", "Ag" or "Pt", but {calibrant} was entered.'
+    )

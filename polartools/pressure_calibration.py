@@ -457,8 +457,8 @@ def calculate_pressure(
         return _calculate_pressure_Pt(v, v0, bt, btp, alphat, temperature - 300)
     else:
         raise ValueError(
-            f'calibrant must be "Au", "Ag" or "Pt", but {calibrant} was\
-        entered'
+            f'Calibrant must be "Au", "Ag" or "Pt", but {calibrant} was '
+            'entered.'
         )
 
 
