@@ -417,8 +417,9 @@ def db_query(db, query):
 
 
 def show_meta(
-    scans,
-    scan_to=None,
+    last=None,
+    scans=None,
+    scans_to=None,
     db=None,
     query=None,
     meta_keys="short",
@@ -429,10 +430,11 @@ def show_meta(
 
     Parameters
     ----------
-    scans : int or iterable
-        Scan numbers or uids. If an integer is passed, it will process scans
-        from `scans` to `scan_to`.
-    scan_to : int, optional
+    last : int
+        last number of scans to be displayed
+    scans : int, list
+        List of scan numbers to process.
+    scans_to : int, list
         Final scan number to process. Note that this is only meaningful if
         an integer is passed to `scans`.
     db : databroker database (optional)
@@ -445,32 +447,38 @@ def show_meta(
     """
 
     if isinstance(scans, int):
-        if scan_to is None:
-            scan_to = scans
-
-        if scan_to < scans:
+        if scans_to is None:
+            scans_to = scans
+        if scans_to < scans:
             raise ValueError(
                 "scans must be larger than scan_to, but you "
                 f"entered: scans = {scans} and scan_to = "
-                f"{scan_to}."
+                f"{scans_to}."
             )
-
-        scans = range(scans, scan_to + 1)
+        scans = range(scans, scans_to + 1)
+    elif scans is None:
+        scans = range(-1 * last, 0) if last else range(-10, 0)
+        print("List of the {} most recent scans:".format(last if last else 10))
+    elif isinstance(scans, list):
+        pass
+    else:
+        raise ValueError("Scans must be int or list or None.")
 
     if meta_keys == "short":
         meta_keys = [
-            "motors",
-            "scan_type",
+            "scan_id",
             "plan_name",
+            "motors",
             "plan_pattern_args",
             "num_points",
             "exit_status",
         ]
     elif meta_keys == "long":
         meta_keys = [
-            "motors",
+            "scan_id",
             "scan_type",
             "plan_name",
+            "motors",
             "plan_pattern_args",
             "num_points",
             "exit_status",
@@ -487,15 +495,15 @@ def show_meta(
         meta_keys.insert(index, "final pos.")
         meta_keys.insert(index, "init. pos.")
 
-    table.labels = ["Scan # "] + list(meta_keys)
-    for scanno, values in meta.items():
-        row = [scanno]
+    table.labels = list(meta_keys)
+    for _, values in meta.items():
+        row = []
         for key, item in values.items():
             # TODO: I don't like this. We need better metadata.
             if key == "plan_pattern_args":
                 if item[0] is None:
-                    row.append(None)
-                    row.append(None)
+                    row.append("")
+                    row.append("")
                 elif isinstance(item[0]["args"][1], list):
                     row.append("{:0.4f}".format(item[0]["args"][1][0]))
                     row.append("{:0.4f}".format(item[0]["args"][1][-1]))
@@ -514,6 +522,8 @@ def show_meta(
             else:
                 if None in item:
                     item.remove(None)
+                    if item[0] is None:
+                        item[0] = ""
                 if len(item) == 1:
                     item = item[0]
                 row.append(item)
@@ -528,13 +538,10 @@ def collect_meta(scan_numbers, meta_keys, db=None, query=None):
 
     Parameters
     ----------
-    scans : iterable
-        Scan numbers or uids.
+    scan_numbers : list
+        List of scan number range to be displayed
     db : databroker database
         Searcheable database
-    scan_to : int, optional
-        Final scan number to process. Note that this is only meaningful if
-        an integer is passed to `scans`.
     meta_keys : iterable
         List with metadata keys to read.
     query : dictionary, optional

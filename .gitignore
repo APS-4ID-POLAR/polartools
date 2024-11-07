@@ -83,3 +83,6 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# test file
+xmcd_save_test.dat

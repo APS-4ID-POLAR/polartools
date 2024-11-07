@@ -86,11 +86,14 @@ def test_db_query(db):
 
 def test_show_meta(capsys, db):
     load_data.show_meta(
-        1049, meta_keys=["motors", "plan_name", "plan_pattern_args"], db=db
+        1, meta_keys=["motors", "plan_name", "plan_pattern_args"], db=db
     )
     captured = capsys.readouterr()
     expected = "Scan #  motors plan_name init. pos. final pos.\n"
     expected += "1049    KBIC_x rel_scan  -20        20        \n\n"
+    expected = "List of the 1 most recent scans:\n"
+    expected += "motors plan_name init. pos. final pos.\n"
+    expected += "KBIC_x rel_scan  -20        20        \n\n"
     assert captured.out == expected
 
 
