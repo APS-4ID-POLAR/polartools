@@ -38,8 +38,8 @@ from polartools.area_detector_handlers import (
 
 # TODO: This should be just temp fix
 LambdaHDF5Handler.specs = {"AD_HDF5_lambda"} | LambdaHDF5Handler.specs
-HDF_DEFAULT_FNAME_FORMAT = "scan_%6.6d_master.hdf"
-BLUESKY_DEFAULT_LOCATION = "entry/"
+HDF_DEFAULT_FNAME_FORMAT = "scan_{%06d}_master.hdf"
+BLUESKY_DEFAULT_LOCATION = "entry/instrument/bluesky/streams/primary"
 
 
 def load_catalog(name=None, query=None, handlers=None):
