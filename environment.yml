@@ -34,6 +34,7 @@ dependencies:
   - scikit-image
   - pims>=0.6.1
   - imageio
+  - h5py
   - pip:
     - sphinx-rtd-theme
     - super-state-machine
