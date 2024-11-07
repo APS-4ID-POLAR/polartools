@@ -20,3 +20,4 @@ dask
 xraydb
 apstools
 imageio
+h5py
