@@ -446,7 +446,7 @@ def calculate_pressure(
     v = a**3 / 4.0
 
     # Loading parameters
-    if calibrant == "Au" or calibrant == "Ag":
+    if calibrant == "Au":
         v0, k0, kp0 = load_au_params(temperature)
         return _calculate_pressure_AuAg(v, v0, k0, kp0, 79)
     elif calibrant == "Ag":

@@ -40,7 +40,7 @@ def test_xrd_calibrate_pressure_Ag():
         monitor="IC3",
     )
 
-    assert allclose(pressure, 0.7433860, atol=1e-5)
+    assert allclose(pressure, 0.81876923, atol=1e-5)
 
 
 def test_xrd_calculate_pressure_Pt():
