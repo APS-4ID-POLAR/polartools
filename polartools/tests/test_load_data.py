@@ -31,6 +31,9 @@ def test_load_hdf5_data():
     table = load_data.load_hdf5_data(25, path)
     assert table.shape == (2, 9)
 
+    table2 = load_data.load_table(25, source="hdf", folder=path)
+    assert table2.shape == (2, 9)
+
 
 def test_load_databroker(db):
     table = load_data.load_table(1049, db, use_db_v1=False)
