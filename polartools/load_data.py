@@ -24,6 +24,7 @@ import copy
 from datetime import datetime
 from collections import OrderedDict
 from pyRestTable import Table
+from h5py import File
 from databroker.queries import TimeRange
 from apstools.utils import getDatabase
 from polartools.area_detector_handlers import (
@@ -34,6 +35,8 @@ from polartools.area_detector_handlers import (
 
 # TODO: This should be just temp fix
 LambdaHDF5Handler.specs = {"AD_HDF5_lambda"} | LambdaHDF5Handler.specs
+HDF_DEFAULT_FNAME_FORMAT = "scan_%6.6d_master.hdf"
+BLUESKY_DEFAULT_LOCATION = "entry/"
 
 
 def load_catalog(name=None, query=None, handlers=None):
@@ -178,6 +181,30 @@ def load_databroker(
             )
 
 
+def hdf5_to_dataframe(data):
+    output = {}
+    for key in data.keys():
+        output[key] = data[key]["value"][()]
+    return DataFrame(output)
+
+
+def load_hdf5_master(scan, folder, fname_format=HDF_DEFAULT_FNAME_FORMAT):
+    return File(join(folder, fname_format.format(scan)))
+
+
+def load_hdf5_data(
+    scan,
+    folder,
+    fname_format=HDF_DEFAULT_FNAME_FORMAT,
+    h5_location=BLUESKY_DEFAULT_LOCATION
+):
+    return hdf5_to_dataframe(
+        load_hdf5_master(
+            scan, folder, fname_format=fname_format
+        )[h5_location]
+    )
+
+
 def load_table(scan, source=None, **kwargs):
     """
     Automated scan table loader.
@@ -224,6 +251,15 @@ def load_table(scan, source=None, **kwargs):
     if source == "csv":
         name_format = kwargs.pop("name_format", "scan_{}_primary.csv")
         table = load_csv(scan, folder=folder, name_format=name_format)
+    elif source in ("hdf5", "h5", "hdf"):
+        fname_format = kwargs.pop("fname_format", HDF_DEFAULT_FNAME_FORMAT)
+        h5_location = kwargs.pop("h5_location", BLUESKY_DEFAULT_LOCATION)
+        table = load_hdf5_data(
+            scan,
+            folder,
+            fname_format=fname_format,
+            h5_location=h5_location
+        )
     elif isinstance(source, str) or isinstance(source, SpecDataFile):
         table = load_spec(scan, source, folder=folder)
     else:
