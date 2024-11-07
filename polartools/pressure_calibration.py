@@ -155,7 +155,6 @@ def load_au_params(temperature):
 
 
 def load_pt_params():
-
     # Bohr radius
     a0 = 0.5291772109  # \AA
     v0 = 101.9 * a0**3

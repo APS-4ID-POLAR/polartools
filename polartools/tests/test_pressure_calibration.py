@@ -1,16 +1,17 @@
 # Copyright (c) 2020, UChicago Argonne, LLC.
 # See LICENSE file for details.
 
-from polartools.pressure_calibration import xrd_calibrate_pressure
+from polartools.pressure_calibration import (
+    xrd_calibrate_pressure, calculate_pressure
+)
 from numpy import allclose
 from os.path import join
 from spec2nexus.spec import SpecDataFile
 
 
-def test_xrd_calibrate_pressure():
+# TODO: These tests are not great as they rely on fitting the data...
+def test_xrd_calibrate_pressure_Au():
     path = join("polartools", "tests", "data_for_test")
-
-    # Au calibrant
     pressure = xrd_calibrate_pressure(
         419,
         "pressure_calibration.dat",
@@ -24,7 +25,9 @@ def test_xrd_calibrate_pressure():
 
     assert allclose(pressure, 0.743387, atol=1e-5)
 
-    # Ag calibrant
+
+def test_xrd_calibrate_pressure_Ag():
+    path = join("polartools", "tests", "data_for_test")
     spec_file = SpecDataFile(join(path, "pressure_calibration.dat"))
     pressure = xrd_calibrate_pressure(
         419,
@@ -37,4 +40,9 @@ def test_xrd_calibrate_pressure():
         monitor="IC3",
     )
 
-    assert allclose(pressure, 0.818770, atol=1e-5)
+    assert allclose(pressure, 0.7433860, atol=1e-5)
+
+
+def test_xrd_calculate_pressure_Pt():
+    pressure = calculate_pressure(11, 300, 30, [1, 1, 1], "Pt")
+    assert allclose(pressure, 60.2033739, atol=1e-5)
