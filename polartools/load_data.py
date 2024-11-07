@@ -26,7 +26,11 @@ from collections import OrderedDict
 from pyRestTable import Table
 from databroker.queries import TimeRange
 from apstools.utils import getDatabase
-from polartools.area_detector_handlers import EigerHandler, LambdaHDF5Handler
+from polartools.area_detector_handlers import (
+    EigerHandler,
+    LambdaHDF5Handler,
+    SPEHandler,
+)
 
 # TODO: This should be just temp fix
 LambdaHDF5Handler.specs = {"AD_HDF5_lambda"} | LambdaHDF5Handler.specs
@@ -59,6 +63,7 @@ def load_catalog(name=None, query=None, handlers=None):
             AD_HDF5_Lambda250k_APSPolar=LambdaHDF5Handler,
             AD_HDF5_lambda=LambdaHDF5Handler,  # Temporary fix
             AD_EIGER_APSPolar=EigerHandler,
+            AD_SPE_APSPolar=SPEHandler,
         )
     for name, handler in handlers.items():
         cat.register_handler(name, handler, overwrite=True)
