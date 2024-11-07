@@ -4,6 +4,9 @@ Base functions to load data from various sources.
 .. autosummary::
     ~load_spec
     ~load_csv
+    ~load_hdf5_data
+    ~hdf5_to_dataframe
+    ~load_hdf5_master
     ~load_databroker
     ~load_table
     ~is_Bluesky_specfile
@@ -24,6 +27,7 @@ import copy
 from datetime import datetime
 from collections import OrderedDict
 from pyRestTable import Table
+from h5py import File
 from databroker.queries import TimeRange
 from apstools.utils import getDatabase
 from polartools.area_detector_handlers import (
@@ -34,6 +38,8 @@ from polartools.area_detector_handlers import (
 
 # TODO: This should be just temp fix
 LambdaHDF5Handler.specs = {"AD_HDF5_lambda"} | LambdaHDF5Handler.specs
+HDF_DEFAULT_FNAME_FORMAT = "scan_{:06d}_master.hdf"
+BLUESKY_DEFAULT_LOCATION = "entry/instrument/bluesky/streams/primary"
 
 
 def load_catalog(name=None, query=None, handlers=None):
@@ -178,6 +184,97 @@ def load_databroker(
             )
 
 
+def hdf5_to_dataframe(data):
+    """
+    Converts h5py object into dataframe
+
+    WARNING: it assumes a very specific format. For each item in `data` it will
+    get the data in `data["key/value"]
+
+    Parameters
+    ----------
+    data : h5py object
+        Object with the data. Each key needs to have a "value" subkey.
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Table with the data.
+
+    See also
+    --------
+    :func:`polartools.load_data.load_hdf5_master`
+    :func:`h5py.File`
+    """
+    output = {}
+    for key in data.keys():
+        output[key] = data[key]["value"][()]
+    return DataFrame(output)
+
+
+def load_hdf5_master(scan, folder, fname_format=HDF_DEFAULT_FNAME_FORMAT):
+    """
+    Wrapper that loads HDF files using `h5py`.
+
+    Parameters
+    ----------
+    scan_id : int
+        Scan_id of the scan to be retrieved.
+    folder : string, optional
+        Folder where the master files are located.
+    fname_format : string, optional
+        General format of file name. The correct name must be retrievable
+        through: `file_name_format.format(scan_id)`
+
+    Returns
+    -------
+    data : h5py.File
+        Loaded HDF file.
+
+    See also
+    --------
+    :func:`h5py.File`
+    """
+    return File(join(folder, fname_format.format(scan)))
+
+
+def load_hdf5_data(
+    scan,
+    folder,
+    fname_format=HDF_DEFAULT_FNAME_FORMAT,
+    h5_location=BLUESKY_DEFAULT_LOCATION,
+):
+    """
+    Wrapper that loads HDF files using `h5py`.
+
+    Parameters
+    ----------
+    scan_id : int
+        Scan_id of the scan to be retrieved.
+    folder : string, optional
+        Folder where the master files are located.
+    fname_format : string, optional
+        General format of file name. The correct name must be retrievable
+        through: `file_name_format.format(scan_id)`
+    h5_location : string, optional
+        Location of the Bluesky data stream.
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Table with the data from the primary stream.
+
+    See also
+    --------
+    :func:`polartools.load_data.load_hdf5_master`
+    :func:`polartools.load_data.hdf5_to_dataframe`
+    :func:`h5py.File`
+    """
+    return hdf5_to_dataframe(
+        load_hdf5_master(scan, folder, fname_format=fname_format)[h5_location]
+    )
+
+
 def load_table(scan, source=None, **kwargs):
     """
     Automated scan table loader.
@@ -224,6 +321,12 @@ def load_table(scan, source=None, **kwargs):
     if source == "csv":
         name_format = kwargs.pop("name_format", "scan_{}_primary.csv")
         table = load_csv(scan, folder=folder, name_format=name_format)
+    elif source in ("hdf5", "h5", "hdf"):
+        fname_format = kwargs.pop("fname_format", HDF_DEFAULT_FNAME_FORMAT)
+        h5_location = kwargs.pop("h5_location", BLUESKY_DEFAULT_LOCATION)
+        table = load_hdf5_data(
+            scan, folder, fname_format=fname_format, h5_location=h5_location
+        )
     elif isinstance(source, str) or isinstance(source, SpecDataFile):
         table = load_spec(scan, source, folder=folder)
     else:
