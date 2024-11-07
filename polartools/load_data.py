@@ -196,12 +196,10 @@ def load_hdf5_data(
     scan,
     folder,
     fname_format=HDF_DEFAULT_FNAME_FORMAT,
-    h5_location=BLUESKY_DEFAULT_LOCATION
+    h5_location=BLUESKY_DEFAULT_LOCATION,
 ):
     return hdf5_to_dataframe(
-        load_hdf5_master(
-            scan, folder, fname_format=fname_format
-        )[h5_location]
+        load_hdf5_master(scan, folder, fname_format=fname_format)[h5_location]
     )
 
 
@@ -255,10 +253,7 @@ def load_table(scan, source=None, **kwargs):
         fname_format = kwargs.pop("fname_format", HDF_DEFAULT_FNAME_FORMAT)
         h5_location = kwargs.pop("h5_location", BLUESKY_DEFAULT_LOCATION)
         table = load_hdf5_data(
-            scan,
-            folder,
-            fname_format=fname_format,
-            h5_location=h5_location
+            scan, folder, fname_format=fname_format, h5_location=h5_location
         )
     elif isinstance(source, str) or isinstance(source, SpecDataFile):
         table = load_spec(scan, source, folder=folder)
