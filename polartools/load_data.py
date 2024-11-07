@@ -4,6 +4,9 @@ Base functions to load data from various sources.
 .. autosummary::
     ~load_spec
     ~load_csv
+    ~load_hdf5_data
+    ~hdf5_to_dataframe
+    ~load_hdf5_master
     ~load_databroker
     ~load_table
     ~is_Bluesky_specfile
@@ -182,6 +185,27 @@ def load_databroker(
 
 
 def hdf5_to_dataframe(data):
+    """
+    Converts h5py object into dataframe
+
+    WARNING: it assumes a very specific format. For each item in `data` it will
+    get the data in `data["key/value"]
+
+    Parameters
+    ----------
+    data : h5py object
+        Object with the data. Each key needs to have a "value" subkey.
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Table with the data.
+
+    See also
+    --------
+    :func:`polartools.load_data.load_hdf5_master`
+    :func:`h5py.File`
+    """
     output = {}
     for key in data.keys():
         output[key] = data[key]["value"][()]
@@ -189,6 +213,28 @@ def hdf5_to_dataframe(data):
 
 
 def load_hdf5_master(scan, folder, fname_format=HDF_DEFAULT_FNAME_FORMAT):
+    """
+    Wrapper that loads HDF files using `h5py`.
+
+    Parameters
+    ----------
+    scan_id : int
+        Scan_id of the scan to be retrieved.
+    folder : string, optional
+        Folder where the master files are located.
+    fname_format : string, optional
+        General format of file name. The correct name must be retrievable
+        through: `file_name_format.format(scan_id)`
+
+    Returns
+    -------
+    data : h5py.File
+        Loaded HDF file.
+
+    See also
+    --------
+    :func:`h5py.File`
+    """
     return File(join(folder, fname_format.format(scan)))
 
 
@@ -198,6 +244,32 @@ def load_hdf5_data(
     fname_format=HDF_DEFAULT_FNAME_FORMAT,
     h5_location=BLUESKY_DEFAULT_LOCATION,
 ):
+    """
+    Wrapper that loads HDF files using `h5py`.
+
+    Parameters
+    ----------
+    scan_id : int
+        Scan_id of the scan to be retrieved.
+    folder : string, optional
+        Folder where the master files are located.
+    fname_format : string, optional
+        General format of file name. The correct name must be retrievable
+        through: `file_name_format.format(scan_id)`
+    h5_location : string, optional
+        Location of the Bluesky data stream.
+
+    Returns
+    -------
+    data : pandas.DataFrame
+        Table with the data from the primary stream.
+
+    See also
+    --------
+    :func:`polartools.load_data.load_hdf5_master`
+    :func:`polartools.load_data.hdf5_to_dataframe`
+    :func:`h5py.File`
+    """
     return hdf5_to_dataframe(
         load_hdf5_master(scan, folder, fname_format=fname_format)[h5_location]
     )
