@@ -2,7 +2,8 @@
 # See LICENSE file for details.
 
 from polartools.pressure_calibration import (
-    xrd_calibrate_pressure, calculate_pressure
+    xrd_calibrate_pressure,
+    calculate_pressure,
 )
 from numpy import allclose
 from os.path import join

@@ -392,7 +392,7 @@ def _calculate_pressure_AuAg(v, v0, k0, kp0, z):
 
 
 def _calculate_pressure_Pt(v, v0, bt, btp, alphat, dt):
-    x = (v / v0)**(1 / 3)
+    x = (v / v0) ** (1 / 3)
     pt = 3 * bt
     eta = 1.5 * (btp - 1)
     return pt * ((1 - x) / x**2) * exp(eta * (1 - x)) + alphat * bt * dt
