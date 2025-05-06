@@ -1,0 +1,30 @@
+Al 1 0 0 4.04960 4.04960 4.04960 90 90 90 cub 225 none
+Al 1 1 0 4.04960 4.04960 4.04960 90 90 90 cub 225 none
+Al 1 1 1 4.04960 4.04960 4.04960 90 90 90 cub 225 none
+Au 1 1 1 4.07810 4.07810 4.07810 90 90 90 cub 225 none
+Cu 1 1 0 3.61502 3.61502 3.61502 90 90 90 cub 225 none
+Cu 1 1 1 3.61502 3.61502 3.61502 90 90 90 cub 225 none
+PG 0 0 1 2.46420 2.46400 6.70790 90 90 120 hex 194 2c
+Si 1 0 0 5.43095 5.43095 5.43095 90 90 90 cub 227 8a
+Si 1 1 0 5.43095 5.43095 5.43095 90 90 90 cub 227 8a
+Si 1 1 1 5.43095 5.43095 5.43095 90 90 90 cub 227 8a
+TbMnO3 0 2 0 5.30190 5.85570 7.40090 90 90 90 ort 62 4b
+Cu 1 0 0 3.61502 3.61502 3.61502 90 90 90 cub 225 none
+Dy 0 0 1 3.59300 3.59300 5.65370 90 90.0 120.0 hex 194 2c
+Ge 1 0 0 5.65750 5.65750 5.65750 90 90 90 cub 227 8a
+Ge 1 1 0 5.65750 5.65750 5.65750 90 90 90 cub 227 8a
+Ge 1 1 1 5.65750 5.65750 5.65750 90 90 90 cub 227 8a
+LiF 1 0 0 4.02580 4.02580 4.02580 90 90 90 cub 225 none
+LiF 1 1 0 4.02580 4.02580 4.02580 90 90 90 cub 225 none
+MgO 1 1 0 4.21700 4.21700 4.21700 90 90 90 cub 225 none
+MgO 1 1 1 4.21700 4.21700 4.21700 90 90 90 cub 225 none
+Mo 1 0 0 3.14737 3.14737 3.14737 90 90 90 cub 229 none
+Pd 1 1 0 3.89020 3.89020 3.89020 90 90 90 cub 225 none
+Pt 1 0 0 3.92370 3.92370 3.92370 90 90 90 cub 225 none
+Pt 1 1 0 3.92370 3.92370 3.92370 90 90 90 cub 225 none
+##REFERENCES
+##Analyzer h k l a b c alpha gamma beta latticesystem spacegroupnumber specialcondition##
+##possible lattice system=cub, tet, rho, ort, hex, mon, tri (cubic, tetragonal, rhombohedral, orthorombic, hexagonal, monoclinic, triclinic)
+##special:check which Wyckoff position is occupied, this might add extra conditions to the general reflection conditions
+#PG 0 0 1 2.46420 2.46400 6.71140 90 90 120 hex 194 2c
+Al2O3 1 0 0 4.75970 4.75970 12.9935 90 90 120 hex 167 12c
