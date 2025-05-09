@@ -13,8 +13,6 @@ from ophyd import (
 )
 from ophyd.status import DeviceStatus
 from collections import OrderedDict
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 MAX_ROIS = 32
 
@@ -86,11 +84,13 @@ class TotalCorrectedSignal(SignalRO):
 
     def get(self, **kwargs):
         value = 0
-        for ch_num in range(1, 4+1):
+        for ch_num in range(1, 4 + 1):
             roi = getattr(self.root, f'mca{ch_num}.rois.roi{self.roi_index}')
             dxp = getattr(self.root, f"dxp{ch_num}")
             _ocr = dxp.output_count_rate.get(**kwargs)
-            correction = 1.0 if _ocr == 0 else dxp.input_count_rate.get(**kwargs)/_ocr
+            correction = (
+                1.0 if _ocr == 0 else dxp.input_count_rate.get(**kwargs) / _ocr
+            )
             value += roi.count.get(**kwargs) * correction
         return value
 
@@ -216,7 +216,7 @@ class MyXMAP(SingleTrigger):
 
     @property
     def label_option_map(self):
-        return {f"ROI{i} Total": i for i in range(1, 8+1)}
+        return {f"ROI{i} Total": i for i in range(0, 8)}
 
     @property
     def plot_options(self):
@@ -226,6 +226,3 @@ class MyXMAP(SingleTrigger):
     def select_plot(self, channels):
         chans = [self.label_option_map[i] for i in channels]
         self.select_roi(chans)
-
-
-vortex = MyXMAP("dxpXMAPDP2:", name="vortex")

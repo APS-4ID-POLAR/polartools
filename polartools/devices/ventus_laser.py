@@ -2,11 +2,7 @@
 Ventus Laser
 '''
 
-__all__ = ["laser"]
-
 from ophyd import EpicsSignal, Component, Device
-from ..utils import logger
-logger.info(__file__)
 
 
 class VentusLaser(Device):
@@ -33,6 +29,3 @@ class VentusLaser(Device):
     psu_time = Component(EpicsSignal, "PSUTime", kind="config")
     laser_enabled_time = Component(EpicsSignal, "LETime", kind="config")
     laser_operation_time = Component(EpicsSignal, "LOTime", kind="config")
-
-
-laser = VentusLaser("4tst:LQE1:", name="laser", labels=("raman",))

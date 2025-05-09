@@ -2,11 +2,7 @@
 USB-CTR8
 """
 
-__all__ = ["ctr8"]
-
 from apstools.devices import MeasCompCtr
-from ..utils import logger
-logger.info(__file__)
 
 
 class CustomMeasCompCtr(MeasCompCtr):
@@ -43,8 +39,3 @@ class CustomMeasCompCtr(MeasCompCtr):
     binary_direction_6 = None
     binary_direction_7 = None
     binary_direction_8 = None
-
-
-ctr8 = CustomMeasCompCtr(
-    "4idCTR8_1:", name="ctr8", labels=("detector", "scaler")
-)

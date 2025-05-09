@@ -3,8 +3,6 @@ Huber filters
 """
 
 from ophyd import Component, FormattedComponent, Device, EpicsSignal
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 
 class SlotDevice(Device):

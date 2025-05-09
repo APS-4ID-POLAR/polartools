@@ -2,13 +2,7 @@
 WB Slit
 """
 
-__all__ = [
-    'wbslt'
-]
-
 from ophyd import Device, FormattedComponent, EpicsMotor
-from ..utils import logger
-logger.info(__file__)
 
 
 class SlitDevice(Device):
@@ -53,13 +47,3 @@ class SlitDevice(Device):
         self._slit_prefix = f'Slit{slitnum}:'
 
         super().__init__(prefix=PV, name=name, **kwargs)
-
-
-# White beam slit
-wbslt = SlitDevice(
-    '4idVDCM:',
-    'wbslt',
-    {'hor': 'm9', 'diag': 'm10', 'pitch': 'm11', 'yaw': 'm12'},
-    1,
-    labels=("4ida", 'slit',)
-)

@@ -2,14 +2,9 @@
 Kepko power supply
 """
 
-# __all__ = ['kepco']
-
 from ophyd import Component, FormattedComponent, Device, Kind
 from ophyd import EpicsSignal, EpicsSignalRO
 from apstools.devices import PVPositionerSoftDoneWithStop
-
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 
 class LocalPositioner(PVPositionerSoftDoneWithStop):
@@ -52,7 +47,3 @@ class KepcoController(Device):
         if value == 'Voltage':
             self.current.readback.kind = Kind.normal
             self.voltage.readback.kind = Kind.hinted
-
-
-# kepco = KepcoController('4idd:BOP:PS1:', name='kepco', labels=("magnet",))
-# kepco.mode_change(value=kepco.mode.get())

@@ -1,4 +1,4 @@
-""" Eiger 1M setup """
+""" Vortex 4 element with Dante electronics """
 
 from ophyd import (
     ADComponent, Staged, SignalRO, DynamicDeviceComponent
@@ -11,23 +11,8 @@ from collections import OrderedDict
 from time import time as ttime
 from .ad_mixins import TriggerBase
 from .vortex_dante_parts import DanteCAM, DanteHDF1Plugin, DanteSCA
-from ..utils.config import iconfig
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
-__all__ = ["vortex"]
-
-# Bluesky and IOC have the same path root.
-# IOC_FILES_ROOT = Path(iconfig["AREA_DETECTOR"]["VORTEX"]["IOC_FILES_ROOT"])
-IOC_FILES_ROOT = Path("")
-
-DEFAULT_FOLDER = Path(iconfig["AREA_DETECTOR"]["VORTEX"]["DEFAULT_FOLDER"])
-
-HDF1_NAME_TEMPLATE = iconfig["AREA_DETECTOR"]["HDF5_FILE_TEMPLATE"]
-HDF1_FILE_EXTENSION = iconfig["AREA_DETECTOR"]["HDF5_FILE_EXTENSION"]
-HDF1_NAME_FORMAT = HDF1_NAME_TEMPLATE + "." + HDF1_FILE_EXTENSION
-
-MAX_TIME = 60*60  # time used in align mode
+MAX_TIME = 60 * 60  # time used in align mode
 MAX_ROIS = 32
 
 
@@ -132,11 +117,13 @@ class TotalCorrectedSignal(SignalRO):
 
     def get(self, **kwargs):
         value = 0
-        for ch_num in range(1, self.root._num_channels+1):
-            roi = getattr(self.root.mcas, f'mca{ch_num}.rois.roi{self.roi_index}')
+        for ch_num in range(1, self.root._num_channels + 1):
+            roi = getattr(
+                self.root.mcas, f'mca{ch_num}.rois.roi{self.roi_index}'
+            )
             sca = getattr(self.root.scas, f"sca{ch_num}")
             _ocr = sca.ocr.get(**kwargs)
-            correction = 1.0 if _ocr == 0 else sca.icr.get(**kwargs)/_ocr
+            correction = 1.0 if _ocr == 0 else sca.icr.get(**kwargs) / _ocr
             value += roi.count.get(**kwargs) * correction
         return value
 
@@ -153,14 +140,14 @@ def _totals(attr_fix, id_range):
 
 def _mcas(num_channels):
     defn = OrderedDict()
-    for k in range(1, num_channels+1):
+    for k in range(1, num_channels + 1):
         defn[f'mca{k}'] = (EpicsMCARecord, f'mca{k}', {})
     return defn
 
 
 def _scas(num_channels):
     defn = OrderedDict()
-    for k in range(1, num_channels+1):
+    for k in range(1, num_channels + 1):
         defn[f'sca{k}'] = (DanteSCA, f'dante{k}:', {})
     return defn
 
@@ -186,14 +173,23 @@ class DanteDetector(Trigger, DetectorBase):
 
     total = DynamicDeviceComponent(_totals('roi', range(MAX_ROIS)))
 
-    hdf1 = ADComponent(
-        DanteHDF1Plugin,
-        "HDF1:",
-        ioc_path_root=IOC_FILES_ROOT,
-    )
+    hdf1 = ADComponent(DanteHDF1Plugin, "HDF1:")
 
     # TODO: TEMPORARY!
     _local_folder = "/local/home/dpuser/sector4/"
+
+    def __init__(
+        self,
+        *args,
+        default_folder=Path(
+            "/net/s4data/export/sector4/4idd/bluesky_images/vortex"
+        ),
+        hdf1_file_format="%s/%s_%6.6d.h5",
+        **kwargs
+    ):
+        self.default_folder = default_folder
+        self.hdf1_file_format = hdf1_file_format
+        super().__init__(*args, **kwargs)
 
     # Make this compatible with other detectors
     @property
@@ -229,8 +225,8 @@ class DanteDetector(Trigger, DetectorBase):
 
     def default_settings(self):
 
-        self.hdf1.file_template.put(HDF1_NAME_FORMAT)
-        self.hdf1.file_path.put(str(DEFAULT_FOLDER))
+        self.hdf1.file_template.put(self.hdf1_file_format)
+        self.hdf1.file_path.put(str(self.default_folder))
         self.hdf1.num_capture.put(0)
 
         if "enable" in self.hdf1.stage_sigs.keys():
@@ -295,7 +291,7 @@ class DanteDetector(Trigger, DetectorBase):
                 getattr(self.total, f"roi{i}").kind = "omitted"
 
         # change ROISTAT kinds
-        for pixel in range(1, self.num_channels+1):
+        for pixel in range(1, self.num_channels + 1):
             pix = getattr(self.mcas, f"mca{pixel}")
             for i in range(MAX_ROIS):
                 k = "normal" if i in rois else "omitted"
@@ -333,7 +329,7 @@ class DanteDetector(Trigger, DetectorBase):
 
     @property
     def label_option_map(self):
-        return {f"ROI{i} Total": i for i in range(1, 8+1)}
+        return {f"ROI{i} Total": i for i in range(0, 8)}
 
     @property
     def plot_options(self):
@@ -370,6 +366,3 @@ class DanteDetector(Trigger, DetectorBase):
         _hdf1_auto = True if self.hdf1.autosave.get() == "on" else False
         _hdf1_on = True if self.hdf1.enable.get() == "Enable" else False
         return _hdf1_on or _hdf1_auto
-
-
-vortex = DanteDetector("dp_dante8_xrd4:", name="vortex", labels=("detector",))

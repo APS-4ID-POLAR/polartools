@@ -3,15 +3,10 @@
 Scalers
 """
 
-__all__ = ['scaler_ctr8']
-
 from ophyd.scaler import ScalerCH
 from ophyd.signal import Signal
 from ophyd import Kind, Component
 import time
-
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 
 class PresetMonitorSignal(Signal):
@@ -59,7 +54,7 @@ class PresetMonitorSignal(Signal):
         # if self.parent._monitor.s.name == 'Time':
         if "chan01" in self.parent._monitor.name:
             freq = 1e7 if not self._freq else self._freq.get()
-            value_put = freq*value  # convert to seconds
+            value_put = freq * value  # convert to seconds
         else:
             value_put = value
 
@@ -210,10 +205,7 @@ class LocalScalerCH(ScalerCH):
     def select_plot(self, channels):
         self.select_plot_channels(chan_names=channels)
 
-
-scaler_ctr8 = LocalScalerCH(
-    '4idCTR8_1:scaler1', name='scaler_ctr8', labels=('detector', 'scaler')
-)
-scaler_ctr8.monitor = 'chan01'
-scaler_ctr8.select_read_channels()
-scaler_ctr8.select_plot_channels()
+    def default_settings(self):
+        self.monitor = 'chan01'
+        self.select_read_channels()
+        self.select_plot_channels()

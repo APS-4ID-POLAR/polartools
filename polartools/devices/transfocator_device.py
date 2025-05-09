@@ -2,8 +2,6 @@
 Transfocator
 """
 
-__all__ = ['transfocator']
-
 from ophyd import (
     Device,
     Component,
@@ -18,18 +16,15 @@ from ophyd import (
     DeviceStatus
 )
 from ophyd.status import AndStatus
-from bluesky.plan_stubs import mv, sleep as bps_sleep, abs_set
+from bluesky.plan_stubs import mv
 from apstools.devices import TrackingSignal
 from toolz import partition
-from numpy import poly1d, loadtxt
+from numpy import loadtxt
 from scipy.interpolate import interp1d
 from time import sleep as tsleep
-from .monochromator import mono
-from ..utils._logging_setup import logger
-from ..utils.transfocator_calculation_new import transfocator_calculation
+from logging import getLogger
 
-logger.info(__file__)
-
+logger = getLogger(__name__)
 MOTORS_IOC = "4idgSoft:"
 EPICS_ENERGY_SLEEP = 0.15
 
@@ -104,7 +99,9 @@ class PyCRL(Device):
     focal_power_index = Component(EpicsSignalWithRBV, "1:sortedIndex")
     # focal_power_index_readback = Component(EpicsSignal, "1:sortedIndex_RBV")
     focal_sizes = Component(EpicsSignal, "fSizes", kind="omitted")
-    minimize_button = Component(EpicsSignal, "minimizeFsize.PROC", kind="omitted")
+    minimize_button = Component(
+        EpicsSignal, "minimizeFsize.PROC", kind="omitted"
+    )
     system_done = Component(EpicsSignalRO, "sysBusy", kind="omitted")
 
     # Parameters readbacks
@@ -154,20 +151,15 @@ class PyCRL(Device):
         super().__init__(*args, **kwargs)
         self._status = None
         self.system_done.subscribe(self._update_status_subscription, run=False)
-    
+
     def _update_status_subscription(self, value, old_value, **kwarg):
         if (
-            (self._status is not None) and
-            (value in ["Done", 0]) and
-            (old_value in ["Changing", 1])
+            (self._status is not None)
+            and (value in ["Done", 0])
+            and (old_value in ["Changing", 1])
         ):
             self._status.set_finished()
             self._status = None
-
-    # def minimize_beam(self, value=1, **kwargs):
-    #     _button_status = self.minimize_button.set(value)
-    #     self._status = DeviceStatus(self)
-    #     return AndStatus(_button_status, self._status)
 
     def set(self, value, **kwargs):
         _st = DeviceStatus(self)
@@ -176,7 +168,7 @@ class PyCRL(Device):
             _st.set_finished()
         else:
             self._status = _st
-        
+
         return _st
 
 
@@ -198,7 +190,7 @@ class EnergySignal(Signal):
         tsleep(self._epics_sleep)
         # this is needed because the scan of the transfocator is 0.1 s
 
-        zpos = self.parent.z.user_readback.get() - self.parent.dq.get()*1000.
+        zpos = self.parent.z.user_readback.get() - self.parent.dq.get() * 1000.
         # dq in meters
 
         return self.parent.z.set(zpos, **kwargs)
@@ -223,10 +215,12 @@ class ZMotor(EpicsMotor):
                 )
 
             xpos = (
-                self.parent._x_interpolation(new_position) + self.parent.deltax.get()
+                self.parent._x_interpolation(new_position)
+                + self.parent.deltax.get()
             )
             ypos = (
-                self.parent._y_interpolation(new_position) + self.parent.deltay.get()
+                self.parent._y_interpolation(new_position)
+                + self.parent.deltay.get()
             )
 
             xystatus = AndStatus(
@@ -377,8 +371,8 @@ class TransfocatorClass(PyCRL):
 
     def _check_z_lims(self, position):
         if (
-            (position > self.z.low_limit_travel.get()) &
-            (position < self.z.high_limit_travel.get())
+            (position > self.z.low_limit_travel.get())
+            & (position < self.z.high_limit_travel.get())
         ):
             return True
         else:
@@ -390,7 +384,7 @@ class TransfocatorClass(PyCRL):
             logger.info("WARNING: transfocator in 'Local' energy mode")
 
         distance = (
-            self.z.user_readback.get() - self.dq.get()*1000
+            self.z.user_readback.get() - self.dq.get() * 1000
         )
 
         if not self._check_z_lims(distance):
@@ -440,59 +434,5 @@ class TransfocatorClass(PyCRL):
             )
         )
 
-    def calc(
-        self,
-        optimize_position=None,
-        reference_distance=None,
-        energy=None,
-        experiment="diffractometer",
-        distance_only=False,
-        selected_lenses=None,
-        verbose=True
-    ):
-        if energy is None:
-            energy = mono.energy.get()
-
-        if selected_lenses is None:
-            selected_lenses = self.lenses_in
-
-        if reference_distance is None:
-            reference_distance = self._default_distance
-
-        if optimize_position is None:
-            optimize_position = 0
-
-        return transfocator_calculation(
-            energy,
-            optimize_position=optimize_position,
-            reference_distance=reference_distance,
-            experiment=experiment,
-            distance_only=distance_only,
-            selected_lenses=selected_lenses,
-            verbose=verbose
-        )
-
-    def move_z_correct_xy_plan(self, zpos):
-        xpos = (
-            self.reference_x.get() +
-            poly1d(self.polynomial_x.get())(zpos)
-        )
-        ypos = (
-            self.reference_y.get() +
-            poly1d(self.polynomial_y.get())(zpos)
-        )
-
-        yield from mv(
-            self.x, xpos,
-            self.y, ypos,
-            self.z, zpos
-        )
-
-
-transfocator = TransfocatorClass(
-    "4idPyCRL:CRL4ID:",
-    name="transfocator",
-    labels=("4idg", "optics", "track_energy")
-)
-
-transfocator.stage_sigs["energy_select"] = 1
+    def default_settings(self):
+        self.stage_sigs["energy_select"] = 1

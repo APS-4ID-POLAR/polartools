@@ -1,10 +1,6 @@
 """ Interferometer setup """
 
-__all__ = ["interferometer"]
-
 from ophyd import Device, Component, EpicsSignalRO
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 
 class InterferometerDevice(Device):
@@ -33,10 +29,3 @@ class InterferometerDevice(Device):
         self.mvert_up.kind = "hinted"
         self.mvert_down.kind = "hinted"
         self.svert.kind = "hinted"
-
-
-interferometer = InterferometerDevice(
-    "4idIF:SG:",
-    name="interferometer",
-    labels=("interferometer",)
-)

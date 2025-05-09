@@ -23,13 +23,9 @@ from apstools.devices import CamMixin_V34
 from os.path import isfile
 from itertools import count
 from pathlib import Path
-from ..utils.config import iconfig
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
-
-USE_DM_PATH = iconfig["DM_USE_PATH"]
-DM_ROOT_PATH = iconfig["DM_ROOT_PATH"]
+USE_DM_PATH = True
+DM_ROOT_PATH = "/gdata/dm/4IDD"
 
 
 class PluginMixin(PluginBase_V34):
@@ -416,36 +412,36 @@ class PolarHDF5Plugin(HDF5Plugin, FileStoreHDF5IterativeWriteEpicsName):
     Using the filename from EPICS.
     """
     _default_configuration_attrs = HDF5Plugin._default_configuration_attrs + (
-            'auto_increment',
-            'auto_save',
-            'file_format',
-            'file_name',
-            'file_number',
-            'file_path',
-            'file_path_exists',
-            'file_template',
-            'file_write_mode',
-            'array_size',
-            'color_mode',
-            'data_type',
-            'dimensions',
-            'enable',
-            'plugin_type',
-            'compression',
-            'szip_num_pixels',
-            'store_attr',
-            'store_perform',
-            'zlevel',
-            'xml_file_name',
-            'swmr_active',
-            'swmr_cb_counter',
-            'swmr_mode',
-            'swmr_supported',
-            'driver_version',
-            'blosc_compressor',
-            'blosc_level',
-            'blosc_shuffle',
-            'autosave'
+        'auto_increment',
+        'auto_save',
+        'file_format',
+        'file_name',
+        'file_number',
+        'file_path',
+        'file_path_exists',
+        'file_template',
+        'file_write_mode',
+        'array_size',
+        'color_mode',
+        'data_type',
+        'dimensions',
+        'enable',
+        'plugin_type',
+        'compression',
+        'szip_num_pixels',
+        'store_attr',
+        'store_perform',
+        'zlevel',
+        'xml_file_name',
+        'swmr_active',
+        'swmr_cb_counter',
+        'swmr_mode',
+        'swmr_supported',
+        'driver_version',
+        'blosc_compressor',
+        'blosc_level',
+        'blosc_shuffle',
+        'autosave'
     )
     _default_read_attrs = HDF5Plugin._default_read_attrs + ('full_file_name',)
 

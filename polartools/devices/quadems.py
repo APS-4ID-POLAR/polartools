@@ -6,8 +6,6 @@ from ophyd import Component, QuadEM, EpicsSignalRO, Device
 from ophyd.quadem import QuadEMPort
 from collections import OrderedDict
 from .ad_mixins import ImagePlugin, StatsPlugin
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 
 class StatsPluginQuadEM(StatsPlugin):

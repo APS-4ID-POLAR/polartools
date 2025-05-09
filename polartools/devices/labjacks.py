@@ -2,18 +2,11 @@
 Labjacks
 """
 
-__all__ = [
-    "labjack_4idb",
-    "labjack_4ida"
-]
-
 from apstools.devices import LabJackT7
 from apstools.devices.labjack import (
     KIND_CONFIG_OR_NORMAL, DigitalIO, Output
 )
 from ophyd import DynamicDeviceComponent, EpicsSignalRO, Component, EpicsSignal
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 
 class AnalogOutput(Output):

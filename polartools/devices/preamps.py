@@ -2,15 +2,11 @@
 SRS 570 pre-amplifiers
 """
 
-# __all__ = ["preamp1", "preamp2"]
-
 from apstools.devices import SRS570_PreAmplifier
 from pint import Quantity
 from pandas import DataFrame
 from bluesky.plan_stubs import mv, rd, trigger, checkpoint, sleep
 from numpy import array, where, round, linspace, polyfit, poly1d
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 
 class LocalPreAmp(SRS570_PreAmplifier):
@@ -73,13 +69,13 @@ class LocalPreAmp(SRS570_PreAmplifier):
         # print(value, gain)
 
         best = [None, None, 1e10, False]
-        if (value/time > 1000) and (value/time < 950000):
-            optimal_gain = value/time/6e5*gain
-            opt_list = array(table.index)/optimal_gain
+        if (value / time > 1000) and (value / time < 950000):
+            optimal_gain = value / time / 6e5 * gain
+            opt_list = array(table.index) / optimal_gain
             i = where(opt_list == opt_list[opt_list > 1].min())[0][0]
             best = [table.iloc[i]["vals"], table.iloc[i]["units"], value, True]
         else:
-            direction = 1 if value/time > 4e5 else -1
+            direction = 1 if value / time > 4e5 else -1
             start = table.index.get_loc(gain)
             end = 0 if direction == -1 else table.shape[0]
 
@@ -95,8 +91,8 @@ class LocalPreAmp(SRS570_PreAmplifier):
 
                 # print(value, best)
                 if (
-                    (abs(value/time - 5e5) < abs(best[2]/time - 5e5))
-                    & (value/time < 6e5)
+                    (abs(value / time - 5e5) < abs(best[2] / time - 5e5))
+                    & (value / time < 6e5)
                 ):
                     best = [
                         table.iloc[i]["vals"],
@@ -110,9 +106,9 @@ class LocalPreAmp(SRS570_PreAmplifier):
 
         if best[0] is not None:
             yield from mv(
-                    self.sensitivity_value, best[0],
-                    self.sensitivity_unit, best[1]
-                )
+                self.sensitivity_value, best[0],
+                self.sensitivity_unit, best[1]
+            )
             yield from mv(self.set_all, 1)
 
     def opt_offset_plan(self, scaler_channel=None, time=0.1, delay=1):
@@ -145,8 +141,8 @@ class LocalPreAmp(SRS570_PreAmplifier):
                 # print(value, best)
                 # If value is better than previous one, then update.
                 if (
-                    (abs(value - 200) < abs(best["count"] - 200)) &
-                    (value*time > 2)
+                    (abs(value - 200) < abs(best["count"] - 200))
+                    & (value * time > 2)
                 ):
                     best["vals"] = gain_pv_conversion.iloc[i]["vals"]
                     best["units"] = gain_pv_conversion.iloc[i]["units"]
@@ -159,7 +155,7 @@ class LocalPreAmp(SRS570_PreAmplifier):
             return best
 
         # Keep the offset sign, start with the same "number" as the sensitivity
-        yield from mv(self.offset_fine, current_sign*500)
+        yield from mv(self.offset_fine, current_sign * 500)
         yield from sleep(delay)
         start = gain_pv_conversion.index.get_loc(
             round(self.computed_gain, 12)
@@ -168,15 +164,15 @@ class LocalPreAmp(SRS570_PreAmplifier):
         # print(best)
         if not best["done"]:
             # Change sign
-            yield from mv(self.offset_fine, -1*current_sign*500)
+            yield from mv(self.offset_fine, -1 * current_sign * 500)
             yield from sleep(delay)
             best = yield from _offset_scan(range(0, start, 1), best=best)
 
         yield from mv(
-                self.offset_fine, best["fine"],
-                self.offset_value, best["vals"],
-                self.offset_unit, best["units"]
-            )
+            self.offset_fine, best["fine"],
+            self.offset_value, best["vals"],
+            self.offset_unit, best["units"]
+        )
         yield from mv(self.set_all, 1)
 
     def opt_fine_plan(
@@ -198,10 +194,10 @@ class LocalPreAmp(SRS570_PreAmplifier):
         factor = +1 if sign == "+" else -1
 
         if start is None:
-            start = factor*1
+            start = factor * 1
 
         if end is None:
-            end = factor*1000
+            end = factor * 1000
 
         yield from mv(self.offset_fine, start)
         yield from mv(self.set_all, 1)
@@ -215,7 +211,7 @@ class LocalPreAmp(SRS570_PreAmplifier):
             yield from sleep(delay)
             yield from trigger(scaler_channel.root, wait=True)
             value = yield from rd(scaler_channel.s)
-            counts.append(value/time)
+            counts.append(value / time)
 
         pos = int(poly1d(polyfit(counts, fines, 1))(200))
         pos = pos if pos < 1000 else 1000
@@ -243,7 +239,7 @@ class LocalPreAmp(SRS570_PreAmplifier):
         yield from trigger(scaler_channel.root, wait=True)
         zero = yield from rd(scaler_channel.s)
 
-        if zero/time > 5e4:
+        if zero / time > 5e4:
             yield from self.opt_offset_plan(scaler_channel, time, delay)
 
         yield from checkpoint()
@@ -263,7 +259,7 @@ class LocalPreAmp(SRS570_PreAmplifier):
         yield from trigger(scaler_channel.root, wait=True)
         value = yield from rd(scaler_channel.s)
 
-        if (value/time > 6e5) or (value/time < 3e5):
+        if (value / time > 6e5) or (value / time < 3e5):
 
             yield from mv(self.shutter, self._shutter_vals["on"])
             yield from self.opt_sens_plan(scaler_channel, time, delay)
@@ -277,19 +273,10 @@ class LocalPreAmp(SRS570_PreAmplifier):
         yield from mv(self.shutter, self._shutter_vals["on"])
         yield from mv(self.set_all, 1)
 
+    def default_settings(self):
+        self.offset_fine._string = False
 
-# preamp1 = LocalPreAmp(
-#     '4tst:A1', name="preamp1", labels=('preamp', 'detector',)
-# )
-# preamp2 = LocalPreAmp(
-#     '4tst:A2', name="preamp2", labels=('preamp', 'detector',)
-# )
-
-# preamp1.offset_fine._string = False
-# preamp2.offset_fine._string = False
-
-# for pa in [preamp1, preamp2]:
-#     for item in (
-#         "offset_fine set_all offset_value offset_unit offset_fine"
-#     ).split():
-#         getattr(pa, item).put_complete = True
+        for item in (
+            "offset_fine set_all offset_value offset_unit offset_fine"
+        ).split():
+            getattr(self, item).put_complete = True

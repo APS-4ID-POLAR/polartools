@@ -2,8 +2,6 @@
 APS filter support
 """
 
-__all__ = ["gfilter"]
-
 
 from ophyd import (
     Component,
@@ -13,8 +11,6 @@ from ophyd import (
     EpicsSignalRO,
     EpicsSignalWithRBV
 )
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 NUM_FILTERS = 12
 
@@ -37,7 +33,7 @@ class FilterSlot(Device):
 
 def make_filter_slots(num: int):
     defn = {}
-    for n in range(1, num+1):
+    for n in range(1, num + 1):
         defn[f"f{n}"] = (
             FilterSlot, f"filter{n :02d}", dict(kind="config")
         )
@@ -74,8 +70,3 @@ class APSFilter(Device):
     )
 
     filters = DynamicDeviceComponent(make_filter_slots(NUM_FILTERS))
-
-
-gfilter = APSFilter(
-    "4idPyFilter:FL1:", name="gfilter", labels=("4idg", "filter")
-)

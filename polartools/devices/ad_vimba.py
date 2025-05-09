@@ -10,21 +10,6 @@ from ophyd.areadetector.trigger_mixins import ADTriggerStatus
 from pathlib import Path
 from time import time as ttime
 from .ad_mixins import PolarHDF5Plugin, StatsPlugin, ROIPlugin, TriggerBase
-from ..utils.config import iconfig
-from ..utils._logging_setup import logger
-logger.info(__file__)
-
-
-ad_iconfig = iconfig["AREA_DETECTOR"]
-HDF1_NAME_TEMPLATE = ad_iconfig["HDF5_FILE_TEMPLATE"]
-HDF1_FILE_EXTENSION = ad_iconfig["HDF5_FILE_EXTENSION"]
-HDF1_NAME_FORMAT = HDF1_NAME_TEMPLATE + "." + HDF1_FILE_EXTENSION
-
-vimba_iconfig = ad_iconfig["VIMBA"]
-IOC_FILES_ROOT = Path(vimba_iconfig["IOC_FILES_ROOT"])
-DEFAULT_FOLDER = IOC_FILES_ROOT / vimba_iconfig["RELATIVE_DEFAULT_FOLDER"]
-
-MAX_IMAGES = 65535
 
 
 class Trigger(TriggerBase):
@@ -206,7 +191,21 @@ class VimbaDetector(Trigger, DetectorBase):
     stats4 = ADComponent(StatsPlugin, "Stats4:")
     stats5 = ADComponent(StatsPlugin, "Stats5:")  # This is the full detector
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+        self,
+        *args,
+        default_folder="",
+        hdf1_name_template="%s/%s_%6.6d",
+        hdf1_file_extension="h5",
+        max_num_images=65535,
+        **kwargs
+    ):
+        self.default_folder = default_folder
+        self.hdf1_name_format = (
+            hdf1_name_template + "." + hdf1_file_extension
+        )
+        self.max_num_images = max_num_images
+
         super().__init__(*args, **kwargs)
 
     def wait_for_connection(self, all_signals=False, timeout=2):
@@ -221,7 +220,7 @@ class VimbaDetector(Trigger, DetectorBase):
     def align_on(self, time=0.1):
         """Start detector in alignment mode"""
         self.save_images_off()
-        self.cam.num_images.set(MAX_IMAGES).wait(timeout=10)
+        self.cam.num_images.set(self.max_num_images).wait(timeout=10)
         self.cam.image_mode.set("Continuous").wait(timeout=10)
         self.preset_monitor.set(time).wait(timeout=10)
         self.cam.acquire.set(1).wait(timeout=10)
@@ -248,8 +247,8 @@ class VimbaDetector(Trigger, DetectorBase):
         self.cam.image_mode.put("Single")
         self.cam.acquire.put(0)
 
-        self.hdf1.file_template.put(HDF1_NAME_FORMAT)
-        self.hdf1.file_path.put(str(DEFAULT_FOLDER))
+        self.hdf1.file_template.put(self.hdf1_name_format)
+        self.hdf1.file_path.put(str(self.default_folder))
         self.hdf1.create_directory.put(-2)
         self.hdf1.num_capture.put(0)
 
@@ -275,7 +274,7 @@ class VimbaDetector(Trigger, DetectorBase):
             List with the ROIs numbers to be plotted.
         """
 
-        for i in range(1, 5+1):
+        for i in range(1, 5 + 1):
             getattr(self, f"stats{i}").total.kind = (
                 "hinted" if i in rois else "normal"
             )
@@ -324,7 +323,7 @@ class VimbaDetector(Trigger, DetectorBase):
 
     @property
     def label_option_map(self):
-        return {f"ROI{i} Total": i for i in range(1, 5+1)}
+        return {f"ROI{i} Total": i for i in range(1, 5 + 1)}
 
     @property
     def plot_options(self):

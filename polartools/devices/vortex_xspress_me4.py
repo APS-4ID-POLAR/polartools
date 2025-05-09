@@ -16,30 +16,14 @@ from bluesky.plan_stubs import wait_for
 import asyncio
 from pathlib import Path
 from collections import OrderedDict
-from time import time as ttime, sleep
+from time import time as ttime
 from .ad_mixins import (
     ROIPlugin,
     AttributePlugin,
     ROIStatPlugin,
     PolarHDF5Plugin,
     VortexDetectorCam,
-    AD_plugin_primed_vortex,
-    AD_prime_plugin2_vortex
 )
-from ..utils.config import iconfig
-from ..utils._logging_setup import logger
-logger.info(__file__)
-
-__all__ = ["load_vortex", "vortex"]
-
-# Bluesky and IOC have the same path root.
-IOC_FILES_ROOT = Path(iconfig["AREA_DETECTOR"]["VORTEX"]["IOC_FILES_ROOT"])
-
-DEFAULT_FOLDER = Path(iconfig["AREA_DETECTOR"]["VORTEX"]["DEFAULT_FOLDER"])
-
-HDF1_NAME_TEMPLATE = iconfig["AREA_DETECTOR"]["HDF5_FILE_TEMPLATE"]
-HDF1_FILE_EXTENSION = iconfig["AREA_DETECTOR"]["HDF5_FILE_EXTENSION"]
-HDF1_NAME_FORMAT = HDF1_NAME_TEMPLATE + "." + HDF1_FILE_EXTENSION
 
 MAX_IMAGES = 12216
 MAX_ROIS = 8
@@ -146,7 +130,7 @@ class ROIStatN(Device):
 
 class VortexROIStatPlugin(ROIStatPlugin):
     _default_read_attrs = tuple(
-        f"roi{i}" for i in range(1, MAX_ROIS+1)
+        f"roi{i}" for i in range(1, MAX_ROIS + 1)
     )
 
     # ROIs
@@ -209,9 +193,11 @@ class TotalCorrectedSignal(SignalRO):
 
     def get(self, **kwargs):
         value = 0
-        for ch_num in range(1, self.root.cam.num_channels.get()+1):
+        for ch_num in range(1, self.root.cam.num_channels.get() + 1):
             channel = getattr(self.root, f'sca{ch_num}')
-            roi = getattr(self.root, 'stats{:d}.roi{:d}'.format(ch_num, self.roi_index))
+            roi = getattr(
+                self.root, 'stats{:d}.roi{:d}'.format(ch_num, self.roi_index)
+            )
             value += (
                 channel.dt_factor.get(**kwargs) * roi.total_value.get(**kwargs)
             )
@@ -262,13 +248,25 @@ class VortexDetector(Trigger, DetectorBase):
     sca3 = ADComponent(VortexSCA, "C3SCA:")
     sca4 = ADComponent(VortexSCA, "C4SCA:")
 
-    total = DynamicDeviceComponent(_totals('roi', range(1, MAX_ROIS+1)))
+    total = DynamicDeviceComponent(_totals('roi', range(1, MAX_ROIS + 1)))
 
     hdf1 = ADComponent(
         VortexHDF1Plugin,
         "HDF1:",
-        ioc_path_root=IOC_FILES_ROOT,
     )
+
+    def __init__(
+        self,
+        *args,
+        default_folder=Path(
+            "/net/s4data/export/sector4/4idd/bluesky_images/vortex"
+        ),
+        hdf1_file_format="%s/%s_%6.6d.h5",
+        **kwargs
+    ):
+        self.default_folder = default_folder
+        self.hdf1_file_format = hdf1_file_format
+        super().__init__(*args, **kwargs)
 
     # Make this compatible with other detectors
     @property
@@ -315,13 +313,13 @@ class VortexDetector(Trigger, DetectorBase):
                 old = 0
                 new = self.cam.array_counter.read()[
                     "vortex_cam_array_counter"
-                    ]["timestamp"]
+                ]["timestamp"]
                 while old != new:
                     await asyncio.sleep(sleep_time)
                     old = new
                     new = self.cam.array_counter.read()[
                         "vortex_cam_array_counter"
-                        ]["timestamp"]
+                    ]["timestamp"]
 
                 future.set_result("Detector done!")
 
@@ -335,8 +333,8 @@ class VortexDetector(Trigger, DetectorBase):
 
     def default_settings(self):
 
-        self.hdf1.file_template.put(HDF1_NAME_FORMAT)
-        self.hdf1.file_path.put(str(DEFAULT_FOLDER))
+        self.hdf1.file_template.put(self.hdf1_file_format)
+        self.hdf1.file_path.put(str(self.default_folder))
         self.hdf1.num_capture.put(0)
 
         self.cam.trigger_mode.put("Internal")
@@ -354,21 +352,10 @@ class VortexDetector(Trigger, DetectorBase):
         self.stage_sigs.pop("cam.image_mode")
         self.cam.stage_sigs["erase_on_start"] = "No"
 
-        # TODO: Not sure why this is needed. It will timeout otherwise.
-        connection_timeout = iconfig.get("OPHYD", {}).get("TIMEOUTS", {}).get(
-            "PV_CONNECTION", 15
-        )
-
         for nm in self.component_names:
-            t0 = ttime()
-            while ttime() - t0 < connection_timeout:
-                try:
-                    obj = getattr(self, nm)
-                    if "blocking_callbacks" in dir(obj):  # is it a plugin?
-                        obj.stage_sigs["blocking_callbacks"] = "No"
-                    break
-                except TimeoutError:
-                    sleep(0.5)
+            obj = getattr(self, nm)
+            if "blocking_callbacks" in dir(obj):  # is it a plugin?
+                obj.stage_sigs["blocking_callbacks"] = "No"
 
     @property
     def read_rois(self):
@@ -378,14 +365,14 @@ class VortexDetector(Trigger, DetectorBase):
     def read_rois(self, rois):
         for pixel in range(1, 5):
             pix = getattr(self, f"stats{pixel}")
-            for i in range(1, MAX_ROIS+1):
+            for i in range(1, MAX_ROIS + 1):
                 k = "normal" if i in rois else "omitted"
                 getattr(pix, f"roi{i}").kind = k
         self._read_rois = list(rois)
 
     def select_roi(self, rois):
 
-        for i in range(1, MAX_ROIS+1):
+        for i in range(1, MAX_ROIS + 1):
             kh = "hinted" if i in rois else "normal"
             getattr(self.total, f"roi{i}").total_value.kind = kh
 
@@ -421,7 +408,7 @@ class VortexDetector(Trigger, DetectorBase):
 
     @property
     def label_option_map(self):
-        return {f"ROI{i} Total": i for i in range(1, 8+1)}
+        return {f"ROI{i} Total": i for i in range(0, 8)}
 
     @property
     def plot_options(self):
@@ -455,48 +442,3 @@ class VortexDetector(Trigger, DetectorBase):
         _hdf1_auto = True if self.hdf1.autosave.get() == "on" else False
         _hdf1_on = True if self.hdf1.enable.get() == "Enable" else False
         return _hdf1_on or _hdf1_auto
-
-
-def load_vortex(prefix="S4QX4:"):
-
-    t0 = ttime()
-    try:
-        connection_timeout = iconfig.get("OPHYD", {}).get("TIMEOUTS", {}).get(
-            "PV_CONNECTION", 15
-        )
-        logger.info("Connecting to vortex")
-        detector = VortexDetector(prefix, name="vortex")
-        logger.info("Waiting for connection")
-        detector.wait_for_connection(timeout=connection_timeout)
-        logger.info("Connected")
-    except (KeyError, NameError, TimeoutError) as exinfo:
-        # fmt: off
-        logger.warning(
-            "Error connecting with PV='%s in %.2fs, %s",
-            prefix, ttime() - t0, str(exinfo),
-        )
-        logger.warning("Setting vortex to 'None'.")
-        detector = None
-        # fmt: on
-
-    else:
-        prime = iconfig.get("AREA_DETECTOR", {}).get("VORTEX", {})
-        if prime.get("ALLOW_PLUGIN_WARMUP", False):
-            if detector.connected:
-                if not AD_plugin_primed_vortex(detector.hdf1):
-                    logger.info("Priming HDF1 plugin")
-                    AD_prime_plugin2_vortex(detector.hdf1)
-
-        logger.info("Loading default settings")
-
-        detector.default_settings()
-
-        # Sometimes we get errors that bluesky gets the wrong value (just the first)
-        # character. This should fix it.
-        for component in "file_path file_name file_template".split():
-            _ = getattr(detector.hdf1, component).get(use_monitor=False)
-
-    return detector
-
-
-vortex = VortexDetector("S4QX4:", name="vortex", labels=("detector",))

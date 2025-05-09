@@ -15,8 +15,3 @@ class GaussmeterDevice(Device):
     @property
     def preset_monitor(self):
         return self.acquire_dummy
-
-
-gaussmeter = GaussmeterDevice(
-    "4idhSoft:LakeShore475:", name="gaussmeter", labels=("detector",)
-)

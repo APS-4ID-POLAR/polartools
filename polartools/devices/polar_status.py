@@ -3,13 +3,10 @@
 Polar status
 """
 
-__all__ = ["status_polar"]
 
-from ..utils._logging_setup import logger
 from ophyd import (
     Component, FormattedComponent, EpicsSignalRO, Device
 )
-logger.info(__file__)
 
 
 class GHStatus(Device):
@@ -67,6 +64,3 @@ class Status4ID(Device):
     b_hutch = Component(ABStatus, "", hutch="B", labels=("4idb",))
     g_hutch = Component(GHStatus, "", hutch="G", labels=("4idg",))
     h_hutch = Component(GHStatus, "", hutch="H", labels=("4idh",))
-
-
-status_polar = Status4ID("PA:04ID:", name="status_polar")

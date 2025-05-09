@@ -2,12 +2,7 @@
 Monochromator feedback
 """
 
-__all__ = ['mono_feedback']
-
 from ophyd import Device, Component, EpicsSignal, EpicsSignalRO
-from ..utils._logging_setup import logger
-
-logger.info(__file__)
 
 
 class FeedbackDirection(Device):
@@ -46,6 +41,3 @@ class MonoFeedback(Device):
     b = Component(FeedbackStation, "epidB", labels=("4idb",))
     g = Component(FeedbackStation, "epidG", labels=("4idg",))
     h = Component(FeedbackStation, "epidH", labels=("4idh",))
-
-
-mono_feedback = MonoFeedback("4idbSoft:", name="mono_feedback", kind="config")

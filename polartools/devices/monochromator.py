@@ -2,8 +2,6 @@
 Monochromator with energy controller by bluesky
 """
 
-__all__ = ["mono"]
-
 from ophyd import (
     Component,
     FormattedComponent,
@@ -16,9 +14,6 @@ from ophyd.pseudopos import pseudo_position_argument, real_position_argument
 from scipy.constants import speed_of_light, Planck
 from numpy import arcsin, pi, sin, cos
 from .labjacks import AnalogOutput
-from ..utils._logging_setup import logger
-
-logger.info(__file__)
 
 
 class MonoDevice(PseudoPositioner):
@@ -32,7 +27,9 @@ class MonoDevice(PseudoPositioner):
     _real = ['th', 'y2']
 
     # Other motors
-    crystal_select = Component(EpicsMotor, 'm2', labels=('motor',), kind="config")
+    crystal_select = Component(
+        EpicsMotor, 'm2', labels=('motor',), kind="config"
+    )
     thf2 = Component(EpicsMotor, 'm4', labels=('motor',))
     chi2 = Component(EpicsMotor, 'm5', labels=('motor',))
 
@@ -53,19 +50,19 @@ class MonoDevice(PseudoPositioner):
 
     def convert_energy_to_theta(self, energy):
         # lambda in angstroms, theta in degrees, energy in keV
-        lamb = speed_of_light*Planck*6.241509e15*1e10/energy
-        theta = arcsin(lamb/self.crystal_2d.get())*180./pi
+        lamb = speed_of_light * Planck * 6.241509e15 * 1e10 / energy
+        theta = arcsin(lamb / self.crystal_2d.get()) * 180. / pi
         return theta
 
     def convert_energy_to_y(self, energy):
         # lambda in angstroms, theta in degrees, energy in keV
         theta = self.convert_energy_to_theta(energy)
-        return self.y_offset.get()/(2*cos(theta*pi/180))
+        return self.y_offset.get() / (2 * cos(theta * pi / 180))
 
     def convert_theta_to_energy(self, theta):
         # lambda in angstroms, theta in degrees, energy in keV
-        lamb = self.crystal_2d.get()*sin(theta*pi/180)
-        energy = speed_of_light*Planck*6.241509e15*1e10/lamb
+        lamb = self.crystal_2d.get() * sin(theta * pi / 180)
+        energy = speed_of_light * Planck * 6.241509e15 * 1e10 / lamb
         return energy
 
     @pseudo_position_argument

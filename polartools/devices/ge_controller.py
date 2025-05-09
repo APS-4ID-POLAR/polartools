@@ -2,12 +2,8 @@
 GE pressure controllers
 """
 
-__all__ = ['ge_apply', 'ge_release']
-
 from ophyd import Component, EpicsSignalRO, EpicsSignalWithRBV
 from apstools.devices import PVPositionerSoftDoneWithStop
-from ..utils import logger
-logger.info(__file__)
 
 
 class GEController(PVPositionerSoftDoneWithStop):
@@ -23,7 +19,7 @@ class GEController(PVPositionerSoftDoneWithStop):
     effort = Component(EpicsSignalRO, "Effort_RBV",
                        auto_monitor=True, kind="config")
 
-    def __init__(self, *args, timeout=60*60*10, **kwargs):
+    def __init__(self, *args, timeout=60 * 60 * 10, **kwargs):
         super().__init__(*args, timeout=timeout, **kwargs)
         self._settle_time = 0
 
@@ -46,21 +42,3 @@ class GEController(PVPositionerSoftDoneWithStop):
         if success is False:
             self.setpoint.put(self._position)
         super().stop(success=success)
-
-
-ge_apply = GEController(
-    "4idPace:PC1:",
-    name="ge_apply",
-    readback_pv="Pressure_RBV",
-    setpoint_pv="Setpoint",
-    tolerance=0.01,
-    labels=('pressure', 'high_pressure')
-)
-ge_release = GEController(
-    "4idPace:PC2:",
-    name="ge_release",
-    readback_pv="Pressure_RBV",
-    setpoint_pv="Setpoint",
-    tolerance=0.01,
-    labels=('pressure', 'high_pressure')
-)

@@ -2,7 +2,6 @@
 """
 HHL mirror
 """
-__all__ = ['hhl_mirror']
 
 from ophyd import (
     Component,
@@ -12,8 +11,6 @@ from ophyd import (
     EpicsSignal,
     EpicsSignalRO
 )
-from ..utils._logging_setup import logger
-logger.info(__file__)
 
 
 class ToroidalMirror(Device):
@@ -41,8 +38,3 @@ class ToroidalMirror(Device):
     critical_energy = Component(EpicsSignalRO, 'Ecritical')
     beam_offset = Component(EpicsSignalRO, 'beam_offset')
     alpha = Component(EpicsSignalRO, 'alpha')
-
-
-hhl_mirror = ToroidalMirror(
-    '4idHHLM:', name='hhl_mirror', labels=("4ida", "mirror",)
-)
