@@ -282,7 +282,7 @@ def load_dichro(
     # In SPEC the columns are different.
     if (
         isinstance(source, (str, SpecDataFile))
-        and source != "csv"
+        and source not in ("csv", "hdf5", "h5", "hdf")
         and not is_Bluesky_specfile(source, **kwargs)
     ):
         if not positioner:
