@@ -38,7 +38,12 @@ def test_load_absorption():
     path = join("polartools", "tests", "data_for_test")
 
     _, xas = absorption.load_absorption(
-        44, "bluesky_spec.dat", positioner="fourc_h", folder=path
+        44,
+        "bluesky_spec.dat",
+        positioner="fourc_h",
+        detector="Ion Ch 5",
+        monitor="Ion Ch 4",
+        folder=path
     )
     assert allclose(xas.mean(), 0.7141861035115614)
 
