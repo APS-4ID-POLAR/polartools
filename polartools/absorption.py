@@ -42,11 +42,11 @@ _spec_default_cols = dict(
 
 _bluesky_default_cols = dict(
     positioner="energy",
-    detector="Ion Ch 5",
-    monitor="Ion Ch 4",
-    dc_col="Lock DC",
-    ac_col="Lock AC",
-    acoff_col="Lock AC off",
+    detector="4idhI0",
+    monitor="4idhI",
+    dc_col="LockDC",
+    ac_col="LockAC",
+    acoff_col="LockACoff",
 )
 
 
@@ -59,7 +59,8 @@ def _select_default_names(source, **kwargs):
             check = is_Bluesky_specfile(source, **kwargs)
             _defaults = _bluesky_default_cols if check else _spec_default_cols
         except (NotASpecDataFile, SpecDataFileNotFound):
-            # If not a spec file, it must be csv, and use bluesky defaults.
+            # If not a spec file, it must be csv or h5, and use bluesky
+            # defaults.
             _defaults = _bluesky_default_cols
     else:
         # It is databroker.

@@ -208,7 +208,9 @@ def hdf5_to_dataframe(data):
     """
     output = {}
     for key in data.keys():
-        output[key] = data[key]["value"][()]
+        value = data[key].get("value", None)
+        if value is not None:
+            output[key] = value[()]
     return DataFrame(output)
 
 
