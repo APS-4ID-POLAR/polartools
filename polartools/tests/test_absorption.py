@@ -43,7 +43,7 @@ def test_load_absorption():
         positioner="fourc_h",
         detector="Ion Ch 5",
         monitor="Ion Ch 4",
-        folder=path
+        folder=path,
     )
     assert allclose(xas.mean(), 0.7141861035115614)
 
