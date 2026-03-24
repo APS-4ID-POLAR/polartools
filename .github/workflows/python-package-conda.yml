@@ -75,7 +75,7 @@ jobs:
           databroker-unpack inplace polartools/tests/data_for_test/databroker data_3
           pytest --cov-config=.coveragerc --cov=./ --cov-report=xml
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
           verbose: true
