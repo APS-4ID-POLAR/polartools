@@ -30,6 +30,19 @@ pytest polartools/tests/test_absorption.py
 pytest polartools/tests/test_absorption.py::test_function_name
 ```
 
+### Test data
+Test fixtures live in `polartools/tests/data_for_test/`:
+- `absorption.dat`, `fluorescence.dat`, `bluesky_spec.dat`, `pressure_calibration.dat` — SPEC files
+- `scan_000025_master.hdf` — HDF5 master file
+- `csv/` — CSV exports of scan 1049
+- `databroker/` — msgpack catalog (scan 1049, must be unpacked before use)
+- `lambda250k/` — databroker catalog with 50 Lambda detector images (scan 276)
+
+**Not yet covered by tests** (need new data files to add coverage):
+- `EigerHandler` — needs an Eiger-format HDF5 file (`entry/data/data` dataset)
+- `SPEHandler` — needs a Princeton Instruments SPE file
+- `process_rxes_mcd` — needs a scan whose image count is divisible by 4 (lambda250k has 50 images, which is not)
+
 ### Lint and format
 ```bash
 flake8
@@ -46,9 +59,10 @@ The package is organized around data sources and processing stages:
 3. **`diffraction.py`** — Loads and fits Bragg peaks (Gaussian/Lorentzian/Pseudo-Voigt via lmfit); also handles HKL conversions.
 4. **`pressure_calibration.py`** — Pressure calibration using Au/Ag diffraction standards; builds on diffraction.py.
 5. **`process_images.py`** — Image processing for area detectors (thresholding, curvature extraction) using dask for large datasets.
-6. **`manage_database.py`** — Import/export Bluesky/databroker data to/from HDF5.
+6. **`manage_database.py`** — Import/export Bluesky/databroker data to/from msgpack or CSV/JSON via `databroker-pack` and `suitcase`.
 7. **`area_detector_handlers.py`** — Custom databroker asset handlers for Lambda HDF5, Eiger, and SPE detectors.
-8. **`_larch.py`**, **`_pyrixs.py`** — Optional wrappers for Larch and PYRIXS spectroscopy libraries.
+8. **`_larch.py`** — Hoisted utilities from xraylarch (`finde0`, `index_nearest`) to avoid the heavy larch install.
+9. **`_pyrixs.py`** — Hoisted utilities from pyrixs for 2D image → spectrum extraction (curvature fitting, photon-event binning).
 
 ### Key dependencies
 - `lmfit` — peak fitting throughout diffraction and absorption modules
