@@ -132,7 +132,7 @@ def test_fit_series_invalid_length():
 
 
 def test_load_series_spec():
-    datax, datay, dataz, det, pos = load_series(
+    datax, _, dataz, det, pos = load_series(
         [SCAN, SCAN, 1],
         source=SPEC_FILE,
         positioner=POSITIONER,

@@ -72,7 +72,7 @@ def test_load_au_params():
     assert allclose(k0, 166.7, atol=0.1)
     assert allclose(kp0, 6.20, atol=1e-3)
     # T=0 K should return the low-temp values
-    v0_0, k0_0, _ = load_au_params(0)
+    v0_0, _, _ = load_au_params(0)
     assert allclose(v0_0, 16.7906, atol=1e-3)
 
 
