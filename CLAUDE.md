@@ -71,6 +71,22 @@ The package is organized around data sources and processing stages:
 - `dask` — lazy/parallel image loading in `process_images.py`
 - `numpy`, `scipy`, `pandas`, `matplotlib` — standard scientific stack
 
+### Known issues (open GitHub issues)
+- **#92** — Bug when loading lockin XMCD with "h5" source
+- **#89** — Moving devices from polar_instrument to here
+- **#69** — Update the lambda handler
+- **#61** — Alternative ways to process images
+- **#60** — `manage_database.to_databroker` bug
+- **#59** — Speed up image processing
+- **#56** — `manage_database.to_csv_json` does not work under pytest (logging conflict)
+- **#54** — Cannot pack run with Eiger images
+- **#48** — Refactor polartools functions
+- **#44** — Interpolation bug in `load_multi` absorption functions
+- **#35** — Improve handling of fluorescence scans by `load_absorption`
+- **#34** — `databroker-unpack` must be run before pytest
+- **#28** — Slow to read data from databroker
+- **#27** — Improve code coverage
+
 ### Versioning
 Uses `versioneer` with git tags (prefix `v`). Do not manually edit `polartools/_version.py`.
 
