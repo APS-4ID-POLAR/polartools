@@ -147,7 +147,7 @@ def test_load_series_spec():
 
 
 def test_load_series_normalize():
-    datax, datay, dataz, det, pos = load_series(
+    _, _, dataz, det, pos = load_series(
         [SCAN, SCAN, 1],
         source=SPEC_FILE,
         positioner=POSITIONER,
