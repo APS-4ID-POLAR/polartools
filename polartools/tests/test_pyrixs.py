@@ -5,8 +5,8 @@ import numpy as np
 from numpy import allclose
 import matplotlib
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from polartools._pyrixs import (
+import matplotlib.pyplot as plt  # noqa: E402
+from polartools._pyrixs import (  # noqa: E402
     poly,
     image_to_photon_events,
     bin_edges_centers,

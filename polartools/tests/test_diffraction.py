@@ -2,13 +2,12 @@
 # See LICENSE file for details.
 
 import numpy as np
-from numpy import allclose
 import pytest
 import matplotlib
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from os.path import join
-from polartools.diffraction import (
+import matplotlib.pyplot as plt  # noqa: E402
+from os.path import join  # noqa: E402
+from polartools.diffraction import (  # noqa: E402
     Model,
     fit_peak,
     get_type,

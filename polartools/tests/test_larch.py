@@ -2,7 +2,6 @@
 # See LICENSE file for details.
 
 import numpy as np
-from numpy import allclose
 from polartools._larch import finde0, index_nearest
 
 
