@@ -4,6 +4,7 @@
 import numpy as np
 import pytest
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 from os.path import join  # noqa: E402
@@ -39,6 +40,7 @@ def _make_gaussian(center=0.0, sigma=1.0, amplitude=100.0, n=100):
 # fit_peak
 # ---------------------------------------------------------------------------
 
+
 def test_fit_peak_gaussian():
     x, y = _make_gaussian()
     result = fit_peak(x, y, model=Model.Gaussian)
@@ -64,6 +66,7 @@ def test_fit_peak_pseudovoigt():
 # get_type
 # ---------------------------------------------------------------------------
 
+
 def test_get_type_spec():
     info = get_type(SCAN, source=SPEC_FILE, folder=PATH)
     assert isinstance(info, dict)
@@ -76,6 +79,7 @@ def test_get_type_spec():
 # fit_series
 # ---------------------------------------------------------------------------
 
+
 def test_fit_series_spec_single_scan():
     result = fit_series(
         [SCAN, SCAN, 1],
@@ -86,10 +90,15 @@ def test_fit_series_spec_single_scan():
     )
     assert result.shape == (1, 9)
     assert list(result.columns) == [
-        "Scan #", "Index", "Std Index",
-        "Intensity", "Std I",
-        "Position", "Std P",
-        "Width", "Std W",
+        "Scan #",
+        "Index",
+        "Std Index",
+        "Intensity",
+        "Std I",
+        "Position",
+        "Std P",
+        "Width",
+        "Std W",
     ]
     assert result["Position"].iloc[0] > 0  # 2-theta must be positive
 
@@ -120,6 +129,7 @@ def test_fit_series_invalid_length():
 # ---------------------------------------------------------------------------
 # load_series
 # ---------------------------------------------------------------------------
+
 
 def test_load_series_spec():
     datax, datay, dataz, det, pos = load_series(
@@ -167,6 +177,7 @@ def test_load_series_invalid_length():
 # plot_fit (wraps fit_series + matplotlib)
 # ---------------------------------------------------------------------------
 
+
 def test_plot_fit_spec():
     result = plot_fit(
         [SCAN, SCAN, 1],
@@ -182,6 +193,7 @@ def test_plot_fit_spec():
 # ---------------------------------------------------------------------------
 # plot_data
 # ---------------------------------------------------------------------------
+
 
 def test_plot_data_spec():
     # plot_data returns None; just verify it runs without error

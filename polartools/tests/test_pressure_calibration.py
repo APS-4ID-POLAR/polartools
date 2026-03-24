@@ -121,7 +121,9 @@ def test_fit_bragg_peak_with_guesses():
 
 def test_calculate_tth_round_trip():
     # Round-trip: tth -> pressure -> tth should recover original tth
-    tth_original = 26.0  # degrees; above ambient for Au(111) at 12 keV -> positive P
+    tth_original = (
+        26.0  # degrees; above ambient for Au(111) at 12 keV -> positive P
+    )
     pressure = calculate_pressure(tth_original, 300, 12.0, [1, 1, 1], "Au")
     assert pressure > 0
     tth_back = calculate_tth(pressure, 300, 12.0, [1, 1, 1], "Au")
