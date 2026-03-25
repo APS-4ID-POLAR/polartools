@@ -47,7 +47,8 @@ def test_bin_edges_centers():
 
 
 def test_get_curvature_offsets():
-    # Horizontal stripe -> offsets should all be near 0 (after referencing center)
+    # Horizontal stripe -> offsets should all be near 0 (after referencing 
+    # center)
     rng = np.random.default_rng(42)
     n = 10000
     x = rng.uniform(0, 512, n)

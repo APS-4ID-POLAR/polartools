@@ -1,9 +1,9 @@
 name: polartools-dev
 channels:
-  - defaults
   - conda-forge
   - aps-anl-tag
   - nsls2forge
+  - nodefaults
 dependencies:
   - python >=3.8, <=3.11
   - scipy
