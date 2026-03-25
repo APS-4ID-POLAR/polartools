@@ -106,3 +106,39 @@ def test_collect_meta(db):
         "f155ab58-a681-4911-9e54-0bbcb7465b22",
     ]
     assert meta[1049]["time"] == [1608235923.9519994, 1608235933.5274835]
+
+
+def test_load_spec():
+    path = join("polartools", "tests", "data_for_test")
+    table = load_data.load_spec(1, "pressure_calibration.dat", folder=path)
+    assert table.shape == (51, 16)
+
+
+def test_load_spec_with_specfile_object():
+    path = join("polartools", "tests", "data_for_test")
+    spec_file = SpecDataFile(join(path, "pressure_calibration.dat"))
+    table = load_data.load_spec(1, spec_file)
+    assert table.shape == (51, 16)
+
+
+def test_load_hdf5_master():
+    path = join("polartools", "tests", "data_for_test")
+    f = load_data.load_hdf5_master(25, path)
+    assert "entry" in f
+    f.close()
+
+
+def test_hdf5_to_dataframe():
+    path = join("polartools", "tests", "data_for_test")
+    f = load_data.load_hdf5_master(25, path)
+    location = "entry/instrument/bluesky/streams/primary"
+    df = load_data.hdf5_to_dataframe(f[location])
+    assert df.shape == (2, 9)
+    f.close()
+
+
+def test_lookup_position(db, capsys):
+    load_data.lookup_position(db, 1049, search_string="")
+    captured = capsys.readouterr()
+    # lookup_position always prints a "Positioner" header line
+    assert "Positioner" in captured.out

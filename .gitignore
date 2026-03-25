@@ -86,3 +86,6 @@ target/
 
 # test file
 xmcd_save_test.dat
+
+# Claude code
+.claude/
