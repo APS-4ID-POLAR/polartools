@@ -50,20 +50,28 @@ _bluesky_default_cols = dict(
 )
 
 
+def _sort_and_deduplicate(x, *ys):
+    """Sort arrays by x and remove duplicate x values."""
+    _, idx = np.unique(x, return_index=True)
+    return (x[idx],) + tuple(y[idx] for y in ys)
+
+
 def _select_default_names(source, **kwargs):
     # Select default parameters
-    if isinstance(source, (str, SpecDataFile)):
-        # It is csv or spec.
+    if isinstance(source, (str, SpecDataFile)) and source not in (
+        "csv",
+        "hdf5",
+        "h5",
+        "hdf",
+    ):
+        # It is spec — check if it was written by Bluesky.
         try:
-            # Checks spec origin.
-            check = is_Bluesky_specfile(source, **kwargs)
+            check = is_Bluesky_specfile(source, folder=kwargs.get("folder", ""))
             _defaults = _bluesky_default_cols if check else _spec_default_cols
         except (NotASpecDataFile, SpecDataFileNotFound):
-            # If not a spec file, it must be csv or h5, and use bluesky
-            # defaults.
             _defaults = _bluesky_default_cols
     else:
-        # It is databroker.
+        # csv, h5/hdf5/hdf, or databroker — all use Bluesky column names.
         _defaults = _bluesky_default_cols
     return _defaults
 
@@ -397,6 +405,7 @@ def load_multi_xas(
                 transmission,
                 **kwargs,
             )
+            energy, xanes = _sort_and_deduplicate(energy, xanes)
         else:
             energy_tmp, xanes_tmp = load_absorption(
                 scan,
@@ -407,6 +416,7 @@ def load_multi_xas(
                 transmission,
                 **kwargs,
             )
+            energy_tmp, xanes_tmp = _sort_and_deduplicate(energy_tmp, xanes_tmp)
             xanes = np.vstack(
                 (
                     xanes,
@@ -510,6 +520,7 @@ def load_multi_dichro(
                 transmission,
                 **kwargs,
             )
+            energy, xanes, xmcd = _sort_and_deduplicate(energy, xanes, xmcd)
         else:
             energy_tmp, xanes_tmp, xmcd_tmp = load_dichro(
                 scan,
@@ -519,6 +530,9 @@ def load_multi_dichro(
                 monitor,
                 transmission,
                 **kwargs,
+            )
+            energy_tmp, xanes_tmp, xmcd_tmp = _sort_and_deduplicate(
+                energy_tmp, xanes_tmp, xmcd_tmp
             )
             xanes = np.vstack(
                 (
@@ -636,9 +650,13 @@ def load_multi_lockin(
             energy, xanes, xmcd = load_lockin(
                 scan, source, positioner, dc_col, ac_col, acoff_col, **kwargs
             )
+            energy, xanes, xmcd = _sort_and_deduplicate(energy, xanes, xmcd)
         else:
             energy_tmp, xanes_tmp, xmcd_tmp = load_lockin(
                 scan, source, positioner, dc_col, ac_col, acoff_col, **kwargs
+            )
+            energy_tmp, xanes_tmp, xmcd_tmp = _sort_and_deduplicate(
+                energy_tmp, xanes_tmp, xmcd_tmp
             )
             xanes = np.vstack(
                 (
