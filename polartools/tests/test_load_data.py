@@ -142,3 +142,56 @@ def test_lookup_position(db, capsys):
     captured = capsys.readouterr()
     # lookup_position always prints a "Positioner" header line
     assert "Positioner" in captured.out
+
+
+def test__is_tiled(db):
+    import types
+
+    assert load_data._is_tiled(db) is False
+    fake_tiled = types.SimpleNamespace()  # no .v2 attribute
+    assert load_data._is_tiled(fake_tiled) is True
+
+
+def test_db_query_tiled():
+    pytest.importorskip("tiled")
+    from unittest.mock import MagicMock
+    from tiled.queries import TimeRange, Key  # noqa: F401
+
+    mock_db = MagicMock(spec=[])  # no .v2 → _is_tiled returns True
+    mock_db.search.return_value = mock_db
+    query = {"since": "2024-01-01", "scan_id": 1049}
+    load_data.db_query(mock_db, query)
+    assert mock_db.search.call_count == 2
+
+
+def test_load_catalog_tiled():
+    pytest.importorskip("tiled")
+    from unittest.mock import patch, MagicMock
+
+    mock_cat = MagicMock(spec=[])  # no .v2 → _is_tiled returns True
+    with patch(
+        "polartools.load_data.getDatabase",
+        side_effect=Exception("not found"),
+    ), patch("tiled.client.from_profile", return_value=mock_cat) as mock_fp:
+        result = load_data.load_catalog(name="test_profile")
+    mock_fp.assert_called_once_with("test_profile")
+    assert result is mock_cat
+    mock_cat.register_handler.assert_not_called()
+
+
+def test_load_databroker_tiled():
+    pytest.importorskip("tiled")
+    from unittest.mock import MagicMock
+    import pandas as pd
+
+    expected_df = pd.DataFrame({"x": [1, 2, 3]})
+    mock_stream = MagicMock()
+    mock_stream.read.return_value = expected_df
+    mock_run = MagicMock(spec=["__contains__", "__getitem__"])
+    mock_run.__contains__ = MagicMock(return_value=True)
+    mock_run.__getitem__ = MagicMock(return_value=mock_stream)
+    mock_db = MagicMock(spec=["__getitem__"])  # no .v2 → tiled
+    mock_db.__getitem__ = MagicMock(return_value=mock_run)
+
+    result = load_data.load_databroker(1049, db=mock_db)
+    pd.testing.assert_frame_equal(result, expected_df)

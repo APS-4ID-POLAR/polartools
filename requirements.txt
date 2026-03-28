@@ -21,3 +21,6 @@ xraydb
 apstools
 imageio
 h5py
+# Optional: uncomment for tiled catalog support (handlers are managed server-side)
+# tiled
+# bluesky-tiled-plugins

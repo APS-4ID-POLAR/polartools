@@ -54,7 +54,7 @@ black . -l 80 --check --diff
 ### Data flow
 The package is organized around data sources and processing stages:
 
-1. **`load_data.py`** — Base layer: reads raw data from SPEC files, CSV, HDF5, or Bluesky databroker into pandas DataFrames. All higher-level modules use these functions.
+1. **`load_data.py`** — Base layer: reads raw data from SPEC files, CSV, HDF5, Bluesky databroker, or tiled catalogs into pandas DataFrames. All higher-level modules use these functions.
 2. **`absorption.py`** — Loads and processes XAS/XMCD spectra (normalization, background subtraction, dichroism calculations).
 3. **`diffraction.py`** — Loads and fits Bragg peaks (Gaussian/Lorentzian/Pseudo-Voigt via lmfit); also handles HKL conversions.
 4. **`pressure_calibration.py`** — Pressure calibration using Au/Ag diffraction standards; builds on diffraction.py.
@@ -64,9 +64,21 @@ The package is organized around data sources and processing stages:
 8. **`_larch.py`** — Hoisted utilities from xraylarch (`finde0`, `index_nearest`) to avoid the heavy larch install.
 9. **`_pyrixs.py`** — Hoisted utilities from pyrixs for 2D image → spectrum extraction (curvature fitting, photon-event binning).
 
+### Catalog backends
+
+`load_data.py` supports two catalog backends, selected automatically by `load_catalog()`:
+
+- **databroker** (legacy, MongoDB): `load_catalog("catalog-name")` — tries this first. Registers area detector handlers (`LambdaHDF5Handler`, `EigerHandler`, `SPEHandler`) client-side.
+- **tiled** (new, postgres/`bluesky-tiled-plugins`): falls back to `from_profile("profile-name")` when the name is not a databroker catalog. No client-side handler registration needed (server-side). Install `tiled` and `bluesky-tiled-plugins` separately (commented out in `requirements.txt`).
+
+Detection: `_is_tiled(obj)` checks `not hasattr(obj, "v2")`. Both backends support `cat[scan_id]` integer indexing and `run.metadata["start"]`.
+
+`manage_database.py` and `process_images.py` are databroker-only and do not yet support tiled.
+
 ### Key dependencies
 - `lmfit` — peak fitting throughout diffraction and absorption modules
-- `databroker` / `bluesky` — experimental data catalog (Bluesky ecosystem)
+- `databroker` / `bluesky` — experimental data catalog (Bluesky ecosystem, legacy)
+- `tiled` + `bluesky-tiled-plugins` — new catalog backend (optional, postgres-backed)
 - `spec2nexus` — reading SPEC data files
 - `dask` — lazy/parallel image loading in `process_images.py`
 - `numpy`, `scipy`, `pandas`, `matplotlib` — standard scientific stack
