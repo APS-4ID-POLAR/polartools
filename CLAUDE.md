@@ -69,16 +69,16 @@ The package is organized around data sources and processing stages:
 `load_data.py` supports two catalog backends, selected automatically by `load_catalog()`:
 
 - **databroker** (legacy, MongoDB): `load_catalog("catalog-name")` — tries this first. Registers area detector handlers (`LambdaHDF5Handler`, `EigerHandler`, `SPEHandler`) client-side.
-- **tiled** (new, postgres/`bluesky-tiled-plugins`): falls back to `from_profile("profile-name")` when the name is not a databroker catalog. No client-side handler registration needed (server-side). Install `tiled` and `bluesky-tiled-plugins` separately (commented out in `requirements.txt`).
+- **tiled** (new, postgres/`bluesky-tiled-plugins`): falls back to `from_profile("profile-name")[tiled_path]` when the name is not a databroker catalog. `tiled_path` defaults to `"/raw"`. No client-side handler registration needed (server-side). `tiled` and `bluesky-tiled-plugins` are required dependencies (in `requirements.txt` and `environment.yml`).
 
-Detection: `_is_tiled(obj)` checks `not hasattr(obj, "v2")`. Both backends support `cat[scan_id]` integer indexing and `run.metadata["start"]`.
+Detection: `_is_tiled(obj)` checks `"tiled" in type(obj).__module__`. Both backends support `cat[scan_id]` integer indexing and `run.metadata["start"]`.
 
 `manage_database.py` and `process_images.py` are databroker-only and do not yet support tiled.
 
 ### Key dependencies
 - `lmfit` — peak fitting throughout diffraction and absorption modules
 - `databroker` / `bluesky` — experimental data catalog (Bluesky ecosystem, legacy)
-- `tiled` + `bluesky-tiled-plugins` — new catalog backend (optional, postgres-backed)
+- `tiled` + `bluesky-tiled-plugins` — new catalog backend (required, postgres-backed)
 - `spec2nexus` — reading SPEC data files
 - `dask` — lazy/parallel image loading in `process_images.py`
 - `numpy`, `scipy`, `pandas`, `matplotlib` — standard scientific stack
