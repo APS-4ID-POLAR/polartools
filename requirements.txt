@@ -12,6 +12,7 @@ suitcase-csv
 suitcase-json-metadata
 databroker
 tiled
+bluesky-tiled-plugins
 databroker-pack
 lmfit
 pyresttable
@@ -22,6 +23,3 @@ xraydb
 apstools
 imageio
 h5py
-# Optional: uncomment for tiled catalog support (handlers are managed server-side)
-# tiled
-# bluesky-tiled-plugins

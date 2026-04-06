@@ -11,6 +11,7 @@ dependencies:
   - pandas
   - databroker
   - tiled
+  - bluesky-tiled-plugins
   - pip
   - sphinx
   - pytest

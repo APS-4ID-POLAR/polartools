@@ -29,7 +29,9 @@ from collections import OrderedDict
 from pyRestTable import Table
 from h5py import File
 from apstools.utils import getDatabase
-from polartools.area_detector_handlers import (
+from tiled.client import from_profile
+from tiled.profiles import ProfileNotFound
+from .area_detector_handlers import (
     EigerHandler,
     LambdaHDF5Handler,
     SPEHandler,
@@ -43,10 +45,10 @@ BLUESKY_DEFAULT_LOCATION = "entry/instrument/bluesky/streams/primary"
 
 def _is_tiled(obj):
     """Return True if obj is a tiled catalog client, False if databroker."""
-    return not hasattr(obj, "v2")
+    return "tiled" in type(obj).__module__
 
 
-def load_catalog(name=None, query=None, handlers=None):
+def load_catalog(name=None, query=None, handlers=None, tiled_path="/raw"):
     """
     Loads a databroker catalog and register data handlers.
 
@@ -67,10 +69,10 @@ def load_catalog(name=None, query=None, handlers=None):
     """
     try:
         cat = getDatabase(catalog_name=name)
-    except Exception:
-        from tiled.client import from_profile
-
-        cat = from_profile(name)
+    except KeyError:
+        cat = from_profile(name)[tiled_path]
+    except ProfileNotFound:
+        raise ValueError(f"No database {name} was not found!")
 
     if query is not None:
         cat = db_query(cat, query)
