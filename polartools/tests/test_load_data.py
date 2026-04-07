@@ -145,22 +145,30 @@ def test_lookup_position(db, capsys):
 
 
 def test__is_tiled(db):
-    import types
-
     assert load_data._is_tiled(db) is False
-    fake_tiled = types.SimpleNamespace()  # no .v2 attribute
+
+    # _is_tiled checks "tiled" in type(obj).__module__
+    class FakeTiledClient:
+        pass
+
+    FakeTiledClient.__module__ = "tiled.client"
+    fake_tiled = FakeTiledClient()
     assert load_data._is_tiled(fake_tiled) is True
 
 
 def test_db_query_tiled():
     pytest.importorskip("tiled")
-    from unittest.mock import MagicMock
-    from tiled.queries import TimeRange, Key  # noqa: F401
+    from unittest.mock import MagicMock, patch
+    import tiled.queries as tiled_queries
 
-    mock_db = MagicMock(spec=[])  # no .v2 → _is_tiled returns True
+    mock_db = MagicMock()
     mock_db.search.return_value = mock_db
     query = {"since": "2024-01-01", "scan_id": 1049}
-    load_data.db_query(mock_db, query)
+    # TimeRange is not in tiled 0.2.x; patch it into tiled.queries for this test
+    with patch(
+        "polartools.load_data._is_tiled", return_value=True
+    ), patch.object(tiled_queries, "TimeRange", MagicMock(), create=True):
+        load_data.db_query(mock_db, query)
     assert mock_db.search.call_count == 2
 
 
@@ -168,11 +176,17 @@ def test_load_catalog_tiled():
     pytest.importorskip("tiled")
     from unittest.mock import patch, MagicMock
 
-    mock_cat = MagicMock(spec=[])  # no .v2 → _is_tiled returns True
+    mock_cat = MagicMock()
+    mock_root = MagicMock()
+    mock_root.__getitem__ = MagicMock(return_value=mock_cat)
     with patch(
         "polartools.load_data.getDatabase",
-        side_effect=Exception("not found"),
-    ), patch("tiled.client.from_profile", return_value=mock_cat) as mock_fp:
+        side_effect=KeyError("not found"),
+    ), patch(
+        "polartools.load_data.from_profile", return_value=mock_root
+    ) as mock_fp, patch(
+        "polartools.load_data._is_tiled", return_value=True
+    ):
         result = load_data.load_catalog(name="test_profile")
     mock_fp.assert_called_once_with("test_profile")
     assert result is mock_cat
@@ -181,7 +195,7 @@ def test_load_catalog_tiled():
 
 def test_load_databroker_tiled():
     pytest.importorskip("tiled")
-    from unittest.mock import MagicMock
+    from unittest.mock import MagicMock, patch
     import pandas as pd
 
     expected_df = pd.DataFrame({"x": [1, 2, 3]})
@@ -190,8 +204,9 @@ def test_load_databroker_tiled():
     mock_run = MagicMock(spec=["__contains__", "__getitem__"])
     mock_run.__contains__ = MagicMock(return_value=True)
     mock_run.__getitem__ = MagicMock(return_value=mock_stream)
-    mock_db = MagicMock(spec=["__getitem__"])  # no .v2 → tiled
+    mock_db = MagicMock(spec=["__getitem__"])
     mock_db.__getitem__ = MagicMock(return_value=mock_run)
 
-    result = load_data.load_databroker(1049, db=mock_db)
+    with patch("polartools.load_data._is_tiled", return_value=True):
+        result = load_data.load_databroker(1049, db=mock_db)
     pd.testing.assert_frame_equal(result, expected_df)
