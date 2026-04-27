@@ -22,7 +22,6 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QStatusBar,
     QSplitter,
-    QFrame,
     QMessageBox,
     QStackedWidget,
 )
@@ -107,7 +106,9 @@ class MainWindow(QMainWindow):
 
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
-        self.status_bar.showMessage("Ready — enter scan numbers and click Load & Process")
+        self.status_bar.showMessage(
+            "Ready — enter scan numbers and click Load & Process"
+        )
 
         self._init_plot_items()
 
@@ -128,10 +129,10 @@ class MainWindow(QMainWindow):
 
         # Stacked contextual source widgets (one per source type)
         self._source_stack = QStackedWidget()
-        self._source_stack.addWidget(self._build_spec_source())   # 0
-        self._source_stack.addWidget(self._build_hdf5_source())   # 1
-        self._source_stack.addWidget(self._build_csv_source())    # 2
-        self._source_stack.addWidget(self._build_db_source())     # 3
+        self._source_stack.addWidget(self._build_spec_source())  # 0
+        self._source_stack.addWidget(self._build_hdf5_source())  # 1
+        self._source_stack.addWidget(self._build_csv_source())  # 2
+        self._source_stack.addWidget(self._build_db_source())  # 3
         self._source_stack.addWidget(self._build_tiled_source())  # 4
         row1.addWidget(self._source_stack, 1)
         layout.addLayout(row1)
@@ -141,13 +142,17 @@ class MainWindow(QMainWindow):
         row2.addWidget(QLabel("H+ scans:"))
         self.le_scans_plus = QLineEdit()
         self.le_scans_plus.setPlaceholderText("1, 2, 3")
-        self.le_scans_plus.setToolTip("Comma-separated scan numbers for H+ field")
+        self.le_scans_plus.setToolTip(
+            "Comma-separated scan numbers for H+ field"
+        )
         row2.addWidget(self.le_scans_plus)
 
         row2.addWidget(QLabel("H− scans:"))
         self.le_scans_minus = QLineEdit()
         self.le_scans_minus.setPlaceholderText("4, 5, 6")
-        self.le_scans_minus.setToolTip("Comma-separated scan numbers for H− field")
+        self.le_scans_minus.setToolTip(
+            "Comma-separated scan numbers for H− field"
+        )
         row2.addWidget(self.le_scans_minus)
 
         row2.addWidget(QLabel("Kind:"))
@@ -192,7 +197,9 @@ class MainWindow(QMainWindow):
         btn = QPushButton("Browse…")
         btn.clicked.connect(
             lambda: self._browse_file(
-                self.le_spec_path, "Open SPEC file", "SPEC files (*.dat *.txt);;All (*)"
+                self.le_spec_path,
+                "Open SPEC file",
+                "SPEC files (*.dat *.txt);;All (*)",
             )
         )
         h.addWidget(btn)
@@ -212,7 +219,9 @@ class MainWindow(QMainWindow):
         self.le_hdf_folder.setPlaceholderText("/path/to/hdf5/")
         h.addWidget(self.le_hdf_folder, 1)
         btn = QPushButton("Browse…")
-        btn.clicked.connect(lambda: self._browse_dir(self.le_hdf_folder, "HDF5 folder"))
+        btn.clicked.connect(
+            lambda: self._browse_dir(self.le_hdf_folder, "HDF5 folder")
+        )
         h.addWidget(btn)
         h.addWidget(QLabel("Format:"))
         self.le_hdf_format = QLineEdit("scan_{:06d}_master.hdf")
@@ -233,7 +242,9 @@ class MainWindow(QMainWindow):
         self.le_csv_folder.setPlaceholderText("/path/to/csv/")
         h.addWidget(self.le_csv_folder, 1)
         btn = QPushButton("Browse…")
-        btn.clicked.connect(lambda: self._browse_dir(self.le_csv_folder, "CSV folder"))
+        btn.clicked.connect(
+            lambda: self._browse_dir(self.le_csv_folder, "CSV folder")
+        )
         h.addWidget(btn)
         return w
 
@@ -268,8 +279,16 @@ class MainWindow(QMainWindow):
         h = QHBoxLayout(w)
         h.setContentsMargins(0, 0, 0, 0)
         for label, attr, tip in [
-            ("Positioner:", "le_d_positioner", "Energy positioner name (blank = default)"),
-            ("Detector:", "le_d_detector", "Detector name (blank = default IC5)"),
+            (
+                "Positioner:",
+                "le_d_positioner",
+                "Energy positioner name (blank = default)",
+            ),
+            (
+                "Detector:",
+                "le_d_detector",
+                "Detector name (blank = default IC5)",
+            ),
             ("Monitor:", "le_d_monitor", "Monitor name (blank = default IC4)"),
         ]:
             h.addWidget(QLabel(label))
@@ -281,7 +300,9 @@ class MainWindow(QMainWindow):
             h.addWidget(le)
         self.chk_transmission = QCheckBox("Transmission")
         self.chk_transmission.setChecked(True)
-        self.chk_transmission.setToolTip("Transmission mode: ln(monitor/detector)")
+        self.chk_transmission.setToolTip(
+            "Transmission mode: ln(monitor/detector)"
+        )
         h.addWidget(self.chk_transmission)
         return w
 
@@ -290,10 +311,30 @@ class MainWindow(QMainWindow):
         h = QHBoxLayout(w)
         h.setContentsMargins(0, 0, 0, 0)
         for label, attr, tip, placeholder in [
-            ("Positioner:", "le_l_positioner", "Energy positioner (blank = default)", "default"),
-            ("DC col:", "le_l_dc", "DC scaler column (blank = 'Lock DC')", "Lock DC"),
-            ("AC col:", "le_l_ac", "AC scaler column (blank = 'Lock AC')", "Lock AC"),
-            ("AC off:", "le_l_acoff", "AC offset column (blank = 'Lock AC off')", "Lock AC off"),
+            (
+                "Positioner:",
+                "le_l_positioner",
+                "Energy positioner (blank = default)",
+                "default",
+            ),
+            (
+                "DC col:",
+                "le_l_dc",
+                "DC scaler column (blank = 'Lock DC')",
+                "Lock DC",
+            ),
+            (
+                "AC col:",
+                "le_l_ac",
+                "AC scaler column (blank = 'Lock AC')",
+                "Lock AC",
+            ),
+            (
+                "AC off:",
+                "le_l_acoff",
+                "AC offset column (blank = 'Lock AC off')",
+                "Lock AC off",
+            ),
         ]:
             h.addWidget(QLabel(label))
             le = QLineEdit()
@@ -328,8 +369,13 @@ class MainWindow(QMainWindow):
         self.pw_artifact = make_plot("Artifact  (H++H−)/2", "Artifact (%)")
 
         # Link all X axes to pw_raw_plus
-        for pw in (self.pw_raw_minus, self.pw_norm, self.pw_xmcd_pm,
-                   self.pw_xmcd_mean, self.pw_artifact):
+        for pw in (
+            self.pw_raw_minus,
+            self.pw_norm,
+            self.pw_xmcd_pm,
+            self.pw_xmcd_mean,
+            self.pw_artifact,
+        ):
             pw.setXLink(self.pw_raw_plus)
 
         grid.addWidget(self.pw_raw_plus, 0, 0)
@@ -347,70 +393,107 @@ class MainWindow(QMainWindow):
 
         # Raw XANES plots
         self.curve_plus_raw = self.pw_raw_plus.plot(
-            pen=mkPen(C_PLUS_RAW, width=2), name="H+ μ")
+            pen=mkPen(C_PLUS_RAW, width=2), name="H+ μ"
+        )
         self.curve_plus_pre = self.pw_raw_plus.plot(
-            pen=mkPen(C_PRE, width=1.5, style=dash), name="pre-edge")
+            pen=mkPen(C_PRE, width=1.5, style=dash), name="pre-edge"
+        )
         self.curve_plus_post = self.pw_raw_plus.plot(
-            pen=mkPen(C_POST, width=1.5, style=dash), name="post-edge")
+            pen=mkPen(C_POST, width=1.5, style=dash), name="post-edge"
+        )
 
         self.curve_minus_raw = self.pw_raw_minus.plot(
-            pen=mkPen(C_MINUS_RAW, width=2), name="H− μ")
+            pen=mkPen(C_MINUS_RAW, width=2), name="H− μ"
+        )
         self.curve_minus_pre = self.pw_raw_minus.plot(
-            pen=mkPen(C_PRE, width=1.5, style=dash))
+            pen=mkPen(C_PRE, width=1.5, style=dash)
+        )
         self.curve_minus_post = self.pw_raw_minus.plot(
-            pen=mkPen(C_POST, width=1.5, style=dash))
+            pen=mkPen(C_POST, width=1.5, style=dash)
+        )
 
         # Draggable markers on H+ raw plot
         self.line_e0 = pg.InfiniteLine(
-            angle=90, movable=False,
+            angle=90,
+            movable=False,
             pen=mkPen(C_E0, width=1.5, style=dot),
-            label="e0", labelOpts={"position": 0.95})
+            label="e0",
+            labelOpts={"position": 0.95},
+        )
         self.line_pre1 = pg.InfiniteLine(
-            angle=90, movable=True,
+            angle=90,
+            movable=True,
             pen=mkPen(C_PRE1, width=1.5),
-            label="pre1", labelOpts={"position": 0.90, "color": C_PRE1})
+            label="pre1",
+            labelOpts={"position": 0.90, "color": C_PRE1},
+        )
         self.line_pre2 = pg.InfiniteLine(
-            angle=90, movable=True,
+            angle=90,
+            movable=True,
             pen=mkPen(C_PRE2, width=1.5),
-            label="pre2", labelOpts={"position": 0.85, "color": C_PRE2})
+            label="pre2",
+            labelOpts={"position": 0.85, "color": C_PRE2},
+        )
         self.line_post1 = pg.InfiniteLine(
-            angle=90, movable=True,
+            angle=90,
+            movable=True,
             pen=mkPen(C_POST1, width=1.5),
-            label="post1", labelOpts={"position": 0.90, "color": C_POST1})
+            label="post1",
+            labelOpts={"position": 0.90, "color": C_POST1},
+        )
         self.line_post2 = pg.InfiniteLine(
-            angle=90, movable=True,
+            angle=90,
+            movable=True,
             pen=mkPen(C_POST2, width=1.5),
-            label="post2", labelOpts={"position": 0.85, "color": C_POST2})
+            label="post2",
+            labelOpts={"position": 0.85, "color": C_POST2},
+        )
 
-        for line in (self.line_e0, self.line_pre1, self.line_pre2,
-                     self.line_post1, self.line_post2):
+        for line in (
+            self.line_e0,
+            self.line_pre1,
+            self.line_pre2,
+            self.line_post1,
+            self.line_post2,
+        ):
             self.pw_raw_plus.addItem(line)
             line.setVisible(False)
 
         # Normalized XANES
         self.curve_norm_plus = self.pw_norm.plot(
-            pen=mkPen(C_PLUS_NORM, width=2), name="H+")
+            pen=mkPen(C_PLUS_NORM, width=2), name="H+"
+        )
         self.curve_norm_minus = self.pw_norm.plot(
-            pen=mkPen(C_MINUS_NORM, width=2), name="H−")
-        self.pw_norm.addLine(
-            y=1.0, pen=mkPen("#cccccc", width=1, style=dash))
+            pen=mkPen(C_MINUS_NORM, width=2), name="H−"
+        )
+        self.pw_norm.addLine(y=1.0, pen=mkPen("#cccccc", width=1, style=dash))
 
         # XMCD per polarity
         self.curve_xmcd_plus = self.pw_xmcd_pm.plot(
-            pen=mkPen(C_PLUS_XMCD, width=2), name="H+")
+            pen=mkPen(C_PLUS_XMCD, width=2), name="H+"
+        )
         self.curve_xmcd_minus = self.pw_xmcd_pm.plot(
-            pen=mkPen(C_MINUS_XMCD, width=2), name="H−")
-        self.pw_xmcd_pm.addLine(y=0.0, pen=mkPen("#cccccc", width=1, style=dash))
+            pen=mkPen(C_MINUS_XMCD, width=2), name="H−"
+        )
+        self.pw_xmcd_pm.addLine(
+            y=0.0, pen=mkPen("#cccccc", width=1, style=dash)
+        )
 
         # Mean XMCD
         self.curve_xmcd_mean = self.pw_xmcd_mean.plot(
-            pen=mkPen(C_MEAN_XMCD, width=2))
-        self.pw_xmcd_mean.addLine(y=0.0, pen=mkPen("#cccccc", width=1, style=dash))
+            pen=mkPen(C_MEAN_XMCD, width=2)
+        )
+        self.pw_xmcd_mean.addLine(
+            y=0.0, pen=mkPen("#cccccc", width=1, style=dash)
+        )
 
         # Artifact
         self.curve_artifact = self.pw_artifact.plot(
-            pen=mkPen(C_ARTIFACT, width=2))
-        self.pw_artifact.addLine(y=0.0, pen=mkPen("#cccccc", width=1, style=dash))
+            pen=mkPen(C_ARTIFACT, width=2)
+        )
+        self.pw_artifact.addLine(
+            y=0.0, pen=mkPen("#cccccc", width=1, style=dash)
+        )
 
     # ── Parameter panel (normalization) ───────────────────────────────────────
 
@@ -528,37 +611,55 @@ class MainWindow(QMainWindow):
         self.btn_load.clicked.connect(self._on_load)
         self.btn_save.clicked.connect(self._save_results)
 
-        self.cb_source.currentIndexChanged.connect(self._source_stack.setCurrentIndex)
-        self.cb_kind.currentIndexChanged.connect(self._kind_stack.setCurrentIndex)
+        self.cb_source.currentIndexChanged.connect(
+            self._source_stack.setCurrentIndex
+        )
+        self.cb_kind.currentIndexChanged.connect(
+            self._kind_stack.setCurrentIndex
+        )
 
         self.chk_e0_auto.toggled.connect(lambda c: self.le_e0.setEnabled(not c))
-        self.chk_es_auto.toggled.connect(lambda c: self.le_edge_step.setEnabled(not c))
+        self.chk_es_auto.toggled.connect(
+            lambda c: self.le_edge_step.setEnabled(not c)
+        )
         self.le_e0.setEnabled(False)
         self.le_edge_step.setEnabled(False)
 
         # Draggable lines → entries
         self.line_pre1.sigPositionChanged.connect(
-            lambda: self._line_moved(self.line_pre1, self.le_pre1))
+            lambda: self._line_moved(self.line_pre1, self.le_pre1)
+        )
         self.line_pre2.sigPositionChanged.connect(
-            lambda: self._line_moved(self.line_pre2, self.le_pre2))
+            lambda: self._line_moved(self.line_pre2, self.le_pre2)
+        )
         self.line_post1.sigPositionChanged.connect(
-            lambda: self._line_moved(self.line_post1, self.le_post1))
+            lambda: self._line_moved(self.line_post1, self.le_post1)
+        )
         self.line_post2.sigPositionChanged.connect(
-            lambda: self._line_moved(self.line_post2, self.le_post2))
+            lambda: self._line_moved(self.line_post2, self.le_post2)
+        )
 
         # Entries → draggable lines
         self.le_pre1.editingFinished.connect(
-            lambda: self._entry_changed(self.le_pre1, self.line_pre1))
+            lambda: self._entry_changed(self.le_pre1, self.line_pre1)
+        )
         self.le_pre2.editingFinished.connect(
-            lambda: self._entry_changed(self.le_pre2, self.line_pre2))
+            lambda: self._entry_changed(self.le_pre2, self.line_pre2)
+        )
         self.le_post1.editingFinished.connect(
-            lambda: self._entry_changed(self.le_post1, self.line_post1))
+            lambda: self._entry_changed(self.le_post1, self.line_post1)
+        )
         self.le_post2.editingFinished.connect(
-            lambda: self._entry_changed(self.le_post2, self.line_post2))
+            lambda: self._entry_changed(self.le_post2, self.line_post2)
+        )
 
         for widget in (
-            self.le_e0, self.le_edge_step, self.le_flat1, self.le_flat2,
-            self.chk_e0_auto, self.chk_es_auto,
+            self.le_e0,
+            self.le_edge_step,
+            self.le_flat1,
+            self.le_flat2,
+            self.chk_e0_auto,
+            self.chk_es_auto,
         ):
             if isinstance(widget, QCheckBox):
                 widget.toggled.connect(self._schedule_normalize)
@@ -578,7 +679,6 @@ class MainWindow(QMainWindow):
 
     def _resolve_source(self):
         """Return (source, extra_kwargs) based on current source widget state."""
-        idx = self.cb_source.currentIndex()
         source_name = self.cb_source.currentText()
 
         if source_name == "SPEC":
@@ -610,6 +710,7 @@ class MainWindow(QMainWindow):
 
         if source_name == "Databroker":
             from polartools.load_data import load_catalog
+
             name = self.le_db_name.text().strip()
             if not name:
                 raise ValueError("Databroker catalog name is required.")
@@ -618,6 +719,7 @@ class MainWindow(QMainWindow):
 
         if source_name == "Tiled":
             from tiled.client import from_profile
+
             profile = self.le_tiled_profile.text().strip()
             if not profile:
                 raise ValueError("Tiled profile name is required.")
@@ -659,7 +761,9 @@ class MainWindow(QMainWindow):
     # ─── Load phase ───────────────────────────────────────────────────────────
 
     def _parse_scan_list(self, text):
-        parts = [p.strip() for p in text.replace(";", ",").split(",") if p.strip()]
+        parts = [
+            p.strip() for p in text.replace(";", ",").split(",") if p.strip()
+        ]
         if not parts:
             raise ValueError("No scan numbers provided.")
         result = []
@@ -686,7 +790,8 @@ class MainWindow(QMainWindow):
 
         load_kwargs = self._resolve_load_kwargs(extra_kwargs)
         load_func = (
-            load_multi_dichro if self.cb_kind.currentText() == "dichro"
+            load_multi_dichro
+            if self.cb_kind.currentText() == "dichro"
             else load_multi_lockin
         )
 
@@ -728,8 +833,13 @@ class MainWindow(QMainWindow):
         e0_est = float(energy[np.argmax(deriv)])
         self._e0_val = e0_est
 
-        for line in (self.line_e0, self.line_pre1, self.line_pre2,
-                     self.line_post1, self.line_post2):
+        for line in (
+            self.line_e0,
+            self.line_pre1,
+            self.line_pre2,
+            self.line_post1,
+            self.line_post2,
+        ):
             line.setVisible(True)
         self.line_e0.setPos(e0_est)
 
@@ -792,17 +902,37 @@ class MainWindow(QMainWindow):
         return None if txt == "Auto" else int(txt)
 
     def _build_norm_kwargs(self):
-        e0 = None if self.chk_e0_auto.isChecked() else self._parse_entry(self.le_e0)
-        edge_step = None if self.chk_es_auto.isChecked() else self._parse_entry(self.le_edge_step)
+        e0 = (
+            None
+            if self.chk_e0_auto.isChecked()
+            else self._parse_entry(self.le_e0)
+        )
+        edge_step = (
+            None
+            if self.chk_es_auto.isChecked()
+            else self._parse_entry(self.le_edge_step)
+        )
 
-        pre1, pre2 = self._parse_entry(self.le_pre1), self._parse_entry(self.le_pre2)
-        pre_range = [pre1, pre2] if (pre1 is not None or pre2 is not None) else None
+        pre1, pre2 = self._parse_entry(self.le_pre1), self._parse_entry(
+            self.le_pre2
+        )
+        pre_range = (
+            [pre1, pre2] if (pre1 is not None or pre2 is not None) else None
+        )
 
-        post1, post2 = self._parse_entry(self.le_post1), self._parse_entry(self.le_post2)
-        post_range = [post1, post2] if (post1 is not None or post2 is not None) else None
+        post1, post2 = self._parse_entry(self.le_post1), self._parse_entry(
+            self.le_post2
+        )
+        post_range = (
+            [post1, post2] if (post1 is not None or post2 is not None) else None
+        )
 
-        flat1, flat2 = self._parse_entry(self.le_flat1), self._parse_entry(self.le_flat2)
-        flat_range = [flat1, flat2] if (flat1 is not None or flat2 is not None) else None
+        flat1, flat2 = self._parse_entry(self.le_flat1), self._parse_entry(
+            self.le_flat2
+        )
+        flat_range = (
+            [flat1, flat2] if (flat1 is not None or flat2 is not None) else None
+        )
 
         return dict(
             e0=e0,
@@ -822,8 +952,12 @@ class MainWindow(QMainWindow):
 
         norm_kw = self._build_norm_kwargs()
         try:
-            plus = normalize_absorption(self._plus_energy, self._plus_mu, **norm_kw)
-            minus = normalize_absorption(self._minus_energy, self._minus_mu, **norm_kw)
+            plus = normalize_absorption(
+                self._plus_energy, self._plus_mu, **norm_kw
+            )
+            minus = normalize_absorption(
+                self._minus_energy, self._minus_mu, **norm_kw
+            )
         except Exception as exc:
             self.status_bar.showMessage(f"Normalization error: {exc}")
             return
@@ -860,6 +994,7 @@ class MainWindow(QMainWindow):
 
         # Mean XMCD and artifact (interpolate minus onto plus energy grid)
         from scipy.interpolate import interp1d
+
         minus_xmcd_interp = interp1d(
             em, minus["xmcd"], bounds_error=False, fill_value=np.nan
         )(ep)
@@ -885,8 +1020,10 @@ class MainWindow(QMainWindow):
         fname = self.le_savename.text().strip() or "xmcd_output.dat"
         if not os.path.isabs(fname):
             path, _ = QFileDialog.getSaveFileName(
-                self, "Save XMCD output", fname,
-                "Data files (*.dat *.txt);;All files (*)"
+                self,
+                "Save XMCD output",
+                fname,
+                "Data files (*.dat *.txt);;All files (*)",
             )
             if not path:
                 return

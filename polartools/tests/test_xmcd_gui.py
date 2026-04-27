@@ -7,7 +7,9 @@ See LICENSE file for details.
 import pytest
 
 pytest.importorskip("PyQt6", reason="PyQt6 not installed — skipping GUI tests")
-pytest.importorskip("pyqtgraph", reason="pyqtgraph not installed — skipping GUI tests")
+pytest.importorskip(
+    "pyqtgraph", reason="pyqtgraph not installed — skipping GUI tests"
+)
 
 
 @pytest.fixture

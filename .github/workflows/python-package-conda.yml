@@ -73,6 +73,7 @@ jobs:
         shell: bash -l {0}
         env:
           QT_QPA_PLATFORM: offscreen
+          PYTEST_QT_API: pyqt6
         run: |
           databroker-unpack inplace polartools/tests/data_for_test/databroker data_3
           pytest --cov-config=.coveragerc --cov=./ --cov-report=xml
