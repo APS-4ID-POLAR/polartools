@@ -402,9 +402,7 @@ def test_run_normalization_success(loaded_win):
         "edge_step": 1.0,
         "flat": np.ones_like(energy),
     }
-    with patch(
-        "polartools.xmcd_gui.normalize_absorption", return_value=stub
-    ):
+    with patch("polartools.xmcd_gui.normalize_absorption", return_value=stub):
         loaded_win._run_normalization()
     assert loaded_win.btn_save.isEnabled()
     assert loaded_win._plus_results is not None
