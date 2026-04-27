@@ -52,7 +52,7 @@ jobs:
         uses: mamba-org/setup-micromamba@v3
         with:
           cache-environment: true
-          cache-environment-key: env-key-${{ matrix.python-version }}
+          cache-environment-key: env-key-${{ matrix.python-version }}-${{ hashFiles('environment.yml') }}
           condarc: |
             channel-priority: flexible
           environment-file: environment.yml

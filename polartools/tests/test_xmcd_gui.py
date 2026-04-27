@@ -6,19 +6,29 @@ See LICENSE file for details.
 
 import pytest
 
+# Skip the entire module if PyQt6 or pyqtgraph are not installed.
 pytest.importorskip("PyQt6", reason="PyQt6 not installed — skipping GUI tests")
 pytest.importorskip(
     "pyqtgraph", reason="pyqtgraph not installed — skipping GUI tests"
 )
 
 
+@pytest.fixture(scope="session")
+def qapp():
+    """Session-scoped QApplication — created once, reused across all tests."""
+    from PyQt6.QtWidgets import QApplication
+
+    app = QApplication.instance() or QApplication([])
+    yield app
+
+
 @pytest.fixture
-def win(qtbot):
+def win(qapp):
     from polartools.xmcd_gui import MainWindow
 
     window = MainWindow()
-    qtbot.addWidget(window)
-    return window
+    yield window
+    window.close()
 
 
 # ─── Window creation ──────────────────────────────────────────────────────────
@@ -97,7 +107,7 @@ def test_norm_kwargs_defaults(win):
     assert kw["flat_order"] is None
 
 
-def test_norm_kwargs_manual_e0(win, qtbot):
+def test_norm_kwargs_manual_e0(win):
     win.chk_e0_auto.setChecked(False)
     win.le_e0.setText("7112.5")
     kw = win._build_norm_kwargs()
