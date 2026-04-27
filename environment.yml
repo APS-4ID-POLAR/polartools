@@ -5,11 +5,13 @@ channels:
   - nsls2forge
   - nodefaults
 dependencies:
-  - python >=3.8, <=3.11
+  - python >=3.9, <=3.11
   - scipy
   - numpy
   - pandas
-  - databroker<=1.2.5
+  - databroker
+  - tiled
+  - bluesky-tiled-plugins
   - pip
   - sphinx
   - pytest

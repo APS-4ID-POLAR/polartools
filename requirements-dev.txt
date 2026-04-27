@@ -12,6 +12,7 @@ numpydoc
 sphinx-copybutton
 sphinx_rtd_theme
 # These are for testing databroker
-databroker>=1.2.2
+databroker
+tiled
 ipython
 h5py

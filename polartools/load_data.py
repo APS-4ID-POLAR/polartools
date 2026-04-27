@@ -28,9 +28,10 @@ from datetime import datetime
 from collections import OrderedDict
 from pyRestTable import Table
 from h5py import File
-from databroker.queries import TimeRange
 from apstools.utils import getDatabase
-from polartools.area_detector_handlers import (
+from tiled.client import from_profile
+from tiled.profiles import ProfileNotFound
+from .area_detector_handlers import (
     EigerHandler,
     LambdaHDF5Handler,
     SPEHandler,
@@ -42,7 +43,12 @@ HDF_DEFAULT_FNAME_FORMAT = "scan_{:06d}_master.hdf"
 BLUESKY_DEFAULT_LOCATION = "entry/instrument/bluesky/streams/primary"
 
 
-def load_catalog(name=None, query=None, handlers=None):
+def _is_tiled(obj):
+    """Return True if obj is a tiled catalog client, False if databroker."""
+    return "tiled" in type(obj).__module__
+
+
+def load_catalog(name=None, query=None, handlers=None, tiled_path="/raw"):
     """
     Loads a databroker catalog and register data handlers.
 
@@ -61,18 +67,27 @@ def load_catalog(name=None, query=None, handlers=None):
     cat : databroker catalog
         Catalog after running the query, and registering the handler.
     """
-    cat = getDatabase(catalog_name=name)
+    try:
+        cat = getDatabase(catalog_name=name)
+    except KeyError:
+        cat = from_profile(name)[tiled_path]
+    except ProfileNotFound:
+        raise ValueError(f"No database {name} was not found!")
+
     if query is not None:
         cat = db_query(cat, query)
-    if handlers is None:
-        handlers = dict(
-            AD_HDF5_Lambda250k_APSPolar=LambdaHDF5Handler,
-            AD_HDF5_lambda=LambdaHDF5Handler,  # Temporary fix
-            AD_EIGER_APSPolar=EigerHandler,
-            AD_SPE_APSPolar=SPEHandler,
-        )
-    for name, handler in handlers.items():
-        cat.register_handler(name, handler, overwrite=True)
+
+    if not _is_tiled(cat):
+        if handlers is None:
+            handlers = dict(
+                AD_HDF5_Lambda250k_APSPolar=LambdaHDF5Handler,
+                AD_HDF5_lambda=LambdaHDF5Handler,  # Temporary fix
+                AD_EIGER_APSPolar=EigerHandler,
+                AD_SPE_APSPolar=SPEHandler,
+            )
+        for hname, handler in handlers.items():
+            cat.register_handler(hname, handler, overwrite=True)
+    # For tiled: handler registration is server-side.
     return cat
 
 
@@ -166,22 +181,31 @@ def load_databroker(
     data : pandas.DataFrame
         Table with the data from the primary stream.
     """
-    db = getDatabase(db=db)
-    _db = db_query(db, query) if query else db
-    if use_db_v1:
-        if stream in _db.v1[scan_id].stream_names:
-            return _db.v1[scan_id].table(stream_name=stream)
+    if db is None or not _is_tiled(db):
+        db = getDatabase(db=db)
+        _db = db_query(db, query) if query else db
+        if use_db_v1:
+            if stream in _db.v1[scan_id].stream_names:
+                return _db.v1[scan_id].table(stream_name=stream)
+            else:
+                raise ValueError(
+                    f"The stream {stream} does not exist in scan {scan_id}."
+                )
         else:
-            raise ValueError(
-                f"The stream {stream} does not exist in scan {scan_id}."
-            )
+            try:
+                return getattr(_db.v2[scan_id], stream).read().to_dataframe()
+            except AttributeError:
+                raise ValueError(
+                    f"The stream {stream} does not exist in scan {scan_id}."
+                )
     else:
-        try:
-            return getattr(_db.v2[scan_id], stream).read().to_dataframe()
-        except AttributeError:
+        _db = db_query(db, query) if query else db
+        run = _db[scan_id]
+        if stream not in run:
             raise ValueError(
                 f"The stream {stream} does not exist in scan {scan_id}."
             )
+        return run[stream].read()
 
 
 def hdf5_to_dataframe(data):
@@ -402,18 +426,32 @@ def db_query(db, query):
     since = query.pop("since", None)
     until = query.pop("until", None)
 
-    if since or until:
-        if not since:
-            since = "2010"
-        if not until:
-            until = "2050"
+    if _is_tiled(db):
+        from tiled.queries import Key, TimeRange
 
-        _db = db.v2.search(TimeRange(since=since, until=until))
+        if since or until:
+            if not since:
+                since = "2010"
+            if not until:
+                until = "2050"
+            _db = db.search(TimeRange(since=since, until=until))
+        else:
+            _db = db
+        for key, value in query.items():
+            _db = _db.search(Key(key) == value)
     else:
-        _db = db
+        from databroker.queries import TimeRange
 
-    if len(query) != 0:
-        _db = _db.v2.search(query)
+        if since or until:
+            if not since:
+                since = "2010"
+            if not until:
+                until = "2050"
+            _db = db.v2.search(TimeRange(since=since, until=until))
+        else:
+            _db = db
+        if len(query) != 0:
+            _db = _db.v2.search(query)
 
     return _db
 
@@ -555,7 +593,8 @@ def collect_meta(scan_numbers, meta_keys, db=None, query=None):
         Metadata organized by scan number or uid (whatever is given in
         `scans`).
     """
-    db = getDatabase(db=db)
+    if db is None or not _is_tiled(db):
+        db = getDatabase(db=db)
     # print(f"db = {db}")
     # print(f"scan_numbers = {scan_numbers}")
     db_range = db_query(db, query=query) if query else db
