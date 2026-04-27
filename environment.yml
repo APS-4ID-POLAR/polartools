@@ -35,10 +35,10 @@ dependencies:
   - pims>=0.6.1
   - imageio
   - h5py
-  - pyqtgraph
   - pip:
     - sphinx-rtd-theme
     - super-state-machine
     - sphinx-copybutton
     - PyQt6
+    - pyqtgraph
     - pytest-qt

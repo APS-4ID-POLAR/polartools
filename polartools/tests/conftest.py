@@ -10,7 +10,12 @@ import os
 # This allows GUI tests to run in headless CI environments (GitHub Actions).
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-# Force pytest-qt to use PyQt6; pyqtgraph (conda-forge) can pull in PyQt5
-# as well, and pytest-qt would otherwise default to PyQt5, causing an
-# isinstance mismatch with our PyQt6-based MainWindow.
-os.environ.setdefault("PYTEST_QT_API", "pyqt6")
+# Tell pytest-qt to use PyQt6 only when it is actually installed.
+# Setting this unconditionally causes an INTERNALERROR on Python versions
+# where PyQt6 is unavailable (e.g. 3.8) or when libEGL is missing.
+try:
+    import PyQt6  # noqa: F401
+
+    os.environ.setdefault("PYTEST_QT_API", "pyqt6")
+except ImportError:
+    pass
