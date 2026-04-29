@@ -1,8 +1,5 @@
-"""
-Copyright (c) 2020, UChicago Argonne, LLC.
-
-See LICENSE file for details.
-"""
+# Copyright (c) 2020, UChicago Argonne, LLC.
+# See LICENSE file for details.
 
 import pytest
 import numpy as np
@@ -253,8 +250,8 @@ def test_resolve_load_kwargs_lockin_acoff(win):
 
 def test_resolve_load_kwargs_passes_extra(win):
     win.cb_kind.setCurrentIndex(0)
-    kw = win._resolve_load_kwargs({"folder": "/tmp/data"})
-    assert kw["folder"] == "/tmp/data"
+    kw = win._resolve_load_kwargs({"folder": "/data/folder"})
+    assert kw["folder"] == "/data/folder"
 
 
 # ─── e0 auto / manual toggle ──────────────────────────────────────────────────
