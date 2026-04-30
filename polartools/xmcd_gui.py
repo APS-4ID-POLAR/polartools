@@ -24,6 +24,7 @@ from PyQt6.QtWidgets import (
     QSplitter,
     QMessageBox,
     QStackedWidget,
+    QScrollArea,
 )
 from PyQt6.QtCore import Qt, QSignalBlocker, QTimer
 from PyQt6.QtGui import QFont
@@ -73,6 +74,7 @@ class MainWindow(QMainWindow):
         self._plus_results = None
         self._minus_results = None
         self._e0_val = None
+        self._m_e0_val = None
         self._block_line_update = False
 
         self._norm_timer = QTimer(singleShot=True)
@@ -459,6 +461,53 @@ class MainWindow(QMainWindow):
             self.pw_raw_plus.addItem(line)
             line.setVisible(False)
 
+        # Mirror markers on H− raw plot for independent normalization mode.
+        self.m_line_e0 = pg.InfiniteLine(
+            angle=90,
+            movable=False,
+            pen=mkPen(C_E0, width=1.5, style=dot),
+            label="e0",
+            labelOpts={"position": 0.95},
+        )
+        self.m_line_pre1 = pg.InfiniteLine(
+            angle=90,
+            movable=True,
+            pen=mkPen(C_PRE1, width=1.5),
+            label="pre1",
+            labelOpts={"position": 0.90, "color": C_PRE1},
+        )
+        self.m_line_pre2 = pg.InfiniteLine(
+            angle=90,
+            movable=True,
+            pen=mkPen(C_PRE2, width=1.5),
+            label="pre2",
+            labelOpts={"position": 0.85, "color": C_PRE2},
+        )
+        self.m_line_post1 = pg.InfiniteLine(
+            angle=90,
+            movable=True,
+            pen=mkPen(C_POST1, width=1.5),
+            label="post1",
+            labelOpts={"position": 0.90, "color": C_POST1},
+        )
+        self.m_line_post2 = pg.InfiniteLine(
+            angle=90,
+            movable=True,
+            pen=mkPen(C_POST2, width=1.5),
+            label="post2",
+            labelOpts={"position": 0.85, "color": C_POST2},
+        )
+
+        for line in (
+            self.m_line_e0,
+            self.m_line_pre1,
+            self.m_line_pre2,
+            self.m_line_post1,
+            self.m_line_post2,
+        ):
+            self.pw_raw_minus.addItem(line)
+            line.setVisible(False)
+
         # Normalized XANES
         self.curve_norm_plus = self.pw_norm.plot(
             pen=mkPen(C_PLUS_NORM, width=2), name="H+"
@@ -498,9 +547,39 @@ class MainWindow(QMainWindow):
     # ── Parameter panel (normalization) ───────────────────────────────────────
 
     def _build_param_panel(self):
+        container = QWidget()
+        layout = QVBoxLayout(container)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(8)
+
+        self.chk_independent = QCheckBox("Different parameters for H−")
+        self.chk_independent.setToolTip(
+            "When checked, normalize H− with its own parameters. "
+            "Otherwise both polarities share the H+ parameters."
+        )
+        layout.addWidget(self.chk_independent)
+
+        self._plus_norm_panel, self._plus_boxes = self._build_norm_widgets("")
+        layout.addWidget(self._plus_norm_panel)
+
+        self._minus_norm_panel, self._minus_boxes = self._build_norm_widgets(
+            "m_"
+        )
+        self._minus_norm_panel.setVisible(False)
+        layout.addWidget(self._minus_norm_panel)
+
+        layout.addStretch()
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(container)
+        return scroll
+
+    def _build_norm_widgets(self, prefix):
+        """Build the 4 normalization GroupBoxes; store widgets as ``self.{prefix}…``."""
         panel = QWidget()
         layout = QVBoxLayout(panel)
-        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(8)
 
         bold = QFont()
@@ -521,74 +600,96 @@ class MainWindow(QMainWindow):
                 w.setToolTip(tip)
             return w
 
+        def store(name, widget):
+            setattr(self, f"{prefix}{name}", widget)
+
+        boxes = {}
+
         # Edge
         gb_edge, gl = section("Edge")
         gl.addWidget(QLabel("e0 (eV):"), 0, 0)
-        self.le_e0 = entry("Absorption edge energy; blank = auto-detect")
-        self.chk_e0_auto = QCheckBox("Auto")
-        self.chk_e0_auto.setChecked(True)
-        gl.addWidget(self.le_e0, 0, 1)
-        gl.addWidget(self.chk_e0_auto, 0, 2)
+        le_e0 = entry("Absorption edge energy; blank = auto-detect")
+        chk_e0_auto = QCheckBox("Auto")
+        chk_e0_auto.setChecked(True)
+        gl.addWidget(le_e0, 0, 1)
+        gl.addWidget(chk_e0_auto, 0, 2)
+        store("le_e0", le_e0)
+        store("chk_e0_auto", chk_e0_auto)
 
         gl.addWidget(QLabel("edge_step:"), 1, 0)
-        self.le_edge_step = entry("Edge step size; blank = auto")
-        self.chk_es_auto = QCheckBox("Auto")
-        self.chk_es_auto.setChecked(True)
-        gl.addWidget(self.le_edge_step, 1, 1)
-        gl.addWidget(self.chk_es_auto, 1, 2)
+        le_edge_step = entry("Edge step size; blank = auto")
+        chk_es_auto = QCheckBox("Auto")
+        chk_es_auto.setChecked(True)
+        gl.addWidget(le_edge_step, 1, 1)
+        gl.addWidget(chk_es_auto, 1, 2)
+        store("le_edge_step", le_edge_step)
+        store("chk_es_auto", chk_es_auto)
         layout.addWidget(gb_edge)
+        boxes["edge"] = gb_edge
 
         # Pre-edge
         gb_pre, gl = section("Pre-edge  (drag orange lines)")
         gl.addWidget(QLabel("Start (rel. eV):"), 0, 0)
-        self.le_pre1 = entry("Pre-edge start relative to e0")
-        gl.addWidget(self.le_pre1, 0, 1)
+        le_pre1 = entry("Pre-edge start relative to e0")
+        gl.addWidget(le_pre1, 0, 1)
         gl.addWidget(QLabel("End (rel. eV):"), 1, 0)
-        self.le_pre2 = entry("Pre-edge end relative to e0")
-        gl.addWidget(self.le_pre2, 1, 1)
+        le_pre2 = entry("Pre-edge end relative to e0")
+        gl.addWidget(le_pre2, 1, 1)
         gl.addWidget(QLabel("Order:"), 2, 0)
-        self.sp_pre_order = QSpinBox()
-        self.sp_pre_order.setRange(0, 5)
-        self.sp_pre_order.setValue(1)
-        gl.addWidget(self.sp_pre_order, 2, 1)
+        sp_pre_order = QSpinBox()
+        sp_pre_order.setRange(0, 5)
+        sp_pre_order.setValue(1)
+        gl.addWidget(sp_pre_order, 2, 1)
         gl.addWidget(QLabel("nvict:"), 3, 0)
-        self.sp_nvict = QSpinBox()
-        self.sp_nvict.setRange(0, 3)
-        self.sp_nvict.setValue(0)
-        self.sp_nvict.setToolTip("Energy exponent for pre-edge fit")
-        gl.addWidget(self.sp_nvict, 3, 1)
+        sp_nvict = QSpinBox()
+        sp_nvict.setRange(0, 3)
+        sp_nvict.setValue(0)
+        sp_nvict.setToolTip("Energy exponent for pre-edge fit")
+        gl.addWidget(sp_nvict, 3, 1)
+        store("le_pre1", le_pre1)
+        store("le_pre2", le_pre2)
+        store("sp_pre_order", sp_pre_order)
+        store("sp_nvict", sp_nvict)
         layout.addWidget(gb_pre)
+        boxes["pre"] = gb_pre
 
         # Post-edge
         gb_post, gl = section("Post-edge  (drag green lines)")
         gl.addWidget(QLabel("Start (rel. eV):"), 0, 0)
-        self.le_post1 = entry("Post-edge start relative to e0")
-        gl.addWidget(self.le_post1, 0, 1)
+        le_post1 = entry("Post-edge start relative to e0")
+        gl.addWidget(le_post1, 0, 1)
         gl.addWidget(QLabel("End (rel. eV):"), 1, 0)
-        self.le_post2 = entry("Post-edge end relative to e0")
-        gl.addWidget(self.le_post2, 1, 1)
+        le_post2 = entry("Post-edge end relative to e0")
+        gl.addWidget(le_post2, 1, 1)
         gl.addWidget(QLabel("Order:"), 2, 0)
-        self.cb_post_order = QComboBox()
-        self.cb_post_order.addItems(["Auto", "0", "1", "2", "3"])
-        gl.addWidget(self.cb_post_order, 2, 1)
+        cb_post_order = QComboBox()
+        cb_post_order.addItems(["Auto", "0", "1", "2", "3"])
+        gl.addWidget(cb_post_order, 2, 1)
+        store("le_post1", le_post1)
+        store("le_post2", le_post2)
+        store("cb_post_order", cb_post_order)
         layout.addWidget(gb_post)
+        boxes["post"] = gb_post
 
         # Flatten
         gb_flat, gl = section("Flatten  (blank = same as post-edge)")
         gl.addWidget(QLabel("Start (rel. eV):"), 0, 0)
-        self.le_flat1 = entry()
-        gl.addWidget(self.le_flat1, 0, 1)
+        le_flat1 = entry()
+        gl.addWidget(le_flat1, 0, 1)
         gl.addWidget(QLabel("End (rel. eV):"), 1, 0)
-        self.le_flat2 = entry()
-        gl.addWidget(self.le_flat2, 1, 1)
+        le_flat2 = entry()
+        gl.addWidget(le_flat2, 1, 1)
         gl.addWidget(QLabel("Order:"), 2, 0)
-        self.cb_flat_order = QComboBox()
-        self.cb_flat_order.addItems(["Auto", "0", "1", "2", "3"])
-        gl.addWidget(self.cb_flat_order, 2, 1)
+        cb_flat_order = QComboBox()
+        cb_flat_order.addItems(["Auto", "0", "1", "2", "3"])
+        gl.addWidget(cb_flat_order, 2, 1)
+        store("le_flat1", le_flat1)
+        store("le_flat2", le_flat2)
+        store("cb_flat_order", cb_flat_order)
         layout.addWidget(gb_flat)
+        boxes["flat"] = gb_flat
 
-        layout.addStretch()
-        return panel
+        return panel, boxes
 
     # ── Save bar ──────────────────────────────────────────────────────────────
 
@@ -670,6 +771,112 @@ class MainWindow(QMainWindow):
         self.sp_nvict.valueChanged.connect(self._schedule_normalize)
         self.cb_post_order.currentIndexChanged.connect(self._schedule_normalize)
         self.cb_flat_order.currentIndexChanged.connect(self._schedule_normalize)
+
+        # ── H− widget signals (mirror of the H+ wiring above) ────────────
+        self.m_chk_e0_auto.toggled.connect(
+            lambda c: self.m_le_e0.setEnabled(not c)
+        )
+        self.m_chk_es_auto.toggled.connect(
+            lambda c: self.m_le_edge_step.setEnabled(not c)
+        )
+        self.m_le_e0.setEnabled(False)
+        self.m_le_edge_step.setEnabled(False)
+
+        self.m_line_pre1.sigPositionChanged.connect(
+            lambda: self._line_moved(
+                self.m_line_pre1, self.m_le_pre1, is_minus=True
+            )
+        )
+        self.m_line_pre2.sigPositionChanged.connect(
+            lambda: self._line_moved(
+                self.m_line_pre2, self.m_le_pre2, is_minus=True
+            )
+        )
+        self.m_line_post1.sigPositionChanged.connect(
+            lambda: self._line_moved(
+                self.m_line_post1, self.m_le_post1, is_minus=True
+            )
+        )
+        self.m_line_post2.sigPositionChanged.connect(
+            lambda: self._line_moved(
+                self.m_line_post2, self.m_le_post2, is_minus=True
+            )
+        )
+
+        self.m_le_pre1.editingFinished.connect(
+            lambda: self._entry_changed(
+                self.m_le_pre1, self.m_line_pre1, is_minus=True
+            )
+        )
+        self.m_le_pre2.editingFinished.connect(
+            lambda: self._entry_changed(
+                self.m_le_pre2, self.m_line_pre2, is_minus=True
+            )
+        )
+        self.m_le_post1.editingFinished.connect(
+            lambda: self._entry_changed(
+                self.m_le_post1, self.m_line_post1, is_minus=True
+            )
+        )
+        self.m_le_post2.editingFinished.connect(
+            lambda: self._entry_changed(
+                self.m_le_post2, self.m_line_post2, is_minus=True
+            )
+        )
+
+        for widget in (
+            self.m_le_e0,
+            self.m_le_edge_step,
+            self.m_le_flat1,
+            self.m_le_flat2,
+            self.m_chk_e0_auto,
+            self.m_chk_es_auto,
+        ):
+            if isinstance(widget, QCheckBox):
+                widget.toggled.connect(self._schedule_normalize)
+            else:
+                widget.editingFinished.connect(self._schedule_normalize)
+
+        self.m_sp_pre_order.valueChanged.connect(self._schedule_normalize)
+        self.m_sp_nvict.valueChanged.connect(self._schedule_normalize)
+        self.m_cb_post_order.currentIndexChanged.connect(
+            self._schedule_normalize
+        )
+        self.m_cb_flat_order.currentIndexChanged.connect(
+            self._schedule_normalize
+        )
+
+        # Independent toggle
+        self.chk_independent.toggled.connect(self._on_independent_toggled)
+
+    def _on_independent_toggled(self, checked):
+        self._minus_norm_panel.setVisible(checked)
+        for line in (
+            self.m_line_e0,
+            self.m_line_pre1,
+            self.m_line_pre2,
+            self.m_line_post1,
+            self.m_line_post2,
+        ):
+            line.setVisible(checked and self._minus_energy is not None)
+        # Update H+ section titles to disambiguate when both panels show.
+        suffix = "  (H+)" if checked else ""
+        for key, base in (
+            ("edge", "Edge"),
+            ("pre", "Pre-edge  (drag orange lines)"),
+            ("post", "Post-edge  (drag green lines)"),
+            ("flat", "Flatten  (blank = same as post-edge)"),
+        ):
+            self._plus_boxes[key].setTitle(base + suffix)
+        if checked:
+            for key, base in (
+                ("edge", "Edge"),
+                ("pre", "Pre-edge  (drag orange lines)"),
+                ("post", "Post-edge  (drag green lines)"),
+                ("flat", "Flatten  (blank = same as post-edge)"),
+            ):
+                self._minus_boxes[key].setTitle(base + "  (H−)")
+        self._schedule_normalize()
 
     def _schedule_normalize(self):
         if self._plus_energy is not None:
@@ -861,6 +1068,32 @@ class MainWindow(QMainWindow):
         ]:
             entry.setText(f"{line.value() - e0_est:.1f}")
 
+        # Initialize H− markers from H− data so they're ready when
+        # independent mode is enabled. Markers stay invisible until then.
+        m_energy = self._minus_energy
+        m_deriv = np.gradient(self._minus_mu, m_energy)
+        m_e0_est = float(m_energy[np.argmax(m_deriv)])
+        self._m_e0_val = m_e0_est
+        self.m_line_e0.setPos(m_e0_est)
+
+        m_span = m_energy[-1] - m_energy[0]
+        m_defaults = {
+            self.m_line_pre1: -0.10 * m_span,
+            self.m_line_pre2: -0.03 * m_span,
+            self.m_line_post1: 0.05 * m_span,
+            self.m_line_post2: 0.40 * m_span,
+        }
+        for line, rel in m_defaults.items():
+            self._set_line_silent(line, m_e0_est + rel)
+
+        for line, entry in [
+            (self.m_line_pre1, self.m_le_pre1),
+            (self.m_line_pre2, self.m_le_pre2),
+            (self.m_line_post1, self.m_le_post1),
+            (self.m_line_post2, self.m_le_post2),
+        ]:
+            entry.setText(f"{line.value() - m_e0_est:.1f}")
+
     # ─── Line ↔ entry synchronization ────────────────────────────────────────
 
     def _set_line_silent(self, line, pos):
@@ -868,14 +1101,15 @@ class MainWindow(QMainWindow):
         line.setPos(pos)
         self._block_line_update = False
 
-    def _line_moved(self, line, entry):
-        if self._block_line_update or self._e0_val is None:
+    def _line_moved(self, line, entry, is_minus=False):
+        e0 = self._m_e0_val if is_minus else self._e0_val
+        if self._block_line_update or e0 is None:
             return
         with QSignalBlocker(entry):
-            entry.setText(f"{line.value() - self._e0_val:.1f}")
+            entry.setText(f"{line.value() - e0:.1f}")
         self._schedule_normalize()
 
-    def _entry_changed(self, entry, line):
+    def _entry_changed(self, entry, line, is_minus=False):
         txt = entry.text().strip()
         if not txt:
             return
@@ -883,7 +1117,8 @@ class MainWindow(QMainWindow):
             rel = float(txt)
         except ValueError:
             return
-        self._set_line_silent(line, (self._e0_val or 0.0) + rel)
+        e0 = self._m_e0_val if is_minus else self._e0_val
+        self._set_line_silent(line, (e0 or 0.0) + rel)
         self._schedule_normalize()
 
     # ─── Normalize phase ──────────────────────────────────────────────────────
@@ -901,34 +1136,39 @@ class MainWindow(QMainWindow):
         txt = combo.currentText()
         return None if txt == "Auto" else int(txt)
 
-    def _build_norm_kwargs(self):
+    def _build_norm_kwargs(self, side="plus"):
+        prefix = "" if side == "plus" else "m_"
+
+        def w(name):
+            return getattr(self, f"{prefix}{name}")
+
         e0 = (
             None
-            if self.chk_e0_auto.isChecked()
-            else self._parse_entry(self.le_e0)
+            if w("chk_e0_auto").isChecked()
+            else self._parse_entry(w("le_e0"))
         )
         edge_step = (
             None
-            if self.chk_es_auto.isChecked()
-            else self._parse_entry(self.le_edge_step)
+            if w("chk_es_auto").isChecked()
+            else self._parse_entry(w("le_edge_step"))
         )
 
-        pre1, pre2 = self._parse_entry(self.le_pre1), self._parse_entry(
-            self.le_pre2
+        pre1, pre2 = self._parse_entry(w("le_pre1")), self._parse_entry(
+            w("le_pre2")
         )
         pre_range = (
             [pre1, pre2] if (pre1 is not None or pre2 is not None) else None
         )
 
-        post1, post2 = self._parse_entry(self.le_post1), self._parse_entry(
-            self.le_post2
+        post1, post2 = self._parse_entry(w("le_post1")), self._parse_entry(
+            w("le_post2")
         )
         post_range = (
             [post1, post2] if (post1 is not None or post2 is not None) else None
         )
 
-        flat1, flat2 = self._parse_entry(self.le_flat1), self._parse_entry(
-            self.le_flat2
+        flat1, flat2 = self._parse_entry(w("le_flat1")), self._parse_entry(
+            w("le_flat2")
         )
         flat_range = (
             [flat1, flat2] if (flat1 is not None or flat2 is not None) else None
@@ -938,25 +1178,30 @@ class MainWindow(QMainWindow):
             e0=e0,
             edge_step=edge_step,
             pre_range=pre_range,
-            pre_order=self.sp_pre_order.value(),
-            nvict=self.sp_nvict.value(),
+            pre_order=w("sp_pre_order").value(),
+            nvict=w("sp_nvict").value(),
             post_range=post_range,
-            post_order=self._parse_order(self.cb_post_order),
+            post_order=self._parse_order(w("cb_post_order")),
             flat_range=flat_range,
-            flat_order=self._parse_order(self.cb_flat_order),
+            flat_order=self._parse_order(w("cb_flat_order")),
         )
 
     def _run_normalization(self):
         if self._plus_energy is None:
             return
 
-        norm_kw = self._build_norm_kwargs()
+        plus_kw = self._build_norm_kwargs("plus")
+        minus_kw = (
+            self._build_norm_kwargs("minus")
+            if self.chk_independent.isChecked()
+            else plus_kw
+        )
         try:
             plus = normalize_absorption(
-                self._plus_energy, self._plus_mu, **norm_kw
+                self._plus_energy, self._plus_mu, **plus_kw
             )
             minus = normalize_absorption(
-                self._minus_energy, self._minus_mu, **norm_kw
+                self._minus_energy, self._minus_mu, **minus_kw
             )
         except Exception as exc:
             self.status_bar.showMessage(f"Normalization error: {exc}")
@@ -968,11 +1213,16 @@ class MainWindow(QMainWindow):
         self._plus_results = plus
         self._minus_results = minus
 
-        # Update e0 marker
+        # Update e0 markers (one per polarity)
         self._e0_val = float(plus["e0"])
         self.line_e0.setPos(self._e0_val)
         with QSignalBlocker(self.le_e0):
             self.le_e0.setText(f"{self._e0_val:.2f}")
+
+        self._m_e0_val = float(minus["e0"])
+        self.m_line_e0.setPos(self._m_e0_val)
+        with QSignalBlocker(self.m_le_e0):
+            self.m_le_e0.setText(f"{self._m_e0_val:.2f}")
 
         ep, em = plus["energy"], minus["energy"]
 

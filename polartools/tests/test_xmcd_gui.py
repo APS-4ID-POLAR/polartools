@@ -593,3 +593,102 @@ def test_on_load_success_sets_state(win, synthetic_data):
 
     assert win._plus_energy is not None
     assert win._minus_energy is not None
+
+
+# ─── Independent H+/H− normalization ─────────────────────────────────────────
+
+
+def test_independent_panel_hidden_by_default(win):
+    assert not win.chk_independent.isChecked()
+    assert not win._minus_norm_panel.isVisibleTo(win)
+
+
+def test_independent_panel_shows_when_toggled(win):
+    win.show()
+    win.chk_independent.setChecked(True)
+    assert win._minus_norm_panel.isVisibleTo(win)
+    win.chk_independent.setChecked(False)
+    assert not win._minus_norm_panel.isVisibleTo(win)
+
+
+def test_h_minus_markers_hidden_by_default(win):
+    for line in (
+        win.m_line_pre1,
+        win.m_line_pre2,
+        win.m_line_post1,
+        win.m_line_post2,
+    ):
+        assert not line.isVisible()
+
+
+def test_h_minus_markers_show_when_toggled(loaded_win):
+    loaded_win.chk_independent.setChecked(True)
+    for line in (
+        loaded_win.m_line_pre1,
+        loaded_win.m_line_pre2,
+        loaded_win.m_line_post1,
+        loaded_win.m_line_post2,
+    ):
+        assert line.isVisible()
+
+
+def test_run_normalization_independent_uses_separate_kwargs(loaded_win):
+    loaded_win.chk_independent.setChecked(True)
+    loaded_win.chk_e0_auto.setChecked(False)
+    loaded_win.le_e0.setText("7112.0")
+    loaded_win.m_chk_e0_auto.setChecked(False)
+    loaded_win.m_le_e0.setText("7115.0")
+
+    energy = loaded_win._plus_energy
+    stub = {
+        "energy": energy,
+        "mu": loaded_win._plus_mu,
+        "norm": np.ones_like(energy),
+        "xmcd": np.zeros_like(energy),
+        "preedge": np.zeros_like(energy),
+        "postedge": np.ones_like(energy),
+        "e0": 7112.0,
+        "edge_step": 1.0,
+        "flat": np.ones_like(energy),
+    }
+    with patch(
+        "polartools.xmcd_gui.normalize_absorption", return_value=stub
+    ) as mock_norm:
+        loaded_win._run_normalization()
+
+    assert mock_norm.call_count == 2
+    plus_e0 = mock_norm.call_args_list[0].kwargs["e0"]
+    minus_e0 = mock_norm.call_args_list[1].kwargs["e0"]
+    assert plus_e0 == pytest.approx(7112.0)
+    assert minus_e0 == pytest.approx(7115.0)
+
+
+def test_run_normalization_dependent_uses_same_kwargs(loaded_win):
+    loaded_win.chk_independent.setChecked(False)
+    loaded_win.chk_e0_auto.setChecked(False)
+    loaded_win.le_e0.setText("7112.0")
+    loaded_win.m_chk_e0_auto.setChecked(False)
+    loaded_win.m_le_e0.setText("7115.0")  # ignored when toggle is off
+
+    energy = loaded_win._plus_energy
+    stub = {
+        "energy": energy,
+        "mu": loaded_win._plus_mu,
+        "norm": np.ones_like(energy),
+        "xmcd": np.zeros_like(energy),
+        "preedge": np.zeros_like(energy),
+        "postedge": np.ones_like(energy),
+        "e0": 7112.0,
+        "edge_step": 1.0,
+        "flat": np.ones_like(energy),
+    }
+    with patch(
+        "polartools.xmcd_gui.normalize_absorption", return_value=stub
+    ) as mock_norm:
+        loaded_win._run_normalization()
+
+    assert mock_norm.call_count == 2
+    plus_kw = mock_norm.call_args_list[0].kwargs
+    minus_kw = mock_norm.call_args_list[1].kwargs
+    assert plus_kw == minus_kw
+    assert plus_kw["e0"] == pytest.approx(7112.0)
