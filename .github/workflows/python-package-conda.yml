@@ -51,7 +51,7 @@ jobs:
         uses: mamba-org/setup-micromamba@v3
         with:
           cache-environment: true
-          cache-environment-key: env-key-${{ matrix.python-version }}
+          cache-environment-key: env-key-${{ matrix.python-version }}-${{ hashFiles('environment.yml') }}
           condarc: |
             channel-priority: flexible
           environment-file: environment.yml
@@ -68,8 +68,14 @@ jobs:
           micromamba env list
           printenv | sort
 
+      - name: Install Qt system dependencies
+        shell: bash
+        run: sudo apt-get install -y libegl1 libgl1
+
       - name: Run pytest
         shell: bash -l {0}
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: |
           databroker-unpack inplace polartools/tests/data_for_test/databroker data_3
           pytest --cov-config=.coveragerc --cov=./ --cov-report=xml

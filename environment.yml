@@ -41,3 +41,5 @@ dependencies:
     - sphinx-rtd-theme
     - super-state-machine
     - sphinx-copybutton
+    - PyQt6
+    - pyqtgraph

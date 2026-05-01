@@ -1286,6 +1286,7 @@ def process_xmcd(
     xmcd_kind="dichro",
     load_parameters=dict(),
     normalization_parameters=dict(),
+    normalization_parameters_minus=None,
 ):
     """
     Process the XMCD scans of +/- magnetic fields.
@@ -1307,8 +1308,13 @@ def process_xmcd(
         `polartools.absorption.load_multi_dichro` or
         `polartools.absorption.load_multi_lockin`.
     normalization_parameters :  dictionary
-        Parameters used to normalized the data. Passed as kwargs to
+        Parameters used to normalize the "plus" data (and the "minus" data
+        when ``normalization_parameters_minus`` is None). Passed as kwargs to
         `polartools.absorption.normalize_absorption`.
+    normalization_parameters_minus : dictionary, optional
+        If provided, used to normalize the "minus" data independently. When
+        None (default), the "minus" data is normalized with the same
+        parameters as the "plus" data.
 
     Returns
     --------
@@ -1336,12 +1342,18 @@ def process_xmcd(
             f"but {xmcd_kind} was entered."
         )
 
+    minus_parameters = (
+        normalization_parameters
+        if normalization_parameters_minus is None
+        else normalization_parameters_minus
+    )
+
     x, y, z, _, _ = _load_func(scans_plus, source, **load_parameters)
     plus = normalize_absorption(x * 1000, y, **normalization_parameters)
     plus["xmcd"] = z[np.argsort(x)] / plus["edge_step"]
 
     x, y, z, _, _ = _load_func(scans_minus, source, **load_parameters)
-    minus = normalize_absorption(x * 1000, y, **normalization_parameters)
+    minus = normalize_absorption(x * 1000, y, **minus_parameters)
     minus["xmcd"] = z[np.argsort(x)] / minus["edge_step"]
 
     return plus, minus

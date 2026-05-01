@@ -23,3 +23,5 @@ xraydb
 apstools
 imageio
 h5py
+PyQt6
+pyqtgraph

@@ -143,6 +143,50 @@ def test_process_xmcd():
     ]
 
 
+def test_process_xmcd_independent_normalization():
+    path = join("polartools", "tests", "data_for_test")
+    scans = [39, 40, 41]
+    load_parameters = dict(detector="IC4", monitor="IC3", folder=path)
+    plus_params = dict(
+        pre_range=[-30, -10],
+        pre_order=0,
+        post_range=[10, 30],
+        post_order=0,
+    )
+    minus_params = dict(
+        pre_range=[-25, -5],
+        pre_order=1,
+        post_range=[15, 35],
+        post_order=1,
+    )
+
+    # Reference run with shared parameters.
+    shared_plus, shared_minus = absorption.process_xmcd(
+        scans,
+        scans,
+        "absorption.dat",
+        xmcd_kind="dichro",
+        load_parameters=load_parameters,
+        normalization_parameters=plus_params,
+    )
+
+    # Independent run: same plus_params, different minus_params.
+    plus, minus = absorption.process_xmcd(
+        scans,
+        scans,
+        "absorption.dat",
+        xmcd_kind="dichro",
+        load_parameters=load_parameters,
+        normalization_parameters=plus_params,
+        normalization_parameters_minus=minus_params,
+    )
+
+    # Plus side is unchanged from the shared run.
+    assert allclose(plus["edge_step"], shared_plus["edge_step"])
+    # Minus side differs because it used minus_params.
+    assert not allclose(minus["edge_step"], shared_minus["edge_step"])
+
+
 def test_plot_xmcd():
     path = join("polartools", "tests", "data_for_test")
     scans = [39, 40, 41]
