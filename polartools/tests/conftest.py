@@ -9,32 +9,34 @@ import shutil
 import subprocess
 from pathlib import Path
 
-import pytest
-
 # Must be set before any Qt import so the offscreen backend is selected.
 # This allows GUI tests to run in headless CI environments (GitHub Actions).
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 
-@pytest.fixture(scope="session", autouse=True)
-def _unpack_databroker_test_data():
-    """Ensure the msgpack databroker test catalog is unpacked before tests run.
+def _ensure_databroker_catalog_registered():
+    """Register the packed databroker test catalog with intake.
 
-    Replaces the manual `databroker-unpack inplace ... data_3` step previously
-    required in the README/CI. Idempotent: if the catalog has already been
-    registered, this is a no-op.
+    Runs at conftest import time (i.e. before any test module imports
+    `from databroker import catalog`) so the global catalog singleton sees
+    the entry on first read. Replaces the manual `databroker-unpack`
+    prerequisite previously documented in the README and run as a separate
+    CI step (closes #34).
+
+    `databroker-unpack inplace` is idempotent — re-running just rewrites the
+    user-side intake config file pointing at the same packed data.
     """
+    if shutil.which("databroker-unpack") is None:
+        return
     data_dir = (
         Path(__file__).parent / "data_for_test" / "databroker"
     ).resolve()
-    catalog_yml = data_dir / "catalog.yml"
-    if catalog_yml.exists():
-        return
-    if shutil.which("databroker-unpack") is None:
-        pytest.skip(
-            "databroker-unpack CLI not available; cannot prepare test data"
-        )
+    if not (data_dir / "catalog.yml").exists():
+        return  # nothing to register
     subprocess.run(
         ["databroker-unpack", "inplace", str(data_dir), "data_3"],
         check=True,
     )
+
+
+_ensure_databroker_catalog_registered()

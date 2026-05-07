@@ -165,9 +165,10 @@ def test_db_query_tiled():
     mock_db.search.return_value = mock_db
     query = {"since": "2024-01-01", "scan_id": 1049}
     # TimeRange is not in tiled 0.2.x; patch it into tiled.queries for this test
-    with patch(
-        "polartools.load_data._is_tiled", return_value=True
-    ), patch.object(tiled_queries, "TimeRange", MagicMock(), create=True):
+    with (
+        patch("polartools.load_data._is_tiled", return_value=True),
+        patch.object(tiled_queries, "TimeRange", MagicMock(), create=True),
+    ):
         load_data.db_query(mock_db, query)
     assert mock_db.search.call_count == 2
 
@@ -179,13 +180,15 @@ def test_load_catalog_tiled():
     mock_cat = MagicMock()
     mock_root = MagicMock()
     mock_root.__getitem__ = MagicMock(return_value=mock_cat)
-    with patch(
-        "polartools.load_data.getDatabase",
-        side_effect=KeyError("not found"),
-    ), patch(
-        "polartools.load_data.from_profile", return_value=mock_root
-    ) as mock_fp, patch(
-        "polartools.load_data._is_tiled", return_value=True
+    with (
+        patch(
+            "polartools.load_data.getDatabase",
+            side_effect=KeyError("not found"),
+        ),
+        patch(
+            "polartools.load_data.from_profile", return_value=mock_root
+        ) as mock_fp,
+        patch("polartools.load_data._is_tiled", return_value=True),
     ):
         result = load_data.load_catalog(name="test_profile")
     mock_fp.assert_called_once_with("test_profile")

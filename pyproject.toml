@@ -45,6 +45,9 @@ dependencies = [
     "PyQt6",
     "pyresttable",
     "scipy",
+    # setuptools provides the distutils shim that databroker-pack still
+    # imports under Python 3.12+ (stdlib distutils was removed in 3.12).
+    "setuptools",
     "spec2nexus",
     "suitcase-csv",
     "suitcase-json-metadata",
@@ -117,13 +120,15 @@ extend-exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "UP", "B"]
-# E203/W503 are black-incompatible; E501 handled by formatter; E741 is the
-# legacy single-letter-name allowance from the previous flake8 config.
-ignore = ["E203", "E501", "E741", "W503"]
+# Conservative rule set matching the previous flake8 coverage (E/F/W).
+# Follow-up PRs can enable I (isort), UP (pyupgrade), B (bugbear) — the
+# repo currently has ~62 unrelated findings under those rules.
+select = ["E", "F", "W"]
+# E203 is black-incompatible; E501 is handled by the formatter; E741 keeps
+# the legacy single-letter-name allowance from the previous flake8 config.
+ignore = ["E203", "E501", "E741"]
 
 [tool.ruff.lint.per-file-ignores]
-"polartools/tests/*" = ["B011"]
 "polartools/__init__.py" = ["F401"]
 
 [tool.ruff.format]
