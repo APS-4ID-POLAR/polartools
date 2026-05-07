@@ -34,7 +34,7 @@ jobs:
         # separately, then re-add -W to make warnings fail the build.
         run: sphinx-build --keep-going -b html docs/source docs/build/html
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: docs-html
           path: docs/build/html
