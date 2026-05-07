@@ -1,0 +1,46 @@
+polartools
+==========
+
+.. py:module:: polartools
+
+.. autoapi-nested-parse::
+
+   
+   Copyright (c) 2020, UChicago Argonne, LLC.
+
+   See LICENSE file for details.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /api/polartools/absorption/index
+   /api/polartools/area_detector_handlers/index
+   /api/polartools/diffraction/index
+   /api/polartools/load_data/index
+   /api/polartools/manage_database/index
+   /api/polartools/pressure_calibration/index
+   /api/polartools/process_images/index
+   /api/polartools/xmcd_gui/index
+
+

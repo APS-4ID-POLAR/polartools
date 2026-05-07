@@ -1,0 +1,1299 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>polartools.load_data &#8212; polartools</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=dda85ae5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/polartools/load_data';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.6.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">polartools</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.load_data</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for polartools.load_data</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Base functions to load data from various sources.</span>
+
+<span class="sd">.. autosummary::</span>
+<span class="sd">    ~load_spec</span>
+<span class="sd">    ~load_csv</span>
+<span class="sd">    ~load_hdf5_data</span>
+<span class="sd">    ~hdf5_to_dataframe</span>
+<span class="sd">    ~load_hdf5_master</span>
+<span class="sd">    ~load_databroker</span>
+<span class="sd">    ~load_table</span>
+<span class="sd">    ~is_Bluesky_specfile</span>
+<span class="sd">    ~db_query</span>
+<span class="sd">    ~show_meta</span>
+<span class="sd">    ~collect_meta</span>
+<span class="sd">    ~lookup_position</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Copyright (c) 2020-2021, UChicago Argonne, LLC.</span>
+<span class="c1"># See LICENSE file for details.</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_csv</span><span class="p">,</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">join</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spec2nexus.spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpecDataFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyRestTable</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">h5py</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apstools.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">getDatabase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tiled.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_profile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tiled.profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProfileNotFound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.area_detector_handlers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EigerHandler</span><span class="p">,</span>
+    <span class="n">LambdaHDF5Handler</span><span class="p">,</span>
+    <span class="n">SPEHandler</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># TODO: This should be just temp fix</span>
+<span class="n">LambdaHDF5Handler</span><span class="o">.</span><span class="n">specs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;AD_HDF5_lambda&quot;</span><span class="p">}</span> <span class="o">|</span> <span class="n">LambdaHDF5Handler</span><span class="o">.</span><span class="n">specs</span>
+<span class="n">HDF_DEFAULT_FNAME_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;scan_</span><span class="si">{:06d}</span><span class="s2">_master.hdf&quot;</span>
+<span class="n">BLUESKY_DEFAULT_LOCATION</span> <span class="o">=</span> <span class="s2">&quot;entry/instrument/bluesky/streams/primary&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_tiled</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True if obj is a tiled catalog client, False if databroker.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;tiled&quot;</span> <span class="ow">in</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__module__</span>
+
+
+<div class="viewcode-block" id="load_catalog">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.load_catalog">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_catalog</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">handlers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tiled_path</span><span class="o">=</span><span class="s2">&quot;/raw&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads a databroker catalog and register data handlers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str, optional</span>
+<span class="sd">        Name of the database. Defaults to 4-ID-D name.</span>
+<span class="sd">    query : dict, optional</span>
+<span class="sd">        Dictionary with search parameters for the database.</span>
+<span class="sd">    handlers : dict, optional</span>
+<span class="sd">        Dictionary organized as {handler_name: handler_class}. If None,</span>
+<span class="sd">        defaults to handlers used at 4-ID-D.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cat : databroker catalog</span>
+<span class="sd">        Catalog after running the query, and registering the handler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cat</span> <span class="o">=</span> <span class="n">getDatabase</span><span class="p">(</span><span class="n">catalog_name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">cat</span> <span class="o">=</span> <span class="n">from_profile</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="n">tiled_path</span><span class="p">]</span>
+    <span class="k">except</span> <span class="n">ProfileNotFound</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No database </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> was not found!&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cat</span> <span class="o">=</span> <span class="n">db_query</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_tiled</span><span class="p">(</span><span class="n">cat</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">handlers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">handlers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">AD_HDF5_Lambda250k_APSPolar</span><span class="o">=</span><span class="n">LambdaHDF5Handler</span><span class="p">,</span>
+                <span class="n">AD_HDF5_lambda</span><span class="o">=</span><span class="n">LambdaHDF5Handler</span><span class="p">,</span>  <span class="c1"># Temporary fix</span>
+                <span class="n">AD_EIGER_APSPolar</span><span class="o">=</span><span class="n">EigerHandler</span><span class="p">,</span>
+                <span class="n">AD_SPE_APSPolar</span><span class="o">=</span><span class="n">SPEHandler</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">hname</span><span class="p">,</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">handlers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">cat</span><span class="o">.</span><span class="n">register_handler</span><span class="p">(</span><span class="n">hname</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># For tiled: handler registration is server-side.</span>
+    <span class="k">return</span> <span class="n">cat</span></div>
+
+
+
+<div class="viewcode-block" id="load_spec">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.load_spec">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_spec</span><span class="p">(</span><span class="n">scan_id</span><span class="p">,</span> <span class="n">spec_file</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load data from spec file.</span>
+
+<span class="sd">    If `spec_file` is the file name, it will load the spec file internally</span>
+<span class="sd">    which is time consuming.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_id : int</span>
+<span class="sd">        Scan_id of the scan to be retrieved.</span>
+<span class="sd">    spec_file : string or spec2nexus.spec.SpecDataFile</span>
+<span class="sd">        Either the spec file name or a SpecDataFile instance.</span>
+<span class="sd">    folder : string, optional</span>
+<span class="sd">        Folder where spec file is located.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data : pandas.DataFrame</span>
+<span class="sd">        Table with the data from scan.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`spec2nexus.spec.SpecDataFile`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">spec_file</span><span class="p">)</span>
+        <span class="n">spec_file</span> <span class="o">=</span> <span class="n">SpecDataFile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">spec_file</span><span class="o">.</span><span class="n">getScan</span><span class="p">(</span><span class="n">scan_id</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_csv">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.load_csv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_csv</span><span class="p">(</span><span class="n">scan_id</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name_format</span><span class="o">=</span><span class="s2">&quot;scan_</span><span class="si">{}</span><span class="s2">_primary.csv&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load data from the &#39;primary&#39; stream from exported csv files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_id : int</span>
+<span class="sd">        Scan_id of the scan to be retrieved.</span>
+<span class="sd">    folder : string, optional</span>
+<span class="sd">        Folder where csv files are located.</span>
+<span class="sd">    name_format : string, optional</span>
+<span class="sd">        General format of file name. The correct name must be</span>
+<span class="sd">        retrievable through: `file_name_format.format(scan_id)`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data : pandas.DataFrame</span>
+<span class="sd">        Table with the data from the primary stream.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`pandas.read_csv`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">name_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scan_id</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="load_databroker">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.load_databroker">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_databroker</span><span class="p">(</span>
+    <span class="n">scan_id</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_db_v1</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load data of the first scan with the provided scan_id.</span>
+
+<span class="sd">    Currently defaults to databroker.v1 because it is faster. See issue #28.</span>
+
+<span class="sd">    For further details, refer to the `databroker` `documentation`_.</span>
+
+<span class="sd">    .. _documentation: https://blueskyproject.io/databroker/</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_id : int</span>
+<span class="sd">        Scan_id of the scan to be retrieved</span>
+<span class="sd">    db :</span>
+<span class="sd">        `databroker` database</span>
+<span class="sd">    stream : string, optional</span>
+<span class="sd">        Selects the stream from which data will be loaded.</span>
+<span class="sd">    query : dict, optional</span>
+<span class="sd">        Dictionary with search parameters for the database.</span>
+<span class="sd">    use_db_v1 : bool, optional</span>
+<span class="sd">        Chooses databroker API version between &#39;v1&#39; or &#39;v2&#39;, defaults to &#39;v1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data : pandas.DataFrame</span>
+<span class="sd">        Table with the data from the primary stream.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">db</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_is_tiled</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">getDatabase</span><span class="p">(</span><span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">)</span>
+        <span class="n">_db</span> <span class="o">=</span> <span class="n">db_query</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="n">db</span>
+        <span class="k">if</span> <span class="n">use_db_v1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stream</span> <span class="ow">in</span> <span class="n">_db</span><span class="o">.</span><span class="n">v1</span><span class="p">[</span><span class="n">scan_id</span><span class="p">]</span><span class="o">.</span><span class="n">stream_names</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_db</span><span class="o">.</span><span class="n">v1</span><span class="p">[</span><span class="n">scan_id</span><span class="p">]</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">stream_name</span><span class="o">=</span><span class="n">stream</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The stream </span><span class="si">{</span><span class="n">stream</span><span class="si">}</span><span class="s2"> does not exist in scan </span><span class="si">{</span><span class="n">scan_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_db</span><span class="o">.</span><span class="n">v2</span><span class="p">[</span><span class="n">scan_id</span><span class="p">],</span> <span class="n">stream</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The stream </span><span class="si">{</span><span class="n">stream</span><span class="si">}</span><span class="s2"> does not exist in scan </span><span class="si">{</span><span class="n">scan_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_db</span> <span class="o">=</span> <span class="n">db_query</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="n">db</span>
+        <span class="n">run</span> <span class="o">=</span> <span class="n">_db</span><span class="p">[</span><span class="n">scan_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">stream</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">run</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The stream </span><span class="si">{</span><span class="n">stream</span><span class="si">}</span><span class="s2"> does not exist in scan </span><span class="si">{</span><span class="n">scan_id</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">run</span><span class="p">[</span><span class="n">stream</span><span class="p">]</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="hdf5_to_dataframe">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.hdf5_to_dataframe">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hdf5_to_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an h5py object into a DataFrame.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">       Assumes a specific layout: for each top-level key, the data is read</span>
+<span class="sd">       from the ``&quot;value&quot;`` sub-key (i.e. ``data[key][&quot;value&quot;][()]``).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : h5py.File or h5py.Group</span>
+<span class="sd">        Object with the data. Each key needs to have a ``&quot;value&quot;`` sub-key.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        Table with one column per top-level key.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_hdf5_master`</span>
+<span class="sd">    :func:`h5py.File`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[()]</span>
+    <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_hdf5_master">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.load_hdf5_master">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_hdf5_master</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">HDF_DEFAULT_FNAME_FORMAT</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper that loads HDF files using `h5py`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_id : int</span>
+<span class="sd">        Scan_id of the scan to be retrieved.</span>
+<span class="sd">    folder : string, optional</span>
+<span class="sd">        Folder where the master files are located.</span>
+<span class="sd">    fname_format : string, optional</span>
+<span class="sd">        General format of file name. The correct name must be retrievable</span>
+<span class="sd">        through: `file_name_format.format(scan_id)`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data : h5py.File</span>
+<span class="sd">        Loaded HDF file.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`h5py.File`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">File</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scan</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="load_hdf5_data">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.load_hdf5_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_hdf5_data</span><span class="p">(</span>
+    <span class="n">scan</span><span class="p">,</span>
+    <span class="n">folder</span><span class="p">,</span>
+    <span class="n">fname_format</span><span class="o">=</span><span class="n">HDF_DEFAULT_FNAME_FORMAT</span><span class="p">,</span>
+    <span class="n">h5_location</span><span class="o">=</span><span class="n">BLUESKY_DEFAULT_LOCATION</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper that loads HDF files using `h5py`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_id : int</span>
+<span class="sd">        Scan_id of the scan to be retrieved.</span>
+<span class="sd">    folder : string, optional</span>
+<span class="sd">        Folder where the master files are located.</span>
+<span class="sd">    fname_format : string, optional</span>
+<span class="sd">        General format of file name. The correct name must be retrievable</span>
+<span class="sd">        through: `file_name_format.format(scan_id)`</span>
+<span class="sd">    h5_location : string, optional</span>
+<span class="sd">        Location of the Bluesky data stream.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data : pandas.DataFrame</span>
+<span class="sd">        Table with the data from the primary stream.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_hdf5_master`</span>
+<span class="sd">    :func:`polartools.load_data.hdf5_to_dataframe`</span>
+<span class="sd">    :func:`h5py.File`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">hdf5_to_dataframe</span><span class="p">(</span>
+        <span class="n">load_hdf5_master</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">fname_format</span><span class="p">)[</span><span class="n">h5_location</span><span class="p">]</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_table">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.load_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_table</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Automated scan table loader.</span>
+
+<span class="sd">    The automation is based on the source argument.</span>
+
+<span class="sd">    - if source == &#39;csv&#39; -&gt; uses `load_csv`.</span>
+<span class="sd">    - else if source is a string or nexus2spec.spec.SpecDataFile -&gt; uses\</span>
+<span class="sd">    `load_spec`.</span>
+<span class="sd">    - else -&gt; uses `load_databroker`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan : int</span>
+<span class="sd">        Scan_id our uid. If scan_id is passed, it will load the last scan with</span>
+<span class="sd">        that scan_id. See kwargs for search options.</span>
+<span class="sd">    source : databroker database, name of the spec file, or &#39;csv&#39;</span>
+<span class="sd">        Note that applicable kwargs depend on this selection.</span>
+<span class="sd">    kwargs :</span>
+<span class="sd">        The necessary kwargs are passed to the loading functions defined by the</span>
+<span class="sd">        `source` argument:</span>
+
+<span class="sd">        - csv -&gt; possible kwargs: folder, name_format.</span>
+<span class="sd">        - spec -&gt; possible kwargs: folder.</span>
+<span class="sd">        - databroker -&gt; possible kwargs: stream, query, use_db_v1.</span>
+
+<span class="sd">        Note that a warning will be printed if the an unnecessary kwarg is</span>
+<span class="sd">        passed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    table : pandas.DataFrame</span>
+<span class="sd">        Table with the scan data.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_databroker`</span>
+<span class="sd">    :func:`polartools.load_data.load_csv`</span>
+<span class="sd">    :func:`polartools.load_data.load_spec`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;folder&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+        <span class="n">name_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;name_format&quot;</span><span class="p">,</span> <span class="s2">&quot;scan_</span><span class="si">{}</span><span class="s2">_primary.csv&quot;</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">load_csv</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">name_format</span><span class="o">=</span><span class="n">name_format</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;hdf5&quot;</span><span class="p">,</span> <span class="s2">&quot;h5&quot;</span><span class="p">,</span> <span class="s2">&quot;hdf&quot;</span><span class="p">):</span>
+        <span class="n">fname_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fname_format&quot;</span><span class="p">,</span> <span class="n">HDF_DEFAULT_FNAME_FORMAT</span><span class="p">)</span>
+        <span class="n">h5_location</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;h5_location&quot;</span><span class="p">,</span> <span class="n">BLUESKY_DEFAULT_LOCATION</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">load_hdf5_data</span><span class="p">(</span>
+            <span class="n">scan</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">fname_format</span><span class="p">,</span> <span class="n">h5_location</span><span class="o">=</span><span class="n">h5_location</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">SpecDataFile</span><span class="p">):</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">load_spec</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;stream&quot;</span><span class="p">,</span> <span class="s2">&quot;primary&quot;</span><span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">use_db_v1</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;use_db_v1&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">load_databroker</span><span class="p">(</span>
+            <span class="n">scan</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">use_db_v1</span><span class="o">=</span><span class="n">use_db_v1</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_kwargs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following kwargs were not used! </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">_kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span></div>
+
+
+
+<div class="viewcode-block" id="is_Bluesky_specfile">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.is_Bluesky_specfile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_Bluesky_specfile</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the specfile was created by Bluesky.</span>
+
+<span class="sd">    It looks for a &quot;Bluesky&quot; comment in the file header.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source : string or spec2nexus.spec.SpecDataFile</span>
+<span class="sd">        Either the spec file name or a SpecDataFile instance.</span>
+<span class="sd">    folder : string, optional</span>
+<span class="sd">        Folder where spec file is located.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y : bool</span>
+<span class="sd">        True if spec_file was generated by Bluesky, False otherwise.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`spec2nexus.spec.SpecDataFile`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">SpecDataFile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">comments</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">source</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Bluesky&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="db_query">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.db_query">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">db_query</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches the databroker v2 database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    db :</span>
+<span class="sd">        `databroker` database.</span>
+<span class="sd">    query: dict</span>
+<span class="sd">        Search parameters.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    _db :</span>
+<span class="sd">        Subset of db that satisfy the search parameters. Note that it has the</span>
+<span class="sd">        same format as db.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`databroker.catalog.search`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">since</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;since&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">until</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;until&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_is_tiled</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">tiled.queries</span><span class="w"> </span><span class="kn">import</span> <span class="n">Key</span><span class="p">,</span> <span class="n">TimeRange</span>
+
+        <span class="k">if</span> <span class="n">since</span> <span class="ow">or</span> <span class="n">until</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">since</span><span class="p">:</span>
+                <span class="n">since</span> <span class="o">=</span> <span class="s2">&quot;2010&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">until</span><span class="p">:</span>
+                <span class="n">until</span> <span class="o">=</span> <span class="s2">&quot;2050&quot;</span>
+            <span class="n">_db</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">TimeRange</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="n">since</span><span class="p">,</span> <span class="n">until</span><span class="o">=</span><span class="n">until</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_db</span> <span class="o">=</span> <span class="n">db</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">_db</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">Key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">databroker.queries</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeRange</span>
+
+        <span class="k">if</span> <span class="n">since</span> <span class="ow">or</span> <span class="n">until</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">since</span><span class="p">:</span>
+                <span class="n">since</span> <span class="o">=</span> <span class="s2">&quot;2010&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">until</span><span class="p">:</span>
+                <span class="n">until</span> <span class="o">=</span> <span class="s2">&quot;2050&quot;</span>
+            <span class="n">_db</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">TimeRange</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="n">since</span><span class="p">,</span> <span class="n">until</span><span class="o">=</span><span class="n">until</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_db</span> <span class="o">=</span> <span class="n">db</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_db</span> <span class="o">=</span> <span class="n">_db</span><span class="o">.</span><span class="n">v2</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_db</span></div>
+
+
+
+<div class="viewcode-block" id="show_meta">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.show_meta">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_meta</span><span class="p">(</span>
+    <span class="n">last</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">scans</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">scans_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">meta_keys</span><span class="o">=</span><span class="s2">&quot;short&quot;</span><span class="p">,</span>
+    <span class="n">table_fmt</span><span class="o">=</span><span class="s2">&quot;plain&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print metadata of scans.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    last : int</span>
+<span class="sd">        last number of scans to be displayed</span>
+<span class="sd">    scans : int, list</span>
+<span class="sd">        List of scan numbers to process.</span>
+<span class="sd">    scans_to : int, list</span>
+<span class="sd">        Final scan number to process. Note that this is only meaningful if</span>
+<span class="sd">        an integer is passed to `scans`.</span>
+<span class="sd">    db : databroker database (optional)</span>
+<span class="sd">        Searcheable database</span>
+<span class="sd">    query : dictionary, optional</span>
+<span class="sd">        Search parameters.</span>
+<span class="sd">    meta_keys : string or iterable, optional</span>
+<span class="sd">        List with metadata keys to read. There are two preset metadata lists</span>
+<span class="sd">        that can be used with `meta_keys=&quot;short&quot;` or `meta_keys=&quot;long&quot;`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scans</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">scans_to</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scans_to</span> <span class="o">=</span> <span class="n">scans</span>
+        <span class="k">if</span> <span class="n">scans_to</span> <span class="o">&lt;</span> <span class="n">scans</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;scans must be larger than scan_to, but you &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;entered: scans = </span><span class="si">{</span><span class="n">scans</span><span class="si">}</span><span class="s2"> and scan_to = &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scans_to</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">scans</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">scans</span><span class="p">,</span> <span class="n">scans_to</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">scans</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">scans</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">last</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">last</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;List of the </span><span class="si">{}</span><span class="s2"> most recent scans:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">last</span> <span class="k">if</span> <span class="n">last</span> <span class="k">else</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scans</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Scans must be int or list or None.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">meta_keys</span> <span class="o">==</span> <span class="s2">&quot;short&quot;</span><span class="p">:</span>
+        <span class="n">meta_keys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;scan_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;plan_name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;motors&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;plan_pattern_args&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;num_points&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;exit_status&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">meta_keys</span> <span class="o">==</span> <span class="s2">&quot;long&quot;</span><span class="p">:</span>
+        <span class="n">meta_keys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;scan_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;scan_type&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;plan_name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;motors&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;plan_pattern_args&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;num_points&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;exit_status&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hints&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">collect_meta</span><span class="p">(</span><span class="n">scans</span><span class="p">,</span> <span class="n">meta_keys</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="s2">&quot;plan_pattern_args&quot;</span> <span class="ow">in</span> <span class="n">meta_keys</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">meta_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;plan_pattern_args&quot;</span><span class="p">)</span>
+        <span class="n">meta_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;plan_pattern_args&quot;</span><span class="p">)</span>
+        <span class="n">meta_keys</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="s2">&quot;final pos.&quot;</span><span class="p">)</span>
+        <span class="n">meta_keys</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="s2">&quot;init. pos.&quot;</span><span class="p">)</span>
+
+    <span class="n">table</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">meta_keys</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># TODO: I don&#39;t like this. We need better metadata.</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;plan_pattern_args&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:0.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:0.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+                <span class="n">time</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%Y %H:%M:%S&quot;</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="n">item</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">reST</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">table_fmt</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="collect_meta">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.collect_meta">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_meta</span><span class="p">(</span><span class="n">scan_numbers</span><span class="p">,</span> <span class="n">meta_keys</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts metadata of a list of scans.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_numbers : list</span>
+<span class="sd">        List of scan number range to be displayed</span>
+<span class="sd">    db : databroker database</span>
+<span class="sd">        Searcheable database</span>
+<span class="sd">    meta_keys : iterable</span>
+<span class="sd">        List with metadata keys to read.</span>
+<span class="sd">    query : dictionary, optional</span>
+<span class="sd">        Search parameters.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    meta : dictionary</span>
+<span class="sd">        Metadata organized by scan number or uid (whatever is given in</span>
+<span class="sd">        `scans`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">db</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_is_tiled</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">getDatabase</span><span class="p">(</span><span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">)</span>
+    <span class="c1"># print(f&quot;db = {db}&quot;)</span>
+    <span class="c1"># print(f&quot;scan_numbers = {scan_numbers}&quot;)</span>
+    <span class="n">db_range</span> <span class="o">=</span> <span class="n">db_query</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="n">db</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">scan_numbers</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">db_range</span><span class="p">[</span><span class="n">scan</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span>
+            <span class="n">stop</span> <span class="o">=</span> <span class="n">db_range</span><span class="p">[</span><span class="n">scan</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stop&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="n">output</span><span class="p">[</span><span class="n">scan</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">meta_keys</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">scan</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">start</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">stop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">output</span><span class="p">[</span><span class="n">scan</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">output</span><span class="p">[</span><span class="n">scan</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">stop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">scan</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_flatten_list</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="n">scan</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The scan number </span><span class="si">{</span><span class="n">scan</span><span class="si">}</span><span class="s2"> was not found.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_list</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Only handles lists to second level&quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">inp</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">+=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">item</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span>
+
+
+<div class="viewcode-block" id="lookup_position">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.lookup_position">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lookup_position</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">scan</span><span class="p">,</span> <span class="n">search_string</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lookup positioner values in past scans.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    db : databroker database</span>
+<span class="sd">        Searcheable database</span>
+<span class="sd">    scan : integer</span>
+<span class="sd">        Scan numbers or uids.</span>
+<span class="sd">    search_string : string</span>
+<span class="sd">        Full or part of positioner name.</span>
+<span class="sd">    query: dict</span>
+<span class="sd">        Search parameters.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    output: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">db_range</span> <span class="o">=</span> <span class="n">db_query</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="n">db</span>
+
+    <span class="n">baseline</span> <span class="o">=</span> <span class="n">load_databroker</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">db_range</span><span class="p">,</span> <span class="s2">&quot;baseline&quot;</span><span class="p">,</span> <span class="n">use_db_v1</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">baseline</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">date1</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%y %H:%M:%S&quot;</span><span class="p">)</span>
+        <span class="n">date2</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%y %H:%M:%S&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Positioner&#39;</span><span class="si">:</span><span class="s2">&gt;50</span><span class="si">}{</span><span class="n">date1</span><span class="si">:</span><span class="s2">&gt;25</span><span class="si">}{</span><span class="n">date2</span><span class="si">:</span><span class="s2">&gt;25</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">baseline</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">search_string</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">baseline</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">&gt;50</span><span class="si">}{</span><span class="n">baseline</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}{</span><span class="n">baseline</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">&gt;50</span><span class="si">}{</span><span class="n">baseline</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;25</span><span class="si">}{</span><span class="n">baseline</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;25</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">date1</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%y %H:%M:%S&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Positioner&#39;</span><span class="si">:</span><span class="s2">&gt;50</span><span class="si">}{</span><span class="n">date1</span><span class="si">:</span><span class="s2">&gt;25</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">baseline</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">search_string</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">baseline</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">&gt;50</span><span class="si">}{</span><span class="n">baseline</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">&gt;50</span><span class="si">}{</span><span class="n">baseline</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;25</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

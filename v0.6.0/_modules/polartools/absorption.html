@@ -1,0 +1,2102 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>polartools.absorption &#8212; polartools</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=dda85ae5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/polartools/absorption';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.6.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">polartools</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.absorption</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for polartools.absorption</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions to load and process x-ray absorption data.</span>
+
+<span class="sd">.. autosummary::</span>
+<span class="sd">   ~load_absorption</span>
+<span class="sd">   ~load_dichro</span>
+<span class="sd">   ~load_lockin</span>
+<span class="sd">   ~load_multi_xas</span>
+<span class="sd">   ~load_multi_dichro</span>
+<span class="sd">   ~load_multi_lockin</span>
+<span class="sd">   ~normalize_absorption</span>
+<span class="sd">   ~pre_edge_background</span>
+<span class="sd">   ~post_edge_background</span>
+<span class="sd">   ~post_edge_flatten</span>
+<span class="sd">   ~fluo_corr</span>
+<span class="sd">   ~process_xmcd</span>
+<span class="sd">   ~plot_xmcd</span>
+<span class="sd">   ~save_xmcd</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Copyright (c) 2020-2021, UChicago Argonne, LLC.</span>
+<span class="c1"># See LICENSE file for details.</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_table</span><span class="p">,</span> <span class="n">is_Bluesky_specfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spec2nexus.spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpecDataFile</span><span class="p">,</span> <span class="n">SpecDataFileNotFound</span><span class="p">,</span> <span class="n">NotASpecDataFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._larch</span><span class="w"> </span><span class="kn">import</span> <span class="n">finde0</span><span class="p">,</span> <span class="n">index_nearest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xraydb</span><span class="w"> </span><span class="kn">import</span> <span class="n">xray_line</span><span class="p">,</span> <span class="n">xray_edge</span><span class="p">,</span> <span class="n">material_mu</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lmfit.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolynomialModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">_spec_default_cols</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="s2">&quot;Energy&quot;</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;IC5&quot;</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;IC4&quot;</span><span class="p">,</span>
+    <span class="n">dc_col</span><span class="o">=</span><span class="s2">&quot;Lock DC&quot;</span><span class="p">,</span>
+    <span class="n">ac_col</span><span class="o">=</span><span class="s2">&quot;Lock AC&quot;</span><span class="p">,</span>
+    <span class="n">acoff_col</span><span class="o">=</span><span class="s2">&quot;Lock ACoff&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">_bluesky_default_cols</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="s2">&quot;energy&quot;</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;4idhI0&quot;</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;4idhI&quot;</span><span class="p">,</span>
+    <span class="n">dc_col</span><span class="o">=</span><span class="s2">&quot;LockDC&quot;</span><span class="p">,</span>
+    <span class="n">ac_col</span><span class="o">=</span><span class="s2">&quot;LockAC&quot;</span><span class="p">,</span>
+    <span class="n">acoff_col</span><span class="o">=</span><span class="s2">&quot;LockACoff&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sort_and_deduplicate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">ys</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort arrays by x and remove duplicate x values.&quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">],)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_select_default_names</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># Select default parameters</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">SpecDataFile</span><span class="p">))</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="s2">&quot;csv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hdf5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;h5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;hdf&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># It is spec — check if it was written by Bluesky.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">check</span> <span class="o">=</span> <span class="n">is_Bluesky_specfile</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;folder&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+            <span class="n">_defaults</span> <span class="o">=</span> <span class="n">_bluesky_default_cols</span> <span class="k">if</span> <span class="n">check</span> <span class="k">else</span> <span class="n">_spec_default_cols</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">NotASpecDataFile</span><span class="p">,</span> <span class="n">SpecDataFileNotFound</span><span class="p">):</span>
+            <span class="n">_defaults</span> <span class="o">=</span> <span class="n">_bluesky_default_cols</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># csv, h5/hdf5/hdf, or databroker — all use Bluesky column names.</span>
+        <span class="n">_defaults</span> <span class="o">=</span> <span class="n">_bluesky_default_cols</span>
+    <span class="k">return</span> <span class="n">_defaults</span>
+
+
+<div class="viewcode-block" id="load_absorption">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.load_absorption">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_absorption</span><span class="p">(</span>
+    <span class="n">scan</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">,</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">transmission</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the x-ray absorption from one scan.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan : int</span>
+<span class="sd">        Scan_id our uid. If scan_id is passed, it will load the last scan with</span>
+<span class="sd">        that scan_id. See kwargs for search options.</span>
+<span class="sd">    source : databroker database, name of the spec file, or &#39;csv&#39;</span>
+<span class="sd">        Note that applicable kwargs depend on this selection.</span>
+<span class="sd">    positioner : string, optional</span>
+<span class="sd">        Name of the positioner, this needs to be the same as defined in</span>
+<span class="sd">        Bluesky or SPEC. If None is passed, it defauts to the x-ray energy.</span>
+<span class="sd">    detector : string, optional</span>
+<span class="sd">        Detector to be read from this scan, again it needs to be the same name</span>
+<span class="sd">        as in Bluesky. If None is passed, it defaults to the ion chamber 5.</span>
+<span class="sd">    monitor : string, optional</span>
+<span class="sd">        Name of the monitor detector. If None is passed, it defaults to the ion</span>
+<span class="sd">        chamber 4.</span>
+<span class="sd">    transmission : bool, optional</span>
+<span class="sd">        Flag to select between transmission mode -&gt; ln(monitor/detector)</span>
+<span class="sd">        or fluorescence mode -&gt; detector/monitor</span>
+<span class="sd">    kwargs :</span>
+<span class="sd">        The necessary kwargs are passed to the loading functions defined by the</span>
+<span class="sd">        `source` argument:</span>
+
+<span class="sd">        - csv -&gt; possible kwargs: folder, name_format.</span>
+<span class="sd">        - spec -&gt; possible kwargs: folder.</span>
+<span class="sd">        - databroker -&gt; possible kwargs: stream, query, use_db_v1.</span>
+
+<span class="sd">        Note that a warning will be printed if the an unnecessary kwarg is</span>
+<span class="sd">        passed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : numpy.array</span>
+<span class="sd">        Positioner data.</span>
+<span class="sd">    y : numpy.array</span>
+<span class="sd">        X-ray absorption.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_table`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_defaults</span> <span class="o">=</span> <span class="n">_select_default_names</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">positioner</span><span class="p">:</span>
+        <span class="n">positioner</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;positioner&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">detector</span><span class="p">:</span>
+        <span class="n">detector</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;detector&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">monitor</span><span class="p">:</span>
+        <span class="n">monitor</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;monitor&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Load data</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">transmission</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">table</span><span class="p">[</span><span class="n">positioner</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">monitor</span><span class="p">]</span> <span class="o">/</span> <span class="n">table</span><span class="p">[</span><span class="n">detector</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">table</span><span class="p">[</span><span class="n">positioner</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">detector</span><span class="p">]</span> <span class="o">/</span> <span class="n">table</span><span class="p">[</span><span class="n">monitor</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_lockin">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.load_lockin">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_lockin</span><span class="p">(</span>
+    <span class="n">scan</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">,</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dc_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ac_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">acoff_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the x-ray magnetic dichroism from one scan taken in lock-in mode.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan : int</span>
+<span class="sd">        Scan_id our uid. If scan_id is passed, it will load the last scan with</span>
+<span class="sd">        that scan_id. See kwargs for search options.</span>
+<span class="sd">    source : databroker database, name of the spec file, or &#39;csv&#39;</span>
+<span class="sd">        Note that applicable kwargs depend on this selection.</span>
+<span class="sd">    positioner : string, optional</span>
+<span class="sd">        Name of the positioner, this needs to be the same as defined in</span>
+<span class="sd">        Bluesky or SPEC. If None is passed, it defaults to the x-ray energy.</span>
+<span class="sd">    dc_col : string, optional</span>
+<span class="sd">        Name of the DC scaler, again it needs to be the same name as in</span>
+<span class="sd">        Bluesky or SPEC. If None is passed, it defaults to &#39;Lock DC&#39;.</span>
+<span class="sd">    ac_col : string, optional</span>
+<span class="sd">        Name of the AC scaler. If None is passed, it defaults to &#39;Lock AC&#39;.</span>
+<span class="sd">    acoff_col : string, optional</span>
+<span class="sd">        Name of the AC offset scaler. If None is passed, it defaults to</span>
+<span class="sd">        &#39;Lock AC off&#39;.</span>
+<span class="sd">    kwargs :</span>
+<span class="sd">        The necessary kwargs are passed to the loading functions defined by the</span>
+<span class="sd">        `source` argument:</span>
+
+<span class="sd">        - csv -&gt; possible kwargs: folder, name_format.</span>
+<span class="sd">        - spec -&gt; possible kwargs: folder.</span>
+<span class="sd">        - databroker -&gt; possible kwargs: stream, query, use_db_v1.</span>
+
+<span class="sd">        Note that a warning will be printed if the an unnecessary kwarg is</span>
+<span class="sd">        passed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : numpy.array</span>
+<span class="sd">        Positioner data.</span>
+<span class="sd">    dc : numpy.array</span>
+<span class="sd">        DC response, normally corresponds to the x-ray absorption.</span>
+<span class="sd">    ac-ac_off : numpy.array</span>
+<span class="sd">        AC response minus the offset, normally corresponds to the x-ray</span>
+<span class="sd">        magnetic dichroism.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_table`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_defaults</span> <span class="o">=</span> <span class="n">_select_default_names</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">positioner</span><span class="p">:</span>
+        <span class="n">positioner</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;positioner&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dc_col</span><span class="p">:</span>
+        <span class="n">dc_col</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;dc_col&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ac_col</span><span class="p">:</span>
+        <span class="n">ac_col</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;ac_col&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">acoff_col</span><span class="p">:</span>
+        <span class="n">acoff_col</span> <span class="o">=</span> <span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;acoff_col&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Load data</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">table</span><span class="p">[</span><span class="n">positioner</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="n">table</span><span class="p">[</span><span class="n">dc_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">ac_col</span><span class="p">]</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="n">acoff_col</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_dichro">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.load_dichro">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_dichro</span><span class="p">(</span>
+    <span class="n">scan</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">,</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">transmission</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the x-ray magnetic dichroism from one scan taken in non-lock-in mode</span>
+<span class="sd">    (&#39;dichro&#39;).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan : int</span>
+<span class="sd">        Scan_id our uid. If scan_id is passed, it will load the last scan with</span>
+<span class="sd">        that scan_id. See kwargs for search options.</span>
+<span class="sd">    source : databroker database, name of the spec file, or &#39;csv&#39;</span>
+<span class="sd">        Note that applicable kwargs depend on this selection.</span>
+<span class="sd">    positioner : string, optional</span>
+<span class="sd">        Name of the positioner, this needs to be the same as defined in</span>
+<span class="sd">        Bluesky. Defauts to the x-ray energy.</span>
+<span class="sd">    detector : string, optional</span>
+<span class="sd">        Detector to be read from this scan, again it needs to be the same name</span>
+<span class="sd">        as in Bluesky. Defaults to the ion chamber 5.</span>
+<span class="sd">    monitor : string, optional</span>
+<span class="sd">        Name of the monitor detector. Defaults to the ion chamber 4.</span>
+<span class="sd">    transmission: bool, optional</span>
+<span class="sd">        Flag to select between transmission mode -&gt; ln(monitor/detector)</span>
+<span class="sd">        or fluorescence mode -&gt; detector/monitor.</span>
+<span class="sd">    kwargs :</span>
+<span class="sd">        The necessary kwargs are passed to the loading functions defined by the</span>
+<span class="sd">        `source` argument:</span>
+
+<span class="sd">        - csv -&gt; possible kwargs: folder, name_format.</span>
+<span class="sd">        - spec -&gt; possible kwargs: folder.</span>
+<span class="sd">        - databroker -&gt; possible kwargs: stream, query, use_db_v1.</span>
+
+<span class="sd">        Note that a warning will be printed if the an unnecessary kwarg is</span>
+<span class="sd">        passed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : numpy.array</span>
+<span class="sd">        Positioner data.</span>
+<span class="sd">    xanes : numpy.array</span>
+<span class="sd">        X-ray absorption.</span>
+<span class="sd">    xmcd : numpy.array</span>
+<span class="sd">        X-ray magnetic dichroism.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_absorption`</span>
+<span class="sd">    :func:`polartools.load_data.load_table`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># In SPEC the columns are different.</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">SpecDataFile</span><span class="p">))</span>
+        <span class="ow">and</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;hdf5&quot;</span><span class="p">,</span> <span class="s2">&quot;h5&quot;</span><span class="p">,</span> <span class="s2">&quot;hdf&quot;</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_Bluesky_specfile</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">positioner</span><span class="p">:</span>
+            <span class="n">positioner</span> <span class="o">=</span> <span class="n">_spec_default_cols</span><span class="p">[</span><span class="s2">&quot;positioner&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">monitor</span><span class="p">:</span>
+            <span class="n">monitor</span> <span class="o">=</span> <span class="n">_spec_default_cols</span><span class="p">[</span><span class="s2">&quot;monitor&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">detector</span><span class="p">:</span>
+            <span class="n">detector</span> <span class="o">=</span> <span class="n">_spec_default_cols</span><span class="p">[</span><span class="s2">&quot;detector&quot;</span><span class="p">]</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">positioner</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">monp</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">monitor</span> <span class="o">+</span> <span class="s2">&quot;(+)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">detp</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">detector</span> <span class="o">+</span> <span class="s2">&quot;(+)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">monm</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">monitor</span> <span class="o">+</span> <span class="s2">&quot;(-)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">detm</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">detector</span> <span class="o">+</span> <span class="s2">&quot;(-)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">if</span> <span class="n">transmission</span><span class="p">:</span>
+            <span class="n">xanes</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">monp</span> <span class="o">/</span> <span class="n">detp</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">monm</span> <span class="o">/</span> <span class="n">detm</span><span class="p">))</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">xmcd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">monp</span> <span class="o">/</span> <span class="n">detp</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">monm</span> <span class="o">/</span> <span class="n">detm</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xanes</span> <span class="o">=</span> <span class="p">(</span><span class="n">detp</span> <span class="o">/</span> <span class="n">monp</span> <span class="o">+</span> <span class="n">detm</span> <span class="o">/</span> <span class="n">monm</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="n">xmcd</span> <span class="o">=</span> <span class="n">detp</span> <span class="o">/</span> <span class="n">monp</span> <span class="o">-</span> <span class="n">detm</span> <span class="o">/</span> <span class="n">monm</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">load_absorption</span><span class="p">(</span>
+            <span class="n">scan</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">positioner</span><span class="p">,</span> <span class="n">detector</span><span class="p">,</span> <span class="n">monitor</span><span class="p">,</span> <span class="n">transmission</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">x0</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">4</span>
+
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">y0</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x0</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xanes</span> <span class="o">=</span> <span class="n">y0</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xmcd</span> <span class="o">=</span> <span class="n">y0</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">y0</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span></div>
+
+
+
+<div class="viewcode-block" id="load_multi_xas">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.load_multi_xas">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_multi_xas</span><span class="p">(</span>
+    <span class="n">scans</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">,</span>
+    <span class="n">return_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">transmission</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load multiple x-ray absorption energy scans.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scans : iterable</span>
+<span class="sd">        Sequence of scan_ids our uids. If scan_id is passed, it will load the</span>
+<span class="sd">        last scan with that scan_id. Use kwargs for search options.</span>
+<span class="sd">    source : databroker database, name of the spec file, or &#39;csv&#39;</span>
+<span class="sd">        Note that applicable kwargs depend on this selection.</span>
+<span class="sd">    return_mean : boolean, optional</span>
+<span class="sd">        Flag to indicate if the averaging of multiple scans will be performed.</span>
+<span class="sd">        Note that if True three outputs are generated, otherwise two.</span>
+<span class="sd">    positioner : string, optional</span>
+<span class="sd">        Name of the positioner, this needs to be the same as defined in</span>
+<span class="sd">        Bluesky or SPEC. If None is passed, it defauts to the x-ray energy.</span>
+<span class="sd">    detector : string, optional</span>
+<span class="sd">        Detector to be read from this scan, again it needs to be the same name</span>
+<span class="sd">        as in Bluesky. If None is passed, it defaults to the ion chamber 5.</span>
+<span class="sd">    monitor : string, optional</span>
+<span class="sd">        Name of the monitor detector. If None is passed, it defaults to the ion</span>
+<span class="sd">        chamber 4.</span>
+<span class="sd">    transmission: bool, optional</span>
+<span class="sd">        Flag to select between transmission mode -&gt; ln(monitor/detector)</span>
+<span class="sd">        or fluorescence mode -&gt; detector/monitor</span>
+<span class="sd">    kwargs :</span>
+<span class="sd">        The necessary kwargs are passed to the loading functions defined by the</span>
+<span class="sd">        `source` argument:</span>
+
+<span class="sd">        - csv -&gt; possible kwargs: folder, name_format.</span>
+<span class="sd">        - spec -&gt; possible kwargs: folder.</span>
+<span class="sd">        - databroker -&gt; possible kwargs: stream, query, use_db_v1.</span>
+
+<span class="sd">        Note that a warning will be printed if the an unnecessary kwarg is</span>
+<span class="sd">        passed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    energy : numpy.array</span>
+<span class="sd">        X-ray energy.</span>
+<span class="sd">    xanes : numpy.array</span>
+<span class="sd">        X-ray absorption. If return_mean = True:</span>
+<span class="sd">        xanes.shape = (len(scans), len(energy)), otherwise:</span>
+<span class="sd">        xanes.shape = (len(energy))</span>
+<span class="sd">    xanes_std : numpy.array, optional</span>
+<span class="sd">        Error of the mean of x-ray absorption. This will only be returned if</span>
+<span class="sd">        return_mean = True.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_absorption`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">scans</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;energy&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+            <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span> <span class="o">=</span> <span class="n">load_absorption</span><span class="p">(</span>
+                <span class="n">scan</span><span class="p">,</span>
+                <span class="n">source</span><span class="p">,</span>
+                <span class="n">positioner</span><span class="p">,</span>
+                <span class="n">detector</span><span class="p">,</span>
+                <span class="n">monitor</span><span class="p">,</span>
+                <span class="n">transmission</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span> <span class="o">=</span> <span class="n">_sort_and_deduplicate</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">energy_tmp</span><span class="p">,</span> <span class="n">xanes_tmp</span> <span class="o">=</span> <span class="n">load_absorption</span><span class="p">(</span>
+                <span class="n">scan</span><span class="p">,</span>
+                <span class="n">source</span><span class="p">,</span>
+                <span class="n">positioner</span><span class="p">,</span>
+                <span class="n">detector</span><span class="p">,</span>
+                <span class="n">monitor</span><span class="p">,</span>
+                <span class="n">transmission</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">energy_tmp</span><span class="p">,</span> <span class="n">xanes_tmp</span> <span class="o">=</span> <span class="n">_sort_and_deduplicate</span><span class="p">(</span><span class="n">energy_tmp</span><span class="p">,</span> <span class="n">xanes_tmp</span><span class="p">)</span>
+            <span class="n">xanes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">xanes</span><span class="p">,</span>
+                    <span class="n">interp1d</span><span class="p">(</span>
+                        <span class="n">energy_tmp</span><span class="p">,</span>
+                        <span class="n">xanes_tmp</span><span class="p">,</span>
+                        <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+                        <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)(</span><span class="n">energy</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_mean</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xanes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">xanes_std</span> <span class="o">=</span> <span class="n">xanes</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scans</span><span class="p">))</span>
+            <span class="n">xanes</span> <span class="o">=</span> <span class="n">xanes</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xanes_std</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">xanes</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span></div>
+
+
+
+<div class="viewcode-block" id="load_multi_dichro">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.load_multi_dichro">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_multi_dichro</span><span class="p">(</span>
+    <span class="n">scans</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">,</span>
+    <span class="n">return_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">transmission</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load multiple x-ray magnetic dichroism energy &quot;dichro&quot; scans.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scans : iterable</span>
+<span class="sd">        Sequence of scan_ids our uids. If scan_id is passed, it will load the</span>
+<span class="sd">        last scan with that scan_id. Use kwargs for search options.</span>
+<span class="sd">    source : databroker database, name of the spec file, or &#39;csv&#39;</span>
+<span class="sd">        Note that applicable kwargs depend on this selection.</span>
+<span class="sd">    return_mean : boolean, optional</span>
+<span class="sd">        Flag to indicate if the averaging of multiple scans will be performed.</span>
+<span class="sd">        Note that if True three outputs are generated, otherwise two.</span>
+<span class="sd">    positioner : string, optional</span>
+<span class="sd">        Name of the positioner, this needs to be the same as defined in</span>
+<span class="sd">        Bluesky or SPEC. If None is passed, it defauts to the x-ray energy.</span>
+<span class="sd">    detector : string, optional</span>
+<span class="sd">        Detector to be read from this scan, again it needs to be the same name</span>
+<span class="sd">        as in Bluesky. If None is passed, it defaults to the ion chamber 5.</span>
+<span class="sd">    monitor : string, optional</span>
+<span class="sd">        Name of the monitor detector. If None is passed, it defaults to the ion</span>
+<span class="sd">        chamber 4.</span>
+<span class="sd">    transmission: bool, optional</span>
+<span class="sd">        Flag to select between transmission mode -&gt; ln(monitor/detector)</span>
+<span class="sd">        or fluorescence mode -&gt; detector/monitor</span>
+<span class="sd">    kwargs :</span>
+<span class="sd">        The necessary kwargs are passed to the loading functions defined by the</span>
+<span class="sd">        `source` argument:</span>
+
+<span class="sd">        - csv -&gt; possible kwargs: folder, name_format.</span>
+<span class="sd">        - spec -&gt; possible kwargs: folder.</span>
+<span class="sd">        - databroker -&gt; possible kwargs: stream, query, use_db_v1.</span>
+
+<span class="sd">        Note that a warning will be printed if the an unnecessary kwarg is</span>
+<span class="sd">        passed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    energy : numpy.array</span>
+<span class="sd">        X-ray energy.</span>
+<span class="sd">    xanes : numpy.array</span>
+<span class="sd">        X-ray absorption. If return_mean = True:</span>
+<span class="sd">        xanes.shape = (len(scans), len(energy)), otherwise:</span>
+<span class="sd">        xanes.shape = (len(energy))</span>
+<span class="sd">    xmcd : numpy.array</span>
+<span class="sd">        X-ray magnetic dichroism. It has the same shape as the xanes.</span>
+<span class="sd">    xanes_std : numpy.array, optional</span>
+<span class="sd">        Error of the mean of x-ray absorption. This will only be returned if</span>
+<span class="sd">        return_mean = True.</span>
+<span class="sd">    xmcd_std : numpy.array, optional</span>
+<span class="sd">        Error of the mean of x-ray magnetic dichroism. This will only be</span>
+<span class="sd">        returned if return_mean = True.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_dichro`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">scans</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;energy&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+            <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span> <span class="o">=</span> <span class="n">load_dichro</span><span class="p">(</span>
+                <span class="n">scan</span><span class="p">,</span>
+                <span class="n">source</span><span class="p">,</span>
+                <span class="n">positioner</span><span class="p">,</span>
+                <span class="n">detector</span><span class="p">,</span>
+                <span class="n">monitor</span><span class="p">,</span>
+                <span class="n">transmission</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span> <span class="o">=</span> <span class="n">_sort_and_deduplicate</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">energy_tmp</span><span class="p">,</span> <span class="n">xanes_tmp</span><span class="p">,</span> <span class="n">xmcd_tmp</span> <span class="o">=</span> <span class="n">load_dichro</span><span class="p">(</span>
+                <span class="n">scan</span><span class="p">,</span>
+                <span class="n">source</span><span class="p">,</span>
+                <span class="n">positioner</span><span class="p">,</span>
+                <span class="n">detector</span><span class="p">,</span>
+                <span class="n">monitor</span><span class="p">,</span>
+                <span class="n">transmission</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">energy_tmp</span><span class="p">,</span> <span class="n">xanes_tmp</span><span class="p">,</span> <span class="n">xmcd_tmp</span> <span class="o">=</span> <span class="n">_sort_and_deduplicate</span><span class="p">(</span>
+                <span class="n">energy_tmp</span><span class="p">,</span> <span class="n">xanes_tmp</span><span class="p">,</span> <span class="n">xmcd_tmp</span>
+            <span class="p">)</span>
+            <span class="n">xanes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">xanes</span><span class="p">,</span>
+                    <span class="n">interp1d</span><span class="p">(</span>
+                        <span class="n">energy_tmp</span><span class="p">,</span>
+                        <span class="n">xanes_tmp</span><span class="p">,</span>
+                        <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+                        <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)(</span><span class="n">energy</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">xmcd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">xmcd</span><span class="p">,</span>
+                    <span class="n">interp1d</span><span class="p">(</span>
+                        <span class="n">energy_tmp</span><span class="p">,</span>
+                        <span class="n">xmcd_tmp</span><span class="p">,</span>
+                        <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+                        <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)(</span><span class="n">energy</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_mean</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xanes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">xanes_std</span> <span class="o">=</span> <span class="n">xanes</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scans</span><span class="p">))</span>
+            <span class="n">xanes</span> <span class="o">=</span> <span class="n">xanes</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">xmcd_std</span> <span class="o">=</span> <span class="n">xmcd</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scans</span><span class="p">))</span>
+            <span class="n">xmcd</span> <span class="o">=</span> <span class="n">xmcd</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span><span class="p">,</span> <span class="n">xanes_std</span><span class="p">,</span> <span class="n">xmcd_std</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">energy</span><span class="p">,</span>
+                <span class="n">xanes</span><span class="p">,</span>
+                <span class="n">xmcd</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">xanes</span><span class="o">.</span><span class="n">size</span><span class="p">)),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">xanes</span><span class="o">.</span><span class="n">size</span><span class="p">)),</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span></div>
+
+
+
+<div class="viewcode-block" id="load_multi_lockin">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.load_multi_lockin">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_multi_lockin</span><span class="p">(</span>
+    <span class="n">scans</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">,</span>
+    <span class="n">return_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">dc_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ac_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">acoff_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load multiple x-ray magnetic dichroism energy &quot;lockin&quot; scans.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scans : iterable</span>
+<span class="sd">        Sequence of scan_ids our uids. If scan_id is passed, it will load the</span>
+<span class="sd">        last scan with that scan_id. Use kwargs for search options.</span>
+<span class="sd">    source : databroker database, name of the spec file, or &#39;csv&#39;</span>
+<span class="sd">        Note that applicable kwargs depend on this selection.</span>
+<span class="sd">    return_mean : boolean, optional</span>
+<span class="sd">        Flag to indicate if the averaging of multiple scans will be performed.</span>
+<span class="sd">        Note that if True three outputs are generated, otherwise two.</span>
+<span class="sd">    positioner : string, optional</span>
+<span class="sd">        Name of the positioner, this needs to be the same as defined in</span>
+<span class="sd">        Bluesky or SPEC. If None is passed, it defauts to the x-ray energy.</span>
+<span class="sd">    dc_col : string, optional</span>
+<span class="sd">        Name of the DC scaler, again it needs to be the same name as in</span>
+<span class="sd">        Bluesky or SPEC. If None is passed, it defaults to &#39;Lock DC&#39;.</span>
+<span class="sd">    ac_col : string, optional</span>
+<span class="sd">        Name of the AC scaler. If None is passed, it defaults to &#39;Lock AC&#39;.</span>
+<span class="sd">    acoff_col : string, optional</span>
+<span class="sd">        Name of the AC offset scaler. If None is passed, it defaults to</span>
+<span class="sd">        &#39;Lock AC off&#39;.</span>
+<span class="sd">    kwargs :</span>
+<span class="sd">        The necessary kwargs are passed to the loading functions defined by the</span>
+<span class="sd">        `source` argument:</span>
+
+<span class="sd">        - csv -&gt; possible kwargs: folder, name_format.</span>
+<span class="sd">        - spec -&gt; possible kwargs: folder.</span>
+<span class="sd">        - databroker -&gt; possible kwargs: stream, query, use_db_v1.</span>
+
+<span class="sd">        Note that a warning will be printed if the an unnecessary kwarg is</span>
+<span class="sd">        passed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    energy : numpy.array</span>
+<span class="sd">        X-ray energy.</span>
+<span class="sd">    xanes : numpy.array</span>
+<span class="sd">        X-ray absorption. If return_mean = True:</span>
+<span class="sd">        xanes.shape = (len(scans), len(energy)), otherwise:</span>
+<span class="sd">        xanes.shape = (len(energy))</span>
+<span class="sd">    xmcd : numpy.array</span>
+<span class="sd">        X-ray magnetic dichroism. It has the same shape as the xanes.</span>
+<span class="sd">    xanes_std : numpy.array, optional</span>
+<span class="sd">        Error of the mean of x-ray absorption. This will only be returned if</span>
+<span class="sd">        return_mean = True.</span>
+<span class="sd">    xmcd_std : numpy.array, optional</span>
+<span class="sd">        Error of the mean of x-ray magnetic dichroism. This will only be</span>
+<span class="sd">        returned if return_mean = True.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_lockin`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">scans</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;energy&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+            <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span> <span class="o">=</span> <span class="n">load_lockin</span><span class="p">(</span>
+                <span class="n">scan</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">positioner</span><span class="p">,</span> <span class="n">dc_col</span><span class="p">,</span> <span class="n">ac_col</span><span class="p">,</span> <span class="n">acoff_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span> <span class="o">=</span> <span class="n">_sort_and_deduplicate</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">energy_tmp</span><span class="p">,</span> <span class="n">xanes_tmp</span><span class="p">,</span> <span class="n">xmcd_tmp</span> <span class="o">=</span> <span class="n">load_lockin</span><span class="p">(</span>
+                <span class="n">scan</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">positioner</span><span class="p">,</span> <span class="n">dc_col</span><span class="p">,</span> <span class="n">ac_col</span><span class="p">,</span> <span class="n">acoff_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">energy_tmp</span><span class="p">,</span> <span class="n">xanes_tmp</span><span class="p">,</span> <span class="n">xmcd_tmp</span> <span class="o">=</span> <span class="n">_sort_and_deduplicate</span><span class="p">(</span>
+                <span class="n">energy_tmp</span><span class="p">,</span> <span class="n">xanes_tmp</span><span class="p">,</span> <span class="n">xmcd_tmp</span>
+            <span class="p">)</span>
+            <span class="n">xanes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">xanes</span><span class="p">,</span>
+                    <span class="n">interp1d</span><span class="p">(</span>
+                        <span class="n">energy_tmp</span><span class="p">,</span>
+                        <span class="n">xanes_tmp</span><span class="p">,</span>
+                        <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+                        <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)(</span><span class="n">energy</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">xmcd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">xmcd</span><span class="p">,</span>
+                    <span class="n">interp1d</span><span class="p">(</span>
+                        <span class="n">energy_tmp</span><span class="p">,</span>
+                        <span class="n">xmcd_tmp</span><span class="p">,</span>
+                        <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+                        <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="p">)(</span><span class="n">energy</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_mean</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xanes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">xanes_std</span> <span class="o">=</span> <span class="n">xanes</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scans</span><span class="p">))</span>
+            <span class="n">xanes</span> <span class="o">=</span> <span class="n">xanes</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">xmcd_std</span> <span class="o">=</span> <span class="n">xmcd</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scans</span><span class="p">))</span>
+            <span class="n">xmcd</span> <span class="o">=</span> <span class="n">xmcd</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span><span class="p">,</span> <span class="n">xanes_std</span><span class="p">,</span> <span class="n">xmcd_std</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">energy</span><span class="p">,</span>
+                <span class="n">xanes</span><span class="p">,</span>
+                <span class="n">xmcd</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">xanes</span><span class="o">.</span><span class="n">size</span><span class="p">)),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">xanes</span><span class="o">.</span><span class="n">size</span><span class="p">)),</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">xanes</span><span class="p">,</span> <span class="n">xmcd</span></div>
+
+
+
+<div class="viewcode-block" id="normalize_absorption">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.normalize_absorption">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_absorption</span><span class="p">(</span>
+    <span class="n">energy</span><span class="p">,</span>
+    <span class="n">mu</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">e0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pre_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pre_order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">nvict</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">post_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">post_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">flat_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">flat_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pre_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">post_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">flat_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract pre- and post-edge normalization curves by fitting polynomials.</span>
+
+<span class="sd">    This is a wrapper of for the `pre_edge_background`, `post_edge_background`,</span>
+<span class="sd">    and `post_edge_flatten`. The overall process is largely based on</span>
+<span class="sd">    `larch.xafs.preedge`, but it was modified so that a polynomial of any order</span>
+<span class="sd">    can be applied to the pre-edge, and the initial parameters for the pre- and</span>
+<span class="sd">    post-edge polynomials can be given by the user.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    energy : iterable</span>
+<span class="sd">        Incident energy. Must be in eV. It will raise an error if it notices</span>
+<span class="sd">        the maximum of this list is below 100.</span>
+<span class="sd">    mu : iterable</span>
+<span class="sd">        Raw x-ray absorption.</span>
+<span class="sd">    e0 : float or int, optional</span>
+<span class="sd">        Absorption edge energy. If None, it is extracted from the data.</span>
+<span class="sd">    edge_step : float, optional</span>
+<span class="sd">        Size of edge step of the raw data. If None, it is calculated based by</span>
+<span class="sd">        postedge[e0] - preedge[e0].</span>
+<span class="sd">    pre_range : list, optional</span>
+<span class="sd">        List with the energy ranges [initial, final] of the pre-edge region</span>
+<span class="sd">        **relative** to the absorption edge. If None is passed to either</span>
+<span class="sd">        pre_range or one of the elements, a guessed value will be used. For</span>
+<span class="sd">        example:</span>
+
+<span class="sd">        - pre_range = None -&gt; guess initial and final points.</span>
+<span class="sd">        - pre_range = [None, -20] -&gt; guess only initial point.</span>
+<span class="sd">        - pre_range = [-40, None] -&gt; guess only final point.</span>
+<span class="sd">        - pre_range = [-40, -20] -&gt; guess neither.</span>
+
+<span class="sd">    pre_order : int, optional</span>
+<span class="sd">        Order of the polynomial to be used in the pre-edge. Defaults to 1.</span>
+<span class="sd">    nvict : int, optional</span>
+<span class="sd">        Energy exponent to use. The pre-edge background is modelled by a line</span>
+<span class="sd">        that is fit to xanes(energy)*energy**pre_exponent. Defaults to 0.</span>
+<span class="sd">    post_range : list, optional</span>
+<span class="sd">        List with the energy ranges [initial, final] of the post-edge region</span>
+<span class="sd">        **relative** to the absorption edge.</span>
+<span class="sd">    post_order : int, optional</span>
+<span class="sd">        Order of the polynomial to be used in the post-edge. If None, it will</span>
+<span class="sd">        be determined by `larch.xafs.preedge`:</span>
+
+<span class="sd">        - If post_range[1]-post_range[0]&gt;350 -&gt; post_order = 2;</span>
+<span class="sd">        - if 50 &lt; post_range[1]-post_range[0] &lt; 350 -&gt; post_order = 1;</span>
+<span class="sd">        - otherwise -&gt; post_order = 0</span>
+
+<span class="sd">    flat_range : list, optional</span>
+<span class="sd">        List with the energy ranges [initial, final] of the post-edge region</span>
+<span class="sd">        **relative** to the absorption edge. If None, it will be set as the</span>
+<span class="sd">        same as `post_range`.</span>
+<span class="sd">    flat_order : int, optional</span>
+<span class="sd">        Order of the polynomial to be used in the post-edge. If None, it will</span>
+<span class="sd">        be set as the same as `post_order`.</span>
+<span class="sd">    pre_pars, post_pars, flat_pars : lmfit.Parameters, optional</span>
+<span class="sd">        Option to input the initial parameters to the polynomial used in the</span>
+<span class="sd">        data flattening. These will be labelled &#39;c0&#39;, &#39;c1&#39;, ..., depending on</span>
+<span class="sd">        `post_order`. See lmfit.models.PolynomialModel_ for details.</span>
+
+<span class="sd">        .. _lmfit.models.PolynomialModel:\</span>
+<span class="sd">        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : dict</span>
+<span class="sd">        Dictionary with the results and parameters of the normalization and</span>
+<span class="sd">        flattening. The most important items are:</span>
+
+<span class="sd">        - &#39;energy&#39; -&gt; incident energy.</span>
+<span class="sd">        - &#39;mu&#39; -&gt; raw xanes.</span>
+<span class="sd">        - &#39;norm&#39; -&gt; normalized xanes.</span>
+<span class="sd">        - &#39;flat&#39; -&gt; flattened xanes.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`larch.xafs.preedge`</span>
+<span class="sd">    :func:`polartools.absorption.pre_edge_background`</span>
+<span class="sd">    :func:`polartools.absorption.post_edge_background`</span>
+<span class="sd">    :func:`polartools.absorption.post_edge_flatten`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Start output dictionary</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">energy</span><span class="p">)[</span><span class="n">sort</span><span class="p">]</span>
+    <span class="n">results</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mu</span><span class="p">)[</span><span class="n">sort</span><span class="p">]</span>
+
+    <span class="c1"># Process pre-edge</span>
+    <span class="n">pre1</span><span class="p">,</span> <span class="n">pre2</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">pre_range</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">pre_range</span><span class="p">)</span>
+
+    <span class="n">pre_results</span> <span class="o">=</span> <span class="n">pre_edge_background</span><span class="p">(</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">],</span>
+        <span class="n">e0</span><span class="o">=</span><span class="n">e0</span><span class="p">,</span>
+        <span class="n">pre1</span><span class="o">=</span><span class="n">pre1</span><span class="p">,</span>
+        <span class="n">pre2</span><span class="o">=</span><span class="n">pre2</span><span class="p">,</span>
+        <span class="n">pre_order</span><span class="o">=</span><span class="n">pre_order</span><span class="p">,</span>
+        <span class="n">nvict</span><span class="o">=</span><span class="n">nvict</span><span class="p">,</span>
+        <span class="n">pre_pars</span><span class="o">=</span><span class="n">pre_pars</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">pre_results</span><span class="p">)</span>
+
+    <span class="c1"># Process post-edge</span>
+    <span class="n">post1</span><span class="p">,</span> <span class="n">post2</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">post_range</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">post_range</span><span class="p">)</span>
+
+    <span class="n">post_results</span> <span class="o">=</span> <span class="n">post_edge_background</span><span class="p">(</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">],</span>
+        <span class="n">preedge</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;preedge&quot;</span><span class="p">],</span>
+        <span class="n">e0</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">],</span>
+        <span class="n">edge_step</span><span class="o">=</span><span class="n">edge_step</span><span class="p">,</span>
+        <span class="n">post1</span><span class="o">=</span><span class="n">post1</span><span class="p">,</span>
+        <span class="n">post2</span><span class="o">=</span><span class="n">post2</span><span class="p">,</span>
+        <span class="n">post_order</span><span class="o">=</span><span class="n">post_order</span><span class="p">,</span>
+        <span class="n">post_pars</span><span class="o">=</span><span class="n">post_pars</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">post_results</span><span class="p">)</span>
+
+    <span class="c1"># Flatten post-edge</span>
+    <span class="n">use_post</span> <span class="o">=</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">flat_order</span> <span class="ow">or</span> <span class="n">flat_range</span> <span class="ow">or</span> <span class="n">flat_pars</span><span class="p">)</span>
+    <span class="n">postedge_results</span> <span class="o">=</span> <span class="n">post_results</span> <span class="k">if</span> <span class="n">use_post</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">flat1</span><span class="p">,</span> <span class="n">flat2</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">flat_range</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">flat_range</span><span class="p">)</span>
+
+    <span class="n">flat_results</span> <span class="o">=</span> <span class="n">post_edge_flatten</span><span class="p">(</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">],</span>
+        <span class="n">e0</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">],</span>
+        <span class="n">flat1</span><span class="o">=</span><span class="n">flat1</span><span class="p">,</span>
+        <span class="n">flat2</span><span class="o">=</span><span class="n">flat2</span><span class="p">,</span>
+        <span class="n">flat_order</span><span class="o">=</span><span class="n">flat_order</span><span class="p">,</span>
+        <span class="n">flat_pars</span><span class="o">=</span><span class="n">flat_pars</span><span class="p">,</span>
+        <span class="n">bkg_results</span><span class="o">=</span><span class="n">postedge_results</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">flat_results</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<div class="viewcode-block" id="pre_edge_background">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.pre_edge_background">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pre_edge_background</span><span class="p">(</span>
+    <span class="n">energy</span><span class="p">,</span>
+    <span class="n">mu</span><span class="p">,</span>
+    <span class="n">e0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pre1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pre2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">pre_order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">nvict</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">pre_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts the pre-edge background by fitting a polynomial.</span>
+
+<span class="sd">    Based on `larch.xafs.preedge`. Modified so that a polynomial of any order</span>
+<span class="sd">    can be applied to the pre-edge, and its initial parameters can be given by</span>
+<span class="sd">    the user.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    energy : iterable</span>
+<span class="sd">        Incident energy. Must be in eV. It will raise an error if it notices</span>
+<span class="sd">        the maximum of this list is below 100.</span>
+<span class="sd">    mu : iterable</span>
+<span class="sd">        Raw x-ray absorption.</span>
+<span class="sd">    e0 : float or int, optional</span>
+<span class="sd">        Absorption edge energy.</span>
+<span class="sd">    pre1, pre2 : float, optional</span>
+<span class="sd">        Low, high energy limit of pre-edge range with respect to e0. If None,</span>
+<span class="sd">         it will try to guess it based on mu(energy).</span>
+<span class="sd">    pre_order : int, optional</span>
+<span class="sd">        Order of the polynomial to be used in the pre-edge. Defaults to 1.</span>
+<span class="sd">    nvict : int, optional</span>
+<span class="sd">        Energy exponent to use. The pre-edge background is modelled by a line</span>
+<span class="sd">        that is fit to xanes(energy)*energy**pre_exponent. Defaults to 0.</span>
+<span class="sd">    pre_pars : lmfit.Parameters, optional</span>
+<span class="sd">        Option to input the initial parameters to the polynomial used in the</span>
+<span class="sd">        data flattening. These will be labelled &#39;c0&#39;, &#39;c1&#39;, ..., depending on</span>
+<span class="sd">        `post_order`. See lmfit.models.PolynomialModel_ for details.</span>
+
+<span class="sd">        .. _lmfit.models.PolynomialModel:\</span>
+<span class="sd">        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : dict</span>
+<span class="sd">        Dictionary with the results and parameters of the normalization and</span>
+<span class="sd">        flattening. The most important items are:</span>
+
+<span class="sd">        - &#39;energy&#39; -&gt; incident energy.</span>
+<span class="sd">        - &#39;mu&#39; -&gt; raw xanes.</span>
+<span class="sd">        - &#39;preedge&#39; -&gt; preedge polynomial.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`larch.xafs.preedge`</span>
+<span class="sd">    :func:`larch.absorption.normalize_absorption`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Edge energy</span>
+    <span class="n">e0</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">_process_e0</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">e0</span><span class="p">)</span>
+
+    <span class="c1"># Process pre-edge range</span>
+    <span class="n">pre1</span><span class="p">,</span> <span class="n">pre2</span> <span class="o">=</span> <span class="n">_process_preedge_params</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">pre1</span><span class="p">,</span> <span class="n">pre2</span><span class="p">)</span>
+
+    <span class="c1"># Find pre-edge background</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">energy</span> <span class="o">&gt;</span> <span class="n">pre1</span> <span class="o">+</span> <span class="n">e0</span><span class="p">,</span> <span class="n">energy</span> <span class="o">&lt;</span> <span class="n">pre2</span> <span class="o">+</span> <span class="n">e0</span><span class="p">)</span>
+
+    <span class="n">mu_fit</span> <span class="o">=</span> <span class="n">mu</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">energy</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">**</span> <span class="n">nvict</span>
+    <span class="n">energy_fit</span> <span class="o">=</span> <span class="n">energy</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">_fit_polynomial</span><span class="p">(</span><span class="n">energy_fit</span><span class="p">,</span> <span class="n">mu_fit</span><span class="p">,</span> <span class="n">pre_order</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="n">pre_pars</span><span class="p">)</span>
+
+    <span class="n">precoefs</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">best_values</span>
+    <span class="n">preedge</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span> <span class="o">*</span> <span class="n">energy</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">nvict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">,</span>
+        <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+        <span class="n">preedge</span><span class="o">=</span><span class="n">preedge</span><span class="p">,</span>
+        <span class="n">pre1</span><span class="o">=</span><span class="n">pre1</span><span class="p">,</span>
+        <span class="n">pre2</span><span class="o">=</span><span class="n">pre2</span><span class="p">,</span>
+        <span class="n">pre_order</span><span class="o">=</span><span class="n">pre_order</span><span class="p">,</span>
+        <span class="n">nvict</span><span class="o">=</span><span class="n">nvict</span><span class="p">,</span>
+        <span class="n">e0</span><span class="o">=</span><span class="n">e0</span><span class="p">,</span>
+        <span class="n">precoefs</span><span class="o">=</span><span class="n">precoefs</span><span class="p">,</span>
+        <span class="n">energy_unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="post_edge_background">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.post_edge_background">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">post_edge_background</span><span class="p">(</span>
+    <span class="n">energy</span><span class="p">,</span>
+    <span class="n">mu</span><span class="p">,</span>
+    <span class="n">preedge</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">e0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">edge_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">post1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">post2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">post_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">post_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts the post-edge background by fitting a polynomial.</span>
+
+<span class="sd">    Based on `larch.xafs.preedge`. Modified so that a polynomial of any order</span>
+<span class="sd">    can be applied to the post-edge, and its initial parameters can be given by</span>
+<span class="sd">    the user.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    energy : iterable</span>
+<span class="sd">        Incident energy. Must be in eV. It will raise an error if it notices</span>
+<span class="sd">        the maximum of this list is below 100.</span>
+<span class="sd">    mu : iterable</span>
+<span class="sd">        Raw x-ray absorption.</span>
+<span class="sd">    e0 : float or int, optional</span>
+<span class="sd">        Absorption edge energy.</span>
+<span class="sd">    edge_step : float, optional</span>
+<span class="sd">        Size of edge step of the raw data. If None, it is calculated based by</span>
+<span class="sd">        postedge[e0] - preedge[e0].</span>
+<span class="sd">    preedge : iterable, optional</span>
+<span class="sd">        Pre-edge polynomial. If None, it will be set to zero.</span>
+<span class="sd">    post1, post2 : float, optional</span>
+<span class="sd">        Low, high energy limit of post-edge range with respect to e0. If None,</span>
+<span class="sd">         it will try to guess it based on mu(energy).</span>
+<span class="sd">    post_order : int, optional</span>
+<span class="sd">        Order of the polynomial to be used in the post-edge. If None, it will</span>
+<span class="sd">        be determined using:</span>
+
+<span class="sd">        - If post2-post1&gt;350 -&gt; post_order = 2;</span>
+<span class="sd">        - if 50 &lt; post2-post1 &lt; 350 -&gt; post_order = 1;</span>
+<span class="sd">        - otherwise -&gt; post_order = 0</span>
+
+<span class="sd">    post_pars : lmfit.Parameters, optional</span>
+<span class="sd">        Option to input the initial parameters to the polynomial used in the</span>
+<span class="sd">        data flattening. These will be labelled &#39;c0&#39;, &#39;c1&#39;, ..., depending on</span>
+<span class="sd">        `post_order`. See lmfit.models.PolynomialModel_ for details.</span>
+
+<span class="sd">        .. _lmfit.models.PolynomialModel:\</span>
+<span class="sd">        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : dict</span>
+<span class="sd">        Dictionary with the results and parameters of the normalization and</span>
+<span class="sd">        flattening. The most important items are:</span>
+
+<span class="sd">        - &#39;energy&#39; -&gt; incident energy.</span>
+<span class="sd">        - &#39;mu&#39; -&gt; raw xanes.</span>
+<span class="sd">        - &#39;norm&#39; -&gt; normalized XAS.</span>
+<span class="sd">        - &#39;post-edge&#39; -&gt; post-edge background.</span>
+<span class="sd">        - &#39;edge-step&#39; -&gt; Absorption jump size.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`larch.xafs.preedge`</span>
+<span class="sd">    :func:`larch.absorption.normalize_absorption`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Edge energy</span>
+    <span class="n">e0</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">_process_e0</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">e0</span><span class="p">)</span>
+
+    <span class="c1"># Post-edge params</span>
+    <span class="n">post1</span><span class="p">,</span> <span class="n">post2</span><span class="p">,</span> <span class="n">post_order</span> <span class="o">=</span> <span class="n">_process_postedge_params</span><span class="p">(</span>
+        <span class="n">energy</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">post1</span><span class="p">,</span> <span class="n">post2</span><span class="p">,</span> <span class="n">post_order</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Pre-edge</span>
+    <span class="k">if</span> <span class="n">preedge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">preedge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">preedge</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;preedge must have the same dimensions as energy.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Normalization</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">energy</span> <span class="o">&gt;</span> <span class="n">post1</span> <span class="o">+</span> <span class="n">e0</span><span class="p">,</span> <span class="n">energy</span> <span class="o">&lt;</span> <span class="n">post2</span> <span class="o">+</span> <span class="n">e0</span><span class="p">)</span>
+    <span class="n">energy_fit</span> <span class="o">=</span> <span class="n">energy</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">mu_fit</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">preedge</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">_fit_polynomial</span><span class="p">(</span><span class="n">energy_fit</span><span class="p">,</span> <span class="n">mu_fit</span><span class="p">,</span> <span class="n">post_order</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="n">post_pars</span><span class="p">)</span>
+
+    <span class="n">postcoefs</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">best_values</span>
+    <span class="n">postedge</span> <span class="o">=</span> <span class="n">preedge</span> <span class="o">+</span> <span class="n">fit</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">energy</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">edge_step</span><span class="p">:</span>
+        <span class="n">ie0</span> <span class="o">=</span> <span class="n">index_nearest</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">e0</span><span class="p">)</span>
+        <span class="n">edge_step</span> <span class="o">=</span> <span class="n">postedge</span><span class="p">[</span><span class="n">ie0</span><span class="p">]</span> <span class="o">-</span> <span class="n">preedge</span><span class="p">[</span><span class="n">ie0</span><span class="p">]</span>
+
+    <span class="n">norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">preedge</span><span class="p">)</span> <span class="o">/</span> <span class="n">edge_step</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">,</span>
+        <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+        <span class="n">postedge</span><span class="o">=</span><span class="n">postedge</span><span class="p">,</span>
+        <span class="n">preedge</span><span class="o">=</span><span class="n">preedge</span><span class="p">,</span>
+        <span class="n">postcoefs</span><span class="o">=</span><span class="n">postcoefs</span><span class="p">,</span>
+        <span class="n">post1</span><span class="o">=</span><span class="n">post1</span><span class="p">,</span>
+        <span class="n">post2</span><span class="o">=</span><span class="n">post2</span><span class="p">,</span>
+        <span class="n">post_order</span><span class="o">=</span><span class="n">post_order</span><span class="p">,</span>
+        <span class="n">energy_unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+        <span class="n">edge_step</span><span class="o">=</span><span class="n">edge_step</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="post_edge_flatten">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.post_edge_flatten">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">post_edge_flatten</span><span class="p">(</span>
+    <span class="n">energy</span><span class="p">,</span>
+    <span class="n">norm</span><span class="p">,</span>
+    <span class="n">bkg_results</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">e0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">flat1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">flat2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">flat_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">flat_pars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flattens the normalized absorption.</span>
+
+<span class="sd">    This is a slightly modified version from that in the larch_ package.</span>
+
+<span class="sd">    .. _larch: https://xraypy.github.io/xraylarch/index.html</span>
+
+<span class="sd">    The energies inputs must have the same units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    energy : iterable</span>
+<span class="sd">        Incident energy in eV.</span>
+<span class="sd">    norm : iterable</span>
+<span class="sd">        Normalized x-ray absorption.</span>
+<span class="sd">    bkg_results : dict, optional</span>
+<span class="sd">        Results of the data processing done by `post_edge_background`. If None,</span>
+<span class="sd">        the remaining keyword arguments will be ignored.</span>
+<span class="sd">    e0 : float or int</span>
+<span class="sd">        Absorption edge energy.</span>
+<span class="sd">    flat1, flat2 : float or int</span>
+<span class="sd">        Low, high energy limit of flattening range with respect to e0.</span>
+<span class="sd">    flat_order : int, optional</span>
+<span class="sd">        Degree of polynomial to be used. If None, it will be determined using:</span>
+
+<span class="sd">        - If post2-post1&gt;350 -&gt; post_order = 2;</span>
+<span class="sd">        - if 50 &lt; post2-post1 &lt; 350 -&gt; post_order = 1;</span>
+<span class="sd">        - otherwise -&gt; post_order = 0</span>
+
+<span class="sd">    fpars : lmfit.Parameters, optional</span>
+<span class="sd">        Option to input the initial parameters. These will be labelled &#39;c0&#39;,</span>
+<span class="sd">        &#39;c1&#39;, ..., depending on `nnorm`. See lmfit.models.PolynomialModel_ for</span>
+<span class="sd">        details.</span>
+
+<span class="sd">        .. _lmfit.models.PolynomialModel:\</span>
+<span class="sd">        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    flat : numpy.array</span>
+<span class="sd">        Flattened x-ray absorption.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`larch.xafs.pre_edge`</span>
+<span class="sd">    :func:`lmfit.models.PolynomialModel`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Edge energy</span>
+    <span class="n">e0</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="n">_process_e0</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">e0</span><span class="p">)</span>
+    <span class="n">ie0</span> <span class="o">=</span> <span class="n">index_nearest</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">e0</span><span class="p">)</span>
+
+    <span class="c1"># Runs the post edge fit with flat parameters if needed.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bkg_results</span><span class="p">:</span>
+        <span class="n">bkg_results</span> <span class="o">=</span> <span class="n">post_edge_background</span><span class="p">(</span>
+            <span class="n">energy</span><span class="p">,</span>
+            <span class="n">norm</span><span class="p">,</span>
+            <span class="n">e0</span><span class="o">=</span><span class="n">e0</span><span class="p">,</span>
+            <span class="n">post1</span><span class="o">=</span><span class="n">flat1</span><span class="p">,</span>
+            <span class="n">post2</span><span class="o">=</span><span class="n">flat2</span><span class="p">,</span>
+            <span class="n">post_order</span><span class="o">=</span><span class="n">flat_order</span><span class="p">,</span>
+            <span class="n">post_pars</span><span class="o">=</span><span class="n">flat_pars</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">flat_function</span> <span class="o">=</span> <span class="n">bkg_results</span><span class="p">[</span><span class="s2">&quot;postedge&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">flat_function</span> <span class="o">=</span> <span class="n">bkg_results</span><span class="p">[</span><span class="s2">&quot;postedge&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bkg_results</span><span class="p">[</span><span class="s2">&quot;preedge&quot;</span><span class="p">]</span>
+        <span class="n">flat_function</span> <span class="o">/=</span> <span class="n">bkg_results</span><span class="p">[</span><span class="s2">&quot;edge_step&quot;</span><span class="p">]</span>
+
+    <span class="n">flat1</span> <span class="o">=</span> <span class="n">bkg_results</span><span class="p">[</span><span class="s2">&quot;post1&quot;</span><span class="p">]</span>
+    <span class="n">flat2</span> <span class="o">=</span> <span class="n">bkg_results</span><span class="p">[</span><span class="s2">&quot;post2&quot;</span><span class="p">]</span>
+    <span class="n">flat_order</span> <span class="o">=</span> <span class="n">bkg_results</span><span class="p">[</span><span class="s2">&quot;post_order&quot;</span><span class="p">]</span>
+    <span class="n">flatcoefs</span> <span class="o">=</span> <span class="n">bkg_results</span><span class="p">[</span><span class="s2">&quot;postcoefs&quot;</span><span class="p">]</span>
+
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">-</span> <span class="p">(</span><span class="n">flat_function</span> <span class="o">-</span> <span class="n">flat_function</span><span class="p">[</span><span class="n">ie0</span><span class="p">])</span>
+    <span class="n">flat</span><span class="p">[:</span><span class="n">ie0</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm</span><span class="p">[:</span><span class="n">ie0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">,</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+        <span class="n">flat</span><span class="o">=</span><span class="n">flat</span><span class="p">,</span>
+        <span class="n">flat1</span><span class="o">=</span><span class="n">flat1</span><span class="p">,</span>
+        <span class="n">flat2</span><span class="o">=</span><span class="n">flat2</span><span class="p">,</span>
+        <span class="n">flat_order</span><span class="o">=</span><span class="n">flat_order</span><span class="p">,</span>
+        <span class="n">flatcoefs</span><span class="o">=</span><span class="n">flatcoefs</span><span class="p">,</span>
+        <span class="n">flat_function</span><span class="o">=</span><span class="n">flat_function</span><span class="p">,</span>
+        <span class="n">energy_unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_process_e0</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">e0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Internal function to extract the e0 and energy unit.&quot;&quot;&quot;</span>
+    <span class="c1"># Energy unit</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;keV&quot;</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="k">else</span> <span class="s2">&quot;eV&quot;</span>
+
+    <span class="c1"># Edge energy</span>
+    <span class="k">if</span> <span class="n">e0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">e0</span> <span class="o">=</span> <span class="n">finde0</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">e0</span> <span class="o">&lt;</span> <span class="n">energy</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">or</span> <span class="n">e0</span> <span class="o">&gt;</span> <span class="n">energy</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+        <span class="n">e0</span> <span class="o">=</span> <span class="n">finde0</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span>
+        <span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;e0 is not contained in the provided energy range, &quot;</span>
+            <span class="s2">&quot;using e0 = </span><span class="si">{:0.2f}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e0</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">e0</span> <span class="o">=</span> <span class="n">energy</span><span class="p">[</span><span class="n">index_nearest</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">e0</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">e0</span><span class="p">,</span> <span class="n">unit</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_process_preedge_params</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">pre1</span><span class="p">,</span> <span class="n">pre2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Internal function to process the pre-edge parameters.&quot;&quot;&quot;</span>
+    <span class="c1"># Process pre-edge range</span>
+    <span class="k">if</span> <span class="n">pre1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pre1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">e0</span>  <span class="c1"># avoid first/last points</span>
+    <span class="k">if</span> <span class="n">pre2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pre2</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">pre1</span> <span class="o">/</span> <span class="mf">15.0</span><span class="p">)</span>  <span class="c1"># from larch, don&#39;t understand logic.</span>
+    <span class="k">if</span> <span class="n">pre1</span> <span class="o">&gt;</span> <span class="n">pre2</span><span class="p">:</span>
+        <span class="n">pre1</span><span class="p">,</span> <span class="n">pre2</span> <span class="o">=</span> <span class="n">pre2</span><span class="p">,</span> <span class="n">pre1</span>
+
+    <span class="k">return</span> <span class="n">pre1</span><span class="p">,</span> <span class="n">pre2</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_process_postedge_params</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">e0</span><span class="p">,</span> <span class="n">post1</span><span class="p">,</span> <span class="n">post2</span><span class="p">,</span> <span class="n">post_order</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Internal function to process the post-edge parameters.&quot;&quot;&quot;</span>
+    <span class="c1"># Post-edge params</span>
+    <span class="k">if</span> <span class="n">post2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">post2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">energy</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">e0</span>  <span class="c1"># avoid first/last two points</span>
+    <span class="k">if</span> <span class="n">post1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">post1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">post2</span> <span class="o">/</span> <span class="mf">15.0</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">post1</span> <span class="o">&gt;</span> <span class="n">post2</span><span class="p">:</span>
+        <span class="n">post1</span><span class="p">,</span> <span class="n">post2</span> <span class="o">=</span> <span class="n">post2</span><span class="p">,</span> <span class="n">post1</span>
+    <span class="k">if</span> <span class="n">post_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">post2</span> <span class="o">-</span> <span class="n">post1</span> <span class="o">&lt;</span> <span class="mi">50</span><span class="p">:</span>
+            <span class="n">post_order</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">post2</span> <span class="o">-</span> <span class="n">post1</span> <span class="o">&lt;</span> <span class="mi">350</span><span class="p">:</span>
+            <span class="n">post_order</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">post_order</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">post1</span><span class="p">,</span> <span class="n">post2</span><span class="p">,</span> <span class="n">post_order</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fit_polynomial</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Internal function to fit a polynomial using `lmfit`.&quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">PolynomialModel</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pars</span><span class="p">:</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">guess</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="fluo_corr">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.fluo_corr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fluo_corr</span><span class="p">(</span><span class="n">norm</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">elem</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">anginp</span><span class="p">,</span> <span class="n">angout</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Correct over-absorption (self-absorption) in fluorescence XAFS.</span>
+
+<span class="sd">    Based on the `larch` implementation of the FLUO algorithm of</span>
+<span class="sd">    D. Haskel. See the FLUO manual_ for details.</span>
+
+<span class="sd">    .. _manual: https://www3.aps.anl.gov/haskel/fluo.html</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    norm : iter</span>
+<span class="sd">        Normalized fluorescence</span>
+<span class="sd">    formula : str</span>
+<span class="sd">        Chemical formula of the compound. For example: &#39;EuO&#39;.</span>
+<span class="sd">    elem : str</span>
+<span class="sd">        Element of interest. For example: &#39;Eu&#39;.</span>
+<span class="sd">    edge : str</span>
+<span class="sd">        Absorption edge of interest. For example: &#39;L3&#39;.</span>
+<span class="sd">    line : str</span>
+<span class="sd">        Fluorescence line measured. For example: &#39;La&#39;.</span>
+<span class="sd">    anginp : float</span>
+<span class="sd">        Input angle with respect to the sample surface. See FLUO manual.</span>
+<span class="sd">    anginp : float</span>
+<span class="sd">        Output angle with respect to the sample surface. See FLUO manual.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    norm_corr : numpy.array</span>
+<span class="sd">        Corrected normalized fluorescence.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Angular correction. Avoid divide by zero.</span>
+    <span class="n">ang_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">anginp</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span>
+        <span class="nb">max</span><span class="p">(</span><span class="mf">1.0e-7</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">angout</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Find edge energies and fluorescence line energy</span>
+    <span class="n">e_edge</span> <span class="o">=</span> <span class="n">xray_edge</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span><span class="o">.</span><span class="n">energy</span>
+    <span class="n">e_fluor</span> <span class="o">=</span> <span class="n">xray_line</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">energy</span>
+
+    <span class="c1"># Calculate mu(E) for fluorescence energy, above, below edge</span>
+    <span class="c1"># alpha ends up independent of density!</span>
+    <span class="n">muvals</span> <span class="o">=</span> <span class="n">material_mu</span><span class="p">(</span>
+        <span class="n">formula</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e_fluor</span><span class="p">,</span> <span class="n">e_edge</span> <span class="o">-</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">e_edge</span> <span class="o">+</span> <span class="mf">10.0</span><span class="p">]),</span> <span class="n">density</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Do the correction</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">muvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">ang_corr</span> <span class="o">+</span> <span class="n">muvals</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">muvals</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">muvals</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">norm_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">norm_corr</span></div>
+
+
+
+<div class="viewcode-block" id="process_xmcd">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.process_xmcd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_xmcd</span><span class="p">(</span>
+    <span class="n">scans_plus</span><span class="p">,</span>
+    <span class="n">scans_minus</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">,</span>
+    <span class="n">xmcd_kind</span><span class="o">=</span><span class="s2">&quot;dichro&quot;</span><span class="p">,</span>
+    <span class="n">load_parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+    <span class="n">normalization_parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span>
+    <span class="n">normalization_parameters_minus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process the XMCD scans of +/- magnetic fields.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scans_plus : iterable</span>
+<span class="sd">        List of scan number or scan_id of XMCD taken using the &quot;plus&quot; magnetic</span>
+<span class="sd">        field.</span>
+<span class="sd">    scans_minus : iterable</span>
+<span class="sd">        List of scan number or scan_id of XMCD taken using the &quot;minus&quot; magnetic</span>
+<span class="sd">        field.</span>
+<span class="sd">    source : databroker database, name of the spec file, or &#39;csv&#39;</span>
+<span class="sd">        Note that applicable `load_parameters` depend on this selection.</span>
+<span class="sd">    xmcd_kind : &quot;dichro&quot; or &quot;lockin&quot;, optional</span>
+<span class="sd">        Type of XMCD scan used, defaults to &quot;dichro&quot;.</span>
+<span class="sd">    load_parameters : dictionary</span>
+<span class="sd">        Parameters used to load data. Passed as kwargs to</span>
+<span class="sd">        `polartools.absorption.load_multi_dichro` or</span>
+<span class="sd">        `polartools.absorption.load_multi_lockin`.</span>
+<span class="sd">    normalization_parameters :  dictionary</span>
+<span class="sd">        Parameters used to normalize the &quot;plus&quot; data (and the &quot;minus&quot; data</span>
+<span class="sd">        when ``normalization_parameters_minus`` is None). Passed as kwargs to</span>
+<span class="sd">        `polartools.absorption.normalize_absorption`.</span>
+<span class="sd">    normalization_parameters_minus : dictionary, optional</span>
+<span class="sd">        If provided, used to normalize the &quot;minus&quot; data independently. When</span>
+<span class="sd">        None (default), the &quot;minus&quot; data is normalized with the same</span>
+<span class="sd">        parameters as the &quot;plus&quot; data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plus : dictionary</span>
+<span class="sd">        XANES/XMCD taken using the &quot;plus&quot; magnetic field. Output of</span>
+<span class="sd">        `polartools.absorption.normalize_absorption` with the XMCD data added.</span>
+<span class="sd">    minus : dictionary</span>
+<span class="sd">        XANES/XMCD taken using the &quot;minus&quot; magnetic field. Output of</span>
+<span class="sd">        `polartools.absorption.normalize_absorption` with the XMCD data added.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.absorption.load_multi_dichro`</span>
+<span class="sd">    :func:`polartools.absorption.load_multi_lockin`</span>
+<span class="sd">    :func:`polartools.absorption.normalize_absorption`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">xmcd_kind</span> <span class="o">==</span> <span class="s2">&quot;dichro&quot;</span><span class="p">:</span>
+        <span class="n">_load_func</span> <span class="o">=</span> <span class="n">load_multi_dichro</span>
+    <span class="k">elif</span> <span class="n">xmcd_kind</span> <span class="o">==</span> <span class="s2">&quot;lockin&quot;</span><span class="p">:</span>
+        <span class="n">_load_func</span> <span class="o">=</span> <span class="n">load_multi_lockin</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;The parameter &#39;xmcd_kind&#39; must be either &#39;lockin&#39; or &#39;dichro&#39;, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;but </span><span class="si">{</span><span class="n">xmcd_kind</span><span class="si">}</span><span class="s2"> was entered.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">minus_parameters</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">normalization_parameters</span>
+        <span class="k">if</span> <span class="n">normalization_parameters_minus</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="n">normalization_parameters_minus</span>
+    <span class="p">)</span>
+
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_load_func</span><span class="p">(</span><span class="n">scans_plus</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">load_parameters</span><span class="p">)</span>
+    <span class="n">plus</span> <span class="o">=</span> <span class="n">normalize_absorption</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">normalization_parameters</span><span class="p">)</span>
+    <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="o">/</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;edge_step&quot;</span><span class="p">]</span>
+
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_load_func</span><span class="p">(</span><span class="n">scans_minus</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">load_parameters</span><span class="p">)</span>
+    <span class="n">minus</span> <span class="o">=</span> <span class="n">normalize_absorption</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">minus_parameters</span><span class="p">)</span>
+    <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="o">/</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;edge_step&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">plus</span><span class="p">,</span> <span class="n">minus</span></div>
+
+
+
+<div class="viewcode-block" id="plot_xmcd">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.plot_xmcd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_xmcd</span><span class="p">(</span><span class="n">plus</span><span class="p">,</span> <span class="n">minus</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots a new figure with the combined XMCD of plus and minus fields.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    plus : dictionary</span>
+<span class="sd">        XANES/XMCD taken using the &quot;plus&quot; magnetic field. Output of the</span>
+<span class="sd">        normalize_absorption function.</span>
+<span class="sd">    minus : dictionary</span>
+<span class="sd">        XANES/XMCD taken using the &quot;minus&quot; magnetic field. Output of the</span>
+<span class="sd">        normalize_absorption function.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.pyplot.figure</span>
+<span class="sd">        Figure instance.</span>
+<span class="sd">    axs : list</span>
+<span class="sd">        List of the figure axes.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.absorption.process_xmcd`</span>
+<span class="sd">    :func:`polartools.absorption.normalize_absorption`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="p">((</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">),</span> <span class="p">(</span><span class="n">ax3</span><span class="p">,</span> <span class="n">ax4</span><span class="p">),</span> <span class="p">(</span><span class="n">ax5</span><span class="p">,</span> <span class="n">ax6</span><span class="p">))</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;preedge&quot;</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;postedge&quot;</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;pre1&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;pre2&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;post1&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;post2&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Energy (eV)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Raw XANES&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">minus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">minus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;preedge&quot;</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">minus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;postedge&quot;</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">minus</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;pre1&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">minus</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;pre2&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">minus</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;post1&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">minus</span><span class="p">[</span><span class="s2">&quot;e0&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;post2&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Energy (eV)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Raw XANES&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax3</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;H+&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">minus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;H-&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Energy (eV)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized XANES&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax4</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;H+&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">minus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;H-&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Energy (eV)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized XMCD (%)&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Energy (eV)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized XMCD (%)&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax6</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Energy (eV)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized Artifact (%)&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="p">[</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">,</span> <span class="n">ax3</span><span class="p">,</span> <span class="n">ax4</span><span class="p">,</span> <span class="n">ax5</span><span class="p">,</span> <span class="n">ax6</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="save_xmcd">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.save_xmcd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_xmcd</span><span class="p">(</span><span class="n">plus</span><span class="p">,</span> <span class="n">minus</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;XMCD</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%0.5e</span><span class="s2">&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves processed XANES/XMCD data into a file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    plus : dictionary</span>
+<span class="sd">        XMCD taken using the &quot;plus&quot; magnetic field. It needs at least three</span>
+<span class="sd">        keys: &quot;energy&quot;, &quot;norm&quot;, and &quot;xmcd&quot;.</span>
+<span class="sd">    minus : dictionary</span>
+<span class="sd">        XMCD taken using the &quot;minus&quot; magnetic field. It needs at least three</span>
+<span class="sd">        keys: &quot;energy&quot;, &quot;norm&quot;, and &quot;xmcd&quot;.</span>
+<span class="sd">    file_name : string</span>
+<span class="sd">        File name (including folder if not current).</span>
+<span class="sd">    header : string, optional</span>
+<span class="sd">        File header. Note that each line has to be finished with the newline</span>
+<span class="sd">        character.</span>
+<span class="sd">    fmt : string, optional</span>
+<span class="sd">        Format of the data, defaults to %0.5e</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.absorption.process_xmcd`</span>
+<span class="sd">    :func:`polartools.absorption.normalize_absorption`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">plus</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span>
+            <span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">plus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">minus</span><span class="p">[</span><span class="s2">&quot;xmcd&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+    <span class="n">header</span> <span class="o">+=</span> <span class="s2">&quot;Energy</span><span class="se">\t</span><span class="s2">XANES</span><span class="se">\t</span><span class="s2">XMCD</span><span class="se">\t</span><span class="s2">Artifact&quot;</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">combined</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
