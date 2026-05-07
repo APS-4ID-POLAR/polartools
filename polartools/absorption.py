@@ -1228,9 +1228,10 @@ def _fit_polynomial(x, y, order, pars=None):
 
 def fluo_corr(norm, formula, elem, edge, line, anginp, angout):
     """
-    Correct over-absorption (self-absorption) for fluorescene XAFS
-    using the based on the `larch` implementation of the FLUO alogrithm of
-    D. Haskel. See FLUO manual_ for details.
+    Correct over-absorption (self-absorption) in fluorescence XAFS.
+
+    Based on the `larch` implementation of the FLUO algorithm of
+    D. Haskel. See the FLUO manual_ for details.
 
     .. _manual: https://www3.aps.anl.gov/haskel/fluo.html
 
@@ -1252,7 +1253,7 @@ def fluo_corr(norm, formula, elem, edge, line, anginp, angout):
         Output angle with respect to the sample surface. See FLUO manual.
 
     Returns
-    --------
+    -------
     norm_corr : numpy.array
         Corrected normalized fluorescence.
     """
@@ -1317,7 +1318,7 @@ def process_xmcd(
         parameters as the "plus" data.
 
     Returns
-    --------
+    -------
     plus : dictionary
         XANES/XMCD taken using the "plus" magnetic field. Output of
         `polartools.absorption.normalize_absorption` with the XMCD data added.
@@ -1373,7 +1374,7 @@ def plot_xmcd(plus, minus):
         normalize_absorption function.
 
     Returns
-    --------
+    -------
     fig : matplotlib.pyplot.figure
         Figure instance.
     axs : list

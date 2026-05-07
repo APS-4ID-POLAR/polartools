@@ -1627,10 +1627,10 @@ def load_axes(
     read: boolean, optional
         Determines if positioner is read from metadata
 
-    Output
+    Returns
     -------
-    Plot
-
+    matplotlib.axes.Axes
+        Axes object holding the plot.
     """
     _kwargs = copy.deepcopy(kwargs)
     query = _kwargs.pop("query", None)
@@ -1702,10 +1702,10 @@ def plot_data(
             - spec -> possible kwargs: folder.
             - databroker -> possible kwargs: stream, query, use_db_v1.
 
-    Output
+    Returns
     -------
-    Plot
-
+    matplotlib.axes.Axes
+        Axes object holding the plot.
     """
 
     model = kwargs.pop("model", Model.Gaussian)
@@ -1931,10 +1931,10 @@ def dbplot(
             - spec -> possible kwargs: folder.
             - databroker -> possible kwargs: stream, query, use_db_v1.
 
-    Output
+    Returns
     -------
-    Plot
-
+    matplotlib.axes.Axes
+        Axes object holding the plot.
     """
 
     if isinstance(scan, int):

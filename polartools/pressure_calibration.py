@@ -26,12 +26,12 @@ def load_ag_params(temperature):
     Data 30, 515 (2001). It linearly interpolates the data.
 
     Parameters
-    -----------
+    ----------
     temperature : float
         Measurement temperature in Kelvin.
 
     Returns
-    -----------
+    -------
     v0_out, k0_out, kp0_out : float
         Volume, K and K' calibration parameters.
     """
@@ -87,12 +87,12 @@ def load_au_params(temperature):
     Data 30, 515 (2001). It linearly interpolates the data.
 
     Parameters
-    -----------
+    ----------
     temperature : float
         Measurement temperature in Kelvin.
 
     Returns
-    -----------
+    -------
     v0_out, k0_out, kp0_out : float
         Volume, K and K' calibration parameters.
     """
@@ -155,8 +155,25 @@ def load_au_params(temperature):
 
 
 def load_pt_params():
+    """
+    Return the equation-of-state parameters for platinum.
+
+    Reference values are room-temperature constants from the Holzapfel
+    parameterization; no temperature dependence is applied.
+
+    Returns
+    -------
+    v0 : float
+        Reference unit-cell volume (Å³).
+    bt : float
+        Isothermal bulk modulus (GPa).
+    btp : float
+        Pressure derivative of the bulk modulus (dimensionless).
+    alphat : float
+        Thermal expansion coefficient parameter (1/K).
+    """
     # Bohr radius
-    a0 = 0.5291772109  # \AA
+    a0 = 0.5291772109  # Å
     v0 = 101.9 * a0**3
     bt = 266
     btp = 5.81
@@ -349,7 +366,7 @@ def calculate_tth(
     details.
 
     Parameters
-    -----------
+    ----------
     pressure : float or iterable
         Pressure (or list of) to be converted.
     temperature : float
@@ -364,7 +381,7 @@ def calculate_tth(
         Offset between the reference two theta and the measured value.
 
     Returns
-    -----------
+    -------
     tth : float or numpy.array
         Calculated tth in degrees. A numpy.array is returned if an iterable is
         passed to pressure.
@@ -411,7 +428,7 @@ def calculate_pressure(
     details.
 
     Parameters
-    -----------
+    ----------
     tth : float or iterable
         Two theta of the selected Bragg peak. It can be a list of two theta.
     temperature : float
@@ -426,7 +443,7 @@ def calculate_pressure(
         Offset between the reference two theta and the measured value.
 
     Returns
-    -----------
+    -------
     pressure : float or numpy.array
         Calculated pressure in GPa. A numpy.array is returned if an iterable is
         passed to tth.
@@ -499,7 +516,7 @@ def xrd_calibrate_pressure(
         pressure = xrd_calibrate_pressure(100, **kwargs)
 
     Parameters
-    -----------
+    ----------
     scan : int or string
         Scan our uid. It will load the last scan with that scan_id. See kwargs
         for search options.
@@ -547,7 +564,7 @@ def xrd_calibrate_pressure(
         passed.
 
     Returns
-    -----------
+    -------
     pressure : float
         Calculated pressure in GPa.
 

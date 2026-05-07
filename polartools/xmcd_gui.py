@@ -1289,6 +1289,7 @@ class MainWindow(QMainWindow):
 
 
 def main():
+    """Console entry point for the ``xmcd-gui`` application."""
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
     win = MainWindow()

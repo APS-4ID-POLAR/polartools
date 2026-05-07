@@ -210,20 +210,21 @@ def load_databroker(
 
 def hdf5_to_dataframe(data):
     """
-    Converts h5py object into dataframe
+    Convert an h5py object into a DataFrame.
 
-    WARNING: it assumes a very specific format. For each item in `data` it will
-    get the data in `data["key/value"]
+    .. warning::
+       Assumes a specific layout: for each top-level key, the data is read
+       from the ``"value"`` sub-key (i.e. ``data[key]["value"][()]``).
 
     Parameters
     ----------
-    data : h5py object
-        Object with the data. Each key needs to have a "value" subkey.
+    data : h5py.File or h5py.Group
+        Object with the data. Each key needs to have a ``"value"`` sub-key.
 
     Returns
     -------
-    data : pandas.DataFrame
-        Table with the data.
+    pandas.DataFrame
+        Table with one column per top-level key.
 
     See also
     --------
