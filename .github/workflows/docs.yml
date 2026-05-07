@@ -1,0 +1,37 @@
+name: Docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Sphinx build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # hatch-vcs needs full history for version
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install package + docs extras
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[docs]
+
+      - name: Build HTML docs
+        run: sphinx-build -W --keep-going -b html docs/source docs/build/html
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs-html
+          path: docs/build/html

@@ -1,5 +1,22 @@
-ignore:
-  - "setup.py"
-  - "versioneer.py"
-  - "polartools/tests/*"
-  - "polartools/_version.py"
+# Codecov configuration. See https://docs.codecov.com/docs/codecov-yaml.
+# Path exclusions live in pyproject.toml under [tool.coverage.run].omit;
+# Codecov never sees those files, so no `ignore:` block is needed here.
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto       # compare against base branch
+        threshold: 1%      # tolerate <1% drift before failing the check
+    patch:
+      default:
+        target: 80%        # new/changed code in a PR should hit 80%
+        threshold: 5%
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: true    # only comment when coverage actually changed
+
+github_checks:
+  annotations: true
