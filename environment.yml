@@ -5,41 +5,13 @@ channels:
   - nsls2forge
   - nodefaults
 dependencies:
-  - python >=3.9, <=3.11
-  - scipy
-  - numpy
-  - pandas
-  - databroker
-  - tiled
-  - bluesky-tiled-plugins
+  # Python interpreter; package + dev/docs deps are installed via pip from
+  # pyproject.toml below. Keep heavy native libs (Qt, HDF5 plugins, dask) on
+  # conda where pre-built wheels are less reliable.
+  - python >=3.10,<3.13
   - pip
-  - sphinx
-  - pytest
-  - pytest-cov
-  - databroker-pack
-  - bluesky-live
-  - flake8
-  - lmfit
-  - spec2nexus
-  - versioneer
-  - suitcase-csv
-  - suitcase-json-metadata
-  - suitcase-utils=0.5.3
-  - ipython
-  - numpydoc
-  - pyresttable
-  - area-detector-handlers
-  - dask
   - hdf5plugin
-  - apstools>=1.6.0
-  - xraydb
-  - scikit-image
-  - pims>=0.6.1
-  - imageio
-  - h5py
+  - pyqt
+  - suitcase-utils=0.5.3  # pinned to match older databroker-pack output
   - pip:
-    - sphinx-rtd-theme
-    - super-state-machine
-    - sphinx-copybutton
-    - PyQt6
-    - pyqtgraph
+      - -e .[dev,docs]

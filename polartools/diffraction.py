@@ -292,7 +292,7 @@ def fit_series(
 
     if len(scan_series) % 3:
         raise ValueError(
-            f"expected 3*n={3*(len(scan_series)//3)} arguments, got "
+            f"expected 3*n={3 * (len(scan_series) // 3)} arguments, got "
             f"{len(scan_series)}"
         )
 
@@ -535,7 +535,7 @@ def load_series(
         _defaults = _bluesky_default_cols
     if len(scan_series) % 3:
         raise ValueError(
-            f"expected 3*n={3*(len(scan_series)//3)} arguments, got "
+            f"expected 3*n={3 * (len(scan_series) // 3)} arguments, got "
             f"{len(scan_series)}"
         )
     table = load_table(
@@ -1733,7 +1733,7 @@ def plot_data(
     if isinstance(scan_series, list):
         if len(scan_series) % 3:
             raise ValueError(
-                f"expected 3*n={3*((len(scan_series)+1)//3)} arguments, got {len(scan_series)}"
+                f"expected 3*n={3 * ((len(scan_series) + 1) // 3)} arguments, got {len(scan_series)}"
             )
         for series in range(1, len(scan_series), 3):
             start = scan_series[series - 1]

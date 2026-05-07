@@ -1,0 +1,163 @@
+[build-system]
+requires = ["hatchling>=1.21", "hatch-vcs>=0.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "polartools"
+dynamic = ["version"]
+description = "Read and process data from the APS Polar beamline (4-ID-D)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "BSD-3-Clause" }
+authors = [
+    { name = "Argonne National Laboratory", email = "gfabbris@anl.gov" },
+]
+keywords = ["aps", "bluesky", "databroker", "xmcd", "xas", "diffraction"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "apstools",
+    "area-detector-handlers",
+    "bluesky-tiled-plugins",
+    "dask",
+    "databroker",
+    "databroker-pack",
+    "h5py",
+    "hdf5plugin",
+    "imageio",
+    "ipython",
+    "lmfit",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "pyqtgraph",
+    "PyQt6",
+    "pyresttable",
+    "scipy",
+    # setuptools provides the distutils shim that databroker-pack still
+    # imports under Python 3.12+ (stdlib distutils was removed in 3.12).
+    "setuptools",
+    "spec2nexus",
+    "suitcase-csv",
+    "suitcase-json-metadata",
+    "tiled",
+    "xraydb",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+]
+docs = [
+    "ipython",
+    "matplotlib",
+    "numpydoc",
+    "sphinx",
+    "sphinx-copybutton",
+    "sphinx-rtd-theme",
+]
+
+[project.scripts]
+xmcd-gui = "polartools.xmcd_gui:main"
+
+[project.urls]
+Homepage = "https://github.com/APS-4ID-POLAR/polartools"
+Documentation = "https://polartools.readthedocs.io"
+Issues = "https://github.com/APS-4ID-POLAR/polartools/issues"
+Changelog = "https://github.com/APS-4ID-POLAR/polartools/releases"
+
+# --- Build / version --------------------------------------------------------
+
+[tool.hatch.version]
+source = "vcs"
+raw-options = { version_scheme = "post-release" }
+
+[tool.hatch.build.hooks.vcs]
+version-file = "polartools/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["polartools"]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/.claude",
+    "/.github",
+    "/.vscode",
+    "/build",
+    "/dist",
+    "/docs/build",
+    "/docs/source/_build",
+    "/docs/source/generated",
+    "/CLAUDE.md",
+    "/xmcd_save_test.dat",
+]
+
+# --- Ruff (replaces flake8 + black) ----------------------------------------
+
+[tool.ruff]
+line-length = 80
+target-version = "py310"
+extend-exclude = [
+    "polartools/_version.py",
+    "polartools/_larch.py",
+    "polartools/_pyrixs.py",
+    "docs/source/conf.py",
+]
+
+[tool.ruff.lint]
+# Conservative rule set matching the previous flake8 coverage (E/F/W).
+# Follow-up PRs can enable I (isort), UP (pyupgrade), B (bugbear) — the
+# repo currently has ~62 unrelated findings under those rules.
+select = ["E", "F", "W"]
+# E203 is black-incompatible; E501 is handled by the formatter; E741 keeps
+# the legacy single-letter-name allowance from the previous flake8 config.
+ignore = ["E203", "E501", "E741"]
+
+[tool.ruff.lint.per-file-ignores]
+"polartools/__init__.py" = ["F401"]
+
+[tool.ruff.format]
+line-ending = "lf"
+
+# --- Pytest -----------------------------------------------------------------
+
+[tool.pytest.ini_options]
+testpaths = ["polartools/tests"]
+addopts = "-ra"
+
+# --- Coverage ---------------------------------------------------------------
+
+[tool.coverage.run]
+source = ["polartools"]
+omit = [
+    "polartools/_version.py",
+    "polartools/_larch.py",
+    "polartools/_pyrixs.py",
+    "polartools/tests/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+]

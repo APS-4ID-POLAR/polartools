@@ -1153,22 +1153,25 @@ class MainWindow(QMainWindow):
             else self._parse_entry(w("le_edge_step"))
         )
 
-        pre1, pre2 = self._parse_entry(w("le_pre1")), self._parse_entry(
-            w("le_pre2")
+        pre1, pre2 = (
+            self._parse_entry(w("le_pre1")),
+            self._parse_entry(w("le_pre2")),
         )
         pre_range = (
             [pre1, pre2] if (pre1 is not None or pre2 is not None) else None
         )
 
-        post1, post2 = self._parse_entry(w("le_post1")), self._parse_entry(
-            w("le_post2")
+        post1, post2 = (
+            self._parse_entry(w("le_post1")),
+            self._parse_entry(w("le_post2")),
         )
         post_range = (
             [post1, post2] if (post1 is not None or post2 is not None) else None
         )
 
-        flat1, flat2 = self._parse_entry(w("le_flat1")), self._parse_entry(
-            w("le_flat2")
+        flat1, flat2 = (
+            self._parse_entry(w("le_flat1")),
+            self._parse_entry(w("le_flat2")),
         )
         flat_range = (
             [flat1, flat2] if (flat1 is not None or flat2 is not None) else None
