@@ -1,0 +1,1052 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>polartools.process_images &#8212; polartools</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../_static/documentation_options.js?v=fee28ae0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/polartools/process_images';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.5.5.post51+g6090a9297" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">polartools</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.process_images</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for polartools.process_images</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions to process image files.</span>
+
+<span class="sd">.. autosummary::</span>
+<span class="sd">   ~clean_threshold</span>
+<span class="sd">   ~load_images</span>
+<span class="sd">   ~get_curvature</span>
+<span class="sd">   ~get_spectrum</span>
+<span class="sd">   ~get_spectra</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">dask.array</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">da</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._pyrixs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">image_to_photon_events</span><span class="p">,</span>
+    <span class="n">plot_curvature</span><span class="p">,</span>
+    <span class="n">fit_curvature</span><span class="p">,</span>
+    <span class="n">extract</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="clean_threshold">
+<a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.clean_threshold">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_threshold</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cleans image stack using a fixed threshold value.</span>
+
+<span class="sd">    Sets all value above the threshold to nan.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    images : stack of images</span>
+<span class="sd">        Images to be cleaned.</span>
+<span class="sd">    threshold : float, integer</span>
+<span class="sd">        Value of the threshold to be applied.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    clean_images : stack of images</span>
+<span class="sd">        Clean images.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">clean_images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">clean_images</span><span class="p">[</span><span class="n">clean_images</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">clean_images</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cleanup_images</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clean up images.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    images : stack of images</span>
+<span class="sd">        Images to be cleaned.</span>
+<span class="sd">    parameters : dictionary</span>
+<span class="sd">        Clean up functions and arguments. Default options:</span>
+<span class="sd">        - {&#39;threshold&#39;: threshold_value}</span>
+<span class="sd">        For custom functions, use:</span>
+<span class="sd">        - {&#39;function&#39;: (myfunc, (arg1, arg2, ...))}</span>
+<span class="sd">        where myfunc is a function with call: myfunc(images, arg1, arg2, ...)</span>
+<span class="sd">        These function can be stacked, but keys have to be different.</span>
+<span class="sd">        For example, the call:</span>
+<span class="sd">        {&#39;threshold1&#39;: 100,</span>
+<span class="sd">        &#39;threshold2&#39;: 10,</span>
+<span class="sd">        &#39;function&#39;: (myfunc, (arg1, arg2))}</span>
+<span class="sd">        will run the threshold function twice with 100 and 10 as argument, then</span>
+<span class="sd">        myfunc with (arg1, arg2).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    images : dask array</span>
+<span class="sd">        Processed images.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">function</span><span class="p">,</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">&quot;threshold&quot;</span> <span class="ow">in</span> <span class="n">function</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="n">clean_threshold</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="s2">&quot;function&quot;</span> <span class="ow">in</span> <span class="n">function</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">images</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;function must be either &#39;threshold&#39; for preset clean method, &quot;</span>
+                <span class="s2">&quot;or &#39;function&#39; for a custom clean method&quot;</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">images</span>
+
+
+<div class="viewcode-block" id="load_images">
+<a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.load_images">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_images</span><span class="p">(</span>
+    <span class="n">scans</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">detector_key</span><span class="p">,</span> <span class="n">cleanup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load scans with 2D images.</span>
+
+<span class="sd">    Note that this function forces explicity outputs:</span>
+
+<span class="sd">    - If multiple scans are passed, it will return the average of the scans.</span>
+<span class="sd">    - If positioner = None, it will average all images. The resulting image \</span>
+<span class="sd">        will have shape = (pixels_horizontal, pixels_vertical).</span>
+<span class="sd">    - If positioner not None, it will not average all images. The resulting \</span>
+<span class="sd">        image will have \</span>
+<span class="sd">            shape = (positioner_size, pixels_horizontal, pixels_vertical).</span>
+
+<span class="sd">    PARAMETERS</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scans : iterable</span>
+<span class="sd">        List of scan_id or uids.</span>
+<span class="sd">    cat : databroker catalog</span>
+<span class="sd">        Catalog.</span>
+<span class="sd">    detector_key : string</span>
+<span class="sd">        Name of item that holds the images</span>
+<span class="sd">    cleanup : dictionary, optional</span>
+<span class="sd">        Clean up functions and arguments. Available functions:</span>
+
+<span class="sd">        - {&#39;threshold&#39;: threshold_value}</span>
+
+<span class="sd">        For custom functions, use:</span>
+
+<span class="sd">        - {&#39;function&#39;: (myfunc, (arg1, arg2, ...))} \</span>
+<span class="sd">        where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \</span>
+<span class="sd">        These function can be stacked. For example, the call: \</span>
+<span class="sd">        {&#39;threshold&#39;: 100, &#39;threshold&#39;: 10, &#39;function&#39;: (myfunc, (arg1, arg2))} \</span>
+<span class="sd">        will run the threshold function twice with 100 and 10 as argument, then \</span>
+<span class="sd">        myfunc with (arg1, arg2).</span>
+
+<span class="sd">    normalize : string, optional</span>
+<span class="sd">        Name of detector that will be used to normalize data. Default is None.</span>
+<span class="sd">    positioner : string, optional</span>
+<span class="sd">        Name of positioner to be read. Defaults to None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    images : dask array</span>
+<span class="sd">        Processed images.</span>
+<span class="sd">    positioner_values : numpy ndarray, optional</span>
+<span class="sd">        Values of the positioner. It is only returned if positioner is not None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">scans</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">cat</span><span class="p">[</span><span class="n">scan</span><span class="p">]</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">to_dask</span><span class="p">()</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">detector_key</span><span class="p">])</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cleanup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cleanup</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;cleanup must be a dictionary, but a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">cleanup</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="s2">&quot;was entered.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">images</span> <span class="o">=</span> <span class="n">_cleanup_images</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">cleanup</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">normalize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">images</span><span class="p">[:]</span> <span class="o">/=</span> <span class="n">data</span><span class="p">[</span><span class="n">normalize</span><span class="p">]</span><span class="o">.</span><span class="n">broadcast_like</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">detector_key</span><span class="p">])</span>
+
+        <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">positioner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">output</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">output</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">positioner</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cleanup_photon_events</span><span class="p">(</span><span class="n">photon_events</span><span class="p">):</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">photon_events</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">photon_events</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">:]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_constant_offset</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">timg</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">timg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">timg</span><span class="p">[:,</span> <span class="n">pos</span> <span class="o">-</span> <span class="n">rng</span> <span class="p">:</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">rng</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">col</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">col</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_curvature">
+<a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.get_curvature">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_curvature</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">binx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">constant_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the curvature of an image.</span>
+
+<span class="sd">    A second order polynomial is fit to the cross correlation of each slice</span>
+<span class="sd">    using the `pyrixs` algorithm. See pyrixs_ for more details. Ideally used</span>
+<span class="sd">    with an image with large intensity and a single peak.</span>
+
+<span class="sd">    .. _pyrixs: https://github.com/mpmdean/pyrixs/blob/master/pyrixs/process2d.py</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : numpy.array or dask.array</span>
+<span class="sd">        Image to be used.</span>
+<span class="sd">    binx : integer, optional</span>
+<span class="sd">        Bin size in the horizontal direction in pixels. Defaults to 10.</span>
+<span class="sd">    biny : integer, optional</span>
+<span class="sd">        Bin size in the vertical direction in pixels. Defaults to 1.</span>
+<span class="sd">    constant_offset : integer</span>
+<span class="sd">        Offset for the curvature. This is only relevant for the plot, does not</span>
+<span class="sd">        affect the use of the curvature to extract the spectra. Defaults to</span>
+<span class="sd">        None, which triggers an automatic offset calculation.</span>
+<span class="sd">    plot : boolean</span>
+<span class="sd">        Flag to plot image and curvature.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    curvature : list</span>
+<span class="sd">        List of polynomial coefficients [c0, c1, c2] where:</span>
+<span class="sd">        y = c0 + c1.x + c2.x^2.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`pyrixs.fit_curvature`</span>
+<span class="sd">    :func:`pyrixs.get_curvature_offsets`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+    <span class="n">ph</span> <span class="o">=</span> <span class="n">_cleanup_photon_events</span><span class="p">(</span><span class="n">image_to_photon_events</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">transpose</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="n">constant_offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">constant_offset</span> <span class="o">=</span> <span class="n">_get_constant_offset</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+    <span class="n">curvature</span> <span class="o">=</span> <span class="n">fit_curvature</span><span class="p">(</span>
+        <span class="n">ph</span><span class="p">,</span> <span class="n">binx</span><span class="o">=</span><span class="n">binx</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="n">biny</span><span class="p">,</span> <span class="n">CONSTANT_OFFSET</span><span class="o">=</span><span class="n">constant_offset</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="mf">99.99</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">pcolor</span><span class="p">(</span>
+            <span class="n">image</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span>
+            <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span> <span class="k">if</span> <span class="n">vmax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">im</span><span class="p">),</span>
+            <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;plasma&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+        <span class="n">plot_curvature</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">ph</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;curvature = </span><span class="si">{</span><span class="n">curvature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">curvature</span></div>
+
+
+
+<div class="viewcode-block" id="get_spectrum">
+<a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.get_spectrum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spectrum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract the spectrum of a single image.</span>
+
+<span class="sd">    Uses the `pyrixs` extract_ function.</span>
+
+<span class="sd">    .. _extract: \</span>
+<span class="sd">        https://github.com/mpmdean/pyrixs/blob/e94531f325478ce18b88d9fb3d42068\</span>
+<span class="sd">            f269bd118/pyrixs/process2d.py#L325</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : numpy.array or dask.array</span>
+<span class="sd">        Image to be processed.</span>
+<span class="sd">    curvature : iterable</span>
+<span class="sd">        List of polynomial coefficients [c0, c1, c2] where:</span>
+<span class="sd">        y = c0 + c1.x + c2.x^2.</span>
+<span class="sd">    biny : integer, optional</span>
+<span class="sd">        Bin size in the vertical direction in pixels. Defaults to 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    spectrum : numpy array</span>
+<span class="sd">        Extracted 1D spectrum.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`pyrixs.extract`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+    <span class="n">ph</span> <span class="o">=</span> <span class="n">_cleanup_photon_events</span><span class="p">(</span><span class="n">image_to_photon_events</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">transpose</span><span class="p">()))</span>
+    <span class="k">return</span> <span class="n">extract</span><span class="p">(</span><span class="n">ph</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="n">biny</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_spectra">
+<a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.get_spectra">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spectra</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract several spectrum.</span>
+
+<span class="sd">    Uses the `pyrixs` extract_ function.</span>
+
+<span class="sd">    .. _extract: \</span>
+<span class="sd">        https://github.com/mpmdean/pyrixs/blob/e94531f325478ce18b88d9fb3d42068\</span>
+<span class="sd">            f269bd118/pyrixs/process2d.py#L325</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    images : iterable of numpy.array or dask.array</span>
+<span class="sd">        Images to be processed.</span>
+<span class="sd">    curvature : iterable</span>
+<span class="sd">        List of polynomial coefficients [c0, c1, c2] where:</span>
+<span class="sd">        y = c0 + c1.x + c2.x^2.</span>
+<span class="sd">    biny : integer, optional</span>
+<span class="sd">        Bin size in the vertical direction in pixels. Defaults to 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    spectra : numpy.array</span>
+<span class="sd">        List of 1D spectrum.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.process_images.get_spectrum`</span>
+<span class="sd">    :func:`pyrixs.extract`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spectra</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="n">spectra</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_spectrum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="n">biny</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spectra</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="process_rxes">
+<a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.process_rxes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_rxes</span><span class="p">(</span>
+    <span class="n">scans</span><span class="p">,</span>
+    <span class="n">cat</span><span class="p">,</span>
+    <span class="n">detector_key</span><span class="p">,</span>
+    <span class="n">curvature</span><span class="p">,</span>
+    <span class="n">cleanup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper with typical RXES data processing.</span>
+
+<span class="sd">    PARAMETERS</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scans : iterable</span>
+<span class="sd">        List of scan_id or uids.</span>
+<span class="sd">    cat : databroker catalog</span>
+<span class="sd">        Catalog.</span>
+<span class="sd">    detector_key : string</span>
+<span class="sd">        Name of item that holds the images</span>
+<span class="sd">    curvature : iterable</span>
+<span class="sd">        List of polynomial coefficients [c0, c1, c2] where:</span>
+<span class="sd">        y = c0 + c1.x + c2.x^2.</span>
+<span class="sd">    cleanup : dictionary, optional</span>
+<span class="sd">        Clean up functions and arguments. Available functions:</span>
+
+<span class="sd">        - {&#39;threshold&#39;: threshold_value}</span>
+
+<span class="sd">        For custom functions, use:</span>
+
+<span class="sd">        - {&#39;function&#39;: (myfunc, (arg1, arg2, ...))} \</span>
+<span class="sd">        where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \</span>
+<span class="sd">        These function can be stacked. For example, the call: \</span>
+<span class="sd">        {&#39;threshold&#39;: 100, &#39;threshold&#39;: 10, &#39;function&#39;: (myfunc, (arg1, arg2))} \</span>
+<span class="sd">        will run the threshold function twice with 100 and 10 as argument, then \</span>
+<span class="sd">        myfunc with (arg1, arg2).</span>
+
+<span class="sd">    normalize : string, optional</span>
+<span class="sd">        Name of detector that will be used to normalize data. Default is None.</span>
+<span class="sd">    positioner : string, optional</span>
+<span class="sd">        Name of positioner to be read. Defaults to None.</span>
+<span class="sd">    biny : integer, optional</span>
+<span class="sd">        Bin size in the vertical direction in pixels. Defaults to 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    spectrum or spectra : array</span>
+<span class="sd">        Processed spectrum (if positioner is None) or spectra (if positioner</span>
+<span class="sd">        is not None).</span>
+<span class="sd">    positioner_values : numpy ndarray, optional</span>
+<span class="sd">        Values of the positioner. It is only returned if positioner is not None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">load_images</span><span class="p">(</span>
+        <span class="n">scans</span><span class="p">,</span>
+        <span class="n">cat</span><span class="p">,</span>
+        <span class="n">detector_key</span><span class="p">,</span>
+        <span class="n">cleanup</span><span class="o">=</span><span class="n">cleanup</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span>
+        <span class="n">positioner</span><span class="o">=</span><span class="n">positioner</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">positioner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># &quot;Count&quot; scans</span>
+        <span class="k">return</span> <span class="n">get_spectrum</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="n">biny</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Scans with a positioner</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">get_spectra</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="n">biny</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="process_rxes_mcd">
+<a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.process_rxes_mcd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_rxes_mcd</span><span class="p">(</span>
+    <span class="n">scans</span><span class="p">,</span>
+    <span class="n">cat</span><span class="p">,</span>
+    <span class="n">detector_key</span><span class="p">,</span>
+    <span class="n">curvature</span><span class="p">,</span>
+    <span class="n">cleanup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper with typical RXES-MCD data processing.</span>
+
+<span class="sd">    PARAMETERS</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scans : iterable</span>
+<span class="sd">        List of scan_id or uids.</span>
+<span class="sd">    cat : databroker catalog</span>
+<span class="sd">        Catalog.</span>
+<span class="sd">    detector_key : string</span>
+<span class="sd">        Name of item that holds the images</span>
+<span class="sd">    curvature : iterable</span>
+<span class="sd">        List of polynomial coefficients [c0, c1, c2] where:</span>
+<span class="sd">        y = c0 + c1.x + c2.x^2.</span>
+<span class="sd">    cleanup : dictionary, optional</span>
+<span class="sd">        Clean up functions and arguments. Available functions:</span>
+<span class="sd">        - {&#39;threshold&#39;: threshold_value}</span>
+<span class="sd">        For custom functions, use:</span>
+<span class="sd">        - {&#39;function&#39;: (myfunc, (arg1, arg2, ...))} \</span>
+<span class="sd">        where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \</span>
+<span class="sd">        These function can be stacked. For example, the call: \</span>
+<span class="sd">        {&#39;threshold&#39;: 100, &#39;threshold&#39;: 10, &#39;function&#39;: (myfunc, (arg1, arg2))} \</span>
+<span class="sd">        will run the threshold function twice with 100 and 10 as argument, then \</span>
+<span class="sd">        myfunc with (arg1, arg2).</span>
+<span class="sd">    normalize : string, optional</span>
+<span class="sd">        Name of detector that will be used to normalize data. Default is None.</span>
+<span class="sd">    positioner : string, optional</span>
+<span class="sd">        Name of positioner to be read. Defaults to None.</span>
+<span class="sd">    biny : integer, optional</span>
+<span class="sd">        Bin size in the vertical direction in pixels. Defaults to 1.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rxes : array</span>
+<span class="sd">        Processed x-ray emission spectrum(if positioner is None) or spectra</span>
+<span class="sd">        (if positioner is not None).</span>
+<span class="sd">    mcd : array</span>
+<span class="sd">        Processed x-ray emission dichroism spectrum (if positioner is None) or</span>
+<span class="sd">        spectra (if positioner is not None).</span>
+<span class="sd">    positioner_values : numpy ndarray, optional</span>
+<span class="sd">        Values of the positioner. It is only returned if positioner is not None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Need to get all images...</span>
+    <span class="k">if</span> <span class="n">positioner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">positioner</span> <span class="o">=</span> <span class="s2">&quot;Time&quot;</span>
+
+    <span class="n">images</span><span class="p">,</span> <span class="n">positions</span> <span class="o">=</span> <span class="n">load_images</span><span class="p">(</span>
+        <span class="n">scans</span><span class="p">,</span>
+        <span class="n">cat</span><span class="p">,</span>
+        <span class="n">detector_key</span><span class="p">,</span>
+        <span class="n">cleanup</span><span class="o">=</span><span class="n">cleanup</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span>
+        <span class="n">positioner</span><span class="o">=</span><span class="n">positioner</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">ims</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="n">ims_plus</span> <span class="o">=</span> <span class="n">ims</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ims_minus</span> <span class="o">=</span> <span class="n">ims</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">specs_plus</span> <span class="o">=</span> <span class="n">get_spectra</span><span class="p">(</span><span class="n">ims_plus</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="n">biny</span><span class="p">)</span>
+    <span class="n">specs_minus</span> <span class="o">=</span> <span class="n">get_spectra</span><span class="p">(</span><span class="n">ims_minus</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="n">biny</span><span class="p">)</span>
+
+    <span class="n">rxes</span> <span class="o">=</span> <span class="p">(</span><span class="n">specs_plus</span> <span class="o">+</span> <span class="n">specs_minus</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">mcd</span> <span class="o">=</span> <span class="n">specs_plus</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">mcd</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">specs_minus</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">positioner</span> <span class="o">==</span> <span class="s2">&quot;Time&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rxes</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">mcd</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rxes</span><span class="p">,</span> <span class="n">mcd</span><span class="p">,</span> <span class="n">positions</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

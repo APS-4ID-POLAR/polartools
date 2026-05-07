@@ -1,0 +1,1514 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>polartools.diffraction &#8212; polartools</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../_static/documentation_options.js?v=fee28ae0"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/polartools/diffraction/index';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="polartools.load_data" href="../load_data/index.html" />
+    <link rel="prev" title="polartools.area_detector_handlers" href="../area_detector_handlers/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.5.5.post51+g6090a9297" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">polartools</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../release-history.html">
+    Release history
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../release-history.html">
+    Release history
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../absorption/index.html">polartools.absorption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../area_detector_handlers/index.html">polartools.area_detector_handlers</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">polartools.diffraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../load_data/index.html">polartools.load_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../manage_database/index.html">polartools.manage_database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pressure_calibration/index.html">polartools.pressure_calibration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../process_images/index.html">polartools.process_images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xmcd_gui/index.html">polartools.xmcd_gui</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">polartools</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.diffraction</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-polartools.diffraction">
+<span id="polartools-diffraction"></span><h1>polartools.diffraction<a class="headerlink" href="#module-polartools.diffraction" title="Link to this heading">#</a></h1>
+<p>Functions to load and process x-ray diffraction data.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.fit_peak" title="polartools.diffraction.fit_peak"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_peak</span></code></a>(xdata, ydata[, model])</p></td>
+<td><p>Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.load_info" title="polartools.diffraction.load_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_info</span></code></a>(scan_id, info[, source])</p></td>
+<td><p>Load metadata variable value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.fit_series" title="polartools.diffraction.fit_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_series</span></code></a>(scan_series[, source, output, ...])</p></td>
+<td><p>Fit series of scans with chosen functional and returns fit parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.load_series" title="polartools.diffraction.load_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_series</span></code></a>(scan_series[, source, log, ...])</p></td>
+<td><p>Load series of scans as function of variable like temperature of field which can be spaced unequally.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.get_type" title="polartools.diffraction.get_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_type</span></code></a>(scan_id[, source])</p></td>
+<td><p>get_type returns type of scan and scan parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.load_mesh" title="polartools.diffraction.load_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_mesh</span></code></a>(scan, scan_range[, source, log, ...])</p></td>
+<td><p>Load mesh generates input array for plot_2d from mesh scans:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.plot_2d" title="polartools.diffraction.plot_2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_2d</span></code></a>(scans[, source, var_series, ...])</p></td>
+<td><p>Plot 2d:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.plot_fit" title="polartools.diffraction.plot_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_fit</span></code></a>(scan_series[, source, output, ...])</p></td>
+<td><p>Fit and plot series of scans with chosen functional and returns fit parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.load_axes" title="polartools.diffraction.load_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_axes</span></code></a>(scan[, source, positioner, ...])</p></td>
+<td><p>Load default positioner and detector for plot</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.plot_data" title="polartools.diffraction.plot_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_data</span></code></a>(scan_series[, source, positioner, ...])</p></td>
+<td><p>Plot and fit data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.dbplot" title="polartools.diffraction.dbplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dbplot</span></code></a>(scan[, source, positioner, detector, ...])</p></td>
+<td><p>Plot and fit data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.rng" title="polartools.diffraction.rng"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rng</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.Model" title="polartools.diffraction.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a></p></td>
+<td><p>Create a collection of name/value pairs.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.fit_peak" title="polartools.diffraction.fit_peak"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_peak</span></code></a>(xdata, ydata[, model])</p></td>
+<td><p>Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.load_info" title="polartools.diffraction.load_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_info</span></code></a>(scan_id, info[, source])</p></td>
+<td><p>Load metadata variable value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.fit_series" title="polartools.diffraction.fit_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_series</span></code></a>(scan_series[, source, output, var_series, ...])</p></td>
+<td><p>Fit series of scans with chosen functional and returns fit parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.load_series" title="polartools.diffraction.load_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_series</span></code></a>(scan_series[, source, log, var_series, ...])</p></td>
+<td><p>Load series of scans as function of variable like temperature of field</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.get_type" title="polartools.diffraction.get_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_type</span></code></a>(scan_id[, source])</p></td>
+<td><p>get_type returns type of scan and scan parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.load_mesh" title="polartools.diffraction.load_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_mesh</span></code></a>(scan, scan_range[, source, log, mrange, ...])</p></td>
+<td><p>Load mesh generates input array for plot_2d from mesh scans:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.load_dichromesh" title="polartools.diffraction.load_dichromesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_dichromesh</span></code></a>(scan, scan_range[, source, detector])</p></td>
+<td><p>Load dichromesh generates input array for plot_2d from mesh scans with</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.plot_2d" title="polartools.diffraction.plot_2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_2d</span></code></a>(scans[, source, var_series, positioner, ...])</p></td>
+<td><p>Plot 2d:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.plot_fit" title="polartools.diffraction.plot_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_fit</span></code></a>(scan_series[, source, output, var_series, ...])</p></td>
+<td><p>Fit and plot series of scans with chosen functional and returns fit parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.load_axes" title="polartools.diffraction.load_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_axes</span></code></a>(scan[, source, positioner, detector, ...])</p></td>
+<td><p>Load default positioner and detector for plot</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.diffraction.plot_data" title="polartools.diffraction.plot_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_data</span></code></a>(scan_series[, source, positioner, detector, ...])</p></td>
+<td><p>Plot and fit data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.diffraction.dbplot" title="polartools.diffraction.dbplot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dbplot</span></code></a>(scan[, source, positioner, detector, monitor, ...])</p></td>
+<td><p>Plot and fit data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.diffraction.rng">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">rng</span></span><a class="headerlink" href="#polartools.diffraction.rng" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polartools.diffraction.Model">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.Model" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.Enum</span></code></a></p>
+<p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">RED</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">... </span>    <span class="n">BLUE</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">... </span>    <span class="n">GREEN</span> <span class="o">=</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p>Access them by:</p>
+<ul>
+<li><p>attribute access:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Color</span><span class="o">.</span><span class="n">RED</span>
+<span class="go">&lt;Color.RED: 1&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>value lookup:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Color</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">&lt;Color.RED: 1&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>name lookup:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Color</span><span class="p">[</span><span class="s1">&#39;RED&#39;</span><span class="p">]</span>
+<span class="go">&lt;Color.RED: 1&gt;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">Color</span><span class="p">)</span>
+<span class="go">[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]</span>
+</pre></div>
+</div>
+<p>Methods can be added to enumerations, and members can have their own
+attributes – see the documentation for details.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.diffraction.Model.Gaussian">
+<span class="sig-name descname"><span class="pre">Gaussian</span></span><a class="headerlink" href="#polartools.diffraction.Model.Gaussian" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.diffraction.Model.Lorentzian">
+<span class="sig-name descname"><span class="pre">Lorentzian</span></span><a class="headerlink" href="#polartools.diffraction.Model.Lorentzian" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.diffraction.Model.PseudoVoigt">
+<span class="sig-name descname"><span class="pre">PseudoVoigt</span></span><a class="headerlink" href="#polartools.diffraction.Model.PseudoVoigt" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.fit_peak">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">fit_peak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Model.Gaussian</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#fit_peak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.fit_peak" title="Link to this definition">#</a></dt>
+<dd><p>Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.</p>
+<p>Uses lmfit (<a class="reference external" href="https://lmfit.github.io/lmfit-py/">https://lmfit.github.io/lmfit-py/</a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>xdata</strong><span class="classifier">iterable</span></dt><dd><p>List of x-axis values.</p>
+</dd>
+<dt><strong>yydata</strong><span class="classifier">iterable</span></dt><dd><p>List of y-axis values.</p>
+</dd>
+<dt><strong>model: enumeration</strong></dt><dd><p>fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>fit</strong><span class="classifier">lmfit ModelResult class</span></dt><dd><p>Contains the fit results. See:
+<a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class">https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class</a></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.load_info">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">load_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#load_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.load_info" title="Link to this definition">#</a></dt>
+<dd><p>Load metadata variable value.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>scan</strong><span class="classifier">int</span></dt><dd><p>Scan_id our uid. If scan_id is passed, it will load the last scan with
+that scan_id.</p>
+</dd>
+<dt><strong>info</strong><span class="classifier">list</span></dt><dd><p>If SPEC, information on metadata to be read: List starting with #P, #U,
+#Q for motor positions, user values or Q-position or general #xx:</p>
+<ul class="simple">
+<li><p>#P: [‘#P’, row, element_number], e.g. [‘#P’, 2, 0]</p></li>
+<li><p>#U: [‘#U’, Variable, element_number], e.g. [‘#U’, ‘KepkoI’, 1]</p></li>
+<li><p>#Q: [‘#Q’, None, element_number], e.g. [‘#Q’, None, 0]</p></li>
+<li><p>#xx like #UA etc.: [‘#UA’, row, element_number],</p></li>
+</ul>
+<p>If CSV, #metadata_name
+If db, #baseline_information (e.g. #lakeshore340_sample)</p>
+</dd>
+<dt><strong>source: databroker database, name of the spec file, or ‘csv’</strong></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><p>The necessary kwargs are passed to the loading functions defined by the
+<cite>source</cite> argument:</p>
+<ul class="simple">
+<li><p>csv -&gt; possible kwargs: folder, name_format.</p></li>
+<li><p>spec -&gt; possible kwargs: folder.</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query, use_db_v1.</p></li>
+</ul>
+<p>Note that a warning will be printed if the an unnecessary kwarg is
+passed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>value</strong><span class="classifier">number</span></dt><dd><p>Variable value.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.fit_series">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">fit_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xrange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#fit_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.fit_series" title="Link to this definition">#</a></dt>
+<dd><p>Fit series of scans with chosen functional and returns fit parameters.</p>
+<p>Uses <a class="reference external" href="https://lmfit.github.io/lmfit-py/">lmfit</a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>scan_series</strong><span class="classifier">int</span></dt><dd><p>start, stop, step, [start2, stop2, step2, … ,startn, stopn, stepn]</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>output</strong><span class="classifier">boolean, optional</span></dt><dd><p>Output fit parameters and plot data+fit for each scan.</p>
+</dd>
+<dt><strong>var_series</strong><span class="classifier">string or list</span></dt><dd><p>If string:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Varying variable for scan series to be read from scan                {detector), e.g. SampK (sample temperature), optional.</p></li>
+<li><p>String starting with #metadata, reads metadata from CSV baseline</p></li>
+</ul>
+</div></blockquote>
+<p>If list:
+SPEC: Information on metadata to be read: List starting with #P, #U,
+#Q for motor positions, user values or Q-position or general #xx:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>#P: [‘#P’, row, element_number], e.g. [‘#P’, 2, 0]</p></li>
+<li><p>#U: [‘#U’, Variable, element_number], e.g. [‘#U’, ‘KepkoI’, 1]</p></li>
+<li><p>#Q: [‘#Q’, None, element_number], e.g. [‘#Q’, None, 0]</p></li>
+<li><p>#xx like #UA etc.: [‘#UA’, row, element_number].</p></li>
+</ul>
+</div></blockquote>
+<p>CSV: #metadata_name
+If None, successive scans will be numbered starting from zero.</p>
+</dd>
+<dt><strong>positioner</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the positioner, this needs to be the same as defined in
+Bluesky or SPEC. If None is passed, it defauts to ‘4C Theta’ motor.</p>
+</dd>
+<dt><strong>detector</strong><span class="classifier">string, optional</span></dt><dd><p>Detector to be read from this scan, again it needs to be the same name
+as in Bluesky. If None is passed, it defaults to the APD detector.</p>
+</dd>
+<dt><strong>monitor</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the monitor detector. If None is passed, it defaults to the ion
+chamber 3.</p>
+</dd>
+<dt><strong>normalize</strong><span class="classifier">boolean, optional</span></dt><dd><p>Normalization to selected/default monitor on/off</p>
+</dd>
+<dt><strong>xrange</strong><span class="classifier">list</span></dt><dd><p>Set positioner range for fitting</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><p>The necessary kwargs are passed to the loading functions defined by the
+<cite>source</cite> argument:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>csv -&gt; possible kwargs: folder, name_format.</p></li>
+<li><p>spec -&gt; possible kwargs: folder.</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query, use_db_v1.</p></li>
+</ul>
+</div></blockquote>
+<p>Note that a warning will be printed if the an unnecessary kwarg is
+passed.</p>
+<p>model -&gt; fit model, options:
+model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>fit</strong><span class="classifier">lmfit ModelResult class</span></dt><dd><p>Contains the fit results. See:
+<a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class">https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class</a></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.load_series">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">load_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#load_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.load_series" title="Link to this definition">#</a></dt>
+<dd><p>Load series of scans as function of variable like temperature of field
+which can be spaced unequally. Generates input arrays for plot_2d.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>scan_series</strong><span class="classifier">list, int</span></dt><dd><p>start, stop, step, [start2, stop2, step2, … ,startn, stopn, stepn]</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>var_series</strong><span class="classifier">string or list</span></dt><dd><p>string:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Varying variable for scan series to be read from scan                (detector), e.g. SampK (sample temperature), optional.</p></li>
+<li><p>String starting with #metadata, reads metadata from CSV baseline</p></li>
+</ul>
+</div></blockquote>
+<p>list:
+SPEC: Information on metadata to be read: List starting with #P, #U,
+#Q for motor positions, user values or Q-position or general #xx:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>#P: [‘#P’, row, element_number], e.g. [‘#P’, 2, 0]</p></li>
+<li><p>#U: [‘#U’, Variable, element_number], e.g. [‘#U’, ‘KepkoI’, 1]</p></li>
+<li><p>#Q: [‘#Q’, None, element_number], e.g. [‘#Q’, None, 0]</p></li>
+<li><p>#xx like #UA etc.: [‘#UA’, row, element_number],</p></li>
+</ul>
+</div></blockquote>
+<p>CSV: #metadata_name
+None, successive scans will be numbered starting from zero.</p>
+</dd>
+<dt><strong>positioner</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the positioner, this needs to be the same as defined in
+Bluesky or SPEC. If None is passed, it defauts to ‘4C Theta’ motor.</p>
+</dd>
+<dt><strong>detector</strong><span class="classifier">string, optional</span></dt><dd><p>Detector to be read from this scan, again it needs to be the same name
+as in Bluesky. If None is passed, it defaults to the APD detector.</p>
+</dd>
+<dt><strong>monitor</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the monitor detector for normalization. If None is passed, data
+are not normalized.</p>
+</dd>
+<dt><strong>log</strong><span class="classifier">boolean</span></dt><dd><p>If True, z-axis plotted in logarithmic scale.</p>
+</dd>
+<dt><strong>scale</strong><span class="classifier">list, int</span></dt><dd><p>intensity limits: [z_min,z_max]</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><p>The necessary kwargs are passed to the loading and fitting functions
+defined by the <cite>source</cite> argument:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>csv        -&gt; possible kwargs: folder, name_format, e.g.            “scan_{}_primary.csv”</p></li>
+<li><p>spec       -&gt; possible kwargs: folder</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query</p></li>
+</ul>
+</div></blockquote>
+<p>Note that a warning will be printed if the an unnecessary kwarg is
+passed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">arrays with x, y and z information for 2D plot</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.get_type">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#get_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.get_type" title="Link to this definition">#</a></dt>
+<dd><p>get_type returns type of scan and scan parameters.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>scan_id</strong><span class="classifier">int</span></dt><dd><p>scan number</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><p>The necessary kwargs are passed to the loading and fitting functions
+defined by the <cite>source</cite> argument:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>csv        -&gt; possible kwargs: folder, name_format, e.g.            “scan_{}_primary.csv”</p></li>
+<li><p>spec       -&gt; possible kwargs: folder</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query</p></li>
+</ul>
+</div></blockquote>
+<p>Note that a warning will be printed if the an unnecessary kwarg is
+passed.</p>
+<p>Additional parameters in kwargs:
+folder: location of scan file</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">type of scan and scan parameters.</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.load_mesh">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">load_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scan_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reduced'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#load_mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.load_mesh" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Load mesh generates input array for plot_2d from mesh scans:</dt><dd><p>mesh, dichromesh, hklmesh (SPEC)
+grid_scan, rel_grid_scan (BlueSky)</p>
+</dd>
+</dl>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>scan_series</strong><span class="classifier">list, int</span></dt><dd><p>start, stop, step, [start2, stop2, step2, … ,startn, stopn, stepn]</p>
+</dd>
+<dt><strong>scan_range</strong><span class="classifier">list, int</span></dt><dd><p>scan parameters of mesh scan [x0, x1, xinterval, y0, y1, yinterval]</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>log: boolean</strong></dt><dd><p>If True, z-axis plotted in logarithmic scale.</p>
+</dd>
+<dt><strong>mrange: string, list</strong></dt><dd><p>reduced, full, [xmin,ymin,xmx,ymax]</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><p>The necessary kwargs are passed to the loading and fitting functions
+defined by the <cite>source</cite> argument:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>csv        -&gt; possible kwargs: folder, name_format, e.g.                “scan_{}_primary.csv”</p></li>
+<li><p>spec       -&gt; possible kwargs: folder</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query</p></li>
+</ul>
+</div></blockquote>
+<p>Note that a warning will be printed if the an unnecessary kwarg is
+passed.</p>
+</dd>
+<dt><strong>Additional parameters in kwargs:</strong></dt><dd><dl class="simple">
+<dt>scale<span class="classifier">list, int</span></dt><dd><p>intensity limits: [z_min,z_max]</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">arrays with x, y and z information for 2D plot and axes names</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.load_dichromesh">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">load_dichromesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scan_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#load_dichromesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.load_dichromesh" title="Link to this definition">#</a></dt>
+<dd><p>Load dichromesh generates input array for plot_2d from mesh scans with
+several polarizations per scan point:</p>
+<ul class="simple">
+<li><p>dichromesh (SPEC)</p></li>
+<li><p>dichro_grid_scan (BlueSky)</p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>scan_series</strong><span class="classifier">list, int</span></dt><dd><p>start, stop, step, [start2, stop2, step2, … ,startn, stopn, stepn]</p>
+</dd>
+<dt><strong>scan_range</strong><span class="classifier">list, int</span></dt><dd><p>scan parameters of mesh scan [x0, x1, xinterval, y0, y1, yinterval]</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><p>The necessary kwargs are passed to the loading and fitting functions
+defined by the <cite>source</cite> argument:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>csv        -&gt; possible kwargs: folder, name_format, e.g.            “scan_{}_primary.csv”</p></li>
+<li><p>spec       -&gt; possible kwargs: folder</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query</p></li>
+</ul>
+</div></blockquote>
+<p>Note that a warning will be printed if the an unnecessary kwarg is
+passed.</p>
+</dd>
+<dt><strong>Additional parameters in kwargs:</strong></dt><dd><dl class="simple">
+<dt>scale<span class="classifier">list, int</span></dt><dd><p>intensity limits: [z_min,z_max]</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">arrays with x, y and z information for 2D plot for left and right polarizatio and axes names</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.plot_2d">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">plot_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'reduced'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xcut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#plot_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.plot_2d" title="Link to this definition">#</a></dt>
+<dd><p>Plot 2d:</p>
+<p>Creates 2D plot from individual 1D scans as function of variable parameter
+or  plots a 2D mesh scan.</p>
+<dl class="simple">
+<dt>Supported mesh scans:</dt><dd><ul class="simple">
+<li><p>mesh, dichromesh, hklmesh (SPEC)</p></li>
+<li><p>grid_scan, rel_grid_scan (BlueSky)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>scans</strong><span class="classifier">list, int</span></dt><dd><p>1D-scans:   start, stop, step, [start2, stop2, step2, … ,startn, stopn, stepn]
+e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
+mesh-scan:  scan_number, e.g. 10 will read scan #10</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>var_series: string or list, optional</strong></dt><dd><p>string:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>Varying variable for scan series to be read from scan</dt><dd><p>(detector), e.g. SampK (sample temperature), optional.</p>
+</dd>
+</dl>
+</li>
+<li><p>String starting with #metadata, reads metadata from CSV baseline</p></li>
+</ul>
+</div></blockquote>
+<p>list:
+Information on metadata to be read: List starting with #P, #U or #Q for
+motor positions, user values or Q-position, or general #xx, optional:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>#P: [‘#P’, row, element_number], e.g. [‘#P’, 2, 0]</p></li>
+<li><p>#U: [‘#U’, Variable, element_number], e.g. [‘#U’, ‘KepkoI’, 1]</p></li>
+<li><p>#Q: [‘#Q’, None, element_number], e.g. [‘#Q’, None, 0]</p></li>
+<li><p>#xx like #UA etc.: [‘#UA’, row, element_number],</p></li>
+</ul>
+</div></blockquote>
+<p>If None, successive scans will be numbered starting from zero.</p>
+</dd>
+<dt><strong>positioner</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the positioner, this needs to be the same as defined in
+Bluesky or SPEC. If None is passed, it defauts to ‘4C Theta’ motor.</p>
+</dd>
+<dt><strong>detector</strong><span class="classifier">string, optional</span></dt><dd><p>Detector to be read from this scan, again it needs to be the same name
+as in Bluesky. If None is passed, it defaults to the APD detector.</p>
+</dd>
+<dt><strong>monitor</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the monitor detector for normalization. If None is passed,
+data are not normalized.</p>
+</dd>
+<dt><strong>log: boolean, optional</strong></dt><dd><p>If True, z-axis plotted in logarithmic scale.</p>
+</dd>
+<dt><strong>scale</strong><span class="classifier">list, int, optional</span></dt><dd><p>intensity limits: [z_min,z_max]</p>
+</dd>
+<dt><strong>scale2</strong><span class="classifier">list, int, optional</span></dt><dd><p>intensity limits: [z_min,z_max] for sum if 2 plots are provided</p>
+</dd>
+<dt><strong>mrange</strong><span class="classifier">list, optional</span></dt><dd><p>full, reduced, [xmin,ymin,xmax,ymax]</p>
+</dd>
+<dt><strong>direction</strong><span class="classifier">list, int, optional</span></dt><dd><p>multiply axes for inversion: [1,-1]</p>
+</dd>
+<dt><strong>output</strong><span class="classifier">string, optional</span></dt><dd><p>Output file for png file of plot.</p>
+</dd>
+<dt><strong>xcut</strong><span class="classifier">list, optional</span></dt><dd><p>plot 1D cuts for x-axis values</p>
+</dd>
+<dt><strong>ycut</strong><span class="classifier">list, optional</span></dt><dd><p>plot 1D cuts for y-axis values</p>
+</dd>
+<dt><strong>plot2</strong><span class="classifier">list, int</span></dt><dd><p>same as scans. Only z-values are taken. x and y used from scans</p>
+</dd>
+<dt><strong>kwargs:</strong></dt><dd><p>The necessary kwargs are passed to the loading and fitting functions
+defined by the <cite>source</cite> argument:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>csv        -&gt; possible kwargs: folder, name_format, e.g.                “scan_{}_primary.csv”</p></li>
+<li><p>spec       -&gt; possible kwargs: folder</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query</p></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>2D plot, png-file</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.plot_fit">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">plot_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xrange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#plot_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.plot_fit" title="Link to this definition">#</a></dt>
+<dd><p>Fit and plot series of scans with chosen functional and returns fit parameters.</p>
+<p>Uses lmfit (<a class="reference external" href="https://lmfit.github.io/lmfit-py/">https://lmfit.github.io/lmfit-py/</a>).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>scan_series</strong><span class="classifier">int</span></dt><dd><p>start, stop, step, [start2, stop2, step2, … ,startn, stopn, stepn]</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>output</strong><span class="classifier">boolean, optional</span></dt><dd><p>Output fit parameters and plot data+fit for each scan.</p>
+</dd>
+<dt><strong>var_series</strong><span class="classifier">string or list</span></dt><dd><p>If string</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Varying variable for scan series to be read from scan (detector),</dt><dd><p>e.g. SampK (sample temperature), optional.</p>
+</dd>
+</dl>
+</li>
+<li><p>String starting with #metadata, reads metadata from CSV baseline</p></li>
+</ul>
+<p>If list, information on metadata to be read: List starting with #P, #U
+or #Q for motor positions, user values or Q-position, optional:</p>
+<ul class="simple">
+<li><p>#P [‘#P’, row, element_number], e.g. [‘#P’, 2, 0]</p></li>
+<li><p>#U [‘#U’, Variable, element_number], e.g. [‘#U’, ‘KepkoI’, 1]</p></li>
+<li><p>#Q [‘#Q’, None, element_number], e.g. [‘#Q’, None, 0]</p></li>
+<li><p>#xx like #UA etc.: [‘#UA’, row, element_number]</p></li>
+</ul>
+<p>If None, successive scans will be numbered starting from zero.</p>
+</dd>
+<dt><strong>positioner</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the positioner, this needs to be the same as defined in
+Bluesky or SPEC. If None is passed, it defauts to ‘4C Theta’ motor.</p>
+</dd>
+<dt><strong>detector</strong><span class="classifier">string, optional</span></dt><dd><p>Detector to be read from this scan, again it needs to be the same name
+as in Bluesky. If None is passed, it defaults to the APD detector.</p>
+</dd>
+<dt><strong>monitor</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the monitor detector. If None is passed, it defaults to the ion
+chamber 3.</p>
+</dd>
+<dt><strong>normalize</strong><span class="classifier">boolean, optional</span></dt><dd><p>Normalization to selected/default monitor on/off</p>
+</dd>
+<dt><strong>xrange: list</strong></dt><dd><p>Set positioner range for fitting</p>
+</dd>
+<dt><strong>noerror</strong><span class="classifier">boolean, optional</span></dt><dd><p>Plotting of errorbars on/off</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><p>The necessary kwargs are passed to the loading functions defined by the
+<cite>source</cite> argument:</p>
+<ul class="simple">
+<li><p>csv -&gt; possible kwargs: folder, name_format.</p></li>
+<li><p>spec -&gt; possible kwargs: folder.</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query.</p></li>
+</ul>
+<dl class="simple">
+<dt>model<span class="classifier">string, optional</span></dt><dd><p>fit model: Gaussian, Lorentzian, PseudoVoigt</p>
+</dd>
+</dl>
+<p>Note that a warning will be printed if the an unnecessary kwarg is
+passed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>fit</strong><span class="classifier">lmfit ModelResult class</span></dt><dd><p>Contains the fit results. See:
+<a class="reference external" href="https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class">https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class</a></p>
+</dd>
+<dt>plot: plot of fitted data as function of variable changing between scans</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.load_axes">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">load_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#load_axes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.load_axes" title="Link to this definition">#</a></dt>
+<dd><p>Load default positioner and detector for plot</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan</strong><span class="classifier">int, list</span></dt><dd><p>single scan
+or list [start, stop, step, start2, stop2, step2, … ,startn, stopn, stepn]</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>positioner</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the positioner, this needs to be the same as defined in
+Bluesky or SPEC. If None is passed, it defauts to ‘4C Theta’ motor.</p>
+</dd>
+<dt><strong>detector</strong><span class="classifier">string, optional</span></dt><dd><p>Detector to be read from this scan, again it needs to be the same name
+as in Bluesky. If None is passed, it defaults to the APD detector.</p>
+</dd>
+<dt><strong>monitor</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the monitor detector. If None is passed, it defaults to the ion
+chamber 3.</p>
+</dd>
+<dt><strong>defaults</strong><span class="classifier">string, optional</span></dt><dd><p>Default values for positioner and detector</p>
+</dd>
+<dt><strong>read: boolean, optional</strong></dt><dd><p>Determines if positioner is read from metadata</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>matplotlib.axes.Axes</dt><dd><p>Axes object holding the plot.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.plot_data">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">plot_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deriv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#plot_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.plot_data" title="Link to this definition">#</a></dt>
+<dd><p>Plot and fit data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan_series</strong><span class="classifier">list</span></dt><dd><p>list [start, stop, step, start2, stop2, step2, … ,startn, stopn, stepn]</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>positioner</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the positioner, this needs to be the same as defined in
+Bluesky or SPEC.</p>
+</dd>
+<dt><strong>detector</strong><span class="classifier">string, optional</span></dt><dd><p>Detector to be read from this scan, again it needs to be the same name
+as in Bluesky.</p>
+</dd>
+<dt><strong>monitor</strong><span class="classifier">string, optional</span></dt><dd><p>Monitor to be read from this scan, again it needs to be the same name
+as in Bluesky.</p>
+</dd>
+<dt><strong>normalize</strong><span class="classifier">boolean, optional</span></dt><dd><p>Normalization to selected/default monitor on/off</p>
+</dd>
+<dt><strong>log: boolean</strong></dt><dd><p>If True, y-axis plotted in logarithmic scale.</p>
+</dd>
+<dt><strong>deriv</strong><span class="classifier">boolean, optional</span></dt><dd><p>calculated derivative</p>
+</dd>
+<dt><strong>fit</strong><span class="classifier">boolean, optional</span></dt><dd><p>Fitting of peak using model on/off. In case of deriv=True, derivative is fitted</p>
+</dd>
+<dt><strong>direction</strong><span class="classifier">list, int</span></dt><dd><p>multiply axes for inversion: [1,-1] inverts y-axis</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><dl class="simple">
+<dt>model: enumeration</dt><dd><p>fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt</p>
+</dd>
+<dt><cite>source</cite> argument:</dt><dd><ul class="simple">
+<li><p>csv -&gt; possible kwargs: folder, name_format.</p></li>
+<li><p>spec -&gt; possible kwargs: folder.</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query, use_db_v1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>matplotlib.axes.Axes</dt><dd><p>Axes object holding the plot.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.diffraction.dbplot">
+<span class="sig-prename descclassname"><span class="pre">polartools.diffraction.</span></span><span class="sig-name descname"><span class="pre">dbplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deriv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/diffraction.html#dbplot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.diffraction.dbplot" title="Link to this definition">#</a></dt>
+<dd><p>Plot and fit data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan_series</strong><span class="classifier">int, list</span></dt><dd><p>single scan
+or list [start, stop, step, start2, stop2, step2, … ,startn, stopn, stepn]</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>positioner</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the positioner, this needs to be the same as defined in
+Bluesky or SPEC. If None is passed, it defauts to ‘4C Theta’ motor.</p>
+</dd>
+<dt><strong>detector</strong><span class="classifier">string, optional</span></dt><dd><p>Detector to be read from this scan, again it needs to be the same name
+as in Bluesky. If None is passed, it defaults to the APD detector.</p>
+</dd>
+<dt><strong>monitor</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the monitor detector. If None is passed, it defaults to the ion
+chamber 3.</p>
+</dd>
+<dt><strong>normalize</strong><span class="classifier">boolean, optional</span></dt><dd><p>Normalization to selected/default monitor on/off</p>
+</dd>
+<dt><strong>deriv</strong><span class="classifier">boolean, optional</span></dt><dd><p>calculated derivative</p>
+</dd>
+<dt><strong>fit</strong><span class="classifier">boolean, optional</span></dt><dd><p>Fitting of peak using model on/off. In case of deriv=True, derivative is fitted</p>
+</dd>
+<dt><strong>direction</strong><span class="classifier">list, int</span></dt><dd><p>multiply axes for inversion: [1,-1] inverts y-axis</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><dl class="simple">
+<dt>model<span class="classifier">string, optional</span></dt><dd><ul class="simple">
+<li><p>fit model: Gaussian, Lorentzian, PseudoVoigt</p></li>
+</ul>
+</dd>
+<dt><cite>source</cite> argument:</dt><dd><ul class="simple">
+<li><p>csv -&gt; possible kwargs: folder, name_format.</p></li>
+<li><p>spec -&gt; possible kwargs: folder.</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query, use_db_v1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>matplotlib.axes.Axes</dt><dd><p>Axes object holding the plot.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../area_detector_handlers/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">polartools.area_detector_handlers</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../load_data/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">polartools.load_data</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.rng"><code class="docutils literal notranslate"><span class="pre">rng</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.Model.Gaussian"><code class="docutils literal notranslate"><span class="pre">Model.Gaussian</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.Model.Lorentzian"><code class="docutils literal notranslate"><span class="pre">Model.Lorentzian</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.Model.PseudoVoigt"><code class="docutils literal notranslate"><span class="pre">Model.PseudoVoigt</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.fit_peak"><code class="docutils literal notranslate"><span class="pre">fit_peak()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.load_info"><code class="docutils literal notranslate"><span class="pre">load_info()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.fit_series"><code class="docutils literal notranslate"><span class="pre">fit_series()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.load_series"><code class="docutils literal notranslate"><span class="pre">load_series()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.get_type"><code class="docutils literal notranslate"><span class="pre">get_type()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.load_mesh"><code class="docutils literal notranslate"><span class="pre">load_mesh()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.load_dichromesh"><code class="docutils literal notranslate"><span class="pre">load_dichromesh()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.plot_2d"><code class="docutils literal notranslate"><span class="pre">plot_2d()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.plot_fit"><code class="docutils literal notranslate"><span class="pre">plot_fit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.load_axes"><code class="docutils literal notranslate"><span class="pre">load_axes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.plot_data"><code class="docutils literal notranslate"><span class="pre">plot_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.diffraction.dbplot"><code class="docutils literal notranslate"><span class="pre">dbplot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/APS-4ID-POLAR/polartools/edit/main/docs/source/api/polartools/diffraction/index.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/api/polartools/diffraction/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
