@@ -1,0 +1,1201 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>polartools.load_data &#8212; polartools</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../../../_static/documentation_options.js?v=21a70cf8"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/polartools/load_data/index';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="polartools.manage_database" href="../manage_database/index.html" />
+    <link rel="prev" title="polartools.diffraction" href="../diffraction/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.5.5.post54+g91d2811ec" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">polartools</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../release-history.html">
+    Release history
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../release-history.html">
+    Release history
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../absorption/index.html">polartools.absorption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../area_detector_handlers/index.html">polartools.area_detector_handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../diffraction/index.html">polartools.diffraction</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">polartools.load_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../manage_database/index.html">polartools.manage_database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pressure_calibration/index.html">polartools.pressure_calibration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../process_images/index.html">polartools.process_images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xmcd_gui/index.html">polartools.xmcd_gui</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">polartools</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.load_data</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-polartools.load_data">
+<span id="polartools-load-data"></span><h1>polartools.load_data<a class="headerlink" href="#module-polartools.load_data" title="Link to this heading">#</a></h1>
+<p>Base functions to load data from various sources.</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_spec" title="polartools.load_data.load_spec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_spec</span></code></a>(scan_id, spec_file[, folder])</p></td>
+<td><p>Load data from spec file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_csv" title="polartools.load_data.load_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_csv</span></code></a>(scan_id[, folder, name_format])</p></td>
+<td><p>Load data from the 'primary' stream from exported csv files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_data" title="polartools.load_data.load_hdf5_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_data</span></code></a>(scan, folder[, fname_format, ...])</p></td>
+<td><p>Wrapper that loads HDF files using <cite>h5py</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.hdf5_to_dataframe" title="polartools.load_data.hdf5_to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hdf5_to_dataframe</span></code></a>(data)</p></td>
+<td><p>Convert an h5py object into a DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_master" title="polartools.load_data.load_hdf5_master"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_master</span></code></a>(scan, folder[, fname_format])</p></td>
+<td><p>Wrapper that loads HDF files using <cite>h5py</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_databroker" title="polartools.load_data.load_databroker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_databroker</span></code></a>(scan_id[, db, stream, ...])</p></td>
+<td><p>Load data of the first scan with the provided scan_id.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_table" title="polartools.load_data.load_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_table</span></code></a>(scan[, source])</p></td>
+<td><p>Automated scan table loader.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.is_Bluesky_specfile" title="polartools.load_data.is_Bluesky_specfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_Bluesky_specfile</span></code></a>(source[, folder])</p></td>
+<td><p>Check if the specfile was created by Bluesky.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.db_query" title="polartools.load_data.db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db_query</span></code></a>(db, query)</p></td>
+<td><p>Searches the databroker v2 database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.show_meta" title="polartools.load_data.show_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_meta</span></code></a>([last, scans, scans_to, db, ...])</p></td>
+<td><p>Print metadata of scans.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.collect_meta" title="polartools.load_data.collect_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_meta</span></code></a>(scan_numbers, meta_keys[, db, ...])</p></td>
+<td><p>Extracts metadata of a list of scans.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.lookup_position" title="polartools.load_data.lookup_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookup_position</span></code></a>(db, scan[, search_string, query])</p></td>
+<td><p>Lookup positioner values in past scans.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.HDF_DEFAULT_FNAME_FORMAT" title="polartools.load_data.HDF_DEFAULT_FNAME_FORMAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HDF_DEFAULT_FNAME_FORMAT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.BLUESKY_DEFAULT_LOCATION" title="polartools.load_data.BLUESKY_DEFAULT_LOCATION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLUESKY_DEFAULT_LOCATION</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_catalog" title="polartools.load_data.load_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_catalog</span></code></a>([name, query, handlers, tiled_path])</p></td>
+<td><p>Loads a databroker catalog and register data handlers.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_spec" title="polartools.load_data.load_spec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_spec</span></code></a>(scan_id, spec_file[, folder])</p></td>
+<td><p>Load data from spec file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_csv" title="polartools.load_data.load_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_csv</span></code></a>(scan_id[, folder, name_format])</p></td>
+<td><p>Load data from the 'primary' stream from exported csv files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_databroker" title="polartools.load_data.load_databroker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_databroker</span></code></a>(scan_id[, db, stream, query, use_db_v1])</p></td>
+<td><p>Load data of the first scan with the provided scan_id.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.hdf5_to_dataframe" title="polartools.load_data.hdf5_to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hdf5_to_dataframe</span></code></a>(data)</p></td>
+<td><p>Convert an h5py object into a DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_master" title="polartools.load_data.load_hdf5_master"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_master</span></code></a>(scan, folder[, fname_format])</p></td>
+<td><p>Wrapper that loads HDF files using <cite>h5py</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_data" title="polartools.load_data.load_hdf5_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_data</span></code></a>(scan, folder[, fname_format, h5_location])</p></td>
+<td><p>Wrapper that loads HDF files using <cite>h5py</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_table" title="polartools.load_data.load_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_table</span></code></a>(scan[, source])</p></td>
+<td><p>Automated scan table loader.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.is_Bluesky_specfile" title="polartools.load_data.is_Bluesky_specfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_Bluesky_specfile</span></code></a>(source[, folder])</p></td>
+<td><p>Check if the specfile was created by Bluesky.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.db_query" title="polartools.load_data.db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db_query</span></code></a>(db, query)</p></td>
+<td><p>Searches the databroker v2 database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.show_meta" title="polartools.load_data.show_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_meta</span></code></a>([last, scans, scans_to, db, query, ...])</p></td>
+<td><p>Print metadata of scans.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.collect_meta" title="polartools.load_data.collect_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_meta</span></code></a>(scan_numbers, meta_keys[, db, query])</p></td>
+<td><p>Extracts metadata of a list of scans.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.lookup_position" title="polartools.load_data.lookup_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookup_position</span></code></a>(db, scan[, search_string, query])</p></td>
+<td><p>Lookup positioner values in past scans.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.load_data.HDF_DEFAULT_FNAME_FORMAT">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">HDF_DEFAULT_FNAME_FORMAT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scan_{:06d}_master.hdf'</span></span><a class="headerlink" href="#polartools.load_data.HDF_DEFAULT_FNAME_FORMAT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.load_data.BLUESKY_DEFAULT_LOCATION">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">BLUESKY_DEFAULT_LOCATION</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'entry/instrument/bluesky/streams/primary'</span></span><a class="headerlink" href="#polartools.load_data.BLUESKY_DEFAULT_LOCATION" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.load_catalog">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">load_catalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handlers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiled_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/raw'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#load_catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.load_catalog" title="Link to this definition">#</a></dt>
+<dd><p>Loads a databroker catalog and register data handlers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str, optional</span></dt><dd><p>Name of the database. Defaults to 4-ID-D name.</p>
+</dd>
+<dt><strong>query</strong><span class="classifier">dict, optional</span></dt><dd><p>Dictionary with search parameters for the database.</p>
+</dd>
+<dt><strong>handlers</strong><span class="classifier">dict, optional</span></dt><dd><p>Dictionary organized as {handler_name: handler_class}. If None,
+defaults to handlers used at 4-ID-D.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>cat</strong><span class="classifier">databroker catalog</span></dt><dd><p>Catalog after running the query, and registering the handler.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.load_spec">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">load_spec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#load_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.load_spec" title="Link to this definition">#</a></dt>
+<dd><p>Load data from spec file.</p>
+<p>If <cite>spec_file</cite> is the file name, it will load the spec file internally
+which is time consuming.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan_id</strong><span class="classifier">int</span></dt><dd><p>Scan_id of the scan to be retrieved.</p>
+</dd>
+<dt><strong>spec_file</strong><span class="classifier">string or spec2nexus.spec.SpecDataFile</span></dt><dd><p>Either the spec file name or a SpecDataFile instance.</p>
+</dd>
+<dt><strong>folder</strong><span class="classifier">string, optional</span></dt><dd><p>Folder where spec file is located.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>Table with the data from scan.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">spec2nexus.spec.SpecDataFile()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.load_csv">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">load_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scan_{}_primary.csv'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#load_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.load_csv" title="Link to this definition">#</a></dt>
+<dd><p>Load data from the ‘primary’ stream from exported csv files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan_id</strong><span class="classifier">int</span></dt><dd><p>Scan_id of the scan to be retrieved.</p>
+</dd>
+<dt><strong>folder</strong><span class="classifier">string, optional</span></dt><dd><p>Folder where csv files are located.</p>
+</dd>
+<dt><strong>name_format</strong><span class="classifier">string, optional</span></dt><dd><p>General format of file name. The correct name must be
+retrievable through: <cite>file_name_format.format(scan_id)</cite></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>Table with the data from the primary stream.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html#pandas.read_csv" title="(in pandas v3.0.2)"><code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code></a></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.load_databroker">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">load_databroker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'primary'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_db_v1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#load_databroker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.load_databroker" title="Link to this definition">#</a></dt>
+<dd><p>Load data of the first scan with the provided scan_id.</p>
+<p>Currently defaults to databroker.v1 because it is faster. See issue #28.</p>
+<p>For further details, refer to the <cite>databroker</cite> <a class="reference external" href="https://blueskyproject.io/databroker/">documentation</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan_id</strong><span class="classifier">int</span></dt><dd><p>Scan_id of the scan to be retrieved</p>
+</dd>
+<dt><strong>db</strong></dt><dd><p><cite>databroker</cite> database</p>
+</dd>
+<dt><strong>stream</strong><span class="classifier">string, optional</span></dt><dd><p>Selects the stream from which data will be loaded.</p>
+</dd>
+<dt><strong>query</strong><span class="classifier">dict, optional</span></dt><dd><p>Dictionary with search parameters for the database.</p>
+</dd>
+<dt><strong>use_db_v1</strong><span class="classifier">bool, optional</span></dt><dd><p>Chooses databroker API version between ‘v1’ or ‘v2’, defaults to ‘v1’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>Table with the data from the primary stream.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.hdf5_to_dataframe">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">hdf5_to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#hdf5_to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.hdf5_to_dataframe" title="Link to this definition">#</a></dt>
+<dd><p>Convert an h5py object into a DataFrame.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Assumes a specific layout: for each top-level key, the data is read
+from the <code class="docutils literal notranslate"><span class="pre">&quot;value&quot;</span></code> sub-key (i.e. <code class="docutils literal notranslate"><span class="pre">data[key][&quot;value&quot;][()]</span></code>).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">h5py.File or h5py.Group</span></dt><dd><p>Object with the data. Each key needs to have a <code class="docutils literal notranslate"><span class="pre">&quot;value&quot;</span></code> sub-key.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><p>Table with one column per top-level key.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#polartools.load_data.load_hdf5_master" title="polartools.load_data.load_hdf5_master"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_hdf5_master()</span></code></a></dt><dd></dd>
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">h5py.File()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.load_hdf5_master">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">load_hdf5_master</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">HDF_DEFAULT_FNAME_FORMAT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#load_hdf5_master"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.load_hdf5_master" title="Link to this definition">#</a></dt>
+<dd><p>Wrapper that loads HDF files using <cite>h5py</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan_id</strong><span class="classifier">int</span></dt><dd><p>Scan_id of the scan to be retrieved.</p>
+</dd>
+<dt><strong>folder</strong><span class="classifier">string, optional</span></dt><dd><p>Folder where the master files are located.</p>
+</dd>
+<dt><strong>fname_format</strong><span class="classifier">string, optional</span></dt><dd><p>General format of file name. The correct name must be retrievable
+through: <cite>file_name_format.format(scan_id)</cite></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">h5py.File</span></dt><dd><p>Loaded HDF file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">h5py.File()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.load_hdf5_data">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">load_hdf5_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">HDF_DEFAULT_FNAME_FORMAT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h5_location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">BLUESKY_DEFAULT_LOCATION</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#load_hdf5_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.load_hdf5_data" title="Link to this definition">#</a></dt>
+<dd><p>Wrapper that loads HDF files using <cite>h5py</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan_id</strong><span class="classifier">int</span></dt><dd><p>Scan_id of the scan to be retrieved.</p>
+</dd>
+<dt><strong>folder</strong><span class="classifier">string, optional</span></dt><dd><p>Folder where the master files are located.</p>
+</dd>
+<dt><strong>fname_format</strong><span class="classifier">string, optional</span></dt><dd><p>General format of file name. The correct name must be retrievable
+through: <cite>file_name_format.format(scan_id)</cite></p>
+</dd>
+<dt><strong>h5_location</strong><span class="classifier">string, optional</span></dt><dd><p>Location of the Bluesky data stream.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>Table with the data from the primary stream.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#polartools.load_data.load_hdf5_master" title="polartools.load_data.load_hdf5_master"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_hdf5_master()</span></code></a></dt><dd></dd>
+<dt><a class="reference internal" href="#polartools.load_data.hdf5_to_dataframe" title="polartools.load_data.hdf5_to_dataframe"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.hdf5_to_dataframe()</span></code></a></dt><dd></dd>
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">h5py.File()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.load_table">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">load_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#load_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.load_table" title="Link to this definition">#</a></dt>
+<dd><p>Automated scan table loader.</p>
+<p>The automation is based on the source argument.</p>
+<ul class="simple">
+<li><p>if source == ‘csv’ -&gt; uses <cite>load_csv</cite>.</p></li>
+<li><p>else if source is a string or nexus2spec.spec.SpecDataFile -&gt; uses    <cite>load_spec</cite>.</p></li>
+<li><p>else -&gt; uses <cite>load_databroker</cite>.</p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>scan</strong><span class="classifier">int</span></dt><dd><p>Scan_id our uid. If scan_id is passed, it will load the last scan with
+that scan_id. See kwargs for search options.</p>
+</dd>
+<dt><strong>source</strong><span class="classifier">databroker database, name of the spec file, or ‘csv’</span></dt><dd><p>Note that applicable kwargs depend on this selection.</p>
+</dd>
+<dt><strong>kwargs</strong></dt><dd><p>The necessary kwargs are passed to the loading functions defined by the
+<cite>source</cite> argument:</p>
+<ul class="simple">
+<li><p>csv -&gt; possible kwargs: folder, name_format.</p></li>
+<li><p>spec -&gt; possible kwargs: folder.</p></li>
+<li><p>databroker -&gt; possible kwargs: stream, query, use_db_v1.</p></li>
+</ul>
+<p>Note that a warning will be printed if the an unnecessary kwarg is
+passed.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>table</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>Table with the scan data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#polartools.load_data.load_databroker" title="polartools.load_data.load_databroker"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_databroker()</span></code></a></dt><dd></dd>
+<dt><a class="reference internal" href="#polartools.load_data.load_csv" title="polartools.load_data.load_csv"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_csv()</span></code></a></dt><dd></dd>
+<dt><a class="reference internal" href="#polartools.load_data.load_spec" title="polartools.load_data.load_spec"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_spec()</span></code></a></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.is_Bluesky_specfile">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">is_Bluesky_specfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#is_Bluesky_specfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.is_Bluesky_specfile" title="Link to this definition">#</a></dt>
+<dd><p>Check if the specfile was created by Bluesky.</p>
+<p>It looks for a “Bluesky” comment in the file header.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>source</strong><span class="classifier">string or spec2nexus.spec.SpecDataFile</span></dt><dd><p>Either the spec file name or a SpecDataFile instance.</p>
+</dd>
+<dt><strong>folder</strong><span class="classifier">string, optional</span></dt><dd><p>Folder where spec file is located.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>y</strong><span class="classifier">bool</span></dt><dd><p>True if spec_file was generated by Bluesky, False otherwise.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">spec2nexus.spec.SpecDataFile()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.db_query">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">db_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#db_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.db_query" title="Link to this definition">#</a></dt>
+<dd><p>Searches the databroker v2 database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>db</strong></dt><dd><p><cite>databroker</cite> database.</p>
+</dd>
+<dt><strong>query: dict</strong></dt><dd><p>Search parameters.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>_db</dt><dd><p>Subset of db that satisfy the search parameters. Note that it has the
+same format as db.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">databroker.catalog.search()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.show_meta">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">show_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scans_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'short'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'plain'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#show_meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.show_meta" title="Link to this definition">#</a></dt>
+<dd><p>Print metadata of scans.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>last</strong><span class="classifier">int</span></dt><dd><p>last number of scans to be displayed</p>
+</dd>
+<dt><strong>scans</strong><span class="classifier">int, list</span></dt><dd><p>List of scan numbers to process.</p>
+</dd>
+<dt><strong>scans_to</strong><span class="classifier">int, list</span></dt><dd><p>Final scan number to process. Note that this is only meaningful if
+an integer is passed to <cite>scans</cite>.</p>
+</dd>
+<dt><strong>db</strong><span class="classifier">databroker database (optional)</span></dt><dd><p>Searcheable database</p>
+</dd>
+<dt><strong>query</strong><span class="classifier">dictionary, optional</span></dt><dd><p>Search parameters.</p>
+</dd>
+<dt><strong>meta_keys</strong><span class="classifier">string or iterable, optional</span></dt><dd><p>List with metadata keys to read. There are two preset metadata lists
+that can be used with <cite>meta_keys=”short”</cite> or <cite>meta_keys=”long”</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.collect_meta">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">collect_meta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_numbers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#collect_meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.collect_meta" title="Link to this definition">#</a></dt>
+<dd><p>Extracts metadata of a list of scans.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan_numbers</strong><span class="classifier">list</span></dt><dd><p>List of scan number range to be displayed</p>
+</dd>
+<dt><strong>db</strong><span class="classifier">databroker database</span></dt><dd><p>Searcheable database</p>
+</dd>
+<dt><strong>meta_keys</strong><span class="classifier">iterable</span></dt><dd><p>List with metadata keys to read.</p>
+</dd>
+<dt><strong>query</strong><span class="classifier">dictionary, optional</span></dt><dd><p>Search parameters.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>meta</strong><span class="classifier">dictionary</span></dt><dd><p>Metadata organized by scan number or uid (whatever is given in
+<cite>scans</cite>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.lookup_position">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">lookup_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#lookup_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.lookup_position" title="Link to this definition">#</a></dt>
+<dd><p>Lookup positioner values in past scans.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>db</strong><span class="classifier">databroker database</span></dt><dd><p>Searcheable database</p>
+</dd>
+<dt><strong>scan</strong><span class="classifier">integer</span></dt><dd><p>Scan numbers or uids.</p>
+</dd>
+<dt><strong>search_string</strong><span class="classifier">string</span></dt><dd><p>Full or part of positioner name.</p>
+</dd>
+<dt><strong>query: dict</strong></dt><dd><p>Search parameters.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>output: list</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../diffraction/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">polartools.diffraction</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../manage_database/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">polartools.manage_database</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.HDF_DEFAULT_FNAME_FORMAT"><code class="docutils literal notranslate"><span class="pre">HDF_DEFAULT_FNAME_FORMAT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.BLUESKY_DEFAULT_LOCATION"><code class="docutils literal notranslate"><span class="pre">BLUESKY_DEFAULT_LOCATION</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_catalog"><code class="docutils literal notranslate"><span class="pre">load_catalog()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_spec"><code class="docutils literal notranslate"><span class="pre">load_spec()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_csv"><code class="docutils literal notranslate"><span class="pre">load_csv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_databroker"><code class="docutils literal notranslate"><span class="pre">load_databroker()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.hdf5_to_dataframe"><code class="docutils literal notranslate"><span class="pre">hdf5_to_dataframe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_hdf5_master"><code class="docutils literal notranslate"><span class="pre">load_hdf5_master()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_hdf5_data"><code class="docutils literal notranslate"><span class="pre">load_hdf5_data()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_table"><code class="docutils literal notranslate"><span class="pre">load_table()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.is_Bluesky_specfile"><code class="docutils literal notranslate"><span class="pre">is_Bluesky_specfile()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.db_query"><code class="docutils literal notranslate"><span class="pre">db_query()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.show_meta"><code class="docutils literal notranslate"><span class="pre">show_meta()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.collect_meta"><code class="docutils literal notranslate"><span class="pre">collect_meta()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.lookup_position"><code class="docutils literal notranslate"><span class="pre">lookup_position()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/APS-4ID-POLAR/polartools/edit/main/docs/source/api/polartools/load_data/index.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/api/polartools/load_data/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

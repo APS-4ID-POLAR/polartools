@@ -1,0 +1,420 @@
+polartools.pressure_calibration
+===============================
+
+.. py:module:: polartools.pressure_calibration
+
+.. autoapi-nested-parse::
+
+   Functions to do pressure calibration using Au or Ag diffraction.
+
+   .. autosummary::
+      ~load_ag_params
+      ~load_au_params
+      ~calculate_tth
+      ~calculate_pressure
+      ~xrd_calibrate_pressure
+
+   ..
+       !! processed by numpydoc !!
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.pressure_calibration.load_ag_params
+   polartools.pressure_calibration.load_au_params
+   polartools.pressure_calibration.load_pt_params
+   polartools.pressure_calibration.fit_bragg_peak
+   polartools.pressure_calibration.calculate_tth
+   polartools.pressure_calibration.calculate_pressure
+   polartools.pressure_calibration.xrd_calibrate_pressure
+
+
+Module Contents
+---------------
+
+.. py:function:: load_ag_params(temperature)
+
+   
+   Load the Ag parameters for calculating the pressure.
+
+   These parameters were extracted from Holzapfel et al., J. Phys. Chem. Ref.
+   Data 30, 515 (2001). It linearly interpolates the data.
+
+   :Parameters:
+
+       **temperature** : float
+           Measurement temperature in Kelvin.
+
+
+
+   :Returns:
+
+       **v0_out, k0_out, kp0_out** : float
+           Volume, K and K' calibration parameters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_au_params(temperature)
+
+   
+   Load the Au parameters for calculating the pressure.
+
+   These parameters were extracted from Holzapfel et al., J. Phys. Chem. Ref.
+   Data 30, 515 (2001). It linearly interpolates the data.
+
+   :Parameters:
+
+       **temperature** : float
+           Measurement temperature in Kelvin.
+
+
+
+   :Returns:
+
+       **v0_out, k0_out, kp0_out** : float
+           Volume, K and K' calibration parameters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_pt_params()
+
+   
+   Return the equation-of-state parameters for platinum.
+
+   Reference values are room-temperature constants from the Holzapfel
+   parameterization; no temperature dependence is applied.
+
+
+
+
+   :Returns:
+
+       **v0** : float
+           Reference unit-cell volume (Å³).
+
+       **bt** : float
+           Isothermal bulk modulus (GPa).
+
+       **btp** : float
+           Pressure derivative of the bulk modulus (dimensionless).
+
+       **alphat** : float
+           Thermal expansion coefficient parameter (1/K).
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: fit_bragg_peak(x, y, center=None, sigma=None, amplitude=None, fraction=None, fit_fraction=True, slope=None, intercept=None, fit_slope=True)
+
+   
+   Fit Bragg peak with a pseudo-voigt function.
+
+   Uses lmfit (https://lmfit.github.io/lmfit-py/).
+
+   WARNING: This imposes constrains to the fit that are described in
+   `polartools.pressure_calibration._generate_initial_guess`
+
+   :Parameters:
+
+       **x** : iterable
+           List of x-axis values.
+
+       **y** : iterable
+           List of y-axis values.
+
+       **center, sigma, amplitude, fraction** : float, optional
+           Initial guess parameters of pseudo-voigt function. For more details,
+           see: :func: `lmfit.models.PseudoVoigtModel`
+
+       **fit_fraction** : boolean, optional
+           Flag to control if fraction will be varied.
+
+       **slope, intercept** : float, optional
+           Initial guess parameters of linear function. For more details,
+           see: :func: `lmfit.models.LinearModel`
+
+       **fit_slope** : boolean, optional
+           Flag to control if slope will be varied.
+
+
+
+   :Returns:
+
+       **fit** : lmfit ModelResult class
+           Contains the fit results. See:
+           https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`lmfit.models.PseudoVoigtModel`
+           ..
+       :func:`lmfit.models.LinearModel`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: calculate_tth(pressure, temperature, energy, bragg_peak, calibrant, tth_off=0.0)
+
+   
+   Calculate the two theta of Au or Ag Bragg peak of given a pressure.
+
+   See Holzapfel et al., J. Phys. Chem. Ref. Data 30, 515 (2001) for more
+   details.
+
+   :Parameters:
+
+       **pressure** : float or iterable
+           Pressure (or list of) to be converted.
+
+       **temperature** : float
+           Measurement temperature in Kelvin.
+
+       **energy** : float
+           X-ray energy used in keV.
+
+       **bragg_peak** : iterable
+           List containing the Bragg peak indices [H, K, L].
+
+       **calibrant** : string
+           Selects the calibrant used. Options are 'Au' or 'Ag'.
+
+       **tth_off** : float, optional
+           Offset between the reference two theta and the measured value.
+
+
+
+   :Returns:
+
+       **tth** : float or numpy.array
+           Calculated tth in degrees. A numpy.array is returned if an iterable is
+           passed to pressure.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: calculate_pressure(tth, temperature, energy, bragg_peak, calibrant, tth_off=0.0)
+
+   
+   Calculate the pressure using diffraction from Au, Ag, or Pt.
+
+   For Au and Ag see Holzapfel et al., J. Phys. Chem. Ref. Data 30, 515 (2001)
+   for more details.
+
+   For Pt see Holmes et al., J. Appl. Phys. 66, 2962–2967 (1989) for more
+   details.
+
+   :Parameters:
+
+       **tth** : float or iterable
+           Two theta of the selected Bragg peak. It can be a list of two theta.
+
+       **temperature** : float
+           Measurement temperature in Kelvin.
+
+       **energy** : float
+           X-ray energy used in keV.
+
+       **bragg_peak** : iterable
+           List containing the Bragg peak indices [H, K, L].
+
+       **calibrant** : string
+           Selects the calibrant used. Options are 'Au', 'Ag', or 'Pt'.
+
+       **tth_off** : float, optional
+           Offset between the reference two theta and the measured value.
+
+
+
+   :Returns:
+
+       **pressure** : float or numpy.array
+           Calculated pressure in GPa. A numpy.array is returned if an iterable is
+           passed to tth.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: xrd_calibrate_pressure(scan, source, bragg_peak=(1, 1, 1), calibrant='Au', temperature=300, energy='monochromator_energy', positioner='huber_tth', detector='APDSector4', monitor=None, center=None, sigma=None, amplitude=None, fraction=None, fit_fraction=True, slope=None, intercept=None, fit_slope=True, tth_offset=0.0, **kwargs)
+
+   
+   Calibrate pressure using x-ray diffraction.
+
+   This is a wrapper of multiple functions in `polartools` meant to make it
+   more convenient to extract the pressure in XRD measurements.
+
+   For a given experiment, it is recommended to create a kwarg dictionary that
+   holds the input parameters that are different from the standard defaults,
+   and make it easier to process multiple scans. For instance:
+
+   .. code-block:: python
+
+       kwargs = {'db': db, 'calibrant': 'Ag', 'temperature': 10}
+       pressure = xrd_calibrate_pressure(100, **kwargs)
+
+   :Parameters:
+
+       **scan** : int or string
+           Scan our uid. It will load the last scan with that scan_id. See kwargs
+           for search options.
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **bragg_peak** : iterable, optional
+           List containing the Bragg peak indices [H, K, L].
+
+       **calibrant** : string, optional
+           Selects the calibrant used. Options are 'Au', 'Ag', or 'Pt'.
+
+       **temperature** : float or string, optional
+           A string can only be passed if using databroker. In this case it will
+           read the temperature from the database baseline stream. If float is
+           passed, then it is the temperature in Kelvin.
+
+       **energy** : float or string, optional
+           A string can only be passed if using databroker. In this case it will
+           read the energy from the database baseline stream. If float is passed,
+           then it is the energy in keV.
+
+       **positioner** : string, optional
+           2 theta motor name.
+
+       **detector** : string, optional
+           XRD detector name.
+
+       **monitor** : string, optional
+           Monitor detector name.
+
+       **center, sigma, amplitude, fraction** : float, optional
+           Initial guess parameters of pseudo-voigt function. For more details,
+           see: `lmfit.models.PseudoVoigtModel`.
+
+       **fit_fraction** : boolean, optional
+           Flag to control if fraction will be varied.
+
+       **slope, intercept** : float, optional
+           Initial guess parameters of linear function. For more details,
+           see: `lmfit.models.LinearModel`.
+
+       **fit_slope** : boolean, optional
+           Flag to control if slope will be varied.
+
+       **tth_off** : float, optional
+           Offset between the reference two theta and the measured value.
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **pressure** : float
+           Calculated pressure in GPa.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_table`
+           ..
+       :func:`polartools.load_data.load_scan`
+           ..
+       :func:`polartools.load_data.load_csv`
+           ..
+       :func:`polartools.load_data.load_databroker`
+           ..
+       :func:`polartools.process_data.fit_bragg_peak`
+           ..
+       :func:`polartools.pressure_calibration.calculate_pressure`
+           ..
+       :func:`lmfit.models.LinearModel`
+           ..
+       :func:`lmfit.models.PseudoVoigtModel`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+

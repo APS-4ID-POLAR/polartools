@@ -1,0 +1,239 @@
+polartools.manage_database
+==========================
+
+.. py:module:: polartools.manage_database
+
+.. autoapi-nested-parse::
+
+   Functions to import and export Bluesky data.
+
+   .. autosummary::
+      ~to_databroker
+      ~to_csv_json
+      ~from_databroker_inplace
+      ~remove_catalog
+
+   ..
+       !! processed by numpydoc !!
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.manage_database.to_databroker
+   polartools.manage_database.to_csv_json
+   polartools.manage_database.from_databroker_inplace
+   polartools.manage_database.remove_catalog
+
+
+Module Contents
+---------------
+
+.. py:function:: to_databroker(db, folder, query=None, external=False)
+
+   
+   Export a databroker catalog (or query subset) into msgpack files.
+
+   A narrow wrapper around the `databroker-pack`_ package, which also
+   provides a convenient command-line tool of its own.
+
+   .. _databroker-pack: https://blueskyproject.io/databroker-pack/index.html
+
+   .. warning::
+      When passing ``query``, run the query first and inspect the results
+      before exporting — it's easy to inadvertently export a very large
+      number of scans. See :func:`polartools.load_data.db_query`.
+
+   :Parameters:
+
+       **db**
+           Source databroker catalog.
+
+       **folder** : str
+           Destination directory.
+
+       **query** : dict, optional
+           Search parameters to select a subset of ``db``. See
+           :func:`polartools.load_data.db_query` for accepted keys.
+
+       **external** : bool, optional
+           If ``True``, also pack external image files (Lambda/Eiger/SPE)
+           referenced by the scans into ``folder/external_files``.
+
+
+
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.db_query`
+           ..
+       :func:`databroker_pack.export_catalog`
+           ..
+       :func:`databroker_pack.write_documents_manifest`
+           ..
+       :func:`databroker_pack.write_msgpack_catalog_file`
+           ..
+       
+   .. rubric:: Notes
+
+   - Scans are saved as msgpack documents under ``folder/documents``.
+   - ``catalog.yml`` and ``documents_manifest.txt`` are placed in ``folder``.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: to_csv_json(db, folder, query=None, fname_format='scan_{}_', overwrite=False, max_attempts=100)
+
+   
+   Exports scans into .csv and .json files.
+
+   The scans will be labeled by their `scan_id` metadata. If two or more scans
+   have the same `scan_id`, it will write the new scan with a `-number` suffix
+   where number will be the first available integer starting with 2.
+
+   .. warning::
+      When passing ``query``, run the query first and inspect the results
+      before exporting — it's easy to inadvertently export a very large
+      number of scans. See :func:`polartools.load_data.db_query`.
+
+   :Parameters:
+
+       **db**
+           Databroker database.
+
+       **folder** : str
+           Destination directory.
+
+       **query** : dict, optional
+           Search parameters to select a subsection of `db`. See
+           :func:`polartools.load_data.db_query` for more details.
+
+       **fname_format** : str, optional
+           Format of the string to be used for the file names. Note that one has
+           to be able to add the scan numbers into this string by doing:
+           `fname_format.format(scan_number)`.
+
+       **overwrite** : bool, optional
+           Flag to determine if an existing folder should be overwritten.
+
+       **max_attempts** : int, optional
+           Maximum number of times that a new suffix will be added to the file
+           name. Once it reaches this maximum, it will overwrite the last file.
+
+
+
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.db_query`
+           ..
+       :func:`suitcase.csv.export`
+           ..
+       :func:`suitcase.json_metadata.export`
+           ..
+       
+   .. rubric:: Notes
+
+   - Each scan has one json "-metadata.json" file, plus ome csv file for     each data stream, for instance "-primary.csv".
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_databroker_inplace(folder, name, catalog, merge=False)
+
+   
+   Load the exported databroker database.
+
+   This is a narrow usage of the `databroker-pack` package_. Note that this
+   package includes a convenient command line tool.
+
+   .. _package: https://blueskyproject.io/databroker-pack/index.html
+
+   :Parameters:
+
+       **folder** : str
+           Folder with files exported by
+           :func:`polartools.manage_database.to_databroker`.
+
+       **name** : str
+           Unique name that will be set in the databroker catalog.
+
+       **merge** : bool, optional
+           Flag to decide if this data will be merged into an existing catalog.
+           
+           Example ::
+           
+               from databroker import catalog
+               from polartools.manage_database import from_databroker_inplace
+           
+               from_databroker_inplace('folder/to/files', 'my_data')
+               db = catalog['my_data']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: remove_catalog(name, catalog=None)
+
+   
+   Removes a catalog created by `to_databroker`.
+
+
+   :Parameters:
+
+       **name** : str
+           Catalog name
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   - This will not remove the data files, only the catalog, which will not be     discoverable using `databroker.catalog`.
+
+   - It assumes that the catalog was created by `to_databroker` or     `databroker_pack`. The actual name of the file is     'databroker_unpack_NAME.yml'.
+
+
+
+   ..
+       !! processed by numpydoc !!
+

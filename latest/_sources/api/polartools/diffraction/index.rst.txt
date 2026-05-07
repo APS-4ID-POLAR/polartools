@@ -1,0 +1,958 @@
+polartools.diffraction
+======================
+
+.. py:module:: polartools.diffraction
+
+.. autoapi-nested-parse::
+
+   Functions to load and process x-ray diffraction data.
+
+   .. autosummary::
+       ~fit_peak
+       ~load_info
+       ~fit_series
+       ~load_series
+       ~get_type
+       ~load_mesh
+       ~plot_2d
+       ~plot_fit
+       ~load_axes
+       ~plot_data
+       ~dbplot
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.diffraction.rng
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.diffraction.Model
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.diffraction.fit_peak
+   polartools.diffraction.load_info
+   polartools.diffraction.fit_series
+   polartools.diffraction.load_series
+   polartools.diffraction.get_type
+   polartools.diffraction.load_mesh
+   polartools.diffraction.load_dichromesh
+   polartools.diffraction.plot_2d
+   polartools.diffraction.plot_fit
+   polartools.diffraction.load_axes
+   polartools.diffraction.plot_data
+   polartools.diffraction.dbplot
+
+
+Module Contents
+---------------
+
+.. py:data:: rng
+
+.. py:class:: Model(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Create a collection of name/value pairs.
+
+   Example enumeration:
+
+   >>> class Color(Enum):
+   ...     RED = 1
+   ...     BLUE = 2
+   ...     GREEN = 3
+
+   Access them by:
+
+   - attribute access:
+
+     >>> Color.RED
+     <Color.RED: 1>
+
+   - value lookup:
+
+     >>> Color(1)
+     <Color.RED: 1>
+
+   - name lookup:
+
+     >>> Color['RED']
+     <Color.RED: 1>
+
+   Enumerations can be iterated over, and know how many members they have:
+
+   >>> len(Color)
+   3
+
+   >>> list(Color)
+   [<Color.RED: 1>, <Color.BLUE: 2>, <Color.GREEN: 3>]
+
+   Methods can be added to enumerations, and members can have their own
+   attributes -- see the documentation for details.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: Gaussian
+
+
+   .. py:attribute:: Lorentzian
+
+
+   .. py:attribute:: PseudoVoigt
+
+
+.. py:function:: fit_peak(xdata, ydata, model=Model.Gaussian)
+
+   
+   Fit Bragg peak with model of choice: Gaussian, Lorentzian, PseudoVoigt.
+
+   Uses lmfit (https://lmfit.github.io/lmfit-py/).
+
+   :Parameters:
+
+       **xdata** : iterable
+           List of x-axis values.
+
+       **yydata** : iterable
+           List of y-axis values.
+
+       **model: enumeration**
+           fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
+
+
+
+   :Returns:
+
+       **fit** : lmfit ModelResult class
+           Contains the fit results. See:
+           https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_info(scan_id, info, source=None, **kwargs)
+
+   
+   Load metadata variable value.
+
+
+   :Parameters:
+
+       **scan** : int
+           Scan_id our uid. If scan_id is passed, it will load the last scan with
+           that scan_id.
+
+       **info** : list
+           If SPEC, information on metadata to be read: List starting with #P, #U,
+           #Q for motor positions, user values or Q-position or general #xx:
+           
+           - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+           - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+           - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+           - #xx like #UA etc.: ['#UA', row, element_number],
+           
+           If CSV, #metadata_name
+           If db, #baseline_information (e.g. #lakeshore340_sample)
+
+       **source: databroker database, name of the spec file, or 'csv'**
+           Note that applicable kwargs depend on this selection.
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **value** : number
+           Variable value.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: fit_series(scan_series, source=None, output=False, var_series=None, positioner=None, detector=None, monitor=None, normalize=False, xrange=None, **kwargs)
+
+   
+   Fit series of scans with chosen functional and returns fit parameters.
+
+   Uses lmfit_.
+
+   .. _lmfit: https://lmfit.github.io/lmfit-py/
+
+   :Parameters:
+
+       **scan_series** : int
+           start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **output** : boolean, optional
+           Output fit parameters and plot data+fit for each scan.
+
+       **var_series** : string or list
+           If string:
+           
+               - Varying variable for scan series to be read from scan                {detector), e.g. SampK (sample temperature), optional.
+               - String starting with #metadata, reads metadata from CSV baseline
+           
+           If list:
+           SPEC: Information on metadata to be read: List starting with #P, #U,
+           #Q for motor positions, user values or Q-position or general #xx:
+           
+               - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+               - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+               - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+               - #xx like #UA etc.: ['#UA', row, element_number].
+           
+           CSV: #metadata_name
+           If None, successive scans will be numbered starting from zero.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. If None is passed, it defaults to the APD detector.
+
+       **monitor** : string, optional
+           Name of the monitor detector. If None is passed, it defaults to the ion
+           chamber 3.
+
+       **normalize** : boolean, optional
+           Normalization to selected/default monitor on/off
+
+       **xrange** : list
+           Set positioner range for fitting
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+               - csv -> possible kwargs: folder, name_format.
+               - spec -> possible kwargs: folder.
+               - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+           
+           model -> fit model, options:
+           model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt.
+
+
+
+   :Returns:
+
+       **fit** : lmfit ModelResult class
+           Contains the fit results. See:
+           https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_series(scan_series, source=None, log=False, var_series=None, positioner=None, detector=None, monitor=None, normalize=False, scale=None, **kwargs)
+
+   
+   Load series of scans as function of variable like temperature of field
+   which can be spaced unequally. Generates input arrays for plot_2d.
+
+
+   :Parameters:
+
+       **scan_series** : list, int
+           start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **var_series** : string or list
+           string:
+           
+               - Varying variable for scan series to be read from scan                (detector), e.g. SampK (sample temperature), optional.
+               - String starting with #metadata, reads metadata from CSV baseline
+           
+           list:
+           SPEC: Information on metadata to be read: List starting with #P, #U,
+           #Q for motor positions, user values or Q-position or general #xx:
+           
+               - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+               - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+               - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+               - #xx like #UA etc.: ['#UA', row, element_number],
+           
+           CSV: #metadata_name
+           None, successive scans will be numbered starting from zero.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. If None is passed, it defaults to the APD detector.
+
+       **monitor** : string, optional
+           Name of the monitor detector for normalization. If None is passed, data
+           are not normalized.
+
+       **log** : boolean
+           If True, z-axis plotted in logarithmic scale.
+
+       **scale** : list, int
+           intensity limits: [z_min,z_max]
+
+       **kwargs**
+           The necessary kwargs are passed to the loading and fitting functions
+           defined by the `source` argument:
+           
+               - csv        -> possible kwargs: folder, name_format, e.g.            "scan_{}_primary.csv"
+               - spec       -> possible kwargs: folder
+               - databroker -> possible kwargs: stream, query
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **data** : arrays with x, y and z information for 2D plot
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_type(scan_id, source=None, **kwargs)
+
+   
+   get_type returns type of scan and scan parameters.
+
+
+   :Parameters:
+
+       **scan_id** : int
+           scan number
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **kwargs**
+           The necessary kwargs are passed to the loading and fitting functions
+           defined by the `source` argument:
+           
+               - csv        -> possible kwargs: folder, name_format, e.g.            "scan_{}_primary.csv"
+               - spec       -> possible kwargs: folder
+               - databroker -> possible kwargs: stream, query
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+           
+           Additional parameters in kwargs:
+           folder: location of scan file
+
+
+
+   :Returns:
+
+       **data** : type of scan and scan parameters.
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_mesh(scan, scan_range, source=None, log=False, mrange='reduced', detector=None, **kwargs)
+
+   
+   Load mesh generates input array for plot_2d from mesh scans:
+       mesh, dichromesh, hklmesh (SPEC)
+       grid_scan, rel_grid_scan (BlueSky)
+
+
+   :Parameters:
+
+       **scan_series** : list, int
+           start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+
+       **scan_range** : list, int
+           scan parameters of mesh scan [x0, x1, xinterval, y0, y1, yinterval]
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **log: boolean**
+           If True, z-axis plotted in logarithmic scale.
+
+       **mrange: string, list**
+           reduced, full, [xmin,ymin,xmx,ymax]
+
+       **kwargs**
+           The necessary kwargs are passed to the loading and fitting functions
+           defined by the `source` argument:
+           
+               - csv        -> possible kwargs: folder, name_format, e.g.                "scan_{}_primary.csv"
+               - spec       -> possible kwargs: folder
+               - databroker -> possible kwargs: stream, query
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+       **Additional parameters in kwargs:**
+           scale : list, int
+               intensity limits: [z_min,z_max]
+
+
+
+   :Returns:
+
+       **data** : arrays with x, y and z information for 2D plot and axes names
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_dichromesh(scan, scan_range, source=None, detector=None, **kwargs)
+
+   
+   Load dichromesh generates input array for plot_2d from mesh scans with
+   several polarizations per scan point:
+
+   - dichromesh (SPEC)
+   - dichro_grid_scan (BlueSky)
+
+   :Parameters:
+
+       **scan_series** : list, int
+           start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+
+       **scan_range** : list, int
+           scan parameters of mesh scan [x0, x1, xinterval, y0, y1, yinterval]
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **kwargs**
+           The necessary kwargs are passed to the loading and fitting functions
+           defined by the `source` argument:
+           
+               - csv        -> possible kwargs: folder, name_format, e.g.            "scan_{}_primary.csv"
+               - spec       -> possible kwargs: folder
+               - databroker -> possible kwargs: stream, query
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+       **Additional parameters in kwargs:**
+           scale : list, int
+               intensity limits: [z_min,z_max]
+
+
+
+   :Returns:
+
+       **data** : arrays with x, y and z information for 2D plot for left and right polarizatio and axes names
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_2d(scans, source=None, var_series=None, positioner=None, detector=None, monitor=None, normalize=False, log=False, scale=None, mrange='reduced', direction=[1, 1], output=False, xcut=None, ycut=None, plot2=None, scale2=None, **kwargs)
+
+   
+   Plot 2d:
+
+   Creates 2D plot from individual 1D scans as function of variable parameter
+   or  plots a 2D mesh scan.
+
+   Supported mesh scans:
+       - mesh, dichromesh, hklmesh (SPEC)
+       - grid_scan, rel_grid_scan (BlueSky)
+
+   :Parameters:
+
+       **scans** : list, int
+           1D-scans:   start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+           e.g. [10,14,2,23,27,4] will use scan #10,12,14,23,27
+           mesh-scan:  scan_number, e.g. 10 will read scan #10
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **var_series: string or list, optional**
+           string:
+           
+               - Varying variable for scan series to be read from scan
+                   (detector), e.g. SampK (sample temperature), optional.
+               - String starting with #metadata, reads metadata from CSV baseline
+           
+           list:
+           Information on metadata to be read: List starting with #P, #U or #Q for
+           motor positions, user values or Q-position, or general #xx, optional:
+           
+               - #P: ['#P', row, element_number], e.g. ['#P', 2, 0]
+               - #U: ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+               - #Q: ['#Q', None, element_number], e.g. ['#Q', None, 0]
+               - #xx like #UA etc.: ['#UA', row, element_number],
+           
+           If None, successive scans will be numbered starting from zero.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. If None is passed, it defaults to the APD detector.
+
+       **monitor** : string, optional
+           Name of the monitor detector for normalization. If None is passed,
+           data are not normalized.
+
+       **log: boolean, optional**
+           If True, z-axis plotted in logarithmic scale.
+
+       **scale** : list, int, optional
+           intensity limits: [z_min,z_max]
+
+       **scale2** : list, int, optional
+           intensity limits: [z_min,z_max] for sum if 2 plots are provided
+
+       **mrange** : list, optional
+           full, reduced, [xmin,ymin,xmax,ymax]
+
+       **direction** : list, int, optional
+           multiply axes for inversion: [1,-1]
+
+       **output** : string, optional
+           Output file for png file of plot.
+
+       **xcut** : list, optional
+           plot 1D cuts for x-axis values
+
+       **ycut** : list, optional
+           plot 1D cuts for y-axis values
+
+       **plot2** : list, int
+           same as scans. Only z-values are taken. x and y used from scans
+
+       **kwargs:**
+           The necessary kwargs are passed to the loading and fitting functions
+           defined by the `source` argument:
+           
+               - csv        -> possible kwargs: folder, name_format, e.g.                "scan_{}_primary.csv"
+               - spec       -> possible kwargs: folder
+               - databroker -> possible kwargs: stream, query
+
+
+
+   :Returns:
+
+       2D plot, png-file
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_fit(scan_series, source=None, output=False, var_series=None, positioner=None, detector=None, monitor=None, normalize=False, errorbar=True, xrange=None, **kwargs)
+
+   
+   Fit and plot series of scans with chosen functional and returns fit parameters.
+
+   Uses lmfit (https://lmfit.github.io/lmfit-py/).
+
+   :Parameters:
+
+       **scan_series** : int
+           start, stop, step, [start2, stop2, step2, ... ,startn, stopn, stepn]
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **output** : boolean, optional
+           Output fit parameters and plot data+fit for each scan.
+
+       **var_series** : string or list
+           If string
+           
+           - Varying variable for scan series to be read from scan (detector),
+                   e.g. SampK (sample temperature), optional.
+           - String starting with #metadata, reads metadata from CSV baseline
+           
+           If list, information on metadata to be read: List starting with #P, #U
+           or #Q for motor positions, user values or Q-position, optional:
+           
+           - #P ['#P', row, element_number], e.g. ['#P', 2, 0]
+           - #U ['#U', Variable, element_number], e.g. ['#U', 'KepkoI', 1]
+           - #Q ['#Q', None, element_number], e.g. ['#Q', None, 0]
+           - #xx like #UA etc.: ['#UA', row, element_number]
+           
+           If None, successive scans will be numbered starting from zero.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. If None is passed, it defaults to the APD detector.
+
+       **monitor** : string, optional
+           Name of the monitor detector. If None is passed, it defaults to the ion
+           chamber 3.
+
+       **normalize** : boolean, optional
+           Normalization to selected/default monitor on/off
+
+       **xrange: list**
+           Set positioner range for fitting
+
+       **noerror** : boolean, optional
+           Plotting of errorbars on/off
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query.
+           
+           model : string, optional
+               fit model: Gaussian, Lorentzian, PseudoVoigt
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **fit** : lmfit ModelResult class
+           Contains the fit results. See:
+           https://lmfit.github.io/lmfit-py/model.html#the-modelresult-class
+
+       plot: plot of fitted data as function of variable changing between scans
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_axes(scan, source=None, positioner=None, detector=None, monitor=None, defaults=None, read=False, **kwargs)
+
+   
+   Load default positioner and detector for plot
+
+
+   :Parameters:
+
+       **scan** : int, list
+           single scan
+           or list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. If None is passed, it defaults to the APD detector.
+
+       **monitor** : string, optional
+           Name of the monitor detector. If None is passed, it defaults to the ion
+           chamber 3.
+
+       **defaults** : string, optional
+           Default values for positioner and detector
+
+       **read: boolean, optional**
+           Determines if positioner is read from metadata
+
+
+
+   :Returns:
+
+       matplotlib.axes.Axes
+           Axes object holding the plot.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_data(scan_series, source=None, positioner=None, detector=None, monitor=None, fit=False, normalize=False, log=False, deriv=False, direction=[1, 1], **kwargs)
+
+   
+   Plot and fit data.
+
+
+   :Parameters:
+
+       **scan_series** : list
+           list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky.
+
+       **monitor** : string, optional
+           Monitor to be read from this scan, again it needs to be the same name
+           as in Bluesky.
+
+       **normalize** : boolean, optional
+           Normalization to selected/default monitor on/off
+
+       **log: boolean**
+           If True, y-axis plotted in logarithmic scale.
+
+       **deriv** : boolean, optional
+           calculated derivative
+
+       **fit** : boolean, optional
+           Fitting of peak using model on/off. In case of deriv=True, derivative is fitted
+
+       **direction** : list, int
+           multiply axes for inversion: [1,-1] inverts y-axis
+
+       **kwargs**
+           model: enumeration
+               fit model: model = Model.Gaussian (default), Model.Lorentzian, Model.PseudoVoigt
+           `source` argument:
+               - csv -> possible kwargs: folder, name_format.
+               - spec -> possible kwargs: folder.
+               - databroker -> possible kwargs: stream, query, use_db_v1.
+
+
+
+   :Returns:
+
+       matplotlib.axes.Axes
+           Axes object holding the plot.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: dbplot(scan, source=None, positioner=None, detector=None, monitor=None, normalize=False, fit=False, deriv=False, direction=[1, 1], **kwargs)
+
+   
+   Plot and fit data.
+
+
+   :Parameters:
+
+       **scan_series** : int, list
+           single scan
+           or list [start, stop, step, start2, stop2, step2, ... ,startn, stopn, stepn]
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to '4C Theta' motor.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. If None is passed, it defaults to the APD detector.
+
+       **monitor** : string, optional
+           Name of the monitor detector. If None is passed, it defaults to the ion
+           chamber 3.
+
+       **normalize** : boolean, optional
+           Normalization to selected/default monitor on/off
+
+       **deriv** : boolean, optional
+           calculated derivative
+
+       **fit** : boolean, optional
+           Fitting of peak using model on/off. In case of deriv=True, derivative is fitted
+
+       **direction** : list, int
+           multiply axes for inversion: [1,-1] inverts y-axis
+
+       **kwargs**
+           model : string, optional
+               - fit model: Gaussian, Lorentzian, PseudoVoigt
+           `source` argument:
+               - csv -> possible kwargs: folder, name_format.
+               - spec -> possible kwargs: folder.
+               - databroker -> possible kwargs: stream, query, use_db_v1.
+
+
+
+   :Returns:
+
+       matplotlib.axes.Axes
+           Axes object holding the plot.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

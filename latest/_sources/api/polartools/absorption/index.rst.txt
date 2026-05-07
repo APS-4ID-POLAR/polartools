@@ -1,0 +1,1075 @@
+polartools.absorption
+=====================
+
+.. py:module:: polartools.absorption
+
+.. autoapi-nested-parse::
+
+   Functions to load and process x-ray absorption data.
+
+   .. autosummary::
+      ~load_absorption
+      ~load_dichro
+      ~load_lockin
+      ~load_multi_xas
+      ~load_multi_dichro
+      ~load_multi_lockin
+      ~normalize_absorption
+      ~pre_edge_background
+      ~post_edge_background
+      ~post_edge_flatten
+      ~fluo_corr
+      ~process_xmcd
+      ~plot_xmcd
+      ~save_xmcd
+
+   ..
+       !! processed by numpydoc !!
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.absorption.load_absorption
+   polartools.absorption.load_lockin
+   polartools.absorption.load_dichro
+   polartools.absorption.load_multi_xas
+   polartools.absorption.load_multi_dichro
+   polartools.absorption.load_multi_lockin
+   polartools.absorption.normalize_absorption
+   polartools.absorption.pre_edge_background
+   polartools.absorption.post_edge_background
+   polartools.absorption.post_edge_flatten
+   polartools.absorption.fluo_corr
+   polartools.absorption.process_xmcd
+   polartools.absorption.plot_xmcd
+   polartools.absorption.save_xmcd
+
+
+Module Contents
+---------------
+
+.. py:function:: load_absorption(scan, source, positioner=None, detector=None, monitor=None, transmission=True, **kwargs)
+
+   
+   Load the x-ray absorption from one scan.
+
+
+   :Parameters:
+
+       **scan** : int
+           Scan_id our uid. If scan_id is passed, it will load the last scan with
+           that scan_id. See kwargs for search options.
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to the x-ray energy.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. If None is passed, it defaults to the ion chamber 5.
+
+       **monitor** : string, optional
+           Name of the monitor detector. If None is passed, it defaults to the ion
+           chamber 4.
+
+       **transmission** : bool, optional
+           Flag to select between transmission mode -> ln(monitor/detector)
+           or fluorescence mode -> detector/monitor
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **x** : numpy.array
+           Positioner data.
+
+       **y** : numpy.array
+           X-ray absorption.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_table`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_lockin(scan, source, positioner=None, dc_col=None, ac_col=None, acoff_col=None, **kwargs)
+
+   
+   Load the x-ray magnetic dichroism from one scan taken in lock-in mode.
+
+
+   :Parameters:
+
+       **scan** : int
+           Scan_id our uid. If scan_id is passed, it will load the last scan with
+           that scan_id. See kwargs for search options.
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defaults to the x-ray energy.
+
+       **dc_col** : string, optional
+           Name of the DC scaler, again it needs to be the same name as in
+           Bluesky or SPEC. If None is passed, it defaults to 'Lock DC'.
+
+       **ac_col** : string, optional
+           Name of the AC scaler. If None is passed, it defaults to 'Lock AC'.
+
+       **acoff_col** : string, optional
+           Name of the AC offset scaler. If None is passed, it defaults to
+           'Lock AC off'.
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **x** : numpy.array
+           Positioner data.
+
+       **dc** : numpy.array
+           DC response, normally corresponds to the x-ray absorption.
+
+       **ac-ac_off** : numpy.array
+           AC response minus the offset, normally corresponds to the x-ray
+           magnetic dichroism.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_table`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_dichro(scan, source, positioner=None, detector=None, monitor=None, transmission=True, **kwargs)
+
+   
+   Load the x-ray magnetic dichroism from one scan taken in non-lock-in mode
+   ('dichro').
+
+
+   :Parameters:
+
+       **scan** : int
+           Scan_id our uid. If scan_id is passed, it will load the last scan with
+           that scan_id. See kwargs for search options.
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky. Defauts to the x-ray energy.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. Defaults to the ion chamber 5.
+
+       **monitor** : string, optional
+           Name of the monitor detector. Defaults to the ion chamber 4.
+
+       **transmission: bool, optional**
+           Flag to select between transmission mode -> ln(monitor/detector)
+           or fluorescence mode -> detector/monitor.
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **x** : numpy.array
+           Positioner data.
+
+       **xanes** : numpy.array
+           X-ray absorption.
+
+       **xmcd** : numpy.array
+           X-ray magnetic dichroism.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_absorption`
+           ..
+       :func:`polartools.load_data.load_table`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_multi_xas(scans, source, return_mean=True, positioner=None, detector=None, monitor=None, transmission=True, **kwargs)
+
+   
+   Load multiple x-ray absorption energy scans.
+
+
+   :Parameters:
+
+       **scans** : iterable
+           Sequence of scan_ids our uids. If scan_id is passed, it will load the
+           last scan with that scan_id. Use kwargs for search options.
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **return_mean** : boolean, optional
+           Flag to indicate if the averaging of multiple scans will be performed.
+           Note that if True three outputs are generated, otherwise two.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to the x-ray energy.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. If None is passed, it defaults to the ion chamber 5.
+
+       **monitor** : string, optional
+           Name of the monitor detector. If None is passed, it defaults to the ion
+           chamber 4.
+
+       **transmission: bool, optional**
+           Flag to select between transmission mode -> ln(monitor/detector)
+           or fluorescence mode -> detector/monitor
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **energy** : numpy.array
+           X-ray energy.
+
+       **xanes** : numpy.array
+           X-ray absorption. If return_mean = True:
+           xanes.shape = (len(scans), len(energy)), otherwise:
+           xanes.shape = (len(energy))
+
+       **xanes_std** : numpy.array, optional
+           Error of the mean of x-ray absorption. This will only be returned if
+           return_mean = True.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_absorption`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_multi_dichro(scans, source, return_mean=True, positioner=None, detector=None, monitor=None, transmission=True, **kwargs)
+
+   
+   Load multiple x-ray magnetic dichroism energy "dichro" scans.
+
+
+   :Parameters:
+
+       **scans** : iterable
+           Sequence of scan_ids our uids. If scan_id is passed, it will load the
+           last scan with that scan_id. Use kwargs for search options.
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **return_mean** : boolean, optional
+           Flag to indicate if the averaging of multiple scans will be performed.
+           Note that if True three outputs are generated, otherwise two.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to the x-ray energy.
+
+       **detector** : string, optional
+           Detector to be read from this scan, again it needs to be the same name
+           as in Bluesky. If None is passed, it defaults to the ion chamber 5.
+
+       **monitor** : string, optional
+           Name of the monitor detector. If None is passed, it defaults to the ion
+           chamber 4.
+
+       **transmission: bool, optional**
+           Flag to select between transmission mode -> ln(monitor/detector)
+           or fluorescence mode -> detector/monitor
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **energy** : numpy.array
+           X-ray energy.
+
+       **xanes** : numpy.array
+           X-ray absorption. If return_mean = True:
+           xanes.shape = (len(scans), len(energy)), otherwise:
+           xanes.shape = (len(energy))
+
+       **xmcd** : numpy.array
+           X-ray magnetic dichroism. It has the same shape as the xanes.
+
+       **xanes_std** : numpy.array, optional
+           Error of the mean of x-ray absorption. This will only be returned if
+           return_mean = True.
+
+       **xmcd_std** : numpy.array, optional
+           Error of the mean of x-ray magnetic dichroism. This will only be
+           returned if return_mean = True.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_dichro`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_multi_lockin(scans, source, return_mean=True, positioner=None, dc_col=None, ac_col=None, acoff_col=None, **kwargs)
+
+   
+   Load multiple x-ray magnetic dichroism energy "lockin" scans.
+
+
+   :Parameters:
+
+       **scans** : iterable
+           Sequence of scan_ids our uids. If scan_id is passed, it will load the
+           last scan with that scan_id. Use kwargs for search options.
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **return_mean** : boolean, optional
+           Flag to indicate if the averaging of multiple scans will be performed.
+           Note that if True three outputs are generated, otherwise two.
+
+       **positioner** : string, optional
+           Name of the positioner, this needs to be the same as defined in
+           Bluesky or SPEC. If None is passed, it defauts to the x-ray energy.
+
+       **dc_col** : string, optional
+           Name of the DC scaler, again it needs to be the same name as in
+           Bluesky or SPEC. If None is passed, it defaults to 'Lock DC'.
+
+       **ac_col** : string, optional
+           Name of the AC scaler. If None is passed, it defaults to 'Lock AC'.
+
+       **acoff_col** : string, optional
+           Name of the AC offset scaler. If None is passed, it defaults to
+           'Lock AC off'.
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **energy** : numpy.array
+           X-ray energy.
+
+       **xanes** : numpy.array
+           X-ray absorption. If return_mean = True:
+           xanes.shape = (len(scans), len(energy)), otherwise:
+           xanes.shape = (len(energy))
+
+       **xmcd** : numpy.array
+           X-ray magnetic dichroism. It has the same shape as the xanes.
+
+       **xanes_std** : numpy.array, optional
+           Error of the mean of x-ray absorption. This will only be returned if
+           return_mean = True.
+
+       **xmcd_std** : numpy.array, optional
+           Error of the mean of x-ray magnetic dichroism. This will only be
+           returned if return_mean = True.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_lockin`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: normalize_absorption(energy, mu, *, e0=None, edge_step=None, pre_range=None, pre_order=1, nvict=0, post_range=None, post_order=None, flat_range=None, flat_order=None, pre_pars=None, post_pars=None, flat_pars=None)
+
+   
+   Extract pre- and post-edge normalization curves by fitting polynomials.
+
+   This is a wrapper of for the `pre_edge_background`, `post_edge_background`,
+   and `post_edge_flatten`. The overall process is largely based on
+   `larch.xafs.preedge`, but it was modified so that a polynomial of any order
+   can be applied to the pre-edge, and the initial parameters for the pre- and
+   post-edge polynomials can be given by the user.
+
+   :Parameters:
+
+       **energy** : iterable
+           Incident energy. Must be in eV. It will raise an error if it notices
+           the maximum of this list is below 100.
+
+       **mu** : iterable
+           Raw x-ray absorption.
+
+       **e0** : float or int, optional
+           Absorption edge energy. If None, it is extracted from the data.
+
+       **edge_step** : float, optional
+           Size of edge step of the raw data. If None, it is calculated based by
+           postedge[e0] - preedge[e0].
+
+       **pre_range** : list, optional
+           List with the energy ranges [initial, final] of the pre-edge region
+           **relative** to the absorption edge. If None is passed to either
+           pre_range or one of the elements, a guessed value will be used. For
+           example:
+           
+           - pre_range = None -> guess initial and final points.
+           - pre_range = [None, -20] -> guess only initial point.
+           - pre_range = [-40, None] -> guess only final point.
+           - pre_range = [-40, -20] -> guess neither.
+
+       **pre_order** : int, optional
+           Order of the polynomial to be used in the pre-edge. Defaults to 1.
+
+       **nvict** : int, optional
+           Energy exponent to use. The pre-edge background is modelled by a line
+           that is fit to xanes(energy)*energy**pre_exponent. Defaults to 0.
+
+       **post_range** : list, optional
+           List with the energy ranges [initial, final] of the post-edge region
+           **relative** to the absorption edge.
+
+       **post_order** : int, optional
+           Order of the polynomial to be used in the post-edge. If None, it will
+           be determined by `larch.xafs.preedge`:
+           
+           - If post_range[1]-post_range[0]>350 -> post_order = 2;
+           - if 50 < post_range[1]-post_range[0] < 350 -> post_order = 1;
+           - otherwise -> post_order = 0
+
+       **flat_range** : list, optional
+           List with the energy ranges [initial, final] of the post-edge region
+           **relative** to the absorption edge. If None, it will be set as the
+           same as `post_range`.
+
+       **flat_order** : int, optional
+           Order of the polynomial to be used in the post-edge. If None, it will
+           be set as the same as `post_order`.
+
+       **pre_pars, post_pars, flat_pars** : lmfit.Parameters, optional
+           Option to input the initial parameters to the polynomial used in the
+           data flattening. These will be labelled 'c0', 'c1', ..., depending on
+           `post_order`. See lmfit.models.PolynomialModel_ for details.
+           
+           .. _lmfit.models.PolynomialModel:        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel
+
+
+
+   :Returns:
+
+       **results** : dict
+           Dictionary with the results and parameters of the normalization and
+           flattening. The most important items are:
+           
+           - 'energy' -> incident energy.
+           - 'mu' -> raw xanes.
+           - 'norm' -> normalized xanes.
+           - 'flat' -> flattened xanes.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`larch.xafs.preedge`
+           ..
+       :func:`polartools.absorption.pre_edge_background`
+           ..
+       :func:`polartools.absorption.post_edge_background`
+           ..
+       :func:`polartools.absorption.post_edge_flatten`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: pre_edge_background(energy, mu, e0=None, pre1=None, pre2=None, pre_order=1, nvict=0, pre_pars=None)
+
+   
+   Extracts the pre-edge background by fitting a polynomial.
+
+   Based on `larch.xafs.preedge`. Modified so that a polynomial of any order
+   can be applied to the pre-edge, and its initial parameters can be given by
+   the user.
+
+   :Parameters:
+
+       **energy** : iterable
+           Incident energy. Must be in eV. It will raise an error if it notices
+           the maximum of this list is below 100.
+
+       **mu** : iterable
+           Raw x-ray absorption.
+
+       **e0** : float or int, optional
+           Absorption edge energy.
+
+       **pre1, pre2** : float, optional
+           Low, high energy limit of pre-edge range with respect to e0. If None,
+            it will try to guess it based on mu(energy).
+
+       **pre_order** : int, optional
+           Order of the polynomial to be used in the pre-edge. Defaults to 1.
+
+       **nvict** : int, optional
+           Energy exponent to use. The pre-edge background is modelled by a line
+           that is fit to xanes(energy)*energy**pre_exponent. Defaults to 0.
+
+       **pre_pars** : lmfit.Parameters, optional
+           Option to input the initial parameters to the polynomial used in the
+           data flattening. These will be labelled 'c0', 'c1', ..., depending on
+           `post_order`. See lmfit.models.PolynomialModel_ for details.
+           
+           .. _lmfit.models.PolynomialModel:        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel
+
+
+
+   :Returns:
+
+       **results** : dict
+           Dictionary with the results and parameters of the normalization and
+           flattening. The most important items are:
+           
+           - 'energy' -> incident energy.
+           - 'mu' -> raw xanes.
+           - 'preedge' -> preedge polynomial.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`larch.xafs.preedge`
+           ..
+       :func:`larch.absorption.normalize_absorption`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: post_edge_background(energy, mu, preedge=None, e0=None, edge_step=None, post1=None, post2=None, post_order=None, post_pars=None)
+
+   
+   Extracts the post-edge background by fitting a polynomial.
+
+   Based on `larch.xafs.preedge`. Modified so that a polynomial of any order
+   can be applied to the post-edge, and its initial parameters can be given by
+   the user.
+
+   :Parameters:
+
+       **energy** : iterable
+           Incident energy. Must be in eV. It will raise an error if it notices
+           the maximum of this list is below 100.
+
+       **mu** : iterable
+           Raw x-ray absorption.
+
+       **e0** : float or int, optional
+           Absorption edge energy.
+
+       **edge_step** : float, optional
+           Size of edge step of the raw data. If None, it is calculated based by
+           postedge[e0] - preedge[e0].
+
+       **preedge** : iterable, optional
+           Pre-edge polynomial. If None, it will be set to zero.
+
+       **post1, post2** : float, optional
+           Low, high energy limit of post-edge range with respect to e0. If None,
+            it will try to guess it based on mu(energy).
+
+       **post_order** : int, optional
+           Order of the polynomial to be used in the post-edge. If None, it will
+           be determined using:
+           
+           - If post2-post1>350 -> post_order = 2;
+           - if 50 < post2-post1 < 350 -> post_order = 1;
+           - otherwise -> post_order = 0
+
+       **post_pars** : lmfit.Parameters, optional
+           Option to input the initial parameters to the polynomial used in the
+           data flattening. These will be labelled 'c0', 'c1', ..., depending on
+           `post_order`. See lmfit.models.PolynomialModel_ for details.
+           
+           .. _lmfit.models.PolynomialModel:        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel
+
+
+
+   :Returns:
+
+       **results** : dict
+           Dictionary with the results and parameters of the normalization and
+           flattening. The most important items are:
+           
+           - 'energy' -> incident energy.
+           - 'mu' -> raw xanes.
+           - 'norm' -> normalized XAS.
+           - 'post-edge' -> post-edge background.
+           - 'edge-step' -> Absorption jump size.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`larch.xafs.preedge`
+           ..
+       :func:`larch.absorption.normalize_absorption`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: post_edge_flatten(energy, norm, bkg_results=None, e0=None, flat1=None, flat2=None, flat_order=None, flat_pars=None)
+
+   
+   Flattens the normalized absorption.
+
+   This is a slightly modified version from that in the larch_ package.
+
+   .. _larch: https://xraypy.github.io/xraylarch/index.html
+
+   The energies inputs must have the same units.
+
+   :Parameters:
+
+       **energy** : iterable
+           Incident energy in eV.
+
+       **norm** : iterable
+           Normalized x-ray absorption.
+
+       **bkg_results** : dict, optional
+           Results of the data processing done by `post_edge_background`. If None,
+           the remaining keyword arguments will be ignored.
+
+       **e0** : float or int
+           Absorption edge energy.
+
+       **flat1, flat2** : float or int
+           Low, high energy limit of flattening range with respect to e0.
+
+       **flat_order** : int, optional
+           Degree of polynomial to be used. If None, it will be determined using:
+           
+           - If post2-post1>350 -> post_order = 2;
+           - if 50 < post2-post1 < 350 -> post_order = 1;
+           - otherwise -> post_order = 0
+
+       **fpars** : lmfit.Parameters, optional
+           Option to input the initial parameters. These will be labelled 'c0',
+           'c1', ..., depending on `nnorm`. See lmfit.models.PolynomialModel_ for
+           details.
+           
+           .. _lmfit.models.PolynomialModel:        https://lmfit.github.io/lmfit-py/builtin_models.html#polynomialmodel
+
+
+
+   :Returns:
+
+       **flat** : numpy.array
+           Flattened x-ray absorption.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`larch.xafs.pre_edge`
+           ..
+       :func:`lmfit.models.PolynomialModel`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: fluo_corr(norm, formula, elem, edge, line, anginp, angout)
+
+   
+   Correct over-absorption (self-absorption) in fluorescence XAFS.
+
+   Based on the `larch` implementation of the FLUO algorithm of
+   D. Haskel. See the FLUO manual_ for details.
+
+   .. _manual: https://www3.aps.anl.gov/haskel/fluo.html
+
+   :Parameters:
+
+       **norm** : iter
+           Normalized fluorescence
+
+       **formula** : str
+           Chemical formula of the compound. For example: 'EuO'.
+
+       **elem** : str
+           Element of interest. For example: 'Eu'.
+
+       **edge** : str
+           Absorption edge of interest. For example: 'L3'.
+
+       **line** : str
+           Fluorescence line measured. For example: 'La'.
+
+       **anginp** : float
+           Input angle with respect to the sample surface. See FLUO manual.
+
+       **anginp** : float
+           Output angle with respect to the sample surface. See FLUO manual.
+
+
+
+   :Returns:
+
+       **norm_corr** : numpy.array
+           Corrected normalized fluorescence.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: process_xmcd(scans_plus, scans_minus, source, xmcd_kind='dichro', load_parameters=dict(), normalization_parameters=dict(), normalization_parameters_minus=None)
+
+   
+   Process the XMCD scans of +/- magnetic fields.
+
+
+   :Parameters:
+
+       **scans_plus** : iterable
+           List of scan number or scan_id of XMCD taken using the "plus" magnetic
+           field.
+
+       **scans_minus** : iterable
+           List of scan number or scan_id of XMCD taken using the "minus" magnetic
+           field.
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable `load_parameters` depend on this selection.
+
+       **xmcd_kind** : "dichro" or "lockin", optional
+           Type of XMCD scan used, defaults to "dichro".
+
+       **load_parameters** : dictionary
+           Parameters used to load data. Passed as kwargs to
+           `polartools.absorption.load_multi_dichro` or
+           `polartools.absorption.load_multi_lockin`.
+
+       **normalization_parameters** :  dictionary
+           Parameters used to normalize the "plus" data (and the "minus" data
+           when ``normalization_parameters_minus`` is None). Passed as kwargs to
+           `polartools.absorption.normalize_absorption`.
+
+       **normalization_parameters_minus** : dictionary, optional
+           If provided, used to normalize the "minus" data independently. When
+           None (default), the "minus" data is normalized with the same
+           parameters as the "plus" data.
+
+
+
+   :Returns:
+
+       **plus** : dictionary
+           XANES/XMCD taken using the "plus" magnetic field. Output of
+           `polartools.absorption.normalize_absorption` with the XMCD data added.
+
+       **minus** : dictionary
+           XANES/XMCD taken using the "minus" magnetic field. Output of
+           `polartools.absorption.normalize_absorption` with the XMCD data added.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.absorption.load_multi_dichro`
+           ..
+       :func:`polartools.absorption.load_multi_lockin`
+           ..
+       :func:`polartools.absorption.normalize_absorption`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_xmcd(plus, minus)
+
+   
+   Plots a new figure with the combined XMCD of plus and minus fields.
+
+
+   :Parameters:
+
+       **plus** : dictionary
+           XANES/XMCD taken using the "plus" magnetic field. Output of the
+           normalize_absorption function.
+
+       **minus** : dictionary
+           XANES/XMCD taken using the "minus" magnetic field. Output of the
+           normalize_absorption function.
+
+
+
+   :Returns:
+
+       **fig** : matplotlib.pyplot.figure
+           Figure instance.
+
+       **axs** : list
+           List of the figure axes.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.absorption.process_xmcd`
+           ..
+       :func:`polartools.absorption.normalize_absorption`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: save_xmcd(plus, minus, file_name, header='XMCD\n', fmt='%0.5e')
+
+   
+   Saves processed XANES/XMCD data into a file.
+
+
+   :Parameters:
+
+       **plus** : dictionary
+           XMCD taken using the "plus" magnetic field. It needs at least three
+           keys: "energy", "norm", and "xmcd".
+
+       **minus** : dictionary
+           XMCD taken using the "minus" magnetic field. It needs at least three
+           keys: "energy", "norm", and "xmcd".
+
+       **file_name** : string
+           File name (including folder if not current).
+
+       **header** : string, optional
+           File header. Note that each line has to be finished with the newline
+           character.
+
+       **fmt** : string, optional
+           Format of the data, defaults to %0.5e
+
+
+
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.absorption.process_xmcd`
+           ..
+       :func:`polartools.absorption.normalize_absorption`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
