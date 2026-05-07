@@ -34,38 +34,42 @@ from pathlib import Path
 
 def to_databroker(db, folder, query=None, external=False):
     """
-    Exports databroker database into msgpack files.
-    WARNING: While you can pass a query dictionary here, it is advised to run
-    the query and check the results before running this function as you
-    may inadvertely export a very large number of scans. See
-    :func:`polartools.load_data.db_query`.
-    This is a narrow usage of the `databroker-pack` package_. Note that this
-    package includes a convenient command line tool.
+    Export a databroker catalog (or query subset) into msgpack files.
 
-    .. _package: https://blueskyproject.io/databroker-pack/index.html
+    A narrow wrapper around the `databroker-pack`_ package, which also
+    provides a convenient command-line tool of its own.
+
+    .. _databroker-pack: https://blueskyproject.io/databroker-pack/index.html
+
+    .. warning::
+       When passing ``query``, run the query first and inspect the results
+       before exporting — it's easy to inadvertently export a very large
+       number of scans. See :func:`polartools.load_data.db_query`.
 
     Parameters
     ----------
     db :
-        Databroker database.
+        Source databroker catalog.
     folder : str
         Destination directory.
     query : dict, optional
-        Search parameters to select a subsection of `db`. See
-        :func:`polartools.load_data.db_query` for more details.
+        Search parameters to select a subset of ``db``. See
+        :func:`polartools.load_data.db_query` for accepted keys.
+    external : bool, optional
+        If ``True``, also pack external image files (Lambda/Eiger/SPE)
+        referenced by the scans into ``folder/external_files``.
 
     Notes
-    ------
-    - The scans are saved in msgpack files placed in the `folder/documents` \
-    folder.
-    - `catalog.yml` and `documents_manifest.txt` are located in `folder`.
+    -----
+    - Scans are saved as msgpack documents under ``folder/documents``.
+    - ``catalog.yml`` and ``documents_manifest.txt`` are placed in ``folder``.
 
     See also
     --------
     :func:`polartools.load_data.db_query`
-    :func:`databroker-pack.export_catalog`
-    :func:`databroker-pack.write_documents_manifest`
-    :func:`databroker-pack.write_msgpack_catalog_file`
+    :func:`databroker_pack.export_catalog`
+    :func:`databroker_pack.write_documents_manifest`
+    :func:`databroker_pack.write_msgpack_catalog_file`
     """
     results = db_query(db, query) if query else db.v2
 
@@ -110,10 +114,10 @@ def to_csv_json(
     have the same `scan_id`, it will write the new scan with a `-number` suffix
     where number will be the first available integer starting with 2.
 
-    WARNING: While you can pass a query dictionary here, it is advised to run
-    the query and check the results before running this function as you
-    may inadvertely export a very large number of scans. See
-    :func:`polartools.load_data.db_query`.
+    .. warning::
+       When passing ``query``, run the query first and inspect the results
+       before exporting — it's easy to inadvertently export a very large
+       number of scans. See :func:`polartools.load_data.db_query`.
 
     Parameters
     ----------

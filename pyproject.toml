@@ -66,10 +66,15 @@ dev = [
 docs = [
     "ipython",
     "matplotlib",
+    "myst-parser",
+    "nbsphinx",
     "numpydoc",
+    "pydata-sphinx-theme",
     "sphinx",
+    "sphinx-autoapi",
     "sphinx-copybutton",
-    "sphinx-rtd-theme",
+    "sphinx-design",
+    "sphinx-tabs",
 ]
 
 [project.scripts]

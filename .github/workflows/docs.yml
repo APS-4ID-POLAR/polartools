@@ -2,8 +2,15 @@ name: Docs
 
 on:
   push:
-    branches: [main]
+    branches:
+      - "**"
+    tags:
+      - "v*"
   pull_request:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -11,7 +18,7 @@ concurrency:
 
 jobs:
   build:
-    name: Sphinx build
+    name: Build documentation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -20,7 +27,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.12'
+          python-version: "3.12"
           cache: pip
 
       - name: Install package + docs extras
@@ -28,13 +35,65 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e .[docs]
 
-      - name: Build HTML docs
-        # Don't pass -W: there are pre-existing numpydoc/section-format warnings
-        # and a stale autosummary entry for polartools.hkl_utils. Fix those
-        # separately, then re-add -W to make warnings fail the build.
-        run: sphinx-build --keep-going -b html docs/source docs/build/html
+      - name: Build HTML documentation
+        # -W turns warnings into errors so docstring regressions break CI.
+        run: sphinx-build -W --keep-going -b html docs/source docs/build/html
 
       - uses: actions/upload-artifact@v5
         with:
           name: docs-html
           path: docs/build/html
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    # Don't deploy from PRs (no permission to push to gh-pages from forks).
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: docs-html
+          path: html
+
+      - name: Determine deploy destination
+        id: dest
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "dir=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          elif [[ "${GITHUB_REF}" == refs/heads/main ]]; then
+            echo "dir=latest" >> "$GITHUB_OUTPUT"
+          else
+            echo "dir=dev" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Add root redirect (only when publishing latest)
+        if: steps.dest.outputs.dir == 'latest'
+        run: |
+          mkdir -p root_redirect
+          cat > root_redirect/index.html <<'EOF'
+          <!DOCTYPE html>
+          <meta charset="utf-8">
+          <title>Redirecting to latest polartools docs</title>
+          <meta http-equiv="refresh" content="0; url=./latest/">
+          <link rel="canonical" href="./latest/">
+          <p>Redirecting to <a href="./latest/">./latest/</a>.</p>
+          EOF
+
+      - name: Deploy versioned docs
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: html
+          destination_dir: ${{ steps.dest.outputs.dir }}
+          keep_files: true
+
+      - name: Deploy root redirect
+        if: steps.dest.outputs.dir == 'latest'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: root_redirect
+          keep_files: true
