@@ -15,4 +15,4 @@ Python package to read and process data from the APS Polar beamline
 [![GitHub commits](https://img.shields.io/github/commits-since/APS-4ID-POLAR/polartools/v0.6.0.svg)](https://github.com/APS-4ID-POLAR/polartools/commit/)
 
 -   License: [**ANL OPEN SOURCE LICENSE**](LICENSE.txt)
--   Documentation: https://polartools.readthedocs.io
+-   Documentation: [https://aps-4id-polar.github.io/polartools/latest/](https://aps-4id-polar.github.io/polartools/latest/)
