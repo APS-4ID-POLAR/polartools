@@ -1,0 +1,140 @@
+{
+  "mode": "local-only",
+  "track": "C (no Codacy Cloud auth, no prior .codacy/codacy.config.json)",
+  "summary": {
+    "enabledPatterns": { "before": 0, "after": 652 },
+    "enabledTools": { "before": 0, "after": 7 },
+    "issues": { "before": 0, "after": 26 },
+    "analysisRuntime": { "before": null, "after": 13120 }
+  },
+  "broadConfigReference": {
+    "note": "Internal broad-init baseline used for tuning decisions (NOT the user-facing before, which is unconfigured per Track C). Shows the noise actually cut.",
+    "enabledPatterns": 2138,
+    "enabledTools": 12,
+    "issues": 608,
+    "toolExecutionMs": 19107
+  },
+  "toolChanges": [
+    {
+      "toolId": "Prospector",
+      "action": "disabled",
+      "reason": "Cross-tool dedup with PyLintPython3 (Prospector is a meta-linter wrapping pylint/pydocstyle/mccabe). Its 244 issues were 237 PEP257 docstring (Documentation) + 7 mccabe (Complexity) — both categories the maintainers explicitly disable in .codacy.yml. No unique correctness value; Pylint retains all bug detection.",
+      "patternsAffected": 7
+    },
+    {
+      "toolId": "Lizard",
+      "action": "disabled",
+      "reason": "All 47 issues were Complexity (ccn/nloc/parameter-count medium). Maintainers' .codacy.yml documents disabling the Code Complexity category; scientific plotting/fitting code legitimately has many parameters and long functions. Can be re-added with raised thresholds if desired.",
+      "patternsAffected": 4
+    },
+    {
+      "toolId": "Agentlinter",
+      "action": "disabled",
+      "reason": "Wrong context: lints AI-agent instruction files. Its 18 issues were all on CLAUDE.md, which is dev-tooling documentation for Claude Code, not a deployed/production agent. No Python-package code-security concern is lost (its injection-defense pattern targets the agent file, not shipped code).",
+      "patternsAffected": 102
+    },
+    {
+      "toolId": "spectral",
+      "action": "disabled",
+      "reason": "Wrong stack: OpenAPI/AsyncAPI spec linter. The repo has no API specifications; 0 issues found across 92 patterns.",
+      "patternsAffected": 92
+    },
+    {
+      "toolId": "jackson",
+      "action": "disabled",
+      "reason": "Wrong ecosystem: Jackson is a Java JSON library linter (duplicate-keys/decompression). 0 issues; JSON/secrets already covered by Trivy and Semgrep.",
+      "patternsAffected": 2
+    }
+  ],
+  "keptTools": [
+    { "toolId": "PyLintPython3", "patterns": 25, "note": "Switched from local-config (all default checks) to managed mode with a curated correctness set." },
+    { "toolId": "Semgrep", "patterns": 522, "note": "Already stack-tailored by init (python/yaml/generic/json). Kept; dropped 2 stray Java-Spring patterns." },
+    { "toolId": "Checkov", "patterns": 59, "note": "Trimmed from 1358 to GitHub-Actions/GitHub/secrets/git security patterns only." },
+    { "toolId": "markdownlint", "patterns": 40, "note": "Kept structural/link checks; dropped 3 pure-whitespace style rules." },
+    { "toolId": "Trivy", "patterns": 6, "note": "Dependency/secret/vuln scanner. 0 issues; kept as security guardrail." },
+    { "toolId": "Ruff", "patterns": 0, "note": "Local-config mode via pyproject.toml [tool.ruff] — the maintainers' own CI linter. 0 issues." },
+    { "toolId": "Bandit", "patterns": 0, "note": "Local-config mode (no [tool.bandit] section → runs Bandit defaults, all checks). 0 issues; Python security guardrail." }
+  ],
+  "patternChanges": [
+    {
+      "patternId": "PyLintPython3 (tool switched local-config → managed, 25 curated patterns)",
+      "toolId": "PyLintPython3",
+      "action": "updated",
+      "reason": "Was in local-config mode running ALL Pylint defaults (274 issues: ~99 Complexity, ~78 CodeStyle, ~5 Documentation — all categories maintainers disable, plus Ruff covers style in CI). Switched to managed mode enabling only correctness patterns: the 5 that fired real bugs (W0102 mutable-default-arg, E0606 use-before-assignment, W0718 broad-except, W0707 raise-from, W0611 unused-import) plus 20 high-value error/warning codes (E0601/E0602/E0611/E1101/E1120/E1121/E1136/E0704/W0612/W0622/W0702/etc.) for future bug catching (0 noise added, validated).",
+      "delta": -257,
+      "parameters": []
+    },
+    {
+      "patternId": "Checkov_CKV_AWS_*/CKV_AZURE_*/CKV_GCP_*/CKV_K8S_*/CKV_DOCKER_*/CKV_OPENAPI_*/other-CI (~1299 patterns)",
+      "toolId": "Checkov",
+      "action": "disabled",
+      "reason": "Wrong stack: AWS/Azure/GCP/Alibaba/Oracle/K8s/Terraform/Docker/OpenAPI/CircleCI/GitLab-CI/Bitbucket IaC patterns. The repo has no infrastructure-as-code — only GitHub Actions workflows. Kept CKV_GHA_*, CKV2_GHA_*, CKV_GITHUB_*, CKV_SECRET_*, CKV_GIT_* (59 patterns).",
+      "delta": 0,
+      "parameters": []
+    },
+    {
+      "patternId": "markdownlint_MD022",
+      "toolId": "markdownlint",
+      "action": "disabled",
+      "reason": "Pure-whitespace style (blank lines around headings). Convention mismatch — the docs consistently don't pad headings; 9 low-value issues on CLAUDE.md.",
+      "delta": -9,
+      "parameters": []
+    },
+    {
+      "patternId": "markdownlint_MD032",
+      "toolId": "markdownlint",
+      "action": "disabled",
+      "reason": "Pure-whitespace style (blank lines around lists). Convention mismatch; 5 low-value issues on CLAUDE.md.",
+      "delta": -5,
+      "parameters": []
+    },
+    {
+      "patternId": "markdownlint_MD030",
+      "toolId": "markdownlint",
+      "action": "disabled",
+      "reason": "Pure-whitespace style (spaces after list markers). 2 low-value issues on README.md.",
+      "delta": -2,
+      "parameters": []
+    },
+    {
+      "patternId": "Semgrep_*spring* (2 patterns)",
+      "toolId": "Semgrep",
+      "action": "disabled",
+      "reason": "Wrong stack: Java Spring actuator rules. No Java/Spring in this Python repo.",
+      "delta": 0,
+      "parameters": []
+    }
+  ],
+  "fileExclusions": {
+    "note": "No NEW file exclusions added. The existing .codacy.yml exclude_paths (polartools/tests/**, _version.py, _larch.py, _pyrixs.py, docs/**) were auto-merged by init and preserved in the config."
+  },
+  "securityCoverage": {
+    "deduplication": [
+      "Prospector disabled — its checks (pydocstyle/mccabe) are non-security and duplicated by PyLintPython3; no security concern affected."
+    ],
+    "newCoverage": [
+      "Python code security: Bandit (all default checks) + Semgrep python security rules (crypto, pickle/marshal deserialization, eval/exec, subprocess-shell, ssl/tls, sql-injection, xml, jwt, flask) + Trivy",
+      "Secrets: Checkov CKV_SECRET (18) + Trivy + Semgrep generic secret rules",
+      "CI/GitHub Actions: Semgrep yaml.github-actions.security (5 findings: unpinned third-party actions) + Checkov CKV2_GHA_1 (4 findings: workflow write-all permissions)",
+      "Dependency/vulnerability scanning: Trivy"
+    ],
+    "noisyButKept": [],
+    "removedSecurityPatternsJustification": [
+      "Agentlinter_security_has-injection-defense removed with the Agentlinter tool: it targets the CLAUDE.md agent-instruction file (wrong context), not the shipped Python package. No code-level security concern lost coverage."
+    ]
+  },
+  "keyImprovements": [
+    "Issues cut from 608 (broad init) to 26 — every remaining finding is a real correctness bug or security best-practice (19 High + 7 Warning; ErrorProne 20, Security 5, UnusedCode 1).",
+    "Removed 1299 wrong-stack Checkov IaC patterns (AWS/Azure/GCP/K8s/Terraform/Docker) — the repo has no infrastructure-as-code, only GitHub Actions.",
+    "PyLintPython3 switched from all-default-checks (274 issues, mostly docstring/style/complexity noise) to a curated 25-pattern correctness set, honoring the maintainers' documented intent to disable Code Style / Documentation / Complexity (Ruff covers style in CI).",
+    "Dropped Prospector (redundant docstring meta-linter), Lizard (complexity), Agentlinter (agent-file linter, wrong context), spectral (OpenAPI), and jackson (Java) — all irrelevant or duplicative for a Python scientific package.",
+    "Tool-execution time dropped ~43% (19.1s → 11.0s) by removing irrelevant tools and trimming Checkov."
+  ],
+  "localConfigTools": [
+    { "toolId": "Ruff", "configFile": "pyproject.toml", "issueCount": 0, "note": "Uses the project's [tool.ruff] config — the maintainers' CI linter. Codacy managed patterns do not apply; edit pyproject.toml to change Ruff behavior." },
+    { "toolId": "Bandit", "configFile": "pyproject.toml", "issueCount": 0, "note": "No [tool.bandit] section, so Bandit runs its built-in defaults (all checks). Add a [tool.bandit] section to tune." }
+  ],
+  "codacyYaml": null,
+  "importResults": null,
+  "cloudVerification": null
+}
