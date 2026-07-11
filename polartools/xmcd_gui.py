@@ -76,6 +76,8 @@ class MainWindow(QMainWindow):
         self._e0_val = None
         self._m_e0_val = None
         self._block_line_update = False
+        self._markers_initialized = False
+        self._loaded_kind = None
 
         self._norm_timer = QTimer(singleShot=True)
         self._norm_timer.timeout.connect(self._run_normalization)
@@ -345,6 +347,13 @@ class MainWindow(QMainWindow):
             le.setMaximumWidth(120)
             setattr(self, attr, le)
             h.addWidget(le)
+        h.addWidget(QLabel("Factor:"))
+        self.le_l_factor = QLineEdit("87")
+        self.le_l_factor.setToolTip(
+            "Lock-in XMCD conversion factor (XMCD is divided by this)"
+        )
+        self.le_l_factor.setMaximumWidth(70)
+        h.addWidget(self.le_l_factor)
         return w
 
     # ── 6-plot grid ───────────────────────────────────────────────────────────
@@ -552,6 +561,12 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(8)
 
+        self.btn_guess = QPushButton("Guess parameters")
+        self.btn_guess.setToolTip(
+            "Re-guess e0 and the pre/post-edge ranges from the loaded data"
+        )
+        layout.addWidget(self.btn_guess)
+
         self.chk_independent = QCheckBox("Different parameters for H−")
         self.chk_independent.setToolTip(
             "When checked, normalize H− with its own parameters. "
@@ -711,6 +726,8 @@ class MainWindow(QMainWindow):
     def _connect_signals(self):
         self.btn_load.clicked.connect(self._on_load)
         self.btn_save.clicked.connect(self._save_results)
+        self.btn_guess.clicked.connect(self._on_guess)
+        self.le_l_factor.editingFinished.connect(self._schedule_normalize)
 
         self.cb_source.currentIndexChanged.connect(
             self._source_stack.setCurrentIndex
@@ -996,11 +1013,8 @@ class MainWindow(QMainWindow):
             return
 
         load_kwargs = self._resolve_load_kwargs(extra_kwargs)
-        load_func = (
-            load_multi_dichro
-            if self.cb_kind.currentText() == "dichro"
-            else load_multi_lockin
-        )
+        kind = self.cb_kind.currentText()
+        load_func = load_multi_dichro if kind == "dichro" else load_multi_lockin
 
         self.status_bar.showMessage("Loading…")
         QApplication.processEvents()
@@ -1021,18 +1035,28 @@ class MainWindow(QMainWindow):
         self._minus_energy = em[sort_m] * 1000
         self._minus_mu = ym[sort_m]
         self._minus_xmcd_raw = zm[sort_m]
+        self._loaded_kind = kind
 
         # Show raw data immediately
         self.curve_plus_raw.setData(self._plus_energy, self._plus_mu)
         self.curve_minus_raw.setData(self._minus_energy, self._minus_mu)
 
-        # Set default normalization range markers on first load
-        self._init_markers()
+        # Guess normalization range markers only on the first load. On later
+        # loads, keep the current parameters (relative pre/post ranges) so tuned
+        # settings survive; the marker lines are repositioned onto the new e0
+        # after normalization.
+        first_load = not self._markers_initialized
+        if first_load:
+            self._init_markers()
+            self._markers_initialized = True
 
         self.status_bar.showMessage(
             f"Loaded {len(scans_plus)} H+ and {len(scans_minus)} H− scans — normalizing…"
         )
         self._run_normalization()
+
+        if not first_load:
+            self._sync_lines_to_entries()
 
     def _init_markers(self):
         energy = self._plus_energy
@@ -1094,6 +1118,33 @@ class MainWindow(QMainWindow):
         ]:
             entry.setText(f"{line.value() - m_e0_est:.1f}")
 
+    def _on_guess(self):
+        """Re-guess e0 and pre/post ranges from the loaded data on demand."""
+        if self._plus_energy is None:
+            return
+        self._init_markers()
+        self._run_normalization()
+
+    def _sync_lines_to_entries(self):
+        """Reposition pre/post marker lines to ``e0 + relative entry``.
+
+        Used after a kept-parameters reload: the relative entries are unchanged,
+        but e0 may have shifted, so move the lines onto the new spectrum.
+        """
+        for entry, line, e0 in [
+            (self.le_pre1, self.line_pre1, self._e0_val),
+            (self.le_pre2, self.line_pre2, self._e0_val),
+            (self.le_post1, self.line_post1, self._e0_val),
+            (self.le_post2, self.line_post2, self._e0_val),
+            (self.m_le_pre1, self.m_line_pre1, self._m_e0_val),
+            (self.m_le_pre2, self.m_line_pre2, self._m_e0_val),
+            (self.m_le_post1, self.m_line_post1, self._m_e0_val),
+            (self.m_le_post2, self.m_line_post2, self._m_e0_val),
+        ]:
+            rel = self._parse_entry(entry)
+            if rel is not None and e0 is not None:
+                self._set_line_silent(line, e0 + rel)
+
     # ─── Line ↔ entry synchronization ────────────────────────────────────────
 
     def _set_line_silent(self, line, pos):
@@ -1135,6 +1186,15 @@ class MainWindow(QMainWindow):
     def _parse_order(self, combo):
         txt = combo.currentText()
         return None if txt == "Auto" else int(txt)
+
+    def _lockin_factor(self):
+        """Lock-in XMCD conversion factor; defaults to 87 on blank/invalid."""
+        txt = self.le_l_factor.text().strip()
+        try:
+            val = float(txt)
+        except ValueError:
+            return 87.0
+        return val if val != 0 else 1.0
 
     def _build_norm_kwargs(self, side="plus"):
         prefix = "" if side == "plus" else "m_"
@@ -1210,8 +1270,9 @@ class MainWindow(QMainWindow):
             self.status_bar.showMessage(f"Normalization error: {exc}")
             return
 
-        plus["xmcd"] = self._plus_xmcd_raw / plus["edge_step"]
-        minus["xmcd"] = self._minus_xmcd_raw / minus["edge_step"]
+        factor = self._lockin_factor() if self._loaded_kind == "lockin" else 1.0
+        plus["xmcd"] = self._plus_xmcd_raw / plus["edge_step"] / factor
+        minus["xmcd"] = self._minus_xmcd_raw / minus["edge_step"] / factor
 
         self._plus_results = plus
         self._minus_results = minus
