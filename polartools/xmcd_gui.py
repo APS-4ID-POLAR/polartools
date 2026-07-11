@@ -1126,11 +1126,7 @@ class MainWindow(QMainWindow):
         self._run_normalization()
 
     def _sync_lines_to_entries(self):
-        """Reposition pre/post marker lines to ``e0 + relative entry``.
-
-        Used after a kept-parameters reload: the relative entries are unchanged,
-        but e0 may have shifted, so move the lines onto the new spectrum.
-        """
+        """Move pre/post marker lines onto the new e0 after a reload."""
         for entry, line, e0 in [
             (self.le_pre1, self.line_pre1, self._e0_val),
             (self.le_pre2, self.line_pre2, self._e0_val),
