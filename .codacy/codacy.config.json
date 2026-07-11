@@ -1,0 +1,2022 @@
+{
+  "version": 1,
+  "metadata": {
+    "source": "auto",
+    "provider": null,
+    "organization": null,
+    "autoFilters": "Critical,High,Warning,Minor,AllSecurity,ErrorProne,Performance,BestPractice,UnusedCode,Compatibility,Complexity,Comprehensibility,CodeStyle,Documentation",
+    "repositoryId": null,
+    "repositoryName": null,
+    "createdAt": "2026-07-11T03:22:14.235Z",
+    "updatedAt": "2026-07-11T03:22:14.235Z",
+    "languages": [
+      "JSON",
+      "Markdown",
+      "Python",
+      "YAML"
+    ]
+  },
+  "tools": [
+    {
+      "toolId": "markdownlint",
+      "patterns": [
+        {
+          "patternId": "markdownlint_MD001"
+        },
+        {
+          "patternId": "markdownlint_MD003"
+        },
+        {
+          "patternId": "markdownlint_MD004"
+        },
+        {
+          "patternId": "markdownlint_MD005"
+        },
+        {
+          "patternId": "markdownlint_MD007"
+        },
+        {
+          "patternId": "markdownlint_MD010"
+        },
+        {
+          "patternId": "markdownlint_MD011"
+        },
+        {
+          "patternId": "markdownlint_MD012"
+        },
+        {
+          "patternId": "markdownlint_MD014"
+        },
+        {
+          "patternId": "markdownlint_MD018"
+        },
+        {
+          "patternId": "markdownlint_MD019"
+        },
+        {
+          "patternId": "markdownlint_MD020"
+        },
+        {
+          "patternId": "markdownlint_MD021"
+        },
+        {
+          "patternId": "markdownlint_MD023"
+        },
+        {
+          "patternId": "markdownlint_MD024"
+        },
+        {
+          "patternId": "markdownlint_MD025"
+        },
+        {
+          "patternId": "markdownlint_MD026"
+        },
+        {
+          "patternId": "markdownlint_MD027"
+        },
+        {
+          "patternId": "markdownlint_MD028"
+        },
+        {
+          "patternId": "markdownlint_MD029"
+        },
+        {
+          "patternId": "markdownlint_MD033"
+        },
+        {
+          "patternId": "markdownlint_MD034"
+        },
+        {
+          "patternId": "markdownlint_MD035"
+        },
+        {
+          "patternId": "markdownlint_MD036"
+        },
+        {
+          "patternId": "markdownlint_MD037"
+        },
+        {
+          "patternId": "markdownlint_MD038"
+        },
+        {
+          "patternId": "markdownlint_MD039"
+        },
+        {
+          "patternId": "markdownlint_MD042"
+        },
+        {
+          "patternId": "markdownlint_MD044"
+        },
+        {
+          "patternId": "markdownlint_MD045"
+        },
+        {
+          "patternId": "markdownlint_MD046"
+        },
+        {
+          "patternId": "markdownlint_MD048"
+        },
+        {
+          "patternId": "markdownlint_MD049"
+        },
+        {
+          "patternId": "markdownlint_MD050"
+        },
+        {
+          "patternId": "markdownlint_MD051"
+        },
+        {
+          "patternId": "markdownlint_MD052"
+        },
+        {
+          "patternId": "markdownlint_MD053"
+        },
+        {
+          "patternId": "markdownlint_MD054"
+        },
+        {
+          "patternId": "markdownlint_MD055"
+        },
+        {
+          "patternId": "markdownlint_MD056"
+        }
+      ]
+    },
+    {
+      "toolId": "Ruff",
+      "localConfigurationFile": "/Users/gfabbris/GitHub/polartools/pyproject.toml",
+      "useLocalConfigurationFile": true,
+      "patterns": []
+    },
+    {
+      "toolId": "Trivy",
+      "patterns": [
+        {
+          "patternId": "Trivy_malicious_packages"
+        },
+        {
+          "patternId": "Trivy_secret"
+        },
+        {
+          "patternId": "Trivy_vulnerability_critical"
+        },
+        {
+          "patternId": "Trivy_vulnerability_high"
+        },
+        {
+          "patternId": "Trivy_vulnerability_medium"
+        },
+        {
+          "patternId": "Trivy_vulnerability_minor"
+        }
+      ]
+    },
+    {
+      "toolId": "Semgrep",
+      "patterns": [
+        {
+          "patternId": "Semgrep_ai.python.detect-openai.detect-openai"
+        },
+        {
+          "patternId": "Semgrep_codacy.generic.security.detect-invisible-unicode"
+        },
+        {
+          "patternId": "Semgrep_codacy.k8s.ingress.nginx.retirement.ingress-class"
+        },
+        {
+          "patternId": "Semgrep_codacy.k8s.ingress.nginx.retirement.ingress-resource"
+        },
+        {
+          "patternId": "Semgrep_codacy.k8s.ingress.nginx.retirement.workload"
+        },
+        {
+          "patternId": "Semgrep_codacy.python.openai.import-without-guardrails"
+        },
+        {
+          "patternId": "Semgrep_codacy.python.openai.non-guardrails-client-usage"
+        },
+        {
+          "patternId": "Semgrep_codacy.python.openai.non-guardrails-direct-call"
+        },
+        {
+          "patternId": "Semgrep_dockerfile.security.dockerd-socket-mount.dockerfile-dockerd-socket-mount"
+        },
+        {
+          "patternId": "Semgrep_generic.gradle.security.build-gradle-password-hardcoded.build-gradle-password-hardcoded"
+        },
+        {
+          "patternId": "Semgrep_generic_injection_rule-BiDiTrojanSource"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.adafruit-api-key.adafruit-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.adobe-client-id.adobe-client-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.adobe-client-secret.adobe-client-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.age-secret-key.age-secret-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.airtable-api-key.airtable-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.algolia-api-key.algolia-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.alibaba-access-key-id.alibaba-access-key-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.alibaba-secret-key.alibaba-secret-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.asana-client-id.asana-client-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.asana-client-secret.asana-client-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.atlassian-api-token.atlassian-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.authress-service-client-access-key.authress-service-client-access-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.aws-access-token.aws-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.beamer-api-token.beamer-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.bitbucket-client-id.bitbucket-client-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.bitbucket-client-secret.bitbucket-client-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.bittrex-access-key.bittrex-access-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.bittrex-secret-key.bittrex-secret-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.clojars-api-token.clojars-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.cloudflare-api-key.cloudflare-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.cloudflare-global-api-key.cloudflare-global-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.cloudflare-origin-ca-key.cloudflare-origin-ca-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.codecov-access-token.codecov-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.coinbase-access-token.coinbase-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.confluent-access-token.confluent-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.confluent-secret-key.confluent-secret-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.contentful-delivery-api-token.contentful-delivery-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.databricks-api-token.databricks-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.datadog-access-token.datadog-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.defined-networking-api-token.defined-networking-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.digitalocean-access-token.digitalocean-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.digitalocean-pat.digitalocean-pat"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.digitalocean-refresh-token.digitalocean-refresh-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.discord-api-token.discord-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.discord-client-id.discord-client-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.discord-client-secret.discord-client-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.doppler-api-token.doppler-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.droneci-access-token.droneci-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.dropbox-api-token.dropbox-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.dropbox-long-lived-api-token.dropbox-long-lived-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.dropbox-short-lived-api-token.dropbox-short-lived-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.duffel-api-token.duffel-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.dynatrace-api-token.dynatrace-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.easypost-api-token.easypost-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.easypost-test-api-token.easypost-test-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.etsy-access-token.etsy-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.facebook-access-token.facebook-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.facebook.facebook"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.facebook-page-access-token.facebook-page-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.facebook-secret.facebook-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.fastly-api-token.fastly-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.finicity-api-token.finicity-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.finicity-client-secret.finicity-client-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.finnhub-access-token.finnhub-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.flickr-access-token.flickr-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.flutterwave-encryption-key.flutterwave-encryption-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.flutterwave-public-key.flutterwave-public-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.flutterwave-secret-key.flutterwave-secret-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.frameio-api-token.frameio-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.freshbooks-access-token.freshbooks-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.gcp-api-key.gcp-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.generic-api-key.generic-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.github-app-token.github-app-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.github-fine-grained-pat.github-fine-grained-pat"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.github-oauth.github-oauth"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.github-pat.github-pat"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.github-refresh-token.github-refresh-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.gitlab-pat.gitlab-pat"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.gitlab-ptt.gitlab-ptt"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.gitlab-rrt.gitlab-rrt"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.gitter-access-token.gitter-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.gocardless-api-token.gocardless-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.grafana-api-key.grafana-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.grafana-cloud-api-token.grafana-cloud-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.grafana-service-account-token.grafana-service-account-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.harness-api-key.harness-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.hashicorp-tf-api-token.hashicorp-tf-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.hashicorp-tf-password.hashicorp-tf-password"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.heroku-api-key.heroku-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.hubspot-api-key.hubspot-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.huggingface-access-token.huggingface-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.huggingface-organization-api-token.huggingface-organization-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.infracost-api-token.infracost-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.intercom-api-key.intercom-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.intra42-client-secret.intra42-client-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.jfrog-api-key.jfrog-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.jfrog-identity-token.jfrog-identity-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.jwt-base64.jwt-base64"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.jwt.jwt"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.kraken-access-token.kraken-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.kucoin-access-token.kucoin-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.kucoin-secret-key.kucoin-secret-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.launchdarkly-access-token.launchdarkly-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.linear-api-key.linear-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.linear-client-secret.linear-client-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.linkedin-client-id.linkedin-client-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.linkedin-client-secret.linkedin-client-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.lob-api-key.lob-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.lob-pub-api-key.lob-pub-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.mailchimp-api-key.mailchimp-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.mailgun-private-api-token.mailgun-private-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.mailgun-pub-key.mailgun-pub-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.mailgun-signing-key.mailgun-signing-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.mapbox-api-token.mapbox-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.mattermost-access-token.mattermost-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.messagebird-api-token.messagebird-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.messagebird-client-id.messagebird-client-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.microsoft-teams-webhook.microsoft-teams-webhook"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.netlify-access-token.netlify-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.new-relic-browser-api-token.new-relic-browser-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.new-relic-insert-key.new-relic-insert-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.new-relic-user-api-id.new-relic-user-api-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.new-relic-user-api-key.new-relic-user-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.npm-access-token.npm-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.nytimes-access-token.nytimes-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.okta-access-token.okta-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.openai-api-key.openai-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.plaid-api-token.plaid-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.plaid-client-id.plaid-client-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.plaid-secret-key.plaid-secret-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.planetscale-api-token.planetscale-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.planetscale-oauth-token.planetscale-oauth-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.planetscale-password.planetscale-password"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.postman-api-token.postman-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.prefect-api-token.prefect-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.private-key.private-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.pulumi-api-token.pulumi-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.pypi-upload-token.pypi-upload-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.rapidapi-access-token.rapidapi-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.readme-api-token.readme-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.rubygems-api-token.rubygems-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.scalingo-api-token.scalingo-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.sendbird-access-id.sendbird-access-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.sendbird-access-token.sendbird-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.sendgrid-api-token.sendgrid-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.sendinblue-api-token.sendinblue-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.sentry-access-token.sentry-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.shippo-api-token.shippo-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.shopify-access-token.shopify-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.shopify-custom-access-token.shopify-custom-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.shopify-private-app-access-token.shopify-private-app-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.shopify-shared-secret.shopify-shared-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.sidekiq-secret.sidekiq-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.sidekiq-sensitive-url.sidekiq-sensitive-url"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.slack-app-token.slack-app-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.slack-bot-token.slack-bot-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.slack-config-access-token.slack-config-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.slack-config-refresh-token.slack-config-refresh-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.slack-legacy-bot-token.slack-legacy-bot-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.slack-legacy-token.slack-legacy-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.slack-legacy-workspace-token.slack-legacy-workspace-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.slack-user-token.slack-user-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.slack-webhook-url.slack-webhook-url"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.snyk-api-token.snyk-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.square-access-token.square-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.squarespace-access-token.squarespace-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.stripe-access-token.stripe-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.sumologic-access-id.sumologic-access-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.sumologic-access-token.sumologic-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.telegram-bot-api-token.telegram-bot-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.travisci-access-token.travisci-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.twilio-api-key.twilio-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.twitch-api-token.twitch-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.twitter-access-secret.twitter-access-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.twitter-access-token.twitter-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.twitter-api-key.twitter-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.twitter-api-secret.twitter-api-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.twitter-bearer-token.twitter-bearer-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.typeform-api-token.typeform-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.vault-batch-token.vault-batch-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.vault-service-token.vault-service-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.yandex-access-token.yandex-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.yandex-api-key.yandex-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.yandex-aws-access-token.yandex-aws-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.gitleaks.zendesk-secret-key.zendesk-secret-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-amazon-mws-auth-token.detected-amazon-mws-auth-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-artifactory-password.detected-artifactory-password"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-artifactory-token.detected-artifactory-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-aws-access-key-id-value.detected-aws-access-key-id-value"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-aws-account-id.detected-aws-account-id"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-aws-appsync-graphql-key.detected-aws-appsync-graphql-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-aws-secret-access-key.detected-aws-secret-access-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-aws-session-token.detected-aws-session-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-bcrypt-hash.detected-bcrypt-hash"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-codeclimate.detected-codeclimate"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-etc-shadow.detected-etc-shadow"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-facebook-access-token.detected-facebook-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-facebook-oauth.detected-facebook-oauth"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-generic-api-key.detected-generic-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-generic-secret.detected-generic-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-github-token.detected-github-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-google-api-key.detected-google-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-google-cloud-api-key.detected-google-cloud-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-google-gcm-service-account.detected-google-gcm-service-account"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-google-oauth-access-token.detected-google-oauth-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-google-oauth.detected-google-oauth-url"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-heroku-api-key.detected-heroku-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-hockeyapp.detected-hockeyapp"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-jwt-token.detected-jwt-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-kolide-api-key.detected-kolide-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-mailchimp-api-key.detected-mailchimp-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-mailgun-api-key.detected-mailgun-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-npm-registry-auth-token.detected-npm-registry-auth-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-onfido-live-api-token.detected-onfido-live-api-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-outlook-team.detected-outlook-team"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-paypal-braintree-access-token.detected-paypal-braintree-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-pgp-private-key-block.detected-pgp-private-key-block"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-picatic-api-key.detected-picatic-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-private-key.detected-private-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-sauce-token.detected-sauce-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-sendgrid-api-key.detected-sendgrid-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-slack-token.detected-slack-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-slack-webhook.detected-slack-webhook"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-snyk-api-key.detected-snyk-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-softlayer-api-key.detected-softlayer-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-sonarqube-docs-api-key.detected-sonarqube-docs-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-square-access-token.detected-square-access-token"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-square-oauth-secret.detected-square-oauth-secret"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-ssh-password.detected-ssh-password"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-stripe-api-key.detected-stripe-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-stripe-restricted-api-key.detected-stripe-restricted-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-telegram-bot-api-key.detected-telegram-bot-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-twilio-api-key.detected-twilio-api-key"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.detected-username-and-password-in-uri.detected-username-and-password-in-uri"
+        },
+        {
+          "patternId": "Semgrep_generic.secrets.security.google-maps-apikeyleak.google-maps-apikeyleak"
+        },
+        {
+          "patternId": "Semgrep_generic.unicode.security.bidi.contains-bidirectional-characters"
+        },
+        {
+          "patternId": "Semgrep_json.aws.security.public-s3-bucket.public-s3-bucket"
+        },
+        {
+          "patternId": "Semgrep_json.aws.security.public-s3-policy-statement.public-s3-policy-statement"
+        },
+        {
+          "patternId": "Semgrep_json.aws.security.wildcard-assume-role.wildcard-assume-role"
+        },
+        {
+          "patternId": "Semgrep_json.npm.security.package-dependencies-check.package-dependencies-check"
+        },
+        {
+          "patternId": "Semgrep_python.airflow.security.audit.formatted-string-bashoperator.formatted-string-bashoperator"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.dangerous-asyncio-create-exec.dangerous-asyncio-create-exec"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.dangerous-asyncio-exec.dangerous-asyncio-exec"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.dangerous-asyncio-shell.dangerous-asyncio-shell"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.dangerous-spawn-process.dangerous-spawn-process"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.dangerous-subprocess-use.dangerous-subprocess-use"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.dangerous-system-call.dangerous-system-call"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.dynamodb-filter-injection.dynamodb-filter-injection"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.mysql-sqli.mysql-sqli"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.psycopg-sqli.psycopg-sqli"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.pymssql-sqli.pymssql-sqli"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.pymysql-sqli.pymysql-sqli"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.sqlalchemy-sqli.sqlalchemy-sqli"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.tainted-code-exec.tainted-code-exec"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.tainted-html-response.tainted-html-response"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.tainted-html-string.tainted-html-string"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.tainted-pickle-deserialization.tainted-pickle-deserialization"
+        },
+        {
+          "patternId": "Semgrep_python.aws-lambda.security.tainted-sql-string.tainted-sql-string"
+        },
+        {
+          "patternId": "Semgrep_python_bind-all-interfaces_rule-general-bindall-interfaces"
+        },
+        {
+          "patternId": "Semgrep_python.boto3.security.hardcoded-token.hardcoded-token"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.empty-aes-key.empty-aes-key"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.insecure-cipher-algorithms-arc4.insecure-cipher-algorithm-arc4"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.insecure-cipher-algorithms-blowfish.insecure-cipher-algorithm-blowfish"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.insecure-cipher-algorithms.insecure-cipher-algorithm-idea"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.insecure-cipher-mode-ecb.insecure-cipher-mode-ecb"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.insecure-hash-algorithms-md5.insecure-hash-algorithm-md5"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.insufficient-dsa-key-size.insufficient-dsa-key-size"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.insufficient-ec-key-size.insufficient-ec-key-size"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.insufficient-rsa-key-size.insufficient-rsa-key-size"
+        },
+        {
+          "patternId": "Semgrep_python.cryptography.security.mode-without-authentication.crypto-mode-without-authentication"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-cipher-modes"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-cipher-blowfish"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-cipher-des"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-cipher-rc2"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-cipher-rc4"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-cipher-xor"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-encrypt-dsa-rsa"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-encrypt-ec"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-hash-md5"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-hash-sha1"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-hazmat-cipher-arc4"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-hazmat-cipher-blowfish"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto-hazmat-cipher-idea"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto.hazmat-hash-md5"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-crypto.hazmat-hash-sha1"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-hashlib-new-insecure-functions"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-hash-md2"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-hash-md4"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-hash-md5"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-hash-sha1"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-HTTPConnectionPool"
+        },
+        {
+          "patternId": "Semgrep_python_crypto_rule-import-pycrypto"
+        },
+        {
+          "patternId": "Semgrep_python_deserialization_rule-cpickle"
+        },
+        {
+          "patternId": "Semgrep_python_deserialization_rule-dill"
+        },
+        {
+          "patternId": "Semgrep_python_deserialization_rule-marshal"
+        },
+        {
+          "patternId": "Semgrep_python_deserialization_rule-pickle"
+        },
+        {
+          "patternId": "Semgrep_python_deserialization_rule-shelve"
+        },
+        {
+          "patternId": "Semgrep_python_deserialization_rule-yaml-load"
+        },
+        {
+          "patternId": "Semgrep_python.distributed.security.require-encryption"
+        },
+        {
+          "patternId": "Semgrep_python_django_rule-django-extra-used"
+        },
+        {
+          "patternId": "Semgrep_python_django_rule-django-rawsql-used"
+        },
+        {
+          "patternId": "Semgrep_python_django_rule-django-raw-used"
+        },
+        {
+          "patternId": "Semgrep_python.docker.security.audit.docker-arbitrary-container-run.docker-arbitrary-container-run"
+        },
+        {
+          "patternId": "Semgrep_python_escaping_rule-django"
+        },
+        {
+          "patternId": "Semgrep_python_escaping_rule-jinja2-autoescape-false"
+        },
+        {
+          "patternId": "Semgrep_python_escaping_rule-use-of-mako-templates"
+        },
+        {
+          "patternId": "Semgrep_python_eval_rule-eval"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-exec-used"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-os-path"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-os-popen2"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-start-process-partial-path"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-start-process-path"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-start-process-with-no-shell"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-subprocess-call"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-subprocess-call-array"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-subprocess-popen-shell-true"
+        },
+        {
+          "patternId": "Semgrep_python_exec_rule-subprocess-shell-TRUE"
+        },
+        {
+          "patternId": "Semgrep_python_file-permissions_rule-general-bad-permission"
+        },
+        {
+          "patternId": "Semgrep_python_files_rule-tarfile-unsafe-members"
+        },
+        {
+          "patternId": "Semgrep_python_flask_rule-app-debug"
+        },
+        {
+          "patternId": "Semgrep_python_flask_rule-flask-open-redirect"
+        },
+        {
+          "patternId": "Semgrep_python_flask_rule-path-traversal-open"
+        },
+        {
+          "patternId": "Semgrep_python_flask_rule-tainted-sql-string"
+        },
+        {
+          "patternId": "Semgrep_python_ftp_rule-ftplib"
+        },
+        {
+          "patternId": "Semgrep_python.jinja2.security.audit.autoescape-disabled-false.incorrect-autoescape-disabled"
+        },
+        {
+          "patternId": "Semgrep_python.jinja2.security.audit.missing-autoescape-disabled.missing-autoescape-disabled"
+        },
+        {
+          "patternId": "Semgrep_python_jwt_rule-jwt-none-alg"
+        },
+        {
+          "patternId": "Semgrep_python.jwt.security.audit.jwt-exposed-data.jwt-python-exposed-data"
+        },
+        {
+          "patternId": "Semgrep_python.jwt.security.jwt-exposed-credentials.jwt-python-exposed-credentials"
+        },
+        {
+          "patternId": "Semgrep_python.jwt.security.jwt-hardcode.jwt-python-hardcoded-secret"
+        },
+        {
+          "patternId": "Semgrep_python.jwt.security.jwt-none-alg.jwt-python-none-alg"
+        },
+        {
+          "patternId": "Semgrep_python.jwt.security.unverified-jwt-decode.unverified-jwt-decode"
+        },
+        {
+          "patternId": "Semgrep_python.lang.correctness.tempfile.mktemp.tempfile-insecure"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.conn_recv.multiprocessing-recv"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-annotations-usage.dangerous-annotations-usage"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-asyncio-create-exec-audit.dangerous-asyncio-create-exec-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-asyncio-create-exec-tainted-env-args.dangerous-asyncio-create-exec-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-asyncio-exec-audit.dangerous-asyncio-exec-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-asyncio-exec-tainted-env-args.dangerous-asyncio-exec-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-asyncio-shell-audit.dangerous-asyncio-shell-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-asyncio-shell-tainted-env-args.dangerous-asyncio-shell-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-code-run-audit.dangerous-interactive-code-run-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-code-run-tainted-env-args.dangerous-interactive-code-run-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-os-exec-audit.dangerous-os-exec-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-os-exec-tainted-env-args.dangerous-os-exec-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-spawn-process-audit.dangerous-spawn-process-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-spawn-process-tainted-env-args.dangerous-spawn-process-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-subinterpreters-run-string-audit.dangerous-subinterpreters-run-string-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-subinterpreters-run-string-tainted-env-args.dangerous-subinterpreters-run-string-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-subprocess-use-audit.dangerous-subprocess-use-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-subprocess-use-tainted-env-args.dangerous-subprocess-use-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-system-call-audit.dangerous-system-call-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-system-call-tainted-env-args.dangerous-system-call-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-testcapi-run-in-subinterp-audit.dangerous-testcapi-run-in-subinterp-audit"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dangerous-testcapi-run-in-subinterp-tainted-env-args.dangerous-testcapi-run-in-subinterp-tainted-env-args"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.eval-detected.eval-detected"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.exec-detected.exec-detected"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.formatted-sql-query.formatted-sql-query"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.hardcoded-password-default-argument.hardcoded-password-default-argument"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.httpsconnection-detected.httpsconnection-detected"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-file-permissions.insecure-file-permissions"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.ftplib.use-ftp-tls.use-ftp-tls"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.requests.request-session-http-in-with-context.request-session-http-in-with-context"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.requests.request-session-with-http.request-session-with-http"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.requests.request-with-http.request-with-http"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.ssl.no-set-ciphers.no-set-ciphers"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-openerdirector-open-ftp.insecure-openerdirector-open-ftp"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-openerdirector-open.insecure-openerdirector-open"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-request-object-ftp.insecure-request-object-ftp"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-request-object.insecure-request-object"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-urlopener-open-ftp.insecure-urlopener-open-ftp"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-urlopener-open.insecure-urlopener-open"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-urlopener-retrieve-ftp.insecure-urlopener-retrieve-ftp"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-urlopener-retrieve.insecure-urlopener-retrieve"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-urlopen-ftp.insecure-urlopen-ftp"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-urlopen.insecure-urlopen"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-urlretrieve-ftp.insecure-urlretrieve-ftp"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.insecure-transport.urllib.insecure-urlretrieve.insecure-urlretrieve"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.logging.listeneval.listen-eval"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.logging.logger-credential-leak.python-logger-credential-disclosure"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.mako-templates-detected.mako-templates-detected"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.marshal.marshal-usage"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.md5-used-as-password.md5-used-as-password"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.network.bind.avoid-bind-to-all-interfaces"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.network.disabled-cert-validation.disabled-cert-validation"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.network.http-not-https-connection.http-not-https-connection"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.non-literal-import.non-literal-import"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.paramiko-implicit-trust-host-key.paramiko-implicit-trust-host-key"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.paramiko.paramiko-exec-command.paramiko-exec-command"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.python-reverse-shell.python-reverse-shell"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.regex-dos.regex_dos"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.sqli.aiopg-sqli.aiopg-sqli"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.sqli.asyncpg-sqli.asyncpg-sqli"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.sqli.pg8000-sqli.pg8000-sqli"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.sqli.psycopg-sqli.psycopg-sqli"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.ssl-wrap-socket-is-deprecated.ssl-wrap-socket-is-deprecated"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.subprocess-shell-true.subprocess-shell-true"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.system-wildcard-detected.system-wildcard-detected"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.telnetlib.telnetlib"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.audit.weak-ssl-version.weak-ssl-version"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.dangerous-code-run.dangerous-interactive-code-run"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.dangerous-globals-use.dangerous-globals-use"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.dangerous-os-exec.dangerous-os-exec"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.dangerous-spawn-process.dangerous-spawn-process"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.dangerous-subinterpreters-run-string.dangerous-subinterpreters-run-string"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.dangerous-subprocess-use.dangerous-subprocess-use"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.dangerous-system-call.dangerous-system-call"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.dangerous-testcapi-run-in-subinterp.dangerous-testcapi-run-in-subinterp"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.deserialization.avoid-jsonpickle.avoid-jsonpickle"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.deserialization.avoid-pyyaml-load.avoid-pyyaml-load"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.deserialization.avoid-unsafe-ruamel.avoid-unsafe-ruamel"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.deserialization.pickle.avoid-cpickle"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.deserialization.pickle.avoid-dill"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.deserialization.pickle.avoid-pickle"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.deserialization.pickle.avoid-shelve"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.insecure-hash-algorithms-md5.insecure-hash-algorithm-md5"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.insecure-hash-function.insecure-hash-function"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.insecure-uuid-version.insecure-uuid-version"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.unverified-ssl-context.unverified-ssl-context"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.use-defusedcsv.use-defusedcsv"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.use-defused-xml-parse.use-defused-xml-parse"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.use-defused-xmlrpc.use-defused-xmlrpc"
+        },
+        {
+          "patternId": "Semgrep_python.lang.security.use-defused-xml.use-defused-xml"
+        },
+        {
+          "patternId": "Semgrep_python_log_rule-logging-config-insecure-listen"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insecure-cipher-algorithm-blowfish.insecure-cipher-algorithm-blowfish"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insecure-cipher-algorithm-des.insecure-cipher-algorithm-des"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insecure-cipher-algorithm.insecure-cipher-algorithm-xor"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insecure-cipher-algorithm-rc2.insecure-cipher-algorithm-rc2"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insecure-cipher-algorithm-rc4.insecure-cipher-algorithm-rc4"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insecure-hash-algorithm.insecure-hash-algorithm-sha1"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insecure-hash-algorithm-md2.insecure-hash-algorithm-md2"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insecure-hash-algorithm-md4.insecure-hash-algorithm-md4"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insecure-hash-algorithm-md5.insecure-hash-algorithm-md5"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insufficient-dsa-key-size.insufficient-dsa-key-size"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.insufficient-rsa-key-size.insufficient-rsa-key-size"
+        },
+        {
+          "patternId": "Semgrep_python.pycryptodome.security.mode-without-authentication.crypto-mode-without-authentication"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.authtkt-cookie-httponly-unsafe-default.pyramid-authtkt-cookie-httponly-unsafe-default"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.authtkt-cookie-httponly-unsafe-value.pyramid-authtkt-cookie-httponly-unsafe-value"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.authtkt-cookie-samesite.pyramid-authtkt-cookie-samesite"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.authtkt-cookie-secure-unsafe-default.pyramid-authtkt-cookie-secure-unsafe-default"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.authtkt-cookie-secure-unsafe-value.pyramid-authtkt-cookie-secure-unsafe-value"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.csrf-check-disabled.pyramid-csrf-check-disabled"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.csrf-origin-check-disabled-globally.pyramid-csrf-origin-check-disabled-globally"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.csrf-origin-check-disabled.pyramid-csrf-origin-check-disabled"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.set-cookie-httponly-unsafe-default.pyramid-set-cookie-httponly-unsafe-default"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.set-cookie-httponly-unsafe-value.pyramid-set-cookie-httponly-unsafe-value"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.set-cookie-samesite-unsafe-default.pyramid-set-cookie-samesite-unsafe-default"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.set-cookie-samesite-unsafe-value.pyramid-set-cookie-samesite-unsafe-value"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.set-cookie-secure-unsafe-default.pyramid-set-cookie-secure-unsafe-default"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.audit.set-cookie-secure-unsafe-value.pyramid-set-cookie-secure-unsafe-value"
+        },
+        {
+          "patternId": "Semgrep_python_pyramid_rule-pyramid-csrf-origin-check"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.security.csrf-check-disabled-globally.pyramid-csrf-check-disabled-globally"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.security.direct-use-of-response.pyramid-direct-use-of-response"
+        },
+        {
+          "patternId": "Semgrep_python.pyramid.security.sqlalchemy-sql-injection.pyramid-sqlalchemy-sql-injection"
+        },
+        {
+          "patternId": "Semgrep_python_random_rule-random"
+        },
+        {
+          "patternId": "Semgrep_python_requests_rule-request-without-timeout"
+        },
+        {
+          "patternId": "Semgrep_python.requests.security.disabled-cert-validation.disabled-cert-validation"
+        },
+        {
+          "patternId": "Semgrep_python.requests.security.no-auth-over-http.no-auth-over-http"
+        },
+        {
+          "patternId": "Semgrep_python.sh.security.string-concat.string-concat"
+        },
+        {
+          "patternId": "Semgrep_python_snmp_rule-insecure-snmp-version"
+        },
+        {
+          "patternId": "Semgrep_python_snmp_rule-snmp-weak-cryptography"
+        },
+        {
+          "patternId": "Semgrep_python_sql_rule-hardcoded-sql-expression"
+        },
+        {
+          "patternId": "Semgrep_python_ssh_rule-ssh-nohost-key-verification"
+        },
+        {
+          "patternId": "Semgrep_python_ssl_rule-req-no-certvalid"
+        },
+        {
+          "patternId": "Semgrep_python_ssl_rule-ssl-no-version"
+        },
+        {
+          "patternId": "Semgrep_python_ssl_rule-ssl-with-bad-version"
+        },
+        {
+          "patternId": "Semgrep_python_ssl_rule-unverified-context"
+        },
+        {
+          "patternId": "Semgrep_python_telnet_rule-import-telnib"
+        },
+        {
+          "patternId": "Semgrep_python_tmpdir_rule-hardcodedtmp"
+        },
+        {
+          "patternId": "Semgrep_python_tmpdir_rule-mktemp-q"
+        },
+        {
+          "patternId": "Semgrep_python.twilio.security.twiml-injection.twiml-injection"
+        },
+        {
+          "patternId": "Semgrep_python_urlopen_rule-urllib-urlopen"
+        },
+        {
+          "patternId": "Semgrep_python_xml_rule-celement"
+        },
+        {
+          "patternId": "Semgrep_python_xml_rule-element"
+        },
+        {
+          "patternId": "Semgrep_python_xml_rule-etree"
+        },
+        {
+          "patternId": "Semgrep_python_xml_rule-expatbuilder"
+        },
+        {
+          "patternId": "Semgrep_python_xml_rule-expatreader"
+        },
+        {
+          "patternId": "Semgrep_python_xml_rule-minidom"
+        },
+        {
+          "patternId": "Semgrep_python_xml_rule-pulldom"
+        },
+        {
+          "patternId": "Semgrep_python_xml_rule-sax"
+        },
+        {
+          "patternId": "Semgrep_yaml.argo.security.argo-workflow-parameter-command-injection.argo-workflow-parameter-command-injection"
+        },
+        {
+          "patternId": "Semgrep_yaml.docker-compose.security.exposing-docker-socket-volume.exposing-docker-socket-volume"
+        },
+        {
+          "patternId": "Semgrep_yaml.docker-compose.security.no-new-privileges.no-new-privileges"
+        },
+        {
+          "patternId": "Semgrep_yaml.docker-compose.security.privileged-service.privileged-service"
+        },
+        {
+          "patternId": "Semgrep_yaml.docker-compose.security.seccomp-confinement-disabled.seccomp-confinement-disabled"
+        },
+        {
+          "patternId": "Semgrep_yaml.docker-compose.security.selinux-separation-disabled.selinux-separation-disabled"
+        },
+        {
+          "patternId": "Semgrep_yaml.docker-compose.security.writable-filesystem-service.writable-filesystem-service"
+        },
+        {
+          "patternId": "Semgrep_yaml.github-actions.security.allowed-unsecure-commands.allowed-unsecure-commands"
+        },
+        {
+          "patternId": "Semgrep_yaml.github-actions.security.audit.unsafe-add-mask-workflow-command.unsafe-add-mask-workflow-command"
+        },
+        {
+          "patternId": "Semgrep_yaml.github-actions.security.curl-eval.curl-eval"
+        },
+        {
+          "patternId": "Semgrep_yaml.github-actions.security.github-script-injection.github-script-injection"
+        },
+        {
+          "patternId": "Semgrep_yaml.github-actions.security.pull-request-target-code-checkout.pull-request-target-code-checkout"
+        },
+        {
+          "patternId": "Semgrep_yaml.github-actions.security.run-shell-injection.run-shell-injection"
+        },
+        {
+          "patternId": "Semgrep_yaml.github-actions.security.third-party-action-not-pinned-to-commit-sha.third-party-action-not-pinned-to-commit-sha"
+        },
+        {
+          "patternId": "Semgrep_yaml.github-actions.security.workflow-run-target-code-checkout.workflow-run-target-code-checkout"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.allow-privilege-escalation.allow-privilege-escalation"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.allow-privilege-escalation-no-securitycontext.allow-privilege-escalation-no-securitycontext"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.allow-privilege-escalation-true.allow-privilege-escalation-true"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.env.flask-debugging-enabled.flask-debugging-enabled"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.exposing-docker-socket-hostpath.exposing-docker-socket-hostpath"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.hostipc-pod.hostipc-pod"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.hostnetwork-pod.hostnetwork-pod"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.hostpid-pod.hostpid-pod"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.legacy-api-clusterrole-excessive-permissions.legacy-api-clusterrole-excessive-permissions"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.privileged-container.privileged-container"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.run-as-non-root-container-level-missing-security-context.run-as-non-root-container-level-missing-security-context"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.run-as-non-root-container-level.run-as-non-root-container-level"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.run-as-non-root.run-as-non-root"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.run-as-non-root-security-context-pod-level.run-as-non-root-security-context-pod-level"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.run-as-non-root-unsafe-value.run-as-non-root-unsafe-value"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.seccomp-confinement-disabled.seccomp-confinement-disabled"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.secrets-in-config-file.secrets-in-config-file"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.skip-tls-verify-cluster.skip-tls-verify-cluster"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.skip-tls-verify-service.skip-tls-verify-service"
+        },
+        {
+          "patternId": "Semgrep_yaml.kubernetes.security.writable-filesystem-container.writable-filesystem-container"
+        },
+        {
+          "patternId": "Semgrep_yaml.openapi.security.api-key-in-query-parameter.api-key-in-query-parameter"
+        },
+        {
+          "patternId": "Semgrep_yaml.openapi.security.openai-consequential-action-false.openai-consequential-action-false"
+        },
+        {
+          "patternId": "Semgrep_yaml.openapi.security.use-of-basic-authentication.use-of-basic-authentication"
+        }
+      ]
+    },
+    {
+      "toolId": "Bandit",
+      "localConfigurationFile": "/Users/gfabbris/GitHub/polartools/pyproject.toml",
+      "useLocalConfigurationFile": true,
+      "patterns": []
+    },
+    {
+      "toolId": "PyLintPython3",
+      "useLocalConfigurationFile": false,
+      "patterns": [
+        {
+          "patternId": "PyLintPython3_W0102"
+        },
+        {
+          "patternId": "PyLintPython3_E0606"
+        },
+        {
+          "patternId": "PyLintPython3_W0718"
+        },
+        {
+          "patternId": "PyLintPython3_W0707"
+        },
+        {
+          "patternId": "PyLintPython3_W0611"
+        },
+        {
+          "patternId": "PyLintPython3_E0601"
+        },
+        {
+          "patternId": "PyLintPython3_E0602"
+        },
+        {
+          "patternId": "PyLintPython3_E0603"
+        },
+        {
+          "patternId": "PyLintPython3_E0611"
+        },
+        {
+          "patternId": "PyLintPython3_E1101"
+        },
+        {
+          "patternId": "PyLintPython3_E1102"
+        },
+        {
+          "patternId": "PyLintPython3_E1111"
+        },
+        {
+          "patternId": "PyLintPython3_E1120"
+        },
+        {
+          "patternId": "PyLintPython3_E1121"
+        },
+        {
+          "patternId": "PyLintPython3_E1123"
+        },
+        {
+          "patternId": "PyLintPython3_E1124"
+        },
+        {
+          "patternId": "PyLintPython3_E1128"
+        },
+        {
+          "patternId": "PyLintPython3_E1136"
+        },
+        {
+          "patternId": "PyLintPython3_E0704"
+        },
+        {
+          "patternId": "PyLintPython3_W0612"
+        },
+        {
+          "patternId": "PyLintPython3_W0622"
+        },
+        {
+          "patternId": "PyLintPython3_W0702"
+        },
+        {
+          "patternId": "PyLintPython3_W0706"
+        },
+        {
+          "patternId": "PyLintPython3_W0104"
+        },
+        {
+          "patternId": "PyLintPython3_W0106"
+        }
+      ]
+    },
+    {
+      "toolId": "Checkov",
+      "patterns": [
+        {
+          "patternId": "Checkov_CKV2_GHA_1"
+        },
+        {
+          "patternId": "Checkov_CKV2_GIT_1"
+        },
+        {
+          "patternId": "Checkov_CKV_GHA_1"
+        },
+        {
+          "patternId": "Checkov_CKV_GHA_2"
+        },
+        {
+          "patternId": "Checkov_CKV_GHA_3"
+        },
+        {
+          "patternId": "Checkov_CKV_GHA_4"
+        },
+        {
+          "patternId": "Checkov_CKV_GHA_5"
+        },
+        {
+          "patternId": "Checkov_CKV_GHA_6"
+        },
+        {
+          "patternId": "Checkov_CKV_GHA_7"
+        },
+        {
+          "patternId": "Checkov_CKV_GIT_1"
+        },
+        {
+          "patternId": "Checkov_CKV_GIT_2"
+        },
+        {
+          "patternId": "Checkov_CKV_GIT_3"
+        },
+        {
+          "patternId": "Checkov_CKV_GIT_4"
+        },
+        {
+          "patternId": "Checkov_CKV_GIT_5"
+        },
+        {
+          "patternId": "Checkov_CKV_GIT_6"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_1"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_10"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_11"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_12"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_13"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_14"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_15"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_16"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_17"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_18"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_19"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_2"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_20"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_21"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_22"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_23"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_26"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_27"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_28"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_3"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_4"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_5"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_6"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_7"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_8"
+        },
+        {
+          "patternId": "Checkov_CKV_GITHUB_9"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_1"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_11"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_12"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_13"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_14"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_15"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_16"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_17"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_18"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_19"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_2"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_3"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_4"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_5"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_6"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_7"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_8"
+        },
+        {
+          "patternId": "Checkov_CKV_SECRET_9"
+        }
+      ]
+    }
+  ],
+  "exclude": [
+    "polartools/tests/**",
+    "polartools/_version.py",
+    "polartools/_larch.py",
+    "polartools/_pyrixs.py",
+    "docs/**"
+  ]
+}
