@@ -692,3 +692,124 @@ def test_run_normalization_dependent_uses_same_kwargs(loaded_win):
     minus_kw = mock_norm.call_args_list[1].kwargs
     assert plus_kw == minus_kw
     assert plus_kw["e0"] == pytest.approx(7112.0)
+
+
+# ─── Lock-in conversion factor ───────────────────────────────────────────────
+
+
+def _norm_stub(energy):
+    return {
+        "energy": energy,
+        "mu": np.ones_like(energy),
+        "norm": np.ones_like(energy),
+        "xmcd": np.zeros_like(energy),
+        "preedge": np.zeros_like(energy),
+        "postedge": np.ones_like(energy),
+        "e0": 7112.0,
+        "edge_step": 1.0,
+        "flat": np.ones_like(energy),
+    }
+
+
+def test_lockin_factor_default_field(win):
+    assert win.le_l_factor.text() == "87"
+    assert win._lockin_factor() == pytest.approx(87.0)
+
+
+def test_lockin_factor_blank_defaults(win):
+    win.le_l_factor.setText("")
+    assert win._lockin_factor() == pytest.approx(87.0)
+
+
+def test_lockin_factor_invalid_defaults(win):
+    win.le_l_factor.setText("abc")
+    assert win._lockin_factor() == pytest.approx(87.0)
+
+
+def test_lockin_factor_custom(win):
+    win.le_l_factor.setText("100")
+    assert win._lockin_factor() == pytest.approx(100.0)
+
+
+def test_lockin_factor_zero_falls_back_to_one(win):
+    win.le_l_factor.setText("0")
+    assert win._lockin_factor() == pytest.approx(1.0)
+
+
+def test_run_normalization_applies_lockin_factor(loaded_win):
+    energy = loaded_win._plus_energy
+    loaded_win._plus_xmcd_raw = np.ones_like(energy)
+    loaded_win._minus_xmcd_raw = np.ones_like(energy)
+    loaded_win._loaded_kind = "lockin"
+    loaded_win.le_l_factor.setText("100")
+    with patch(
+        "polartools.xmcd_gui.normalize_absorption",
+        side_effect=lambda *a, **k: _norm_stub(energy),
+    ):
+        loaded_win._run_normalization()
+    # edge_step = 1.0, factor = 100 → xmcd = 1 / 1 / 100 = 0.01
+    assert np.allclose(loaded_win._plus_results["xmcd"], 0.01)
+    assert np.allclose(loaded_win._minus_results["xmcd"], 0.01)
+
+
+def test_run_normalization_no_factor_for_dichro(loaded_win):
+    energy = loaded_win._plus_energy
+    loaded_win._plus_xmcd_raw = np.ones_like(energy)
+    loaded_win._minus_xmcd_raw = np.ones_like(energy)
+    loaded_win._loaded_kind = "dichro"
+    loaded_win.le_l_factor.setText("100")  # ignored in dichro mode
+    with patch(
+        "polartools.xmcd_gui.normalize_absorption",
+        side_effect=lambda *a, **k: _norm_stub(energy),
+    ):
+        loaded_win._run_normalization()
+    # factor not applied → xmcd = 1 / 1 = 1.0
+    assert np.allclose(loaded_win._plus_results["xmcd"], 1.0)
+
+
+# ─── Guess-only-on-first-load behavior ───────────────────────────────────────
+
+
+def test_on_load_guesses_only_first_load(win, synthetic_data):
+    ep, yp, zp = synthetic_data
+    win.le_scans_plus.setText("1")
+    win.le_scans_minus.setText("2")
+    win.cb_source.setCurrentIndex(0)
+    win.le_spec_path.setText("/fake/path.dat")
+    win.cb_kind.setCurrentIndex(0)  # dichro
+    fake_return = (ep, yp, zp, None, None)
+    with (
+        patch(
+            "polartools.xmcd_gui.load_multi_dichro", return_value=fake_return
+        ),
+        patch(
+            "polartools.xmcd_gui.normalize_absorption",
+            side_effect=lambda *a, **k: _norm_stub(ep * 1000),
+        ),
+        patch.object(win, "_init_markers", wraps=win._init_markers) as spy,
+    ):
+        win._on_load()
+        assert spy.call_count == 1
+        assert win._markers_initialized
+        win._on_load()
+        # Parameters kept — not re-guessed on the second load.
+        assert spy.call_count == 1
+
+
+def test_on_guess_noop_without_data(win):
+    with patch.object(win, "_init_markers") as spy:
+        win._on_guess()
+    spy.assert_not_called()
+
+
+def test_on_guess_reguesses_with_data(loaded_win):
+    energy = loaded_win._plus_energy
+    with (
+        patch(
+            "polartools.xmcd_gui.normalize_absorption",
+            side_effect=lambda *a, **k: _norm_stub(energy),
+        ),
+        patch.object(loaded_win, "_init_markers") as spy,
+    ):
+        loaded_win._on_guess()
+    spy.assert_called_once()
