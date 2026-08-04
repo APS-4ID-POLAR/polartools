@@ -17,7 +17,7 @@ df = load_table(scan_id=42, source="myfile.dat", folder="/data/2024-1")
 
 result = fit_peak(
     xdata=df["th"],
-    ydata=df["apd"] / df["I0"],     # normalize by monitor
+    ydata=df["apd"] / df["I0"],  # normalize by monitor
     model=Model.PseudoVoigt,
 )
 
@@ -33,8 +33,12 @@ The result is an `lmfit.model.ModelResult`.
 ```python
 from polartools.diffraction import load_info, get_type
 
-info = load_info(scan_id=42, info=["sample", "T", "B"],
-                 source="myfile.dat", folder="/data/2024-1")
+info = load_info(
+    scan_id=42,
+    info=["sample", "T", "B"],
+    source="myfile.dat",
+    folder="/data/2024-1",
+)
 scan_type = get_type(scan_id=42, source="myfile.dat", folder="/data/2024-1")
 ```
 
@@ -51,7 +55,9 @@ fits = fit_series(
     scan_series=[100, 119, 1],
     source="myfile.dat",
     folder="/data/2024-1",
-    x="th", y="apd", monitor="I0",
+    x="th",
+    y="apd",
+    monitor="I0",
     model=Model.PseudoVoigt,
 )
 
@@ -74,7 +80,9 @@ mesh = load_mesh(
     scan_id=200,
     source="myfile.dat",
     folder="/data/2024-1",
-    x="h", y="k", intensity="apd",
+    x="h",
+    y="k",
+    intensity="apd",
     monitor="I0",
 )
 
@@ -98,8 +106,12 @@ databroker shortcut:
 from polartools.diffraction import plot_data, plot_fit, dbplot
 
 plot_data(scan_id=42, source="myfile.dat", folder="/data/2024-1")
-plot_fit(scan_id=42, source="myfile.dat", folder="/data/2024-1",
-         model=Model.PseudoVoigt)
+plot_fit(
+    scan_id=42,
+    source="myfile.dat",
+    folder="/data/2024-1",
+    model=Model.PseudoVoigt,
+)
 
 # straight from a databroker catalog
 dbplot(db, scan_id=42)

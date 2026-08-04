@@ -22,8 +22,8 @@ Pack a subset of a catalog into a folder you can copy to another machine:
 from polartools.manage_database import to_databroker
 
 to_databroker(
-    db,                           # source databroker catalog
-    folder="/exports/run3",       # destination
+    db,  # source databroker catalog
+    folder="/exports/run3",  # destination
     query={"scan_id": range(100, 200)},
 )
 ```
@@ -40,8 +40,8 @@ from databroker import catalog
 from polartools.manage_database import from_databroker_inplace
 
 from_databroker_inplace(
-    folder="/data/run3",          # the directory created by to_databroker
-    name="run3",                  # the catalog name to register
+    folder="/data/run3",  # the directory created by to_databroker
+    name="run3",  # the catalog name to register
     catalog=catalog,
 )
 
@@ -93,9 +93,12 @@ If your scans reference external image files (Lambda HDF5, Eiger HDF5, SPE),
 pass `external=True` to also pack the image files alongside the documents:
 
 ```python
-to_databroker(db, folder="/exports/run3",
-              query={"scan_id": range(100, 200)},
-              external=True)
+to_databroker(
+    db,
+    folder="/exports/run3",
+    query={"scan_id": range(100, 200)},
+    external=True,
+)
 ```
 
 Without `external=True`, the packed catalog will reference the original image

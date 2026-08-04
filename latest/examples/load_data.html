@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=b82b7c57"></script>
+    <script src="../_static/documentation_options.js?v=bd9c2a1f"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="Quickstart" href="../quickstart.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post20+g7f043475c" />
+  <meta name="docsearch:version" content="0.6.0.post22+gfe4d36f1b" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -560,11 +560,13 @@ to the right backend.</p>
 
 <span class="c1"># Databroker (legacy)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">databroker</span><span class="w"> </span><span class="kn">import</span> <span class="n">catalog</span>
+
 <span class="n">db</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">[</span><span class="s2">&quot;my_catalog&quot;</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">1049</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">db</span><span class="p">)</span>
 
 <span class="c1"># Tiled (new)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tiled.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_profile</span>
+
 <span class="n">cat</span> <span class="o">=</span> <span class="n">from_profile</span><span class="p">(</span><span class="s2">&quot;polar&quot;</span><span class="p">)[</span><span class="s2">&quot;raw&quot;</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">2025</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">cat</span><span class="p">)</span>
 </pre></div>
@@ -588,9 +590,11 @@ and let you pass backend-specific options:</p>
 it tries <code class="docutils literal notranslate"><span class="pre">databroker.catalog[name]</span></code> first, then falls back to a tiled profile:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_catalog</span>
 
-<span class="n">cat</span> <span class="o">=</span> <span class="n">load_catalog</span><span class="p">(</span><span class="s2">&quot;polar&quot;</span><span class="p">)</span>          <span class="c1"># tries databroker, then tiled</span>
-<span class="n">cat</span> <span class="o">=</span> <span class="n">load_catalog</span><span class="p">(</span><span class="s2">&quot;polar&quot;</span><span class="p">,</span>          <span class="c1"># tiled-only with explicit subpath</span>
-                   <span class="n">tiled_path</span><span class="o">=</span><span class="s2">&quot;/raw/2024-1&quot;</span><span class="p">)</span>
+<span class="n">cat</span> <span class="o">=</span> <span class="n">load_catalog</span><span class="p">(</span><span class="s2">&quot;polar&quot;</span><span class="p">)</span>  <span class="c1"># tries databroker, then tiled</span>
+<span class="n">cat</span> <span class="o">=</span> <span class="n">load_catalog</span><span class="p">(</span>
+    <span class="s2">&quot;polar&quot;</span><span class="p">,</span>  <span class="c1"># tiled-only with explicit subpath</span>
+    <span class="n">tiled_path</span><span class="o">=</span><span class="s2">&quot;/raw/2024-1&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>For tiled, the default <code class="docutils literal notranslate"><span class="pre">tiled_path</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;/raw&quot;</span></code>. Pass a deeper path if your
@@ -607,7 +611,9 @@ profile is laid out differently.</p>
 <span class="n">show_meta</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">,</span> <span class="n">meta_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">])</span>
 
 <span class="c1"># Aggregate the same metadata across many scans</span>
-<span class="n">table</span> <span class="o">=</span> <span class="n">collect_meta</span><span class="p">(</span><span class="n">scan_numbers</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="n">meta_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">)</span>
+<span class="n">table</span> <span class="o">=</span> <span class="n">collect_meta</span><span class="p">(</span>
+    <span class="n">scan_numbers</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="n">meta_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>

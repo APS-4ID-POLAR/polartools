@@ -16,8 +16,8 @@ energy, mu = load_absorption(
     source="myfile.dat",
     folder="/data/2024-1",
     monitor="I0",
-    detector="It",       # transmission detector
-    transmission=True,   # μ = -log(It / I0)
+    detector="It",  # transmission detector
+    transmission=True,  # μ = -log(It / I0)
 )
 ```
 
@@ -58,9 +58,11 @@ from polartools.absorption import normalize_absorption
 mu_norm = normalize_absorption(
     energy,
     mu,
-    e0=7112,         # Fe K-edge
-    pre1=-150, pre2=-30,
-    post1=80,  post2=300,
+    e0=7112,  # Fe K-edge
+    pre1=-150,
+    pre2=-30,
+    post1=80,
+    post2=300,
     post_order=2,
 )
 ```
@@ -79,8 +81,12 @@ from polartools.absorption import (
 )
 
 pre = pre_edge_background(energy, mu, e0=7112, pre1=-150, pre2=-30)
-post = post_edge_background(energy, mu, e0=7112, post1=80, post2=300, post_order=2)
-mu_flat = post_edge_flatten(energy, mu - pre, e0=7112, post1=80, post2=300, post_order=2)
+post = post_edge_background(
+    energy, mu, e0=7112, post1=80, post2=300, post_order=2
+)
+mu_flat = post_edge_flatten(
+    energy, mu - pre, e0=7112, post1=80, post2=300, post_order=2
+)
 ```
 
 ## Fluorescence over-absorption correction
@@ -93,12 +99,12 @@ it given the chemical formula, edge, and incidence/exit angles:
 from polartools.absorption import fluo_corr
 
 mu_corrected = fluo_corr(
-    norm=mu_norm,         # edge-step-normalized
+    norm=mu_norm,  # edge-step-normalized
     formula="Fe2O3",
     elem="Fe",
     edge="K",
     line="Ka",
-    anginp=45,            # degrees from sample surface
+    anginp=45,  # degrees from sample surface
     angout=45,
 )
 ```
@@ -118,16 +124,19 @@ plus, minus = process_xmcd(
     detector="IfluorM",
     transmission=False,
     e0=7112,
-    pre1=-150, pre2=-30,
-    post1=80, post2=300,
+    pre1=-150,
+    pre2=-30,
+    post1=80,
+    post2=300,
 )
 
 # Quick look
 plot_xmcd(plus, minus)
 
 # Save to a header-stamped column file
-save_xmcd(plus, minus, "Fe2O3_xmcd.dat",
-          header="# sample=Fe2O3, T=10K, B=±1T\n")
+save_xmcd(
+    plus, minus, "Fe2O3_xmcd.dat", header="# sample=Fe2O3, T=10K, B=±1T\n"
+)
 ```
 
 `process_xmcd` returns two `pandas.DataFrame`s (one per field direction) with
