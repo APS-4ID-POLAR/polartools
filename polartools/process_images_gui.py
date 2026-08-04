@@ -21,6 +21,7 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QStackedWidget,
     QTabWidget,
+    QCheckBox,
 )
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
@@ -309,6 +310,17 @@ class MainWindow(QMainWindow):
         row.addWidget(btn_copy)
         layout.addLayout(row)
 
+        row = QHBoxLayout()
+        chk_none = QCheckBox("No curvature (integrate vertically)")
+        row.addWidget(chk_none)
+        layout.addLayout(row)
+
+        def toggle_none(checked):
+            for widget in (le_c0, le_c1, le_c2, btn_copy):
+                widget.setEnabled(not checked)
+
+        chk_none.toggled.connect(toggle_none)
+
         def copy_curvature():
             if self._curvature is None:
                 QMessageBox.warning(
@@ -324,11 +336,14 @@ class MainWindow(QMainWindow):
 
         btn_copy.clicked.connect(copy_curvature)
 
-        return le_c0, le_c1, le_c2
+        return chk_none, le_c0, le_c1, le_c2
 
     def _read_curvature(self, fields):
+        chk_none, le_c0, le_c1, le_c2 = fields
+        if chk_none.isChecked():
+            return None
         try:
-            return [float(le.text()) for le in fields]
+            return [float(le.text()) for le in (le_c0, le_c1, le_c2)]
         except ValueError:
             raise ValueError("Curvature coefficients must be numeric.")
 

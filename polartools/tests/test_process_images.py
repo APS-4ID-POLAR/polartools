@@ -133,6 +133,13 @@ def test_get_spectra(ims):
     assert allclose(mean(spectra), 132.42162878787877)
 
 
+def test_get_spectrum_no_curvature(im):
+    spectrum_none = process_images.get_spectrum(im, None, biny=2)
+    spectrum_zero = process_images.get_spectrum(im, [0, 0, 0], biny=2)
+
+    assert allclose(spectrum_none, spectrum_zero)
+
+
 def test_process_rxes(cat):
     # No positioner
     spectrum = process_images.process_rxes(
@@ -154,3 +161,14 @@ def test_process_rxes(cat):
     )
     assert spectra.shape == (50, 529, 2)
     assert positioner.shape == (50,)
+
+
+def test_process_rxes_no_curvature(cat):
+    spectrum = process_images.process_rxes(
+        [276],
+        cat,
+        "lambda250k_image",
+        curvature=None,
+        positioner=None,
+    )
+    assert spectrum.shape[1] == 2

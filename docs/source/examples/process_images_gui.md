@@ -20,9 +20,12 @@ tabs below it:
   with the fitted curve overlaid. The result can be saved to a text file.
 - **RXES** — runs `process_images.process_rxes` using a curvature (typed in,
   or copied from the Curvature tab) and plots either a single spectrum or a
-  2D RIXS map, depending on whether a positioner is set.
+  2D RIXS map, depending on whether a positioner is set. Check "No curvature
+  (integrate vertically)" to skip the curvature correction and just sum each
+  image in the vertical direction.
 - **RXES-MCD** — same as RXES but for `process_images.process_rxes_mcd`,
-  plotting the RXES and MCD spectra/maps side by side.
+  plotting the RXES and MCD spectra/maps side by side. It has its own
+  curvature fields and "No curvature" checkbox.
 
 Each tab has its own "Save result" button — spectra are saved as text
 columns, RIXS maps as `.npz` archives.

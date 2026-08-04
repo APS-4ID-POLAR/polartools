@@ -282,7 +282,7 @@ def get_curvature(image, binx=10, biny=1, constant_offset=None, plot=False):
     return curvature
 
 
-def get_spectrum(image, curvature, biny=1):
+def get_spectrum(image, curvature=None, biny=1):
     """
     Extract the spectrum of a single image.
 
@@ -296,9 +296,11 @@ def get_spectrum(image, curvature, biny=1):
     ----------
     image : numpy.array or dask.array
         Image to be processed.
-    curvature : iterable
+    curvature : iterable, optional
         List of polynomial coefficients [c0, c1, c2] where:
-        y = c0 + c1.x + c2.x^2.
+        y = c0 + c1.x + c2.x^2. Defaults to None, which skips the curvature
+        correction and simply integrates the image in the vertical
+        direction.
     biny : integer, optional
         Bin size in the vertical direction in pixels. Defaults to 1.
 
@@ -311,13 +313,15 @@ def get_spectrum(image, curvature, biny=1):
     --------
     :func:`pyrixs.extract`
     """
+    if curvature is None:
+        curvature = (0.0, 0.0, 0.0)
     if isinstance(image, da.core.Array):
         image = image.compute()
     ph = _cleanup_photon_events(image_to_photon_events(image.transpose()))
     return extract(ph, curvature, biny=biny)
 
 
-def get_spectra(images, curvature, biny=1):
+def get_spectra(images, curvature=None, biny=1):
     """
     Extract several spectrum.
 
@@ -331,9 +335,11 @@ def get_spectra(images, curvature, biny=1):
     ----------
     images : iterable of numpy.array or dask.array
         Images to be processed.
-    curvature : iterable
+    curvature : iterable, optional
         List of polynomial coefficients [c0, c1, c2] where:
-        y = c0 + c1.x + c2.x^2.
+        y = c0 + c1.x + c2.x^2. Defaults to None, which skips the curvature
+        correction and simply integrates each image in the vertical
+        direction.
     biny : integer, optional
         Bin size in the vertical direction in pixels. Defaults to 1.
 
@@ -359,7 +365,7 @@ def process_rxes(
     scans,
     cat,
     detector_key,
-    curvature,
+    curvature=None,
     cleanup=None,
     normalize=None,
     positioner=None,
@@ -377,9 +383,11 @@ def process_rxes(
         Catalog.
     detector_key : string
         Name of item that holds the images
-    curvature : iterable
+    curvature : iterable, optional
         List of polynomial coefficients [c0, c1, c2] where:
-        y = c0 + c1.x + c2.x^2.
+        y = c0 + c1.x + c2.x^2. Defaults to None, which skips the curvature
+        correction and simply integrates each image in the vertical
+        direction.
     cleanup : dictionary, optional
         Clean up functions and arguments. Available functions:
 
@@ -430,7 +438,7 @@ def process_rxes_mcd(
     scans,
     cat,
     detector_key,
-    curvature,
+    curvature=None,
     cleanup=None,
     normalize=None,
     positioner=None,
@@ -448,9 +456,11 @@ def process_rxes_mcd(
         Catalog.
     detector_key : string
         Name of item that holds the images
-    curvature : iterable
+    curvature : iterable, optional
         List of polynomial coefficients [c0, c1, c2] where:
-        y = c0 + c1.x + c2.x^2.
+        y = c0 + c1.x + c2.x^2. Defaults to None, which skips the curvature
+        correction and simply integrates each image in the vertical
+        direction.
     cleanup : dictionary, optional
         Clean up functions and arguments. Available functions:
         - {'threshold': threshold_value}

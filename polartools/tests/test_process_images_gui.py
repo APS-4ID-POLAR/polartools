@@ -154,9 +154,9 @@ def test_curvature_save_writes_file(win, tmp_path):
 
 def test_rxes_tab_no_positioner(hdf5_win):
     hdf5_win._rxes["scans"].setText("322")
-    hdf5_win._rxes_curv[0].setText("1")
-    hdf5_win._rxes_curv[1].setText("2")
-    hdf5_win._rxes_curv[2].setText("3")
+    hdf5_win._rxes_curv[1].setText("1")
+    hdf5_win._rxes_curv[2].setText("2")
+    hdf5_win._rxes_curv[3].setText("3")
     hdf5_win._on_rxes_run()
 
     positioner, result = hdf5_win._rxes_result
@@ -168,9 +168,9 @@ def test_rxes_tab_no_positioner(hdf5_win):
 def test_rxes_tab_with_positioner(hdf5_win):
     hdf5_win._rxes["scans"].setText("322")
     hdf5_win._rxes["positioner"].setText("4idgI0")
-    hdf5_win._rxes_curv[0].setText("1")
-    hdf5_win._rxes_curv[1].setText("2")
-    hdf5_win._rxes_curv[2].setText("3")
+    hdf5_win._rxes_curv[1].setText("1")
+    hdf5_win._rxes_curv[2].setText("2")
+    hdf5_win._rxes_curv[3].setText("3")
     hdf5_win._on_rxes_run()
 
     positioner, (spectra, positioner_values) = hdf5_win._rxes_result
@@ -181,12 +181,32 @@ def test_rxes_tab_with_positioner(hdf5_win):
 
 def test_rxes_tab_invalid_curvature_shows_dialog(hdf5_win):
     hdf5_win._rxes["scans"].setText("322")
-    hdf5_win._rxes_curv[0].setText("abc")
+    hdf5_win._rxes_curv[1].setText("abc")
     with patch(
         "polartools.process_images_gui.QMessageBox.critical"
     ) as mock_msg:
         hdf5_win._on_rxes_run()
     mock_msg.assert_called_once()
+
+
+def test_rxes_no_curvature_checkbox_disables_fields(win):
+    chk_none, le_c0, le_c1, le_c2 = win._rxes_curv
+    assert le_c0.isEnabled()
+    chk_none.setChecked(True)
+    assert not le_c0.isEnabled()
+    assert not le_c1.isEnabled()
+    assert not le_c2.isEnabled()
+
+
+def test_rxes_tab_no_curvature(hdf5_win):
+    hdf5_win._rxes["scans"].setText("322")
+    hdf5_win._rxes_curv[0].setChecked(True)
+    hdf5_win._on_rxes_run()
+
+    positioner, result = hdf5_win._rxes_result
+    assert positioner is None
+    assert result.shape[1] == 2
+    assert hdf5_win.btn_rxes_save.isEnabled()
 
 
 def test_rxes_save_1d_writes_file(win, tmp_path):
@@ -224,7 +244,7 @@ def test_mcd_copy_curvature_button(win):
     buttons = win.tabs.widget(2).findChildren(QPushButton)
     copy_btn = [b for b in buttons if b.text() == "Copy from Curvature tab"][0]
     copy_btn.click()
-    assert [le.text() for le in win._mcd_curv] == ["1", "2", "3"]
+    assert [le.text() for le in win._mcd_curv[1:]] == ["1", "2", "3"]
 
 
 def test_mcd_copy_curvature_without_data_warns(win):
@@ -242,9 +262,9 @@ def test_mcd_copy_curvature_without_data_warns(win):
 
 def test_mcd_tab_no_positioner_mocked(hdf5_win):
     hdf5_win._mcd["scans"].setText("322")
-    hdf5_win._mcd_curv[0].setText("1")
-    hdf5_win._mcd_curv[1].setText("2")
-    hdf5_win._mcd_curv[2].setText("3")
+    hdf5_win._mcd_curv[1].setText("1")
+    hdf5_win._mcd_curv[2].setText("2")
+    hdf5_win._mcd_curv[3].setText("3")
 
     fake_rxes = np.column_stack([np.arange(5), np.arange(5) * 1.0])
     fake_mcd = np.column_stack([np.arange(5), np.arange(5) * 0.5])
@@ -264,9 +284,9 @@ def test_mcd_tab_no_positioner_mocked(hdf5_win):
 def test_mcd_tab_with_positioner_mocked(hdf5_win):
     hdf5_win._mcd["scans"].setText("322")
     hdf5_win._mcd["positioner"].setText("4idgI0")
-    hdf5_win._mcd_curv[0].setText("1")
-    hdf5_win._mcd_curv[1].setText("2")
-    hdf5_win._mcd_curv[2].setText("3")
+    hdf5_win._mcd_curv[1].setText("1")
+    hdf5_win._mcd_curv[2].setText("2")
+    hdf5_win._mcd_curv[3].setText("3")
 
     rxes = np.random.rand(2, 4, 2)
     mcd = np.random.rand(2, 4, 2)
@@ -279,6 +299,23 @@ def test_mcd_tab_with_positioner_mocked(hdf5_win):
 
     is_map, result = hdf5_win._mcd_result
     assert is_map
+
+
+def test_mcd_tab_no_curvature_mocked(hdf5_win):
+    hdf5_win._mcd["scans"].setText("322")
+    hdf5_win._mcd_curv[0].setChecked(True)
+
+    fake_rxes = np.column_stack([np.arange(5), np.arange(5) * 1.0])
+    fake_mcd = np.column_stack([np.arange(5), np.arange(5) * 0.5])
+    with patch(
+        "polartools.process_images_gui.process_rxes_mcd",
+        return_value=(fake_rxes, fake_mcd),
+    ) as mock_proc:
+        hdf5_win._on_mcd_run()
+
+    assert mock_proc.call_args.args[3] is None
+    is_map, result = hdf5_win._mcd_result
+    assert not is_map
 
 
 def test_mcd_save_1d_writes_file(win, tmp_path):
