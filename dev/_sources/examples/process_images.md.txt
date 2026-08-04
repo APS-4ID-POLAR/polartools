@@ -14,7 +14,7 @@ from polartools.process_images import load_images
 
 images = load_images(
     scan_id=276,
-    source=db,                # databroker catalog
+    source=db,  # databroker catalog
     detector="lambda250k",
 )
 # images is a dask.array — operations are lazy
