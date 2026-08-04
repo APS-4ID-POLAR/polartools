@@ -1,0 +1,63 @@
+polartools.process_images_gui
+=============================
+
+.. py:module:: polartools.process_images_gui
+
+.. autoapi-nested-parse::
+
+   RXES image processing GUI using PyQt6 + matplotlib.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.process_images_gui.MainWindow
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.process_images_gui.main
+
+
+Module Contents
+---------------
+
+.. py:class:: MainWindow
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QMainWindow`
+
+
+   .. py:attribute:: status_bar
+
+
+.. py:function:: main()
+
+   
+   Console entry point for the ``process-images-gui`` application.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

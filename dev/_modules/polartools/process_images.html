@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=eafd8ece"></script>
+    <script src="../../_static/documentation_options.js?v=c71ebf23"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post21+g328cad69d" />
+  <meta name="docsearch:version" content="0.6.0.post25+g429cf1b37" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -202,6 +202,13 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../examples/xmcd_gui.html">
     XMCD GUI
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/process_images_gui.html">
+    RXES Image Processor GUI
   </a>
 </li>
 
@@ -390,6 +397,13 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/process_images_gui.html">
+    RXES Image Processor GUI
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api/polartools/index.html">
     polartools
   </a>
@@ -527,6 +541,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">dask.array</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">da</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_hdf5_images</span><span class="p">,</span> <span class="n">load_table</span><span class="p">,</span> <span class="n">HDF_DEFAULT_FNAME_FORMAT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._pyrixs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">image_to_photon_events</span><span class="p">,</span>
     <span class="n">plot_curvature</span><span class="p">,</span>
@@ -605,7 +620,13 @@
 <div class="viewcode-block" id="load_images">
 <a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.load_images">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_images</span><span class="p">(</span>
-    <span class="n">scans</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">detector_key</span><span class="p">,</span> <span class="n">cleanup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span>
+    <span class="n">scans</span><span class="p">,</span>
+    <span class="n">cat</span><span class="p">,</span>
+    <span class="n">detector_key</span><span class="o">=</span><span class="s2">&quot;lamb&quot;</span><span class="p">,</span>
+    <span class="n">cleanup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load scans with 2D images.</span>
@@ -623,10 +644,15 @@
 <span class="sd">    ----------</span>
 <span class="sd">    scans : iterable</span>
 <span class="sd">        List of scan_id or uids.</span>
-<span class="sd">    cat : databroker catalog</span>
-<span class="sd">        Catalog.</span>
-<span class="sd">    detector_key : string</span>
-<span class="sd">        Name of item that holds the images</span>
+<span class="sd">    cat : databroker catalog, or &quot;hdf5&quot;/&quot;h5&quot;/&quot;hdf&quot;</span>
+<span class="sd">        Catalog. If &quot;hdf5&quot;, &quot;h5&quot;, or &quot;hdf&quot;, images and scan data are instead</span>
+<span class="sd">        read from HDF5 master files on disk via</span>
+<span class="sd">        :func:`polartools.load_data.load_hdf5_images` and</span>
+<span class="sd">        :func:`polartools.load_data.load_table`. In that case, the following</span>
+<span class="sd">        kwargs are used: folder, fname_format, externals_location,</span>
+<span class="sd">        image_location (see :func:`polartools.load_data.load_hdf5_images`).</span>
+<span class="sd">    detector_key : string, optional</span>
+<span class="sd">        Name of item that holds the images. Defaults to &quot;lamb&quot;.</span>
 <span class="sd">    cleanup : dictionary, optional</span>
 <span class="sd">        Clean up functions and arguments. Available functions:</span>
 
@@ -652,12 +678,45 @@
 <span class="sd">        Processed images.</span>
 <span class="sd">    positioner_values : numpy ndarray, optional</span>
 <span class="sd">        Values of the positioner. It is only returned if positioner is not None.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_hdf5_images`</span>
+<span class="sd">    :func:`polartools.load_data.load_table`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">from_hdf5</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;hdf5&quot;</span><span class="p">,</span> <span class="s2">&quot;h5&quot;</span><span class="p">,</span> <span class="s2">&quot;hdf&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">from_hdf5</span><span class="p">:</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;folder&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">fname_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fname_format&quot;</span><span class="p">,</span> <span class="n">HDF_DEFAULT_FNAME_FORMAT</span><span class="p">)</span>
+        <span class="n">externals_location</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;externals_location&quot;</span><span class="p">,</span> <span class="s2">&quot;entry/externals&quot;</span><span class="p">)</span>
+        <span class="n">image_location</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;image_location&quot;</span><span class="p">,</span> <span class="s2">&quot;detector/data&quot;</span><span class="p">)</span>
 
     <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">scans</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">cat</span><span class="p">[</span><span class="n">scan</span><span class="p">]</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">to_dask</span><span class="p">()</span>
-        <span class="n">images</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">detector_key</span><span class="p">])</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">from_hdf5</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span>
+                <span class="n">scan</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">cat</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">fname_format</span>
+            <span class="p">)</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">da</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                    <span class="n">load_hdf5_images</span><span class="p">(</span>
+                        <span class="n">scan</span><span class="p">,</span>
+                        <span class="n">folder</span><span class="p">,</span>
+                        <span class="n">detector_key</span><span class="p">,</span>
+                        <span class="n">fname_format</span><span class="o">=</span><span class="n">fname_format</span><span class="p">,</span>
+                        <span class="n">externals_location</span><span class="o">=</span><span class="n">externals_location</span><span class="p">,</span>
+                        <span class="n">image_location</span><span class="o">=</span><span class="n">image_location</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="c1"># Match the databroker layout: (n_points, frame=1, height, width)</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">cat</span><span class="p">[</span><span class="n">scan</span><span class="p">]</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">to_dask</span><span class="p">()</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">detector_key</span><span class="p">])</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">cleanup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cleanup</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -669,7 +728,10 @@
             <span class="n">images</span> <span class="o">=</span> <span class="n">_cleanup_images</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">cleanup</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">normalize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">images</span><span class="p">[:]</span> <span class="o">/=</span> <span class="n">data</span><span class="p">[</span><span class="n">normalize</span><span class="p">]</span><span class="o">.</span><span class="n">broadcast_like</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">detector_key</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">from_hdf5</span><span class="p">:</span>
+                <span class="n">images</span><span class="p">[:]</span> <span class="o">/=</span> <span class="n">data</span><span class="p">[</span><span class="n">normalize</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">images</span><span class="p">[:]</span> <span class="o">/=</span> <span class="n">data</span><span class="p">[</span><span class="n">normalize</span><span class="p">]</span><span class="o">.</span><span class="n">broadcast_like</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">detector_key</span><span class="p">])</span>
 
         <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
 
@@ -848,6 +910,7 @@
     <span class="n">normalize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper with typical RXES data processing.</span>
@@ -900,6 +963,7 @@
         <span class="n">cleanup</span><span class="o">=</span><span class="n">cleanup</span><span class="p">,</span>
         <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span>
         <span class="n">positioner</span><span class="o">=</span><span class="n">positioner</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">positioner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># &quot;Count&quot; scans</span>
@@ -920,6 +984,7 @@
     <span class="n">normalize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper with typical RXES-MCD data processing.</span>
@@ -974,6 +1039,7 @@
         <span class="n">cleanup</span><span class="o">=</span><span class="n">cleanup</span><span class="p">,</span>
         <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span>
         <span class="n">positioner</span><span class="o">=</span><span class="n">positioner</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">ims</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>

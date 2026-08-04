@@ -70,7 +70,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: load_images(scans, cat, detector_key, cleanup=None, normalize=None, positioner=None)
+.. py:function:: load_images(scans, cat, detector_key='lamb', cleanup=None, normalize=None, positioner=None, **kwargs)
 
    
    Load scans with 2D images.
@@ -86,11 +86,16 @@ Module Contents
        **scans** : iterable
            List of scan_id or uids.
 
-       **cat** : databroker catalog
-           Catalog.
+       **cat** : databroker catalog, or "hdf5"/"h5"/"hdf"
+           Catalog. If "hdf5", "h5", or "hdf", images and scan data are instead
+           read from HDF5 master files on disk via
+           :func:`polartools.load_data.load_hdf5_images` and
+           :func:`polartools.load_data.load_table`. In that case, the following
+           kwargs are used: folder, fname_format, externals_location,
+           image_location (see :func:`polartools.load_data.load_hdf5_images`).
 
-       **detector_key** : string
-           Name of item that holds the images
+       **detector_key** : string, optional
+           Name of item that holds the images. Defaults to "lamb".
 
        **cleanup** : dictionary, optional
            Clean up functions and arguments. Available functions:
@@ -123,7 +128,14 @@ Module Contents
 
 
 
+   .. seealso::
 
+       
+       :func:`polartools.load_data.load_hdf5_images`
+           ..
+       :func:`polartools.load_data.load_table`
+           ..
+       
 
 
 
@@ -282,7 +294,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: process_rxes(scans, cat, detector_key, curvature, cleanup=None, normalize=None, positioner=None, biny=1)
+.. py:function:: process_rxes(scans, cat, detector_key, curvature, cleanup=None, normalize=None, positioner=None, biny=1, **kwargs)
 
    
    Wrapper with typical RXES data processing.
@@ -345,7 +357,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: process_rxes_mcd(scans, cat, detector_key, curvature, cleanup=None, normalize=None, positioner=None, biny=1)
+.. py:function:: process_rxes_mcd(scans, cat, detector_key, curvature, cleanup=None, normalize=None, positioner=None, biny=1, **kwargs)
 
    
    Wrapper with typical RXES-MCD data processing.

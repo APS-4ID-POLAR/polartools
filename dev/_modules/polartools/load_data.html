@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=eafd8ece"></script>
+    <script src="../../_static/documentation_options.js?v=c71ebf23"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post21+g328cad69d" />
+  <meta name="docsearch:version" content="0.6.0.post25+g429cf1b37" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -202,6 +202,13 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../examples/xmcd_gui.html">
     XMCD GUI
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/process_images_gui.html">
+    RXES Image Processor GUI
   </a>
 </li>
 
@@ -390,6 +397,13 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/process_images_gui.html">
+    RXES Image Processor GUI
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api/polartools/index.html">
     polartools
   </a>
@@ -522,6 +536,7 @@
 <span class="sd">    ~load_hdf5_data</span>
 <span class="sd">    ~hdf5_to_dataframe</span>
 <span class="sd">    ~load_hdf5_master</span>
+<span class="sd">    ~load_hdf5_images</span>
 <span class="sd">    ~load_databroker</span>
 <span class="sd">    ~load_table</span>
 <span class="sd">    ~is_Bluesky_specfile</span>
@@ -798,6 +813,57 @@
 
 
 
+<div class="viewcode-block" id="load_hdf5_images">
+<a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.load_hdf5_images">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_hdf5_images</span><span class="p">(</span>
+    <span class="n">scan</span><span class="p">,</span>
+    <span class="n">folder</span><span class="p">,</span>
+    <span class="n">detector_key</span><span class="o">=</span><span class="s2">&quot;lamb&quot;</span><span class="p">,</span>
+    <span class="n">fname_format</span><span class="o">=</span><span class="n">HDF_DEFAULT_FNAME_FORMAT</span><span class="p">,</span>
+    <span class="n">externals_location</span><span class="o">=</span><span class="s2">&quot;entry/externals&quot;</span><span class="p">,</span>
+    <span class="n">image_location</span><span class="o">=</span><span class="s2">&quot;detector/data&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the image stack for a detector linked from an HDF5 master file.</span>
+
+<span class="sd">    The master file holds an external HDF5 link to the detector&#39;s own file</span>
+<span class="sd">    at `externals_location/detector_key` (e.g. &quot;entry/externals/lamb&quot;).</span>
+<span class="sd">    Because h5py resolves external links transparently, the image dataset at</span>
+<span class="sd">    `image_location` relative to that link (e.g. &quot;detector/data&quot;) can be</span>
+<span class="sd">    read directly from the master file object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan : int</span>
+<span class="sd">        Scan_id of the scan to be retrieved.</span>
+<span class="sd">    folder : string</span>
+<span class="sd">        Folder where the master files (and, relative to it, the external</span>
+<span class="sd">        detector files) are located.</span>
+<span class="sd">    detector_key : string, optional</span>
+<span class="sd">        Name of the external link under `externals_location` that points to</span>
+<span class="sd">        the detector&#39;s file. Defaults to &quot;lamb&quot;.</span>
+<span class="sd">    fname_format : string, optional</span>
+<span class="sd">        General format of the master file name. The correct name must be</span>
+<span class="sd">        retrievable through: `file_name_format.format(scan)`</span>
+<span class="sd">    externals_location : string, optional</span>
+<span class="sd">        Location of the external links group in the master file.</span>
+<span class="sd">    image_location : string, optional</span>
+<span class="sd">        Path of the image dataset relative to the detector&#39;s external link.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    images : h5py.Dataset</span>
+<span class="sd">        Stack of images with shape (npoints, pixels_x, pixels_y).</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.load_data.load_hdf5_master`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">master</span> <span class="o">=</span> <span class="n">load_hdf5_master</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">fname_format</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">master</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">externals_location</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">detector_key</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">image_location</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span></div>
+
+
+
 <div class="viewcode-block" id="load_hdf5_data">
 <a class="viewcode-back" href="../../api/polartools/load_data/index.html#polartools.load_data.load_hdf5_data">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_hdf5_data</span><span class="p">(</span>
@@ -884,11 +950,11 @@
     <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">folder</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;folder&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">source</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
-        <span class="n">name_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;name_format&quot;</span><span class="p">,</span> <span class="s2">&quot;scan_</span><span class="si">{}</span><span class="s2">_primary.csv&quot;</span><span class="p">)</span>
+        <span class="n">name_format</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;name_format&quot;</span><span class="p">,</span> <span class="s2">&quot;scan_</span><span class="si">{}</span><span class="s2">_primary.csv&quot;</span><span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">load_csv</span><span class="p">(</span><span class="n">scan</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">name_format</span><span class="o">=</span><span class="n">name_format</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">source</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;hdf5&quot;</span><span class="p">,</span> <span class="s2">&quot;h5&quot;</span><span class="p">,</span> <span class="s2">&quot;hdf&quot;</span><span class="p">):</span>
-        <span class="n">fname_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fname_format&quot;</span><span class="p">,</span> <span class="n">HDF_DEFAULT_FNAME_FORMAT</span><span class="p">)</span>
-        <span class="n">h5_location</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;h5_location&quot;</span><span class="p">,</span> <span class="n">BLUESKY_DEFAULT_LOCATION</span><span class="p">)</span>
+        <span class="n">fname_format</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fname_format&quot;</span><span class="p">,</span> <span class="n">HDF_DEFAULT_FNAME_FORMAT</span><span class="p">)</span>
+        <span class="n">h5_location</span> <span class="o">=</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;h5_location&quot;</span><span class="p">,</span> <span class="n">BLUESKY_DEFAULT_LOCATION</span><span class="p">)</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">load_hdf5_data</span><span class="p">(</span>
             <span class="n">scan</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">fname_format</span><span class="p">,</span> <span class="n">h5_location</span><span class="o">=</span><span class="n">h5_location</span>
         <span class="p">)</span>

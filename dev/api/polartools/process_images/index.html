@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=eafd8ece"></script>
+    <script src="../../../_static/documentation_options.js?v=c71ebf23"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,11 +53,11 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="polartools.xmcd_gui" href="../xmcd_gui/index.html" />
+    <link rel="next" title="polartools.process_images_gui" href="../process_images_gui/index.html" />
     <link rel="prev" title="polartools.pressure_calibration" href="../pressure_calibration/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post21+g328cad69d" />
+  <meta name="docsearch:version" content="0.6.0.post25+g429cf1b37" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -205,6 +205,13 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../../examples/xmcd_gui.html">
     XMCD GUI
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/process_images_gui.html">
+    RXES Image Processor GUI
   </a>
 </li>
 
@@ -394,6 +401,13 @@
 </li>
 
 
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/process_images_gui.html">
+    RXES Image Processor GUI
+  </a>
+</li>
+
+
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../index.html">
     polartools
@@ -483,6 +497,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../manage_database/index.html">polartools.manage_database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pressure_calibration/index.html">polartools.pressure_calibration</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">polartools.process_images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../process_images_gui/index.html">polartools.process_images_gui</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xmcd_gui/index.html">polartools.xmcd_gui</a></li>
 </ul>
 </div>
@@ -552,7 +567,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.process_images.clean_threshold" title="polartools.process_images.clean_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_threshold</span></code></a>(images, threshold)</p></td>
 <td><p>Cleans image stack using a fixed threshold value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.process_images.load_images" title="polartools.process_images.load_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_images</span></code></a>(scans, cat, detector_key[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.process_images.load_images" title="polartools.process_images.load_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_images</span></code></a>(scans, cat[, detector_key, ...])</p></td>
 <td><p>Load scans with 2D images.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.process_images.get_curvature" title="polartools.process_images.get_curvature"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_curvature</span></code></a>(image[, binx, biny, ...])</p></td>
@@ -574,7 +589,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.process_images.clean_threshold" title="polartools.process_images.clean_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_threshold</span></code></a>(images, threshold)</p></td>
 <td><p>Cleans image stack using a fixed threshold value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.process_images.load_images" title="polartools.process_images.load_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_images</span></code></a>(scans, cat, detector_key[, cleanup, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.process_images.load_images" title="polartools.process_images.load_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_images</span></code></a>(scans, cat[, detector_key, cleanup, ...])</p></td>
 <td><p>Load scans with 2D images.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.process_images.get_curvature" title="polartools.process_images.get_curvature"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_curvature</span></code></a>(image[, binx, biny, constant_offset, plot])</p></td>
@@ -623,7 +638,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polartools.process_images.load_images">
-<span class="sig-prename descclassname"><span class="pre">polartools.process_images.</span></span><span class="sig-name descname"><span class="pre">load_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/process_images.html#load_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.process_images.load_images" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polartools.process_images.</span></span><span class="sig-name descname"><span class="pre">load_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lamb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/process_images.html#load_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.process_images.load_images" title="Link to this definition">#</a></dt>
 <dd><p>Load scans with 2D images.</p>
 <p>Note that this function forces explicity outputs:</p>
 <ul class="simple">
@@ -636,9 +651,14 @@
 <dd class="field-odd"><dl>
 <dt><strong>scans</strong><span class="classifier">iterable</span></dt><dd><p>List of scan_id or uids.</p>
 </dd>
-<dt><strong>cat</strong><span class="classifier">databroker catalog</span></dt><dd><p>Catalog.</p>
+<dt><strong>cat</strong><span class="classifier">databroker catalog, or “hdf5”/”h5”/”hdf”</span></dt><dd><p>Catalog. If “hdf5”, “h5”, or “hdf”, images and scan data are instead
+read from HDF5 master files on disk via
+<a class="reference internal" href="../load_data/index.html#polartools.load_data.load_hdf5_images" title="polartools.load_data.load_hdf5_images"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_hdf5_images()</span></code></a> and
+<a class="reference internal" href="../load_data/index.html#polartools.load_data.load_table" title="polartools.load_data.load_table"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_table()</span></code></a>. In that case, the following
+kwargs are used: folder, fname_format, externals_location,
+image_location (see <a class="reference internal" href="../load_data/index.html#polartools.load_data.load_hdf5_images" title="polartools.load_data.load_hdf5_images"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_hdf5_images()</span></code></a>).</p>
 </dd>
-<dt><strong>detector_key</strong><span class="classifier">string</span></dt><dd><p>Name of item that holds the images</p>
+<dt><strong>detector_key</strong><span class="classifier">string, optional</span></dt><dd><p>Name of item that holds the images. Defaults to “lamb”.</p>
 </dd>
 <dt><strong>cleanup</strong><span class="classifier">dictionary, optional</span></dt><dd><p>Clean up functions and arguments. Available functions:</p>
 <ul class="simple">
@@ -664,6 +684,13 @@
 </dl>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../load_data/index.html#polartools.load_data.load_hdf5_images" title="polartools.load_data.load_hdf5_images"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_hdf5_images()</span></code></a></dt><dd></dd>
+<dt><a class="reference internal" href="../load_data/index.html#polartools.load_data.load_table" title="polartools.load_data.load_table"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_table()</span></code></a></dt><dd></dd>
+</dl>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -774,7 +801,7 @@ y = c0 + c1.x + c2.x^2.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polartools.process_images.process_rxes">
-<span class="sig-prename descclassname"><span class="pre">polartools.process_images.</span></span><span class="sig-name descname"><span class="pre">process_rxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curvature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">biny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/process_images.html#process_rxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.process_images.process_rxes" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polartools.process_images.</span></span><span class="sig-name descname"><span class="pre">process_rxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curvature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">biny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/process_images.html#process_rxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.process_images.process_rxes" title="Link to this definition">#</a></dt>
 <dd><p>Wrapper with typical RXES data processing.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -819,7 +846,7 @@ is not None).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polartools.process_images.process_rxes_mcd">
-<span class="sig-prename descclassname"><span class="pre">polartools.process_images.</span></span><span class="sig-name descname"><span class="pre">process_rxes_mcd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curvature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">biny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/process_images.html#process_rxes_mcd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.process_images.process_rxes_mcd" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polartools.process_images.</span></span><span class="sig-name descname"><span class="pre">process_rxes_mcd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curvature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positioner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">biny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/process_images.html#process_rxes_mcd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.process_images.process_rxes_mcd" title="Link to this definition">#</a></dt>
 <dd><p>Wrapper with typical RXES-MCD data processing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -882,11 +909,11 @@ spectra (if positioner is not None).</p>
       </div>
     </a>
     <a class="right-next"
-       href="../xmcd_gui/index.html"
+       href="../process_images_gui/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">polartools.xmcd_gui</p>
+        <p class="prev-next-title">polartools.process_images_gui</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

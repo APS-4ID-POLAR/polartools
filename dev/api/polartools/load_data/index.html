@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=eafd8ece"></script>
+    <script src="../../../_static/documentation_options.js?v=c71ebf23"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="polartools.diffraction" href="../diffraction/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post21+g328cad69d" />
+  <meta name="docsearch:version" content="0.6.0.post25+g429cf1b37" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -205,6 +205,13 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../../examples/xmcd_gui.html">
     XMCD GUI
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/process_images_gui.html">
+    RXES Image Processor GUI
   </a>
 </li>
 
@@ -394,6 +401,13 @@
 </li>
 
 
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/process_images_gui.html">
+    RXES Image Processor GUI
+  </a>
+</li>
+
+
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../index.html">
     polartools
@@ -483,6 +497,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../manage_database/index.html">polartools.manage_database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pressure_calibration/index.html">polartools.pressure_calibration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../process_images/index.html">polartools.process_images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../process_images_gui/index.html">polartools.process_images_gui</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xmcd_gui/index.html">polartools.xmcd_gui</a></li>
 </ul>
 </div>
@@ -564,25 +579,28 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_master" title="polartools.load_data.load_hdf5_master"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_master</span></code></a>(scan, folder[, fname_format])</p></td>
 <td><p>Wrapper that loads HDF files using <cite>h5py</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_databroker" title="polartools.load_data.load_databroker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_databroker</span></code></a>(scan_id[, db, stream, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_images" title="polartools.load_data.load_hdf5_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_images</span></code></a>(scan, folder[, ...])</p></td>
+<td><p>Load the image stack for a detector linked from an HDF5 master file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_databroker" title="polartools.load_data.load_databroker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_databroker</span></code></a>(scan_id[, db, stream, ...])</p></td>
 <td><p>Load data of the first scan with the provided scan_id.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_table" title="polartools.load_data.load_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_table</span></code></a>(scan[, source])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_table" title="polartools.load_data.load_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_table</span></code></a>(scan[, source])</p></td>
 <td><p>Automated scan table loader.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.is_Bluesky_specfile" title="polartools.load_data.is_Bluesky_specfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_Bluesky_specfile</span></code></a>(source[, folder])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.is_Bluesky_specfile" title="polartools.load_data.is_Bluesky_specfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_Bluesky_specfile</span></code></a>(source[, folder])</p></td>
 <td><p>Check if the specfile was created by Bluesky.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.db_query" title="polartools.load_data.db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db_query</span></code></a>(db, query)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.db_query" title="polartools.load_data.db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db_query</span></code></a>(db, query)</p></td>
 <td><p>Searches the databroker v2 database.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.show_meta" title="polartools.load_data.show_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_meta</span></code></a>([last, scans, scans_to, db, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.show_meta" title="polartools.load_data.show_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_meta</span></code></a>([last, scans, scans_to, db, ...])</p></td>
 <td><p>Print metadata of scans.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.collect_meta" title="polartools.load_data.collect_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_meta</span></code></a>(scan_numbers, meta_keys[, db, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.collect_meta" title="polartools.load_data.collect_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_meta</span></code></a>(scan_numbers, meta_keys[, db, ...])</p></td>
 <td><p>Extracts metadata of a list of scans.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.lookup_position" title="polartools.load_data.lookup_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookup_position</span></code></a>(db, scan[, search_string, query])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.lookup_position" title="polartools.load_data.lookup_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookup_position</span></code></a>(db, scan[, search_string, query])</p></td>
 <td><p>Lookup positioner values in past scans.</p></td>
 </tr>
 </tbody>
@@ -624,25 +642,28 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_master" title="polartools.load_data.load_hdf5_master"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_master</span></code></a>(scan, folder[, fname_format])</p></td>
 <td><p>Wrapper that loads HDF files using <cite>h5py</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_data" title="polartools.load_data.load_hdf5_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_data</span></code></a>(scan, folder[, fname_format, h5_location])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_images" title="polartools.load_data.load_hdf5_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_images</span></code></a>(scan, folder[, detector_key, ...])</p></td>
+<td><p>Load the image stack for a detector linked from an HDF5 master file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_hdf5_data" title="polartools.load_data.load_hdf5_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_hdf5_data</span></code></a>(scan, folder[, fname_format, h5_location])</p></td>
 <td><p>Wrapper that loads HDF files using <cite>h5py</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.load_table" title="polartools.load_data.load_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_table</span></code></a>(scan[, source])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.load_table" title="polartools.load_data.load_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_table</span></code></a>(scan[, source])</p></td>
 <td><p>Automated scan table loader.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.is_Bluesky_specfile" title="polartools.load_data.is_Bluesky_specfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_Bluesky_specfile</span></code></a>(source[, folder])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.is_Bluesky_specfile" title="polartools.load_data.is_Bluesky_specfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_Bluesky_specfile</span></code></a>(source[, folder])</p></td>
 <td><p>Check if the specfile was created by Bluesky.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.db_query" title="polartools.load_data.db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db_query</span></code></a>(db, query)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.db_query" title="polartools.load_data.db_query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db_query</span></code></a>(db, query)</p></td>
 <td><p>Searches the databroker v2 database.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.show_meta" title="polartools.load_data.show_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_meta</span></code></a>([last, scans, scans_to, db, query, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.show_meta" title="polartools.load_data.show_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_meta</span></code></a>([last, scans, scans_to, db, query, ...])</p></td>
 <td><p>Print metadata of scans.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.collect_meta" title="polartools.load_data.collect_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_meta</span></code></a>(scan_numbers, meta_keys[, db, query])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.collect_meta" title="polartools.load_data.collect_meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collect_meta</span></code></a>(scan_numbers, meta_keys[, db, query])</p></td>
 <td><p>Extracts metadata of a list of scans.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.load_data.lookup_position" title="polartools.load_data.lookup_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookup_position</span></code></a>(db, scan[, search_string, query])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.load_data.lookup_position" title="polartools.load_data.lookup_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lookup_position</span></code></a>(db, scan[, search_string, query])</p></td>
 <td><p>Lookup positioner values in past scans.</p></td>
 </tr>
 </tbody>
@@ -838,6 +859,50 @@ through: <cite>file_name_format.format(scan_id)</cite></p>
 <p class="admonition-title">See also</p>
 <dl class="simple">
 <dt><code class="xref py py-func docutils literal notranslate"><span class="pre">h5py.File()</span></code></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.load_data.load_hdf5_images">
+<span class="sig-prename descclassname"><span class="pre">polartools.load_data.</span></span><span class="sig-name descname"><span class="pre">load_hdf5_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lamb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">HDF_DEFAULT_FNAME_FORMAT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">externals_location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'entry/externals'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'detector/data'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/load_data.html#load_hdf5_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.load_data.load_hdf5_images" title="Link to this definition">#</a></dt>
+<dd><p>Load the image stack for a detector linked from an HDF5 master file.</p>
+<p>The master file holds an external HDF5 link to the detector’s own file
+at <cite>externals_location/detector_key</cite> (e.g. “entry/externals/lamb”).
+Because h5py resolves external links transparently, the image dataset at
+<cite>image_location</cite> relative to that link (e.g. “detector/data”) can be
+read directly from the master file object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>scan</strong><span class="classifier">int</span></dt><dd><p>Scan_id of the scan to be retrieved.</p>
+</dd>
+<dt><strong>folder</strong><span class="classifier">string</span></dt><dd><p>Folder where the master files (and, relative to it, the external
+detector files) are located.</p>
+</dd>
+<dt><strong>detector_key</strong><span class="classifier">string, optional</span></dt><dd><p>Name of the external link under <cite>externals_location</cite> that points to
+the detector’s file. Defaults to “lamb”.</p>
+</dd>
+<dt><strong>fname_format</strong><span class="classifier">string, optional</span></dt><dd><p>General format of the master file name. The correct name must be
+retrievable through: <cite>file_name_format.format(scan)</cite></p>
+</dd>
+<dt><strong>externals_location</strong><span class="classifier">string, optional</span></dt><dd><p>Location of the external links group in the master file.</p>
+</dd>
+<dt><strong>image_location</strong><span class="classifier">string, optional</span></dt><dd><p>Path of the image dataset relative to the detector’s external link.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>images</strong><span class="classifier">h5py.Dataset</span></dt><dd><p>Stack of images with shape (npoints, pixels_x, pixels_y).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#polartools.load_data.load_hdf5_master" title="polartools.load_data.load_hdf5_master"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.load_data.load_hdf5_master()</span></code></a></dt><dd></dd>
 </dl>
 </div>
 </dd></dl>
@@ -1121,6 +1186,7 @@ that can be used with <cite>meta_keys=”short”</cite> or <cite>meta_keys=”l
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_databroker"><code class="docutils literal notranslate"><span class="pre">load_databroker()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.hdf5_to_dataframe"><code class="docutils literal notranslate"><span class="pre">hdf5_to_dataframe()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_hdf5_master"><code class="docutils literal notranslate"><span class="pre">load_hdf5_master()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_hdf5_images"><code class="docutils literal notranslate"><span class="pre">load_hdf5_images()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_hdf5_data"><code class="docutils literal notranslate"><span class="pre">load_hdf5_data()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.load_table"><code class="docutils literal notranslate"><span class="pre">load_table()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.load_data.is_Bluesky_specfile"><code class="docutils literal notranslate"><span class="pre">is_Bluesky_specfile()</span></code></a></li>
