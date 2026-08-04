@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=c71ebf23"></script>
+    <script src="../_static/documentation_options.js?v=7811d190"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="XMCD GUI" href="xmcd_gui.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post25+g429cf1b37" />
+  <meta name="docsearch:version" content="0.6.0.post26+g467189708" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -564,9 +564,12 @@ fits its curvature (<code class="docutils literal notranslate"><span class="pre"
 with the fitted curve overlaid. The result can be saved to a text file.</p></li>
 <li><p><strong>RXES</strong> — runs <code class="docutils literal notranslate"><span class="pre">process_images.process_rxes</span></code> using a curvature (typed in,
 or copied from the Curvature tab) and plots either a single spectrum or a
-2D RIXS map, depending on whether a positioner is set.</p></li>
+2D RIXS map, depending on whether a positioner is set. Check “No curvature
+(integrate vertically)” to skip the curvature correction and just sum each
+image in the vertical direction.</p></li>
 <li><p><strong>RXES-MCD</strong> — same as RXES but for <code class="docutils literal notranslate"><span class="pre">process_images.process_rxes_mcd</span></code>,
-plotting the RXES and MCD spectra/maps side by side.</p></li>
+plotting the RXES and MCD spectra/maps side by side. It has its own
+curvature fields and “No curvature” checkbox.</p></li>
 </ul>
 <p>Each tab has its own “Save result” button — spectra are saved as text
 columns, RIXS maps as <code class="docutils literal notranslate"><span class="pre">.npz</span></code> archives.</p>

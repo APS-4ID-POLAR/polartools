@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=c71ebf23"></script>
+    <script src="../_static/documentation_options.js?v=7811d190"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="Pressure calibration" href="pressure_calibration.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post25+g429cf1b37" />
+  <meta name="docsearch:version" content="0.6.0.post26+g467189708" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -612,6 +612,10 @@ shows the fit overlaid on the image (useful for tuning).</p>
 <span class="n">all_spectra</span> <span class="o">=</span> <span class="n">get_spectra</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">curvature</span><span class="o">=</span><span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>If there’s no clean peak to fit a curvature against, pass <code class="docutils literal notranslate"><span class="pre">curvature=None</span></code>
+(the default) to <code class="docutils literal notranslate"><span class="pre">get_spectrum</span></code>/<code class="docutils literal notranslate"><span class="pre">get_spectra</span></code>/<code class="docutils literal notranslate"><span class="pre">process_rxes</span></code>/
+<code class="docutils literal notranslate"><span class="pre">process_rxes_mcd</span></code> — this skips the correction entirely and simply
+integrates each image in the vertical direction.</p>
 </section>
 <section id="resonant-inelastic-x-ray-scattering-rixs-workflows">
 <h2>Resonant inelastic X-ray scattering (RIXS) workflows<a class="headerlink" href="#resonant-inelastic-x-ray-scattering-rixs-workflows" title="Link to this heading">#</a></h2>
