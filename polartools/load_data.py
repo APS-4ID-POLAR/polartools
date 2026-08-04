@@ -395,11 +395,11 @@ def load_table(scan, source=None, **kwargs):
     _kwargs = copy.deepcopy(kwargs)
     folder = _kwargs.pop("folder", "")
     if source == "csv":
-        name_format = kwargs.pop("name_format", "scan_{}_primary.csv")
+        name_format = _kwargs.pop("name_format", "scan_{}_primary.csv")
         table = load_csv(scan, folder=folder, name_format=name_format)
     elif source in ("hdf5", "h5", "hdf"):
-        fname_format = kwargs.pop("fname_format", HDF_DEFAULT_FNAME_FORMAT)
-        h5_location = kwargs.pop("h5_location", BLUESKY_DEFAULT_LOCATION)
+        fname_format = _kwargs.pop("fname_format", HDF_DEFAULT_FNAME_FORMAT)
+        h5_location = _kwargs.pop("h5_location", BLUESKY_DEFAULT_LOCATION)
         table = load_hdf5_data(
             scan, folder, fname_format=fname_format, h5_location=h5_location
         )
