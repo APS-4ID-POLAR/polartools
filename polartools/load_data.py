@@ -7,6 +7,7 @@ Base functions to load data from various sources.
     ~load_hdf5_data
     ~hdf5_to_dataframe
     ~load_hdf5_master
+    ~load_hdf5_images
     ~load_databroker
     ~load_table
     ~is_Bluesky_specfile
@@ -263,6 +264,54 @@ def load_hdf5_master(scan, folder, fname_format=HDF_DEFAULT_FNAME_FORMAT):
     :func:`h5py.File`
     """
     return File(join(folder, fname_format.format(scan)))
+
+
+def load_hdf5_images(
+    scan,
+    folder,
+    detector_key="lamb",
+    fname_format=HDF_DEFAULT_FNAME_FORMAT,
+    externals_location="entry/externals",
+    image_location="detector/data",
+):
+    """
+    Load the image stack for a detector linked from an HDF5 master file.
+
+    The master file holds an external HDF5 link to the detector's own file
+    at `externals_location/detector_key` (e.g. "entry/externals/lamb").
+    Because h5py resolves external links transparently, the image dataset at
+    `image_location` relative to that link (e.g. "detector/data") can be
+    read directly from the master file object.
+
+    Parameters
+    ----------
+    scan : int
+        Scan_id of the scan to be retrieved.
+    folder : string
+        Folder where the master files (and, relative to it, the external
+        detector files) are located.
+    detector_key : string, optional
+        Name of the external link under `externals_location` that points to
+        the detector's file. Defaults to "lamb".
+    fname_format : string, optional
+        General format of the master file name. The correct name must be
+        retrievable through: `file_name_format.format(scan)`
+    externals_location : string, optional
+        Location of the external links group in the master file.
+    image_location : string, optional
+        Path of the image dataset relative to the detector's external link.
+
+    Returns
+    -------
+    images : h5py.Dataset
+        Stack of images with shape (npoints, pixels_x, pixels_y).
+
+    See also
+    --------
+    :func:`polartools.load_data.load_hdf5_master`
+    """
+    master = load_hdf5_master(scan, folder, fname_format=fname_format)
+    return master[f"{externals_location}/{detector_key}/{image_location}"]
 
 
 def load_hdf5_data(

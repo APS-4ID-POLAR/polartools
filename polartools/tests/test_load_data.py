@@ -35,6 +35,12 @@ def test_load_hdf5_data():
     assert table2.shape == (2, 9)
 
 
+def test_load_hdf5_images():
+    path = join("polartools", "tests", "data_for_test")
+    images = load_data.load_hdf5_images(322, path)
+    assert images.shape == (10, 516, 516)
+
+
 def test_load_databroker(db):
     table = load_data.load_table(1049, db, use_db_v1=False)
     assert table.shape == (4, 19)

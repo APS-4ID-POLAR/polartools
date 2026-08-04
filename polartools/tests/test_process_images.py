@@ -42,6 +42,32 @@ def ims(cat):
     )
 
 
+def test_load_image_hdf5():
+    folder = join("polartools", "tests", "data_for_test")
+
+    # with threshold cleanup and normalization, no positioner
+    image = process_images.load_images(
+        [322],
+        "hdf5",
+        folder=folder,
+        cleanup=dict(threshold=(1000,)),
+        normalize="4idgI0",
+    )
+
+    assert image.shape == (516, 516)
+    assert allclose(nanmax(image), 0.15931850824735233)
+
+    # Only positioner
+    images, positioner = process_images.load_images(
+        [322], "hdf5", folder=folder, positioner="4idgI0"
+    )
+
+    assert images.shape == (10, 516, 516)
+    assert allclose(nanmax(images), 16776550.0)
+    assert positioner.shape == (10,)
+    assert allclose(nanmax(positioner), 2811.0)
+
+
 def test_load_image(cat):
     # with threshold cleanup and normalization, no positioner
     image = process_images.load_images(

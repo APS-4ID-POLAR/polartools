@@ -12,6 +12,7 @@ Functions to process image files.
 import dask.array as da
 import numpy as np
 import matplotlib.pyplot as plt
+from .load_data import load_hdf5_images, load_table, HDF_DEFAULT_FNAME_FORMAT
 from ._pyrixs import (
     image_to_photon_events,
     plot_curvature,
@@ -85,7 +86,13 @@ def _cleanup_images(images, parameters):
 
 
 def load_images(
-    scans, cat, detector_key, cleanup=None, normalize=None, positioner=None
+    scans,
+    cat,
+    detector_key="lamb",
+    cleanup=None,
+    normalize=None,
+    positioner=None,
+    **kwargs,
 ):
     """
     Load scans with 2D images.
@@ -103,10 +110,15 @@ def load_images(
     ----------
     scans : iterable
         List of scan_id or uids.
-    cat : databroker catalog
-        Catalog.
-    detector_key : string
-        Name of item that holds the images
+    cat : databroker catalog, or "hdf5"/"h5"/"hdf"
+        Catalog. If "hdf5", "h5", or "hdf", images and scan data are instead
+        read from HDF5 master files on disk via
+        :func:`polartools.load_data.load_hdf5_images` and
+        :func:`polartools.load_data.load_table`. In that case, the following
+        kwargs are used: folder, fname_format, externals_location,
+        image_location (see :func:`polartools.load_data.load_hdf5_images`).
+    detector_key : string, optional
+        Name of item that holds the images. Defaults to "lamb".
     cleanup : dictionary, optional
         Clean up functions and arguments. Available functions:
 
@@ -132,12 +144,45 @@ def load_images(
         Processed images.
     positioner_values : numpy ndarray, optional
         Values of the positioner. It is only returned if positioner is not None.
+
+    See also
+    --------
+    :func:`polartools.load_data.load_hdf5_images`
+    :func:`polartools.load_data.load_table`
     """
+
+    from_hdf5 = isinstance(cat, str) and cat in ("hdf5", "h5", "hdf")
+    if from_hdf5:
+        folder = kwargs.pop("folder", "")
+        fname_format = kwargs.pop("fname_format", HDF_DEFAULT_FNAME_FORMAT)
+        externals_location = kwargs.pop("externals_location", "entry/externals")
+        image_location = kwargs.pop("image_location", "detector/data")
 
     output = []
     for scan in scans:
-        data = cat[scan].primary.to_dask()
-        images = da.array(data[detector_key]).compute().astype(np.float64)
+        if from_hdf5:
+            data = load_table(
+                scan, source=cat, folder=folder, fname_format=fname_format
+            )
+            images = (
+                da.array(
+                    load_hdf5_images(
+                        scan,
+                        folder,
+                        detector_key,
+                        fname_format=fname_format,
+                        externals_location=externals_location,
+                        image_location=image_location,
+                    )
+                )
+                .compute()
+                .astype(np.float64)
+            )
+            # Match the databroker layout: (n_points, frame=1, height, width)
+            images = images.reshape(images.shape[0], 1, *images.shape[1:])
+        else:
+            data = cat[scan].primary.to_dask()
+            images = da.array(data[detector_key]).compute().astype(np.float64)
 
         if cleanup is not None:
             if not isinstance(cleanup, dict):
@@ -149,7 +194,10 @@ def load_images(
             images = _cleanup_images(images, cleanup)
 
         if normalize is not None:
-            images[:] /= data[normalize].broadcast_like(data[detector_key])
+            if from_hdf5:
+                images[:] /= data[normalize].values[:, None, None, None]
+            else:
+                images[:] /= data[normalize].broadcast_like(data[detector_key])
 
         output.append(images)
 
