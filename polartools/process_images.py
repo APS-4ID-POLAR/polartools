@@ -136,7 +136,9 @@ def load_images(
     normalize : string, optional
         Name of detector that will be used to normalize data. Default is None.
     positioner : string, optional
-        Name of positioner to be read. Defaults to None.
+        Name of positioner to be read. Defaults to None. If True, images are
+        not averaged over the points dimension, but no positioner column is
+        read (positioner_values is returned as None).
 
     Returns
     -------
@@ -204,10 +206,10 @@ def load_images(
     if positioner is None:
         return np.nanmean(da.stack(output), axis=(0, 1, 2))
     else:
-        return (
-            np.nanmean(da.stack(output), axis=(0, 2)),
-            data[positioner].values,
-        )
+        stacked = np.nanmean(da.stack(output), axis=(0, 2))
+        if positioner is True:
+            return stacked, None
+        return stacked, data[positioner].values
 
 
 def _cleanup_photon_events(photon_events):
@@ -489,17 +491,13 @@ def process_rxes_mcd(
         Values of the positioner. It is only returned if positioner is not None.
     """
 
-    # Need to get all images...
-    if positioner is None:
-        positioner = "Time"
-
     images, positions = load_images(
         scans,
         cat,
         detector_key,
         cleanup=cleanup,
         normalize=normalize,
-        positioner=positioner,
+        positioner=True if positioner is None else positioner,
         **kwargs,
     )
 
@@ -514,7 +512,7 @@ def process_rxes_mcd(
     mcd = specs_plus.copy()
     mcd[:, :, 1] -= specs_minus[:, :, 1]
 
-    if positioner == "Time":
+    if positioner is None:
         return rxes.mean(axis=0), mcd.mean(axis=0)
     else:
         return rxes, mcd, positions.reshape(-1, 4).mean(axis=1)

@@ -93,6 +93,15 @@ def test_load_image(cat):
     assert positioner.shape == (50,)
     assert allclose(nanmax(positioner), 52.550000000000125)
 
+    # Sentinel positioner (per-point images, no column lookup)
+    images, positioner = process_images.load_images(
+        [276], cat, "lambda250k_image", positioner=True
+    )
+
+    assert images.shape == (50, 516, 516)
+    assert allclose(nanmax(images).compute(), 4095.0)
+    assert positioner is None
+
     def custom_clean(images, value):
         new_images = images.copy()
         new_images[new_images > value] = 100
