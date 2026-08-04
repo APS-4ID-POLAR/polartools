@@ -15,11 +15,13 @@ result = xrd_calibrate_pressure(
     scan_id=42,
     source="myfile.dat",
     folder="/data/2024-1",
-    x="tth", y="apd", monitor="I0",
-    calibrant="Au",          # "Au", "Ag", or "Pt"
+    x="tth",
+    y="apd",
+    monitor="I0",
+    calibrant="Au",  # "Au", "Ag", or "Pt"
     energy_keV=20.0,
-    temperature=300,         # K
-    hkl=(1, 1, 1),           # which Bragg reflection
+    temperature=300,  # K
+    hkl=(1, 1, 1),  # which Bragg reflection
     model="PseudoVoigt",
 )
 
@@ -42,7 +44,9 @@ This is the high-level helper most users want. Under the hood it:
 
 ```python
 from polartools.pressure_calibration import (
-    load_ag_params, load_au_params, load_pt_params,
+    load_ag_params,
+    load_au_params,
+    load_pt_params,
 )
 
 params_au = load_au_params(temperature=300)
@@ -58,7 +62,10 @@ If you want more control over the fit, do the steps yourself:
 
 ```python
 from polartools.pressure_calibration import (
-    fit_bragg_peak, calculate_tth, calculate_pressure, load_au_params,
+    fit_bragg_peak,
+    calculate_tth,
+    calculate_pressure,
+    load_au_params,
 )
 
 # 1. Fit the peak
@@ -66,13 +73,16 @@ peak_fit = fit_bragg_peak(
     scan_id=42,
     source="myfile.dat",
     folder="/data/2024-1",
-    x="tth", y="apd", monitor="I0",
+    x="tth",
+    y="apd",
+    monitor="I0",
     model="Gaussian",
 )
 tth = peak_fit.params["center"].value
 
 # 2. Convert to volume (cubic FCC: a from d-spacing of (111))
 import numpy as np
+
 d = wavelength_A / (2 * np.sin(np.deg2rad(tth) / 2))
 a = d * np.sqrt(1**2 + 1**2 + 1**2)
 V = a**3

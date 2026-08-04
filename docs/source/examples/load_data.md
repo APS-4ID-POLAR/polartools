@@ -29,11 +29,13 @@ df = load_table(scan_id=1049, source="csv", folder="/data/csv_export")
 
 # Databroker (legacy)
 from databroker import catalog
+
 db = catalog["my_catalog"]
 df = load_table(scan_id=1049, source=db)
 
 # Tiled (new)
 from tiled.client import from_profile
+
 cat = from_profile("polar")["raw"]
 df = load_table(scan_id=2025, source=cat)
 ```
@@ -59,9 +61,11 @@ it tries `databroker.catalog[name]` first, then falls back to a tiled profile:
 ```python
 from polartools.load_data import load_catalog
 
-cat = load_catalog("polar")          # tries databroker, then tiled
-cat = load_catalog("polar",          # tiled-only with explicit subpath
-                   tiled_path="/raw/2024-1")
+cat = load_catalog("polar")  # tries databroker, then tiled
+cat = load_catalog(
+    "polar",  # tiled-only with explicit subpath
+    tiled_path="/raw/2024-1",
+)
 ```
 
 For tiled, the default `tiled_path` is `"/raw"`. Pass a deeper path if your
@@ -79,7 +83,9 @@ runs = db_query(db, query={"sample": "Fe2O3", "scan_type": "ascan"})
 show_meta(scan_id=42, db=db, meta_keys=["sample", "user", "uid"])
 
 # Aggregate the same metadata across many scans
-table = collect_meta(scan_numbers=range(40, 60), meta_keys=["sample", "energy"], db=db)
+table = collect_meta(
+    scan_numbers=range(40, 60), meta_keys=["sample", "energy"], db=db
+)
 ```
 
 ## Lookup a motor position

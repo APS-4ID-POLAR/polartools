@@ -32,7 +32,7 @@ from polartools.absorption import process_xmcd
 
 xmcd = process_xmcd(
     scan_plus=10,  # +H scan
-    scan_minus=11, # -H scan
+    scan_minus=11,  # -H scan
     source="my_spec_file.dat",
     folder="/data/2024-1",
     monitor="I0",
