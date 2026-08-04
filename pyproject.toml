@@ -79,6 +79,7 @@ docs = [
 
 [project.scripts]
 xmcd-gui = "polartools.xmcd_gui:main"
+process-images-gui = "polartools.process_images_gui:main"
 
 [project.urls]
 Homepage = "https://github.com/APS-4ID-POLAR/polartools"

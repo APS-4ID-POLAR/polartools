@@ -364,6 +364,7 @@ def process_rxes(
     normalize=None,
     positioner=None,
     biny=1,
+    **kwargs,
 ):
     """
     Wrapper with typical RXES data processing.
@@ -416,6 +417,7 @@ def process_rxes(
         cleanup=cleanup,
         normalize=normalize,
         positioner=positioner,
+        **kwargs,
     )
 
     if positioner is None:  # "Count" scans
@@ -433,6 +435,7 @@ def process_rxes_mcd(
     normalize=None,
     positioner=None,
     biny=1,
+    **kwargs,
 ):
     """
     Wrapper with typical RXES-MCD data processing.
@@ -487,6 +490,7 @@ def process_rxes_mcd(
         cleanup=cleanup,
         normalize=normalize,
         positioner=positioner,
+        **kwargs,
     )
 
     ims = images.reshape((-1, 4, images.shape[1], images.shape[2]))
