@@ -110,7 +110,9 @@ Module Contents
            Name of detector that will be used to normalize data. Default is None.
 
        **positioner** : string, optional
-           Name of positioner to be read. Defaults to None.
+           Name of positioner to be read. Defaults to None. If True, images are
+           not averaged over the points dimension, but no positioner column is
+           read (positioner_values is returned as None).
 
 
 
