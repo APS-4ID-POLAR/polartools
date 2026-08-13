@@ -15,6 +15,7 @@ Functions to load and process x-ray absorption data.
    ~fluo_corr
    ~process_xmcd
    ~plot_xmcd
+   ~save_xas
    ~save_xmcd
 """
 
@@ -1446,6 +1447,100 @@ def plot_xmcd(plus, minus):
     plt.tight_layout()
 
     return fig, [ax1, ax2, ax3, ax4, ax5, ax6]
+
+
+def _format_norm_params(results):
+    """Build a comment block describing the normalization parameters used.
+
+    Returns an empty string if `results` doesn't carry the parameters (e.g.
+    `e0` is missing), which happens for hand-built dictionaries that only
+    have the minimal "energy"/"norm"/"flat" keys.
+    """
+
+    e0 = results.get("e0")
+    if e0 is None:
+        return ""
+
+    lines = [f"e0:         {e0:.4f} eV"]
+
+    edge_step = results.get("edge_step")
+    if edge_step is not None:
+        lines.append(f"edge_step:  {edge_step:.6f}")
+
+    pre1, pre2 = results.get("pre1"), results.get("pre2")
+    if pre1 is not None and pre2 is not None:
+        lines.append(
+            f"pre_range:  [{pre1:.4f}, {pre2:.4f}] eV (relative to e0)"
+        )
+    pre_order = results.get("pre_order")
+    if pre_order is not None:
+        lines.append(f"pre_order:  {pre_order}")
+    nvict = results.get("nvict")
+    if nvict is not None:
+        lines.append(f"nvict:      {nvict}")
+
+    post1, post2 = results.get("post1"), results.get("post2")
+    if post1 is not None and post2 is not None:
+        lines.append(
+            f"post_range: [{post1:.4f}, {post2:.4f}] eV (relative to e0)"
+        )
+    post_order = results.get("post_order")
+    if post_order is not None:
+        lines.append(f"post_order: {post_order}")
+
+    flat1, flat2 = results.get("flat1"), results.get("flat2")
+    if flat1 is not None and flat2 is not None:
+        lines.append(
+            f"flat_range: [{flat1:.4f}, {flat2:.4f}] eV (relative to e0)"
+        )
+    flat_order = results.get("flat_order")
+    if flat_order is not None:
+        lines.append(f"flat_order: {flat_order}")
+
+    return "\n".join(lines)
+
+
+def save_xas(results, file_name, header="XANES\n", fmt="%0.5e"):
+    """
+    Saves processed XANES data into a file.
+
+    Parameters
+    ----------
+    results : dictionary
+        Output of :func:`polartools.absorption.normalize_absorption`. It
+        needs at least three keys: "energy", "norm", and "flat". If it also
+        carries the normalization parameters (as `normalize_absorption`
+        does: "e0", "edge_step", "pre1"/"pre2", "pre_order", "nvict",
+        "post1"/"post2", "post_order", "flat1"/"flat2", "flat_order"), they
+        are written to the file header for reference.
+    file_name : string
+        File name (including folder if not current).
+    header : string, optional
+        File header. Note that each line has to be finished with the newline
+        character.
+    fmt : string, optional
+        Format of the data, defaults to %0.5e
+
+    See also
+    --------
+    :func:`polartools.absorption.normalize_absorption`
+    """
+
+    combined = np.vstack(
+        (
+            results["energy"],
+            results["mu"],
+            results["norm"],
+            results["flat"],
+        )
+    ).transpose()
+
+    param_block = _format_norm_params(results)
+    if param_block:
+        header += param_block + "\n\n"
+
+    header += "Energy\tXANES\tNormalized\tFlattened"
+    np.savetxt(file_name, combined, header=header, fmt=fmt)
 
 
 def save_xmcd(plus, minus, file_name, header="XMCD\n", fmt="%0.5e"):

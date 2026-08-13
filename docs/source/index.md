@@ -32,6 +32,7 @@ examples/pressure_calibration
 examples/process_images
 examples/manage_database
 examples/xmcd_gui
+examples/xanes_gui
 ```
 
 ```{toctree}
@@ -109,6 +110,13 @@ Pack/unpack databroker catalogs, export to CSV/JSON.
 :link-type: doc
 
 The bundled `xmcd-gui` PyQt application for interactive XMCD processing.
+:::
+
+:::{grid-item-card} XANES GUI
+:link: examples/xanes_gui
+:link-type: doc
+
+The bundled `xanes-gui` PyQt application for interactive XANES normalization.
 :::
 
 :::{grid-item-card} API reference

@@ -79,6 +79,7 @@ docs = [
 
 [project.scripts]
 xmcd-gui = "polartools.xmcd_gui:main"
+xanes-gui = "polartools.xanes_gui:main"
 
 [project.urls]
 Homepage = "https://github.com/APS-4ID-POLAR/polartools"
@@ -110,6 +111,8 @@ exclude = [
     "/docs/source/generated",
     "/CLAUDE.md",
     "/xmcd_save_test.dat",
+    "/xanes_save_test.dat",
+    "/xanes_save_test_minimal.dat",
 ]
 
 # --- Ruff (replaces flake8 + black) ----------------------------------------

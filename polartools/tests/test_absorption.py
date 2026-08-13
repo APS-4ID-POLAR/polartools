@@ -229,3 +229,45 @@ def test_save_xmcd():
         normalization_parameters=normalization_parameters,
     )
     absorption.save_xmcd(plus, minus, "xmcd_save_test.dat")
+
+
+def test_save_xas():
+    path = join("polartools", "tests", "data_for_test")
+    scans = [28, 29, 30, 31, 32]
+    energy, xas, _ = absorption.load_multi_xas(
+        scans, "absorption.dat", detector="IC5", monitor="IC4", folder=path
+    )
+    result = absorption.normalize_absorption(
+        energy * 1000.0, xas, pre_range=[-30, -20], post_range=[25, None]
+    )
+    absorption.save_xas(result, "xanes_save_test.dat")
+
+    with open("xanes_save_test.dat") as f:
+        content = f.read()
+
+    assert "# e0:" in content
+    assert "# edge_step:" in content
+    assert "# pre_range:" in content
+    assert "# pre_order:" in content
+    assert "# nvict:" in content
+    assert "# post_range:" in content
+    assert "# post_order:" in content
+    assert "# Energy\tXANES\tNormalized\tFlattened" in content
+
+
+def test_save_xas_without_norm_params():
+    # Hand-built dict lacking normalization parameters shouldn't error, and
+    # shouldn't get a parameter block.
+    result = {
+        "energy": [1, 2, 3],
+        "mu": [0.1, 0.2, 0.3],
+        "norm": [0.1, 0.2, 0.3],
+        "flat": [0.1, 0.2, 0.3],
+    }
+    absorption.save_xas(result, "xanes_save_test_minimal.dat")
+
+    with open("xanes_save_test_minimal.dat") as f:
+        content = f.read()
+
+    assert "e0:" not in content
+    assert "# Energy\tXANES\tNormalized\tFlattened" in content
