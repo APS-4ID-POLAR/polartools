@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=03e83045"></script>
+    <script src="../../_static/documentation_options.js?v=dc837e6b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post27+g26c8cbd89" />
+  <meta name="docsearch:version" content="0.6.0.post23+g5e3bb1c80" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -207,8 +207,8 @@
 
 
 <li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../examples/process_images_gui.html">
-    RXES Image Processor GUI
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/xanes_gui.html">
+    XANES GUI
   </a>
 </li>
 
@@ -397,8 +397,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../examples/process_images_gui.html">
-    RXES Image Processor GUI
+  <a class="nav-link nav-internal" href="../../examples/xanes_gui.html">
+    XANES GUI
   </a>
 </li>
 
@@ -544,6 +544,7 @@
 <span class="sd">   ~fluo_corr</span>
 <span class="sd">   ~process_xmcd</span>
 <span class="sd">   ~plot_xmcd</span>
+<span class="sd">   ~save_xas</span>
 <span class="sd">   ~save_xmcd</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -2013,6 +2014,103 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="p">[</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">,</span> <span class="n">ax3</span><span class="p">,</span> <span class="n">ax4</span><span class="p">,</span> <span class="n">ax5</span><span class="p">,</span> <span class="n">ax6</span><span class="p">]</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_format_norm_params</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a comment block describing the normalization parameters used.</span>
+
+<span class="sd">    Returns an empty string if `results` doesn&#39;t carry the parameters (e.g.</span>
+<span class="sd">    `e0` is missing), which happens for hand-built dictionaries that only</span>
+<span class="sd">    have the minimal &quot;energy&quot;/&quot;norm&quot;/&quot;flat&quot; keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">e0</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;e0&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">e0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;e0:         </span><span class="si">{</span><span class="n">e0</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> eV&quot;</span><span class="p">]</span>
+
+    <span class="n">edge_step</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;edge_step&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">edge_step</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;edge_step:  </span><span class="si">{</span><span class="n">edge_step</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">pre1</span><span class="p">,</span> <span class="n">pre2</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pre1&quot;</span><span class="p">),</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pre2&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pre1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pre2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;pre_range:  [</span><span class="si">{</span><span class="n">pre1</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">pre2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">] eV (relative to e0)&quot;</span>
+        <span class="p">)</span>
+    <span class="n">pre_order</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pre_order&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pre_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pre_order:  </span><span class="si">{</span><span class="n">pre_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">nvict</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nvict&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nvict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nvict:      </span><span class="si">{</span><span class="n">nvict</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">post1</span><span class="p">,</span> <span class="n">post2</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;post1&quot;</span><span class="p">),</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;post2&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">post1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">post2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;post_range: [</span><span class="si">{</span><span class="n">post1</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">post2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">] eV (relative to e0)&quot;</span>
+        <span class="p">)</span>
+    <span class="n">post_order</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;post_order&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">post_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;post_order: </span><span class="si">{</span><span class="n">post_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">flat1</span><span class="p">,</span> <span class="n">flat2</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;flat1&quot;</span><span class="p">),</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;flat2&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">flat1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">flat2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;flat_range: [</span><span class="si">{</span><span class="n">flat1</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">flat2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">] eV (relative to e0)&quot;</span>
+        <span class="p">)</span>
+    <span class="n">flat_order</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;flat_order&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">flat_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;flat_order: </span><span class="si">{</span><span class="n">flat_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="save_xas">
+<a class="viewcode-back" href="../../api/polartools/absorption/index.html#polartools.absorption.save_xas">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_xas</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;XANES</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%0.5e</span><span class="s2">&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves processed XANES data into a file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    results : dictionary</span>
+<span class="sd">        Output of :func:`polartools.absorption.normalize_absorption`. It</span>
+<span class="sd">        needs at least three keys: &quot;energy&quot;, &quot;norm&quot;, and &quot;flat&quot;. If it also</span>
+<span class="sd">        carries the normalization parameters (as `normalize_absorption`</span>
+<span class="sd">        does: &quot;e0&quot;, &quot;edge_step&quot;, &quot;pre1&quot;/&quot;pre2&quot;, &quot;pre_order&quot;, &quot;nvict&quot;,</span>
+<span class="sd">        &quot;post1&quot;/&quot;post2&quot;, &quot;post_order&quot;, &quot;flat1&quot;/&quot;flat2&quot;, &quot;flat_order&quot;), they</span>
+<span class="sd">        are written to the file header for reference.</span>
+<span class="sd">    file_name : string</span>
+<span class="sd">        File name (including folder if not current).</span>
+<span class="sd">    header : string, optional</span>
+<span class="sd">        File header. Note that each line has to be finished with the newline</span>
+<span class="sd">        character.</span>
+<span class="sd">    fmt : string, optional</span>
+<span class="sd">        Format of the data, defaults to %0.5e</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :func:`polartools.absorption.normalize_absorption`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">],</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">],</span>
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;flat&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+    <span class="n">param_block</span> <span class="o">=</span> <span class="n">_format_norm_params</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">param_block</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">+=</span> <span class="n">param_block</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+    <span class="n">header</span> <span class="o">+=</span> <span class="s2">&quot;Energy</span><span class="se">\t</span><span class="s2">XANES</span><span class="se">\t</span><span class="s2">Normalized</span><span class="se">\t</span><span class="s2">Flattened&quot;</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">combined</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">)</span></div>
 
 
 

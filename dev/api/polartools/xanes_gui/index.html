@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>polartools.area_detector_handlers &#8212; polartools</title>
+    <title>polartools.xanes_gui &#8212; polartools</title>
   
   
   
@@ -49,12 +49,12 @@
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/polartools/area_detector_handlers/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/polartools/xanes_gui/index';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="polartools.diffraction" href="../diffraction/index.html" />
-    <link rel="prev" title="polartools.absorption" href="../absorption/index.html" />
+    <link rel="next" title="polartools.xmcd_gui" href="../xmcd_gui/index.html" />
+    <link rel="prev" title="polartools.process_images" href="../process_images/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.6.0.post23+g5e3bb1c80" />
@@ -491,13 +491,13 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../absorption/index.html">polartools.absorption</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">polartools.area_detector_handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../area_detector_handlers/index.html">polartools.area_detector_handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../diffraction/index.html">polartools.diffraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../load_data/index.html">polartools.load_data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../manage_database/index.html">polartools.manage_database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pressure_calibration/index.html">polartools.pressure_calibration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../process_images/index.html">polartools.process_images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../xanes_gui/index.html">polartools.xanes_gui</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">polartools.xanes_gui</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xmcd_gui/index.html">polartools.xmcd_gui</a></li>
 </ul>
 </div>
@@ -542,7 +542,7 @@
     
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">polartools</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.area_detector_handlers</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.xanes_gui</span></li>
   </ul>
 </nav>
 </div>
@@ -559,42 +559,70 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-polartools.area_detector_handlers">
-<span id="polartools-area-detector-handlers"></span><h1>polartools.area_detector_handlers<a class="headerlink" href="#module-polartools.area_detector_handlers" title="Link to this heading">#</a></h1>
-<p>Classes to enable databroker to load area detector images.</p>
-<p>Note that these have to registered</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">databroker</span><span class="w"> </span><span class="kn">import</span> <span class="n">catalog</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">polartools.area_detector_handlers</span><span class="w"> </span><span class="kn">import</span> <span class="n">LambdaHDF5Handler</span>
-<span class="n">cat</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">[</span><span class="s1">&#39;my_catalog&#39;</span><span class="p">]</span>
-<span class="n">cat</span><span class="o">.</span><span class="n">register_handler</span><span class="p">(</span><span class="s2">&quot;AD_HDF5_lambda&quot;</span><span class="p">,</span> <span class="n">LambdaHDF5Handler</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
+  <section id="module-polartools.xanes_gui">
+<span id="polartools-xanes-gui"></span><h1>polartools.xanes_gui<a class="headerlink" href="#module-polartools.xanes_gui" title="Link to this heading">#</a></h1>
+<p>XANES normalization GUI using PyQt6 + pyqtgraph.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.area_detector_handlers.LambdaHDF5Handler" title="polartools.area_detector_handlers.LambdaHDF5Handler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LambdaHDF5Handler</span></code></a>(fpath, template, filename)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_RAW" title="polartools.xanes_gui.C_RAW"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_RAW</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.area_detector_handlers.EigerHandler" title="polartools.area_detector_handlers.EigerHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EigerHandler</span></code></a>(fpath[, images_per_file, ...])</p></td>
-<td><p>Modified Eiger handler -&gt; APS seems to use a different file naming.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_PRE" title="polartools.xanes_gui.C_PRE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_PRE</span></code></a></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.area_detector_handlers.SPEHandler" title="polartools.area_detector_handlers.SPEHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPEHandler</span></code></a>(fpath, template, filename[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_POST" title="polartools.xanes_gui.C_POST"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_POST</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_E0" title="polartools.xanes_gui.C_E0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_E0</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_PRE1" title="polartools.xanes_gui.C_PRE1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_PRE1</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_PRE2" title="polartools.xanes_gui.C_PRE2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_PRE2</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_POST1" title="polartools.xanes_gui.C_POST1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_POST1</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_POST2" title="polartools.xanes_gui.C_POST2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_POST2</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_NORM" title="polartools.xanes_gui.C_NORM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_NORM</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_FLAT" title="polartools.xanes_gui.C_FLAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_FLAT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xanes_gui.C_REF" title="polartools.xanes_gui.C_REF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">C_REF</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.xanes_gui.NORM_DELAY_MS" title="polartools.xanes_gui.NORM_DELAY_MS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NORM_DELAY_MS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
+</section>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.area_detector_handlers.SPEHandler" title="polartools.area_detector_handlers.SPEHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPEHandler</span></code></a></p></td>
-<td><p>Base-class for Handlers to provide the boiler plate to</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xanes_gui.MainWindow" title="polartools.xanes_gui.MainWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MainWindow</span></code></a></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.area_detector_handlers.LambdaHDF5Handler" title="polartools.area_detector_handlers.LambdaHDF5Handler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LambdaHDF5Handler</span></code></a></p></td>
-<td><p>Handler for hdf5 data stored 1 image per file by areadetector</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.area_detector_handlers.EigerHandler" title="polartools.area_detector_handlers.EigerHandler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EigerHandler</span></code></a></p></td>
-<td><p>Modified Eiger handler -&gt; APS seems to use a different file naming.</p></td>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xanes_gui.main" title="polartools.xanes_gui.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<td><p>Console entry point for the <code class="docutils literal notranslate"><span class="pre">xanes-gui</span></code> application.</p></td>
 </tr>
 </tbody>
 </table>
@@ -602,92 +630,76 @@
 </section>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="polartools.area_detector_handlers.SPEHandler">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.area_detector_handlers.</span></span><span class="sig-name descname"><span class="pre">SPEHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_per_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/area_detector_handlers.html#SPEHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.area_detector_handlers.SPEHandler" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">area_detector_handlers.HandlerBase</span></code></p>
-<p>Base-class for Handlers to provide the boiler plate to
-make them usable in context managers by provding stubs of
-<code class="docutils literal notranslate"><span class="pre">__enter__</span></code>, <code class="docutils literal notranslate"><span class="pre">__exit__</span></code> and <code class="docutils literal notranslate"><span class="pre">close</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="polartools.area_detector_handlers.SPEHandler.specs">
-<span class="sig-name descname"><span class="pre">specs</span></span><a class="headerlink" href="#polartools.area_detector_handlers.SPEHandler.specs" title="Link to this definition">#</a></dt>
-<dd><p>Handler for the Princeton detector SPE files.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="polartools.area_detector_handlers.SPEHandler.get_file_list">
-<span class="sig-name descname"><span class="pre">get_file_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datum_kwarg_gen</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/area_detector_handlers.html#SPEHandler.get_file_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.area_detector_handlers.SPEHandler.get_file_list" title="Link to this definition">#</a></dt>
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_RAW">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_RAW</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#4C72B0'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_RAW" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="polartools.area_detector_handlers.LambdaHDF5Handler">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.area_detector_handlers.</span></span><span class="sig-name descname"><span class="pre">LambdaHDF5Handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_per_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/area_detector_handlers.html#LambdaHDF5Handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.area_detector_handlers.LambdaHDF5Handler" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">area_detector_handlers.handlers.AreaDetectorHDF5SingleHandler</span></code></p>
-<p>Handler for hdf5 data stored 1 image per file by areadetector</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>fpath</strong><span class="classifier">string</span></dt><dd><p>filepath</p>
-</dd>
-<dt><strong>template</strong><span class="classifier">string</span></dt><dd><p>filename template string.</p>
-</dd>
-<dt><strong>filename</strong><span class="classifier">string</span></dt><dd><p>filename</p>
-</dd>
-<dt><strong>frame_per_point</strong><span class="classifier">float</span></dt><dd><p>the number of frames per point.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="polartools.area_detector_handlers.LambdaHDF5Handler.specs">
-<span class="sig-name descname"><span class="pre">specs</span></span><a class="headerlink" href="#polartools.area_detector_handlers.LambdaHDF5Handler.specs" title="Link to this definition">#</a></dt>
-<dd><p>Handler for the Lambda detector HDF5 files.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="polartools.area_detector_handlers.EigerHandler">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.area_detector_handlers.</span></span><span class="sig-name descname"><span class="pre">EigerHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images_per_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_per_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/area_detector_handlers.html#EigerHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.area_detector_handlers.EigerHandler" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">area_detector_handlers.eiger.EigerHandler</span></code></p>
-<p>Modified Eiger handler -&gt; APS seems to use a different file naming.</p>
-<p>Initializer for Eiger handler.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>fpath: str</strong></dt><dd><p>the partial file path</p>
-</dd>
-<dt><strong>images_per_file: int, optional</strong></dt><dd><p>images per file. If not set, must set frame_per_point</p>
-</dd>
-<dt><strong>frame_per_point: int, optional. If not set, must set</strong></dt><dd><p>images_per_file</p>
-</dd>
-<dt><strong>This one is backwards compatible for both versions of resources</strong></dt><dd></dd>
-<dt><strong>saved in databroker. Old resources used ‘frame_per_point’ as a</strong></dt><dd></dd>
-<dt><strong>kwarg. Newer resources call this ‘images_per_file’.</strong></dt><dd></dd>
-</dl>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="polartools.area_detector_handlers.EigerHandler.specs">
-<span class="sig-name descname"><span class="pre">specs</span></span><a class="headerlink" href="#polartools.area_detector_handlers.EigerHandler.specs" title="Link to this definition">#</a></dt>
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_PRE">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_PRE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#FF8800'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_PRE" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="polartools.area_detector_handlers.EigerHandler.get_file_list">
-<span class="sig-name descname"><span class="pre">get_file_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/area_detector_handlers.html#EigerHandler.get_file_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.area_detector_handlers.EigerHandler.get_file_list" title="Link to this definition">#</a></dt>
-<dd><p>Get the file list.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_POST">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_POST</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#00AA44'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_POST" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_E0">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_E0</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#222222'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_E0" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_PRE1">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_PRE1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#FF6600'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_PRE1" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_PRE2">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_PRE2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#CC4400'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_PRE2" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_POST1">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_POST1</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#00AA44'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_POST1" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_POST2">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_POST2</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#006622'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_POST2" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_NORM">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_NORM</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#4C72B0'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_NORM" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_FLAT">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_FLAT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#DD8452'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_FLAT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.C_REF">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">C_REF</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#888888'</span></span><a class="headerlink" href="#polartools.xanes_gui.C_REF" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.xanes_gui.NORM_DELAY_MS">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">NORM_DELAY_MS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50</span></span><a class="headerlink" href="#polartools.xanes_gui.NORM_DELAY_MS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polartools.xanes_gui.MainWindow">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><a class="headerlink" href="#polartools.xanes_gui.MainWindow" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">PyQt6.QtWidgets.QMainWindow</span></code></p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="polartools.area_detector_handlers.EigerHandler.get_file_sizes">
-<span class="sig-name descname"><span class="pre">get_file_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/area_detector_handlers.html#EigerHandler.get_file_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.area_detector_handlers.EigerHandler.get_file_sizes" title="Link to this definition">#</a></dt>
-<dd><p>Get the file size.
-Returns size in bytes.</p>
-</dd></dl>
-
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.xanes_gui.main">
+<span class="sig-prename descclassname"><span class="pre">polartools.xanes_gui.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#polartools.xanes_gui.main" title="Link to this definition">#</a></dt>
+<dd><p>Console entry point for the <code class="docutils literal notranslate"><span class="pre">xanes-gui</span></code> application.</p>
 </dd></dl>
 
 </section>
@@ -704,20 +716,20 @@ Returns size in bytes.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../absorption/index.html"
+       href="../process_images/index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">polartools.absorption</p>
+        <p class="prev-next-title">polartools.process_images</p>
       </div>
     </a>
     <a class="right-next"
-       href="../diffraction/index.html"
+       href="../xmcd_gui/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">polartools.diffraction</p>
+        <p class="prev-next-title">polartools.xmcd_gui</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -740,23 +752,24 @@ Returns size in bytes.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.area_detector_handlers.SPEHandler"><code class="docutils literal notranslate"><span class="pre">SPEHandler</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.area_detector_handlers.SPEHandler.specs"><code class="docutils literal notranslate"><span class="pre">SPEHandler.specs</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.area_detector_handlers.SPEHandler.get_file_list"><code class="docutils literal notranslate"><span class="pre">SPEHandler.get_file_list()</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.area_detector_handlers.LambdaHDF5Handler"><code class="docutils literal notranslate"><span class="pre">LambdaHDF5Handler</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.area_detector_handlers.LambdaHDF5Handler.specs"><code class="docutils literal notranslate"><span class="pre">LambdaHDF5Handler.specs</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.area_detector_handlers.EigerHandler"><code class="docutils literal notranslate"><span class="pre">EigerHandler</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.area_detector_handlers.EigerHandler.specs"><code class="docutils literal notranslate"><span class="pre">EigerHandler.specs</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.area_detector_handlers.EigerHandler.get_file_list"><code class="docutils literal notranslate"><span class="pre">EigerHandler.get_file_list()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.area_detector_handlers.EigerHandler.get_file_sizes"><code class="docutils literal notranslate"><span class="pre">EigerHandler.get_file_sizes()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_RAW"><code class="docutils literal notranslate"><span class="pre">C_RAW</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_PRE"><code class="docutils literal notranslate"><span class="pre">C_PRE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_POST"><code class="docutils literal notranslate"><span class="pre">C_POST</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_E0"><code class="docutils literal notranslate"><span class="pre">C_E0</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_PRE1"><code class="docutils literal notranslate"><span class="pre">C_PRE1</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_PRE2"><code class="docutils literal notranslate"><span class="pre">C_PRE2</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_POST1"><code class="docutils literal notranslate"><span class="pre">C_POST1</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_POST2"><code class="docutils literal notranslate"><span class="pre">C_POST2</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_NORM"><code class="docutils literal notranslate"><span class="pre">C_NORM</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_FLAT"><code class="docutils literal notranslate"><span class="pre">C_FLAT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.C_REF"><code class="docutils literal notranslate"><span class="pre">C_REF</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.NORM_DELAY_MS"><code class="docutils literal notranslate"><span class="pre">NORM_DELAY_MS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.MainWindow"><code class="docutils literal notranslate"><span class="pre">MainWindow</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.xanes_gui.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -766,7 +779,7 @@ Returns size in bytes.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/APS-4ID-POLAR/polartools/edit/main/docs/source/api/polartools/area_detector_handlers/index.rst">
+    <a href="https://github.com/APS-4ID-POLAR/polartools/edit/main/docs/source/api/polartools/xanes_gui/index.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -781,7 +794,7 @@ Returns size in bytes.</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../../../_sources/api/polartools/area_detector_handlers/index.rst.txt">
+    <a href="../../../_sources/api/polartools/xanes_gui/index.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

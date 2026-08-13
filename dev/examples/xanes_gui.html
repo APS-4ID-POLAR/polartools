@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>XAS / XMCD &#8212; polartools</title>
+    <title>XANES GUI &#8212; polartools</title>
   
   
   
@@ -49,12 +49,12 @@
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/absorption';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/xanes_gui';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Diffraction" href="diffraction.html" />
-    <link rel="prev" title="Loading data" href="load_data.html" />
+    <link rel="next" title="polartools" href="../api/polartools/index.html" />
+    <link rel="prev" title="XMCD GUI" href="xmcd_gui.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.6.0.post23+g5e3bb1c80" />
@@ -160,8 +160,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="absorption.html">
     XAS / XMCD
   </a>
 </li>
@@ -209,8 +209,8 @@
 </li>
 
 
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="xanes_gui.html">
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
     XANES GUI
   </a>
 </li>
@@ -359,8 +359,8 @@
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="absorption.html">
     XAS / XMCD
   </a>
 </li>
@@ -401,8 +401,8 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="xanes_gui.html">
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
     XANES GUI
   </a>
 </li>
@@ -528,7 +528,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">XAS / XMCD</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">XANES GUI</span></li>
   </ul>
 </nav>
 </div>
@@ -545,167 +545,60 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="xas-xmcd">
-<h1>XAS / XMCD<a class="headerlink" href="#xas-xmcd" title="Link to this heading">#</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">polartools.absorption</span></code> module covers loading and processing of X-ray
-absorption spectroscopy (XAS) and X-ray magnetic circular dichroism (XMCD)
-scans. It handles edge-step normalization, pre/post-edge background
-subtraction, fluorescence over-absorption correction, and the dichroic
-combination of ±-field scans.</p>
-<section id="loading-single-absorption-scans">
-<h2>Loading single absorption scans<a class="headerlink" href="#loading-single-absorption-scans" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_absorption</span>
-
-<span class="n">energy</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="n">load_absorption</span><span class="p">(</span>
-    <span class="n">scan_id</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
-    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;I0&quot;</span><span class="p">,</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;It&quot;</span><span class="p">,</span>  <span class="c1"># transmission detector</span>
-    <span class="n">transmission</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># μ = -log(It / I0)</span>
-<span class="p">)</span>
+  <section id="xanes-gui">
+<h1>XANES GUI<a class="headerlink" href="#xanes-gui" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">polartools</span></code> ships an interactive PyQt6 application for XANES normalization.
+It’s installed as a console script when you <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">polartools</span></code>, so you
+can launch it from anywhere:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xanes-gui
 </pre></div>
 </div>
-<p>For fluorescence:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">energy</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="n">load_absorption</span><span class="p">(</span>
-    <span class="n">scan_id</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
-    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;I0&quot;</span><span class="p">,</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;IfluorM&quot;</span><span class="p">,</span>  <span class="c1"># fluorescence detector</span>
-    <span class="n">transmission</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># μ = IfluorM / I0</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<section id="what-it-does">
+<h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">#</a></h2>
+<p>Wraps the same functions documented in the <a class="reference internal" href="absorption.html"><span class="std std-doc">XAS / XMCD example</span></a>
+with a graphical workflow, for the simpler single-spectrum case (no ±-field
+pairing):</p>
+<ul class="simple">
+<li><p>Load one set of scans from a SPEC file or databroker catalog, or load
+directly from a plain column file by picking which columns are energy and
+mu</p></li>
+<li><p>Set the edge energy (E₀), pre-edge, and post-edge windows interactively</p></li>
+<li><p>See the normalized and flattened XANES update live as you adjust parameters</p></li>
+<li><p>Save the processed XANES to a column file with a metadata header, to a
+folder of your choosing</p></li>
+<li><p>Overlay a previously saved XANES file (same format) on the normalized plot
+for comparison</p></li>
+</ul>
 </section>
-<section id="loading-lockin-dichroism-scans">
-<h2>Loading lockin / dichroism scans<a class="headerlink" href="#loading-lockin-dichroism-scans" title="Link to this heading">#</a></h2>
-<p>For lockin-detected XMCD on a single scan (modulated polarization):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_lockin</span>
-
-<span class="n">energy</span><span class="p">,</span> <span class="n">xmcd</span><span class="p">,</span> <span class="n">xas</span> <span class="o">=</span> <span class="n">load_lockin</span><span class="p">(</span>
-    <span class="n">scan_id</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
-    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;I0&quot;</span><span class="p">,</span>
-    <span class="n">lockin</span><span class="o">=</span><span class="s2">&quot;lockin&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<section id="running-headless-ci-scripted-use">
+<h2>Running headless (CI / scripted use)<a class="headerlink" href="#running-headless-ci-scripted-use" title="Link to this heading">#</a></h2>
+<p>The GUI uses Qt’s <code class="docutils literal notranslate"><span class="pre">offscreen</span></code> platform when <code class="docutils literal notranslate"><span class="pre">QT_QPA_PLATFORM=offscreen</span></code> is
+set — this is how the test suite exercises it without a display. Useful for
+scripted batch processing on a server, but for that workflow you’re usually
+better off calling <code class="docutils literal notranslate"><span class="pre">polartools.absorption.normalize_absorption</span></code> directly.</p>
 </section>
-<section id="edge-step-normalization">
-<h2>Edge-step normalization<a class="headerlink" href="#edge-step-normalization" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_absorption</span>
-
-<span class="n">mu_norm</span> <span class="o">=</span> <span class="n">normalize_absorption</span><span class="p">(</span>
-    <span class="n">energy</span><span class="p">,</span>
-    <span class="n">mu</span><span class="p">,</span>
-    <span class="n">e0</span><span class="o">=</span><span class="mi">7112</span><span class="p">,</span>  <span class="c1"># Fe K-edge</span>
-    <span class="n">pre1</span><span class="o">=-</span><span class="mi">150</span><span class="p">,</span>
-    <span class="n">pre2</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">post1</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
-    <span class="n">post2</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
-    <span class="n">post_order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">normalize_absorption</span></code> fits a linear pre-edge and a polynomial post-edge,
-subtracts the pre-edge, and divides by the edge step. Returns the normalized
-μ on the same energy grid.</p>
-<p>If you need the backgrounds separately:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">pre_edge_background</span><span class="p">,</span>
-    <span class="n">post_edge_background</span><span class="p">,</span>
-    <span class="n">post_edge_flatten</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">pre</span> <span class="o">=</span> <span class="n">pre_edge_background</span><span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">e0</span><span class="o">=</span><span class="mi">7112</span><span class="p">,</span> <span class="n">pre1</span><span class="o">=-</span><span class="mi">150</span><span class="p">,</span> <span class="n">pre2</span><span class="o">=-</span><span class="mi">30</span><span class="p">)</span>
-<span class="n">post</span> <span class="o">=</span> <span class="n">post_edge_background</span><span class="p">(</span>
-    <span class="n">energy</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">e0</span><span class="o">=</span><span class="mi">7112</span><span class="p">,</span> <span class="n">post1</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">post2</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">post_order</span><span class="o">=</span><span class="mi">2</span>
-<span class="p">)</span>
-<span class="n">mu_flat</span> <span class="o">=</span> <span class="n">post_edge_flatten</span><span class="p">(</span>
-    <span class="n">energy</span><span class="p">,</span> <span class="n">mu</span> <span class="o">-</span> <span class="n">pre</span><span class="p">,</span> <span class="n">e0</span><span class="o">=</span><span class="mi">7112</span><span class="p">,</span> <span class="n">post1</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">post2</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">post_order</span><span class="o">=</span><span class="mi">2</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<section id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h2>
+<p>The GUI is a single file: <a class="reference external" href="https://github.com/APS-4ID-POLAR/polartools/blob/main/polartools/xanes_gui.py"><code class="docutils literal notranslate"><span class="pre">polartools/xanes_gui.py</span></code></a>. It’s intentionally
+thin — almost all the actual processing is delegated to functions in
+<code class="docutils literal notranslate"><span class="pre">polartools.absorption</span></code>. So if a scriptable equivalent of any GUI feature is
+useful, you can usually find it (or build it) in that module.</p>
 </section>
-<section id="fluorescence-over-absorption-correction">
-<h2>Fluorescence over-absorption correction<a class="headerlink" href="#fluorescence-over-absorption-correction" title="Link to this heading">#</a></h2>
-<p>For thick concentrated samples in fluorescence, self-absorption distorts the
-spectrum. The hoisted <code class="docutils literal notranslate"><span class="pre">fluo_corr</span></code> (from xraylarch’s FLUO algorithm) corrects
-it given the chemical formula, edge, and incidence/exit angles:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="n">fluo_corr</span>
-
-<span class="n">mu_corrected</span> <span class="o">=</span> <span class="n">fluo_corr</span><span class="p">(</span>
-    <span class="n">norm</span><span class="o">=</span><span class="n">mu_norm</span><span class="p">,</span>  <span class="c1"># edge-step-normalized</span>
-    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;Fe2O3&quot;</span><span class="p">,</span>
-    <span class="n">elem</span><span class="o">=</span><span class="s2">&quot;Fe&quot;</span><span class="p">,</span>
-    <span class="n">edge</span><span class="o">=</span><span class="s2">&quot;K&quot;</span><span class="p">,</span>
-    <span class="n">line</span><span class="o">=</span><span class="s2">&quot;Ka&quot;</span><span class="p">,</span>
-    <span class="n">anginp</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>  <span class="c1"># degrees from sample surface</span>
-    <span class="n">angout</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="xmcd-combining-h-h-scans">
-<h2>XMCD: combining +H / −H scans<a class="headerlink" href="#xmcd-combining-h-h-scans" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_xmcd</span><span class="p">,</span> <span class="n">plot_xmcd</span><span class="p">,</span> <span class="n">save_xmcd</span>
-
-<span class="c1"># Process a paired +H / -H scan into XAS and XMCD</span>
-<span class="n">plus</span><span class="p">,</span> <span class="n">minus</span> <span class="o">=</span> <span class="n">process_xmcd</span><span class="p">(</span>
-    <span class="n">scan_plus</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">scan_minus</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
-    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;I0&quot;</span><span class="p">,</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;IfluorM&quot;</span><span class="p">,</span>
-    <span class="n">transmission</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">e0</span><span class="o">=</span><span class="mi">7112</span><span class="p">,</span>
-    <span class="n">pre1</span><span class="o">=-</span><span class="mi">150</span><span class="p">,</span>
-    <span class="n">pre2</span><span class="o">=-</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">post1</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
-    <span class="n">post2</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Quick look</span>
-<span class="n">plot_xmcd</span><span class="p">(</span><span class="n">plus</span><span class="p">,</span> <span class="n">minus</span><span class="p">)</span>
-
-<span class="c1"># Save to a header-stamped column file</span>
-<span class="n">save_xmcd</span><span class="p">(</span>
-    <span class="n">plus</span><span class="p">,</span> <span class="n">minus</span><span class="p">,</span> <span class="s2">&quot;Fe2O3_xmcd.dat&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;# sample=Fe2O3, T=10K, B=±1T</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">process_xmcd</span></code> returns two <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>s (one per field direction) with
-both the normalized XAS and the dichroism column, ready to plot or stack.</p>
-</section>
-<section id="bulk-processing-many-scans">
-<h2>Bulk processing many scans<a class="headerlink" href="#bulk-processing-many-scans" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">load_multi_xas</span></code>, <code class="docutils literal notranslate"><span class="pre">load_multi_dichro</span></code>, and <code class="docutils literal notranslate"><span class="pre">load_multi_lockin</span></code> accept lists
-of scan IDs and return a single concatenated DataFrame interpolated onto a
-common energy grid. Useful for averaging:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_multi_xas</span>
-
-<span class="n">bulk</span> <span class="o">=</span> <span class="n">load_multi_xas</span><span class="p">(</span>
-    <span class="n">scan_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">],</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
-    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;I0&quot;</span><span class="p">,</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;IfluorM&quot;</span><span class="p">,</span>
-    <span class="n">transmission</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">mean_mu</span> <span class="o">=</span> <span class="n">bulk</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># average across scans</span>
-</pre></div>
-</div>
+<section id="reporting-gui-bugs">
+<h2>Reporting GUI bugs<a class="headerlink" href="#reporting-gui-bugs" title="Link to this heading">#</a></h2>
+<p>Open an issue with:</p>
+<ul class="simple">
+<li><p>The polartools version (<code class="docutils literal notranslate"><span class="pre">xanes-gui</span> <span class="pre">--version</span></code> or <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">polartools;</span> <span class="pre">print(polartools.__version__)&quot;</span></code>)</p></li>
+<li><p>The PyQt6 version (<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;from</span> <span class="pre">PyQt6.QtCore</span> <span class="pre">import</span> <span class="pre">QT_VERSION_STR;</span> <span class="pre">print(QT_VERSION_STR)&quot;</span></code>)</p></li>
+<li><p>A screenshot of the failure if it’s visual</p></li>
+<li><p>The full traceback from the terminal you launched <code class="docutils literal notranslate"><span class="pre">xanes-gui</span></code> from</p></li>
+</ul>
 </section>
 <section id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="xmcd_gui.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">xmcd-gui</span></code></span></a> — interactive PyQt GUI for the XMCD workflow above</p></li>
-<li><p><a class="reference internal" href="xanes_gui.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">xanes-gui</span></code></span></a> — interactive PyQt GUI for XANES normalization</p></li>
-<li><p><a class="reference internal" href="load_data.html"><span class="std std-doc">Loading data</span></a> — how <code class="docutils literal notranslate"><span class="pre">source=</span></code> is resolved</p></li>
+<li><p><a class="reference internal" href="absorption.html"><span class="std std-doc">XAS / XMCD</span></a> — the underlying scriptable API</p></li>
+<li><p><a class="reference internal" href="xmcd_gui.html"><span class="std std-doc">XMCD GUI</span></a> — the paired ±-field counterpart to this GUI</p></li>
 </ul>
 </section>
 </section>
@@ -721,20 +614,20 @@ common energy grid. Useful for averaging:</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="load_data.html"
+       href="xmcd_gui.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Loading data</p>
+        <p class="prev-next-title">XMCD GUI</p>
       </div>
     </a>
     <a class="right-next"
-       href="diffraction.html"
+       href="../api/polartools/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Diffraction</p>
+        <p class="prev-next-title">polartools</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -757,12 +650,10 @@ common energy grid. Useful for averaging:</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-single-absorption-scans">Loading single absorption scans</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-lockin-dichroism-scans">Loading lockin / dichroism scans</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-step-normalization">Edge-step normalization</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fluorescence-over-absorption-correction">Fluorescence over-absorption correction</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xmcd-combining-h-h-scans">XMCD: combining +H / −H scans</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bulk-processing-many-scans">Bulk processing many scans</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-it-does">What it does</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-headless-ci-scripted-use">Running headless (CI / scripted use)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reporting-gui-bugs">Reporting GUI bugs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See also</a></li>
 </ul>
   </nav></div>
@@ -771,7 +662,7 @@ common energy grid. Useful for averaging:</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/APS-4ID-POLAR/polartools/edit/main/docs/source/examples/absorption.md">
+    <a href="https://github.com/APS-4ID-POLAR/polartools/edit/main/docs/source/examples/xanes_gui.md">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -786,7 +677,7 @@ common energy grid. Useful for averaging:</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../_sources/examples/absorption.md.txt">
+    <a href="../_sources/examples/xanes_gui.md.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

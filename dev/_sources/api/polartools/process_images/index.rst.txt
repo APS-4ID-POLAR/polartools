@@ -70,7 +70,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: load_images(scans, cat, detector_key='lamb', cleanup=None, normalize=None, positioner=None, **kwargs)
+.. py:function:: load_images(scans, cat, detector_key, cleanup=None, normalize=None, positioner=None)
 
    
    Load scans with 2D images.
@@ -86,16 +86,11 @@ Module Contents
        **scans** : iterable
            List of scan_id or uids.
 
-       **cat** : databroker catalog, or "hdf5"/"h5"/"hdf"
-           Catalog. If "hdf5", "h5", or "hdf", images and scan data are instead
-           read from HDF5 master files on disk via
-           :func:`polartools.load_data.load_hdf5_images` and
-           :func:`polartools.load_data.load_table`. In that case, the following
-           kwargs are used: folder, fname_format, externals_location,
-           image_location (see :func:`polartools.load_data.load_hdf5_images`).
+       **cat** : databroker catalog
+           Catalog.
 
-       **detector_key** : string, optional
-           Name of item that holds the images. Defaults to "lamb".
+       **detector_key** : string
+           Name of item that holds the images
 
        **cleanup** : dictionary, optional
            Clean up functions and arguments. Available functions:
@@ -110,9 +105,7 @@ Module Contents
            Name of detector that will be used to normalize data. Default is None.
 
        **positioner** : string, optional
-           Name of positioner to be read. Defaults to None. If True, images are
-           not averaged over the points dimension, but no positioner column is
-           read (positioner_values is returned as None).
+           Name of positioner to be read. Defaults to None.
 
 
 
@@ -130,14 +123,7 @@ Module Contents
 
 
 
-   .. seealso::
 
-       
-       :func:`polartools.load_data.load_hdf5_images`
-           ..
-       :func:`polartools.load_data.load_table`
-           ..
-       
 
 
 
@@ -202,7 +188,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: get_spectrum(image, curvature=None, biny=1)
+.. py:function:: get_spectrum(image, curvature, biny=1)
 
    
    Extract the spectrum of a single image.
@@ -216,11 +202,9 @@ Module Contents
        **image** : numpy.array or dask.array
            Image to be processed.
 
-       **curvature** : iterable, optional
+       **curvature** : iterable
            List of polynomial coefficients [c0, c1, c2] where:
-           y = c0 + c1.x + c2.x^2. Defaults to None, which skips the curvature
-           correction and simply integrates the image in the vertical
-           direction.
+           y = c0 + c1.x + c2.x^2.
 
        **biny** : integer, optional
            Bin size in the vertical direction in pixels. Defaults to 1.
@@ -250,7 +234,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: get_spectra(images, curvature=None, biny=1)
+.. py:function:: get_spectra(images, curvature, biny=1)
 
    
    Extract several spectrum.
@@ -264,11 +248,9 @@ Module Contents
        **images** : iterable of numpy.array or dask.array
            Images to be processed.
 
-       **curvature** : iterable, optional
+       **curvature** : iterable
            List of polynomial coefficients [c0, c1, c2] where:
-           y = c0 + c1.x + c2.x^2. Defaults to None, which skips the curvature
-           correction and simply integrates each image in the vertical
-           direction.
+           y = c0 + c1.x + c2.x^2.
 
        **biny** : integer, optional
            Bin size in the vertical direction in pixels. Defaults to 1.
@@ -300,7 +282,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: process_rxes(scans, cat, detector_key, curvature=None, cleanup=None, normalize=None, positioner=None, biny=1, **kwargs)
+.. py:function:: process_rxes(scans, cat, detector_key, curvature, cleanup=None, normalize=None, positioner=None, biny=1)
 
    
    Wrapper with typical RXES data processing.
@@ -317,11 +299,9 @@ Module Contents
        **detector_key** : string
            Name of item that holds the images
 
-       **curvature** : iterable, optional
+       **curvature** : iterable
            List of polynomial coefficients [c0, c1, c2] where:
-           y = c0 + c1.x + c2.x^2. Defaults to None, which skips the curvature
-           correction and simply integrates each image in the vertical
-           direction.
+           y = c0 + c1.x + c2.x^2.
 
        **cleanup** : dictionary, optional
            Clean up functions and arguments. Available functions:
@@ -365,7 +345,7 @@ Module Contents
    ..
        !! processed by numpydoc !!
 
-.. py:function:: process_rxes_mcd(scans, cat, detector_key, curvature=None, cleanup=None, normalize=None, positioner=None, biny=1, **kwargs)
+.. py:function:: process_rxes_mcd(scans, cat, detector_key, curvature, cleanup=None, normalize=None, positioner=None, biny=1)
 
    
    Wrapper with typical RXES-MCD data processing.
@@ -382,11 +362,9 @@ Module Contents
        **detector_key** : string
            Name of item that holds the images
 
-       **curvature** : iterable, optional
+       **curvature** : iterable
            List of polynomial coefficients [c0, c1, c2] where:
-           y = c0 + c1.x + c2.x^2. Defaults to None, which skips the curvature
-           correction and simply integrates each image in the vertical
-           direction.
+           y = c0 + c1.x + c2.x^2.
 
        **cleanup** : dictionary, optional
            Clean up functions and arguments. Available functions:
