@@ -110,6 +110,7 @@ exclude = [
     "/docs/source/_build",
     "/docs/source/generated",
     "/CLAUDE.md",
+    "/ARCHITECTURE.md",
     "/xmcd_save_test.dat",
     "/xanes_save_test.dat",
     "/xanes_save_test_minimal.dat",
