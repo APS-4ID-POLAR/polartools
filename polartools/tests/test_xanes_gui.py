@@ -70,7 +70,7 @@ def normalized_win(loaded_win):
     return loaded_win
 
 
-def _norm_stub(energy):
+def _norm_stub(energy, e0=7112.0):
     return {
         "energy": energy,
         "mu": np.ones_like(energy),
@@ -78,7 +78,7 @@ def _norm_stub(energy):
         "flat": np.ones_like(energy),
         "preedge": np.zeros_like(energy),
         "postedge": np.ones_like(energy),
-        "e0": 7112.0,
+        "e0": e0,
         "edge_step": 1.0,
     }
 
@@ -378,6 +378,40 @@ def test_run_normalization_error(loaded_win):
         loaded_win._run_normalization()
     msg = loaded_win.status_bar.currentMessage()
     assert "Normalization error" in msg
+
+
+def test_run_normalization_error_clears_stale_results(loaded_win):
+    energy = loaded_win._energy
+    with patch(
+        "polartools.xanes_gui.normalize_absorption",
+        return_value=_norm_stub(energy),
+    ):
+        loaded_win._run_normalization()
+    assert loaded_win._results is not None
+    assert loaded_win.btn_save.isEnabled()
+
+    with patch(
+        "polartools.xanes_gui.normalize_absorption",
+        side_effect=RuntimeError("bad fit"),
+    ):
+        loaded_win._run_normalization()
+    assert loaded_win._results is None
+    assert not loaded_win.btn_save.isEnabled()
+
+
+def test_run_normalization_syncs_pre_post_lines_to_new_e0(loaded_win):
+    energy = loaded_win._energy
+    loaded_win.le_pre1.setText("-30.0")
+    loaded_win.le_post1.setText("10.0")
+
+    with patch(
+        "polartools.xanes_gui.normalize_absorption",
+        return_value=_norm_stub(energy, e0=7150.0),
+    ):
+        loaded_win._run_normalization()
+
+    assert loaded_win.line_pre1.value() == pytest.approx(7150.0 - 30.0)
+    assert loaded_win.line_post1.value() == pytest.approx(7150.0 + 10.0)
 
 
 # ─── _save_results ────────────────────────────────────────────────────────────
@@ -907,4 +941,41 @@ def test_on_load_column_file_success(win, tmp_path):
     assert win._mu is not None
     # No keV->eV conversion — energy taken as-is from the file.
     assert np.allclose(sorted(data[:, 0]), win._energy)
+
+
+def test_on_load_column_file_reuses_preview_cache(win, tmp_path):
+    path = str(tmp_path / "data.dat")
+    _write_column_file(path, ncols=2)
+    win.cb_source.setCurrentIndex(win.cb_source.count() - 1)
+    win.le_column_path.setText(path)
+    win._preview_column_file(path)
+
+    with (
+        patch("polartools.xanes_gui.np.loadtxt") as mock_loadtxt,
+        patch(
+            "polartools.xanes_gui.normalize_absorption",
+            side_effect=lambda *a, **k: _norm_stub(win._energy),
+        ),
+    ):
+        win._on_load()
+
+    mock_loadtxt.assert_not_called()
+    assert win._energy is not None
+
+
+def test_on_load_column_file_reparses_on_cache_miss(win, tmp_path):
+    path = str(tmp_path / "data.dat")
+    _write_column_file(path, ncols=2)
+    win.cb_source.setCurrentIndex(win.cb_source.count() - 1)
+    win.le_column_path.setText(path)
+    # No preview taken for this path — cache stays empty/mismatched.
+    assert win._column_cache is None
+
+    with patch(
+        "polartools.xanes_gui.normalize_absorption",
+        side_effect=lambda *a, **k: _norm_stub(win._energy),
+    ):
+        win._on_load()
+
+    assert win._energy is not None
     assert win._results is not None

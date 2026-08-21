@@ -37,6 +37,7 @@ from polartools.absorption import (
     normalize_absorption,
     save_xas,
 )
+from polartools._gui_common import GuiCommonMixin
 
 # ─── Color palette ────────────────────────────────────────────────────────────
 C_RAW = "#4C72B0"
@@ -54,7 +55,7 @@ C_REF = "#888888"
 NORM_DELAY_MS = 50
 
 
-class MainWindow(QMainWindow):
+class MainWindow(GuiCommonMixin, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("XANES Processor")
@@ -63,6 +64,7 @@ class MainWindow(QMainWindow):
         self._energy = None
         self._mu = None
         self._results = None
+        self._column_cache = None
         self._e0_val = None
         self._block_line_update = False
         self._markers_initialized = False
@@ -152,102 +154,8 @@ class MainWindow(QMainWindow):
         return layout
 
     # ── Source parameter sub-widgets ──────────────────────────────────────────
-
-    def _browse_file(self, line_edit, caption, filt):
-        path, _ = QFileDialog.getOpenFileName(self, caption, "", filt)
-        if path:
-            line_edit.setText(path)
-
-    def _browse_dir(self, line_edit, caption):
-        path = QFileDialog.getExistingDirectory(self, caption)
-        if path:
-            line_edit.setText(path)
-
-    def _build_spec_source(self):
-        w = QWidget()
-        h = QHBoxLayout(w)
-        h.setContentsMargins(0, 0, 0, 0)
-        h.addWidget(QLabel("File:"))
-        self.le_spec_path = QLineEdit()
-        self.le_spec_path.setPlaceholderText("/path/to/spec.dat")
-        h.addWidget(self.le_spec_path, 1)
-        btn = QPushButton("Browse…")
-        btn.clicked.connect(
-            lambda: self._browse_file(
-                self.le_spec_path,
-                "Open SPEC file",
-                "SPEC files (*.dat *.txt);;All (*)",
-            )
-        )
-        h.addWidget(btn)
-        h.addWidget(QLabel("Folder:"))
-        self.le_spec_folder = QLineEdit()
-        self.le_spec_folder.setPlaceholderText("(optional)")
-        self.le_spec_folder.setMaximumWidth(160)
-        h.addWidget(self.le_spec_folder)
-        return w
-
-    def _build_hdf5_source(self):
-        w = QWidget()
-        h = QHBoxLayout(w)
-        h.setContentsMargins(0, 0, 0, 0)
-        h.addWidget(QLabel("Folder:"))
-        self.le_hdf_folder = QLineEdit()
-        self.le_hdf_folder.setPlaceholderText("/path/to/hdf5/")
-        h.addWidget(self.le_hdf_folder, 1)
-        btn = QPushButton("Browse…")
-        btn.clicked.connect(
-            lambda: self._browse_dir(self.le_hdf_folder, "HDF5 folder")
-        )
-        h.addWidget(btn)
-        h.addWidget(QLabel("Format:"))
-        self.le_hdf_format = QLineEdit("scan_{:06d}_master.hdf")
-        self.le_hdf_format.setMaximumWidth(200)
-        h.addWidget(self.le_hdf_format)
-        h.addWidget(QLabel("H5 loc:"))
-        self.le_hdf_loc = QLineEdit("entry/instrument/bluesky/streams/primary")
-        self.le_hdf_loc.setMaximumWidth(280)
-        h.addWidget(self.le_hdf_loc)
-        return w
-
-    def _build_csv_source(self):
-        w = QWidget()
-        h = QHBoxLayout(w)
-        h.setContentsMargins(0, 0, 0, 0)
-        h.addWidget(QLabel("Folder:"))
-        self.le_csv_folder = QLineEdit()
-        self.le_csv_folder.setPlaceholderText("/path/to/csv/")
-        h.addWidget(self.le_csv_folder, 1)
-        btn = QPushButton("Browse…")
-        btn.clicked.connect(
-            lambda: self._browse_dir(self.le_csv_folder, "CSV folder")
-        )
-        h.addWidget(btn)
-        return w
-
-    def _build_db_source(self):
-        w = QWidget()
-        h = QHBoxLayout(w)
-        h.setContentsMargins(0, 0, 0, 0)
-        h.addWidget(QLabel("Catalog:"))
-        self.le_db_name = QLineEdit()
-        self.le_db_name.setPlaceholderText("catalog-name")
-        h.addWidget(self.le_db_name, 1)
-        return w
-
-    def _build_tiled_source(self):
-        w = QWidget()
-        h = QHBoxLayout(w)
-        h.setContentsMargins(0, 0, 0, 0)
-        h.addWidget(QLabel("Profile:"))
-        self.le_tiled_profile = QLineEdit()
-        self.le_tiled_profile.setPlaceholderText("profile-name")
-        h.addWidget(self.le_tiled_profile)
-        h.addWidget(QLabel("Path:"))
-        self.le_tiled_path = QLineEdit("/raw")
-        self.le_tiled_path.setMaximumWidth(120)
-        h.addWidget(self.le_tiled_path)
-        return w
+    # _browse_file, _browse_dir, and _build_*_source builders are provided by
+    # GuiCommonMixin (polartools/_gui_common.py).
 
     def _build_column_source(self):
         w = QWidget()
@@ -297,6 +205,7 @@ class MainWindow(QMainWindow):
             return
         if data.ndim == 1:
             data = data.reshape(-1, 1)
+        self._column_cache = (path, data)
         ncols = data.shape[1]
         for cb in (self.cb_energy_col, self.cb_mu_col):
             with QSignalBlocker(cb):
@@ -758,20 +667,7 @@ class MainWindow(QMainWindow):
         return kwargs
 
     # ─── Load phase ───────────────────────────────────────────────────────────
-
-    def _parse_scan_list(self, text):
-        parts = [
-            p.strip() for p in text.replace(";", ",").split(",") if p.strip()
-        ]
-        if not parts:
-            raise ValueError("No scan numbers provided.")
-        result = []
-        for p in parts:
-            try:
-                result.append(int(p))
-            except ValueError:
-                result.append(p)
-        return result
+    # _parse_scan_list is provided by GuiCommonMixin.
 
     def _on_load(self):
         if self.cb_source.currentText() == "Column File":
@@ -814,15 +710,19 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Input error", "Select a file to load.")
             return
 
-        try:
-            data = np.loadtxt(path, comments="#")
-        except Exception as exc:
-            QMessageBox.critical(self, "Load error", str(exc))
-            self.status_bar.showMessage("Load failed.")
-            return
+        if self._column_cache is not None and self._column_cache[0] == path:
+            data = self._column_cache[1]
+        else:
+            try:
+                data = np.loadtxt(path, comments="#")
+            except Exception as exc:
+                QMessageBox.critical(self, "Load error", str(exc))
+                self.status_bar.showMessage("Load failed.")
+                return
 
-        if data.ndim == 1:
-            data = data.reshape(-1, 1)
+            if data.ndim == 1:
+                data = data.reshape(-1, 1)
+
         ncols = data.shape[1]
         ecol = self.cb_energy_col.currentIndex()
         mcol = self.cb_mu_col.currentIndex()
@@ -846,17 +746,13 @@ class MainWindow(QMainWindow):
         # Guess normalization range markers only on the first load. On later
         # loads, keep the current parameters (relative pre/post ranges) so
         # tuned settings survive; the marker lines are repositioned onto the
-        # new e0 after normalization.
-        first_load = not self._markers_initialized
-        if first_load:
+        # new e0 by _run_normalization.
+        if not self._markers_initialized:
             self._init_markers()
             self._markers_initialized = True
 
         self.status_bar.showMessage(status_msg)
         self._run_normalization()
-
-        if not first_load:
-            self._sync_lines_to_entries()
 
     def _init_markers(self):
         energy = self._energy
@@ -912,11 +808,7 @@ class MainWindow(QMainWindow):
                 self._set_line_silent(line, self._e0_val + rel)
 
     # ─── Line ↔ entry synchronization ────────────────────────────────────────
-
-    def _set_line_silent(self, line, pos):
-        self._block_line_update = True
-        line.setPos(pos)
-        self._block_line_update = False
+    # _set_line_silent is provided by GuiCommonMixin.
 
     def _line_moved(self, line, entry):
         if self._block_line_update or self._e0_val is None:
@@ -937,19 +829,7 @@ class MainWindow(QMainWindow):
         self._schedule_normalize()
 
     # ─── Normalize phase ──────────────────────────────────────────────────────
-
-    def _parse_entry(self, entry):
-        txt = entry.text().strip()
-        if not txt:
-            return None
-        try:
-            return float(txt)
-        except ValueError:
-            return None
-
-    def _parse_order(self, combo):
-        txt = combo.currentText()
-        return None if txt == "Auto" else int(txt)
+    # _parse_entry and _parse_order are provided by GuiCommonMixin.
 
     def _build_norm_kwargs(self):
         e0 = (
@@ -1003,6 +883,9 @@ class MainWindow(QMainWindow):
         if self._energy is None:
             return
 
+        self._results = None
+        self.btn_save.setEnabled(False)
+
         norm_kw = self._build_norm_kwargs()
         try:
             results = normalize_absorption(self._energy, self._mu, **norm_kw)
@@ -1017,6 +900,8 @@ class MainWindow(QMainWindow):
         self.line_e0.setPos(self._e0_val)
         with QSignalBlocker(self.le_e0):
             self.le_e0.setText(f"{self._e0_val:.2f}")
+
+        self._sync_lines_to_entries()
 
         energy = results["energy"]
 
