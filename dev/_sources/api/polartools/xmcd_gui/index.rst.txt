@@ -119,8 +119,32 @@ Module Contents
 
 .. py:class:: MainWindow
 
-   Bases: :py:obj:`PyQt6.QtWidgets.QMainWindow`
+   Bases: :py:obj:`polartools._gui_common.GuiCommonMixin`, :py:obj:`PyQt6.QtWidgets.QMainWindow`
 
+
+   
+   Source-widget builders and small parsing/line-sync helpers.
+
+   Mixed into the XMCD and XANES GUI ``MainWindow`` classes, which both
+   declare the same ``le_*``/``cb_*`` widget attribute names these methods
+   build and read.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
 
 .. py:function:: main()
 

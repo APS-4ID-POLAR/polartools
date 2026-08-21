@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=dc837e6b"></script>
+    <script src="../../../_static/documentation_options.js?v=8085b748"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="polartools.manage_database" href="../manage_database/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post23+g5e3bb1c80" />
+  <meta name="docsearch:version" content="0.6.0.post25+g820155e58" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -799,7 +799,7 @@ more convenient to extract the pressure in XRD measurements.</p>
 <p>For a given experiment, it is recommended to create a kwarg dictionary that
 holds the input parameters that are different from the standard defaults,
 and make it easier to process multiple scans. For instance:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;db&#39;</span><span class="p">:</span> <span class="n">db</span><span class="p">,</span> <span class="s1">&#39;calibrant&#39;</span><span class="p">:</span> <span class="s1">&#39;Ag&#39;</span><span class="p">,</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'db'</span><span class="p">:</span> <span class="n">db</span><span class="p">,</span> <span class="s1">'calibrant'</span><span class="p">:</span> <span class="s1">'Ag'</span><span class="p">,</span> <span class="s1">'temperature'</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
 <span class="n">pressure</span> <span class="o">=</span> <span class="n">xrd_calibrate_pressure</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>

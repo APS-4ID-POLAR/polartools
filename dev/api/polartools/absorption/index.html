@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=dc837e6b"></script>
+    <script src="../../../_static/documentation_options.js?v=8085b748"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="polartools" href="../index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post23+g5e3bb1c80" />
+  <meta name="docsearch:version" content="0.6.0.post25+g820155e58" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -1406,8 +1406,8 @@ normalize_absorption function.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>results</strong><span class="classifier">dictionary</span></dt><dd><p>Output of <a class="reference internal" href="#polartools.absorption.normalize_absorption" title="polartools.absorption.normalize_absorption"><code class="xref py py-func docutils literal notranslate"><span class="pre">polartools.absorption.normalize_absorption()</span></code></a>. It
-needs at least three keys: “energy”, “norm”, and “flat”. If it also
-carries the normalization parameters (as <cite>normalize_absorption</cite>
+needs at least four keys: “energy”, “mu”, “norm”, and “flat”. If it
+also carries the normalization parameters (as <cite>normalize_absorption</cite>
 does: “e0”, “edge_step”, “pre1”/”pre2”, “pre_order”, “nvict”,
 “post1”/”post2”, “post_order”, “flat1”/”flat2”, “flat_order”), they
 are written to the file header for reference.</p>

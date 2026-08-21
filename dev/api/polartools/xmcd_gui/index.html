@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=dc837e6b"></script>
+    <script src="../../../_static/documentation_options.js?v=8085b748"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="polartools.xanes_gui" href="../xanes_gui/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post23+g5e3bb1c80" />
+  <meta name="docsearch:version" content="0.6.0.post25+g820155e58" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -623,7 +623,7 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xmcd_gui.MainWindow" title="polartools.xmcd_gui.MainWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MainWindow</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Source-widget builders and small parsing/line-sync helpers.</p></td>
 </tr>
 </tbody>
 </table>
@@ -725,7 +725,11 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="polartools.xmcd_gui.MainWindow">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.xmcd_gui.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><a class="headerlink" href="#polartools.xmcd_gui.MainWindow" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">PyQt6.QtWidgets.QMainWindow</span></code></p>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">polartools._gui_common.GuiCommonMixin</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">PyQt6.QtWidgets.QMainWindow</span></code></p>
+<p>Source-widget builders and small parsing/line-sync helpers.</p>
+<p>Mixed into the XMCD and XANES GUI <code class="docutils literal notranslate"><span class="pre">MainWindow</span></code> classes, which both
+declare the same <code class="docutils literal notranslate"><span class="pre">le_*</span></code>/<code class="docutils literal notranslate"><span class="pre">cb_*</span></code> widget attribute names these methods
+build and read.</p>
 </dd></dl>
 
 <dl class="py function">

@@ -1036,8 +1036,8 @@ Module Contents
 
        **results** : dictionary
            Output of :func:`polartools.absorption.normalize_absorption`. It
-           needs at least three keys: "energy", "norm", and "flat". If it also
-           carries the normalization parameters (as `normalize_absorption`
+           needs at least four keys: "energy", "mu", "norm", and "flat". If it
+           also carries the normalization parameters (as `normalize_absorption`
            does: "e0", "edge_step", "pre1"/"pre2", "pre_order", "nvict",
            "post1"/"post2", "post_order", "flat1"/"flat2", "flat_order"), they
            are written to the file header for reference.

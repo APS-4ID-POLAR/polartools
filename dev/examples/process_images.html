@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=dc837e6b"></script>
+    <script src="../_static/documentation_options.js?v=8085b748"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="Pressure calibration" href="pressure_calibration.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post23+g5e3bb1c80" />
+  <meta name="docsearch:version" content="0.6.0.post25+g820155e58" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -558,7 +558,7 @@ stacks without loading them all into memory.</p>
 <span class="n">images</span> <span class="o">=</span> <span class="n">load_images</span><span class="p">(</span>
     <span class="n">scan_id</span><span class="o">=</span><span class="mi">276</span><span class="p">,</span>
     <span class="n">source</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>  <span class="c1"># databroker catalog</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;lambda250k&quot;</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="s2">"lambda250k"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># images is a dask.array — operations are lazy</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -621,7 +621,7 @@ shows the fit overlaid on the image (useful for tuning).</p>
 <span class="n">energy_in</span><span class="p">,</span> <span class="n">energy_loss</span><span class="p">,</span> <span class="n">intensity</span> <span class="o">=</span> <span class="n">process_rxes</span><span class="p">(</span>
     <span class="n">scan_ids</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span>
     <span class="n">source</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;lambda250k&quot;</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="s2">"lambda250k"</span><span class="p">,</span>
     <span class="n">curvature</span><span class="o">=</span><span class="n">curvature</span><span class="p">,</span>
     <span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
 <span class="p">)</span>
@@ -634,7 +634,7 @@ in groups of 4 polarization states:</p>
 <span class="n">results</span> <span class="o">=</span> <span class="n">process_rxes_mcd</span><span class="p">(</span>
     <span class="n">scan_ids</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span>
     <span class="n">source</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;lambda250k&quot;</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="s2">"lambda250k"</span><span class="p">,</span>
     <span class="n">curvature</span><span class="o">=</span><span class="n">curvature</span><span class="p">,</span>
     <span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
 <span class="p">)</span>

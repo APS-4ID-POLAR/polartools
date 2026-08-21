@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=dc837e6b"></script>
+    <script src="../../_static/documentation_options.js?v=8085b748"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post23+g5e3bb1c80" />
+  <meta name="docsearch:version" content="0.6.0.post25+g820155e58" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -527,21 +527,21 @@
                 <article class="bd-article">
                   
   <h1>Source code for polartools.area_detector_handlers</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Classes to enable databroker to load area detector images.</span>
 
 <span class="sd">Note that these have to registered ::</span>
 
 <span class="sd">    from databroker import catalog</span>
 <span class="sd">    from polartools.area_detector_handlers import LambdaHDF5Handler</span>
-<span class="sd">    cat = catalog[&#39;my_catalog&#39;]</span>
-<span class="sd">    cat.register_handler(&quot;AD_HDF5_lambda&quot;, LambdaHDF5Handler, overwrite=True)</span>
+<span class="sd">    cat = catalog['my_catalog']</span>
+<span class="sd">    cat.register_handler("AD_HDF5_lambda", LambdaHDF5Handler, overwrite=True)</span>
 
 <span class="sd">.. autosummary::</span>
 <span class="sd">   ~LambdaHDF5Handler</span>
 <span class="sd">   ~EigerHandler</span>
 <span class="sd">   ~SPEHandler</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># Copyright (c) 2020-2021, UChicago Argonne, LLC.</span>
 <span class="c1"># See LICENSE file for details.</span>
@@ -561,14 +561,14 @@
 <div class="viewcode-block" id="SPEHandler">
 <a class="viewcode-back" href="../../api/polartools/area_detector_handlers/index.html#polartools.area_detector_handlers.SPEHandler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SPEHandler</span><span class="p">(</span><span class="n">HandlerBase</span><span class="p">):</span>
-    <span class="n">specs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;AD_SPE_APSPolar&quot;</span><span class="p">}</span> <span class="o">|</span> <span class="n">HandlerBase</span><span class="o">.</span><span class="n">specs</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"AD_SPE_APSPolar"</span><span class="p">}</span> <span class="o">|</span> <span class="n">HandlerBase</span><span class="o">.</span><span class="n">specs</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Handler for the Princeton detector SPE files.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">template</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">frame_per_point</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fpp</span> <span class="o">=</span> <span class="n">frame_per_point</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_template</span> <span class="o">=</span> <span class="n">template</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span> <span class="o">=</span> <span class="n">filename</span>
@@ -584,7 +584,7 @@
 
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fpp</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Expected </span><span class="si">{}</span><span class="s2"> frames, found </span><span class="si">{}</span><span class="s2"> frames&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s2">"Expected </span><span class="si">{}</span><span class="s2"> frames, found </span><span class="si">{}</span><span class="s2"> frames"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_fpp</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -595,7 +595,7 @@
 <a class="viewcode-back" href="../../api/polartools/area_detector_handlers/index.html#polartools.area_detector_handlers.SPEHandler.get_file_list">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_file_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum_kwarg_gen</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_template</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;point_number&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_template</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="s2">"point_number"</span><span class="p">])</span>
             <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datum_kwarg_gen</span>
         <span class="p">]</span></div>
 </div>
@@ -605,11 +605,11 @@
 <div class="viewcode-block" id="LambdaHDF5Handler">
 <a class="viewcode-back" href="../../api/polartools/area_detector_handlers/index.html#polartools.area_detector_handlers.LambdaHDF5Handler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LambdaHDF5Handler</span><span class="p">(</span><span class="n">AreaDetectorHDF5SingleHandler</span><span class="p">):</span>
-    <span class="n">specs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;AD_HDF5_Lambda250k_APSPolar&quot;</span><span class="p">}</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"AD_HDF5_Lambda250k_APSPolar"</span><span class="p">}</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Handler for the Lambda detector HDF5 files.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point_number</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">from_array</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">point_number</span><span class="p">))</span></div>
@@ -619,14 +619,14 @@
 <div class="viewcode-block" id="EigerHandler">
 <a class="viewcode-back" href="../../api/polartools/area_detector_handlers/index.html#polartools.area_detector_handlers.EigerHandler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EigerHandler</span><span class="p">(</span><span class="n">AD_EigerHandler</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Modified Eiger handler -&gt; APS seems to use a different file naming.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">specs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;AD_EIGER_APSPolar&quot;</span><span class="p">}</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"AD_EIGER_APSPolar"</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_num</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        This returns data contained in the file.</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -635,20 +635,20 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">            A dask array</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_prefix</span><span class="si">}</span><span class="s2">_data_&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">image_num</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_images_per_file</span><span class="p">)</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">.h5&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_prefix</span><span class="si">}</span><span class="s2">_data_"</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">image_num</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">_images_per_file</span><span class="p">)</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">.h5"</span>
         <span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">fpath</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">file</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+            <span class="n">file</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">fpath</span><span class="p">]</span> <span class="o">=</span> <span class="n">file</span>
 
-        <span class="n">da</span> <span class="o">=</span> <span class="n">from_array</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">&quot;entry/data/data&quot;</span><span class="p">])[</span>
+        <span class="n">da</span> <span class="o">=</span> <span class="n">from_array</span><span class="p">(</span><span class="n">file</span><span class="p">[</span><span class="s2">"entry/data/data"</span><span class="p">])[</span>
             <span class="n">image_num</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_images_per_file</span>
         <span class="p">]</span>
 
@@ -657,19 +657,19 @@
 <div class="viewcode-block" id="EigerHandler.get_file_list">
 <a class="viewcode-back" href="../../api/polartools/area_detector_handlers/index.html#polartools.area_detector_handlers.EigerHandler.get_file_list">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_file_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the file list.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_prefix</span><span class="si">}</span><span class="s2">_*&quot;</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_prefix</span><span class="si">}</span><span class="s2">_*"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="EigerHandler.get_file_sizes">
 <a class="viewcode-back" href="../../api/polartools/area_detector_handlers/index.html#polartools.area_detector_handlers.EigerHandler.get_file_sizes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_file_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the file size.</span>
 <span class="sd">        Returns size in bytes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">sizes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_list</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
