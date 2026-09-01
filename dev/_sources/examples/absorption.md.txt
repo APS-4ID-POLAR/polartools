@@ -166,5 +166,4 @@ mean_mu = bulk.iloc[:, 1:].mean(axis=1)  # average across scans
 ## See also
 
 - [`xmcd-gui`](xmcd_gui.md) — interactive PyQt GUI for the XMCD workflow above
-- [`xanes-gui`](xanes_gui.md) — interactive PyQt GUI for XANES normalization
 - [Loading data](load_data.md) — how `source=` is resolved

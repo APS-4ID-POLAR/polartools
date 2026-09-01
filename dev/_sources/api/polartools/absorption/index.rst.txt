@@ -21,7 +21,6 @@ polartools.absorption
       ~fluo_corr
       ~process_xmcd
       ~plot_xmcd
-      ~save_xas
       ~save_xmcd
 
    ..
@@ -46,7 +45,6 @@ Functions
    polartools.absorption.fluo_corr
    polartools.absorption.process_xmcd
    polartools.absorption.plot_xmcd
-   polartools.absorption.save_xas
    polartools.absorption.save_xmcd
 
 
@@ -1017,53 +1015,6 @@ Module Contents
        
        :func:`polartools.absorption.process_xmcd`
            ..
-       :func:`polartools.absorption.normalize_absorption`
-           ..
-       
-
-
-
-   ..
-       !! processed by numpydoc !!
-
-.. py:function:: save_xas(results, file_name, header='XANES\n', fmt='%0.5e')
-
-   
-   Saves processed XANES data into a file.
-
-
-   :Parameters:
-
-       **results** : dictionary
-           Output of :func:`polartools.absorption.normalize_absorption`. It
-           needs at least four keys: "energy", "mu", "norm", and "flat". If it
-           also carries the normalization parameters (as `normalize_absorption`
-           does: "e0", "edge_step", "pre1"/"pre2", "pre_order", "nvict",
-           "post1"/"post2", "post_order", "flat1"/"flat2", "flat_order"), they
-           are written to the file header for reference.
-
-       **file_name** : string
-           File name (including folder if not current).
-
-       **header** : string, optional
-           File header. Note that each line has to be finished with the newline
-           character.
-
-       **fmt** : string, optional
-           Format of the data, defaults to %0.5e
-
-
-
-
-
-
-
-
-
-
-   .. seealso::
-
-       
        :func:`polartools.absorption.normalize_absorption`
            ..
        

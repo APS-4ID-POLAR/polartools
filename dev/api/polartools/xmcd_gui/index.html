@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../../_static/documentation_options.js?v=8085b748"></script>
+    <script src="../../../_static/documentation_options.js?v=eb3dea43"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,10 +54,10 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Release history" href="../../../release-history.html" />
-    <link rel="prev" title="polartools.xanes_gui" href="../xanes_gui/index.html" />
+    <link rel="prev" title="polartools.process_images" href="../process_images/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post25+g820155e58" />
+  <meta name="docsearch:version" content="0.6.0.post23+g2931f41a9" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -205,13 +205,6 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="../../../examples/xmcd_gui.html">
     XMCD GUI
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../../examples/xanes_gui.html">
-    XANES GUI
   </a>
 </li>
 
@@ -401,13 +394,6 @@
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../examples/xanes_gui.html">
-    XANES GUI
-  </a>
-</li>
-
-
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="../index.html">
     polartools
@@ -497,7 +483,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../manage_database/index.html">polartools.manage_database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pressure_calibration/index.html">polartools.pressure_calibration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../process_images/index.html">polartools.process_images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../xanes_gui/index.html">polartools.xanes_gui</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">polartools.xmcd_gui</a></li>
 </ul>
 </div>
@@ -623,7 +608,7 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.xmcd_gui.MainWindow" title="polartools.xmcd_gui.MainWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MainWindow</span></code></a></p></td>
-<td><p>Source-widget builders and small parsing/line-sync helpers.</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -725,11 +710,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="polartools.xmcd_gui.MainWindow">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.xmcd_gui.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><a class="headerlink" href="#polartools.xmcd_gui.MainWindow" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">polartools._gui_common.GuiCommonMixin</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">PyQt6.QtWidgets.QMainWindow</span></code></p>
-<p>Source-widget builders and small parsing/line-sync helpers.</p>
-<p>Mixed into the XMCD and XANES GUI <code class="docutils literal notranslate"><span class="pre">MainWindow</span></code> classes, which both
-declare the same <code class="docutils literal notranslate"><span class="pre">le_*</span></code>/<code class="docutils literal notranslate"><span class="pre">cb_*</span></code> widget attribute names these methods
-build and read.</p>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">PyQt6.QtWidgets.QMainWindow</span></code></p>
 </dd></dl>
 
 <dl class="py function">
@@ -752,12 +733,12 @@ build and read.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../xanes_gui/index.html"
+       href="../process_images/index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">polartools.xanes_gui</p>
+        <p class="prev-next-title">polartools.process_images</p>
       </div>
     </a>
     <a class="right-next"
@@ -853,8 +834,8 @@ build and read.</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
