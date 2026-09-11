@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=bd9c2a1f"></script>
+    <script src="../_static/documentation_options.js?v=3dc191ff"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="XAS / XMCD" href="absorption.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post22+gfe4d36f1b" />
+  <meta name="docsearch:version" content="0.6.0.post24+g0c17b2617" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -542,11 +542,11 @@ and a databroker-aware <code class="docutils literal notranslate"><span class="p
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.diffraction</span><span class="w"> </span><span class="kn">import</span> <span class="n">fit_peak</span><span class="p">,</span> <span class="n">Model</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">polartools.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_table</span>
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">)</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">fit_peak</span><span class="p">(</span>
-    <span class="n">xdata</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;th&quot;</span><span class="p">],</span>
-    <span class="n">ydata</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;apd&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;I0&quot;</span><span class="p">],</span>  <span class="c1"># normalize by monitor</span>
+    <span class="n">xdata</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">"th"</span><span class="p">],</span>
+    <span class="n">ydata</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">"apd"</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s2">"I0"</span><span class="p">],</span>  <span class="c1"># normalize by monitor</span>
     <span class="n">model</span><span class="o">=</span><span class="n">Model</span><span class="o">.</span><span class="n">PseudoVoigt</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -563,11 +563,11 @@ The result is an <code class="docutils literal notranslate"><span class="pre">lm
 
 <span class="n">info</span> <span class="o">=</span> <span class="n">load_info</span><span class="p">(</span>
     <span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
-    <span class="n">info</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">],</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
+    <span class="n">info</span><span class="o">=</span><span class="p">[</span><span class="s2">"sample"</span><span class="p">,</span> <span class="s2">"T"</span><span class="p">,</span> <span class="s2">"B"</span><span class="p">],</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">scan_type</span> <span class="o">=</span> <span class="n">get_type</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">)</span>
+<span class="n">scan_type</span> <span class="o">=</span> <span class="n">get_type</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -580,17 +580,17 @@ temperature or field series) and returns a DataFrame of fit parameters:</p>
 <span class="c1"># scan_series: [start1, end1, step1, start2, end2, step2, ...]</span>
 <span class="n">fits</span> <span class="o">=</span> <span class="n">fit_series</span><span class="p">(</span>
     <span class="n">scan_series</span><span class="o">=</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">119</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;th&quot;</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;apd&quot;</span><span class="p">,</span>
-    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;I0&quot;</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">"th"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">"apd"</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="s2">"I0"</span><span class="p">,</span>
     <span class="n">model</span><span class="o">=</span><span class="n">Model</span><span class="o">.</span><span class="n">PseudoVoigt</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># fits is a DataFrame indexed by scan_id with columns:</span>
 <span class="c1">#   center, sigma, amplitude, height, fwhm, ...</span>
-<span class="n">fits</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
+<span class="n">fits</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">load_series</span></code> returns the raw concatenated data without fitting if you want
@@ -603,12 +603,12 @@ to plot or process the series differently.</p>
 
 <span class="n">mesh</span> <span class="o">=</span> <span class="n">load_mesh</span><span class="p">(</span>
     <span class="n">scan_id</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;h&quot;</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
-    <span class="n">intensity</span><span class="o">=</span><span class="s2">&quot;apd&quot;</span><span class="p">,</span>
-    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;I0&quot;</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">"h"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span>
+    <span class="n">intensity</span><span class="o">=</span><span class="s2">"apd"</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="s2">"I0"</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">plot_2d</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>  <span class="c1"># heatmap with axis labels</span>
@@ -627,11 +627,11 @@ metadata; <code class="docutils literal notranslate"><span class="pre">plot_data
 databroker shortcut:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.diffraction</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_data</span><span class="p">,</span> <span class="n">plot_fit</span><span class="p">,</span> <span class="n">dbplot</span>
 
-<span class="n">plot_data</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">)</span>
+<span class="n">plot_data</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">)</span>
 <span class="n">plot_fit</span><span class="p">(</span>
     <span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">,</span>
     <span class="n">model</span><span class="o">=</span><span class="n">Model</span><span class="o">.</span><span class="n">PseudoVoigt</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -747,8 +747,8 @@ can stitch together discontiguous scan ranges.</p></li>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

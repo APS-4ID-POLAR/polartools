@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=bd9c2a1f"></script>
+    <script src="../_static/documentation_options.js?v=3dc191ff"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="Pressure calibration" href="pressure_calibration.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post22+gfe4d36f1b" />
+  <meta name="docsearch:version" content="0.6.0.post24+g0c17b2617" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -544,7 +544,7 @@ stacks without loading them all into memory.</p>
 <span class="n">images</span> <span class="o">=</span> <span class="n">load_images</span><span class="p">(</span>
     <span class="n">scan_id</span><span class="o">=</span><span class="mi">276</span><span class="p">,</span>
     <span class="n">source</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>  <span class="c1"># databroker catalog</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;lambda250k&quot;</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="s2">"lambda250k"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="c1"># images is a dask.array — operations are lazy</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -607,7 +607,7 @@ shows the fit overlaid on the image (useful for tuning).</p>
 <span class="n">energy_in</span><span class="p">,</span> <span class="n">energy_loss</span><span class="p">,</span> <span class="n">intensity</span> <span class="o">=</span> <span class="n">process_rxes</span><span class="p">(</span>
     <span class="n">scan_ids</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span>
     <span class="n">source</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;lambda250k&quot;</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="s2">"lambda250k"</span><span class="p">,</span>
     <span class="n">curvature</span><span class="o">=</span><span class="n">curvature</span><span class="p">,</span>
     <span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
 <span class="p">)</span>
@@ -620,7 +620,7 @@ in groups of 4 polarization states:</p>
 <span class="n">results</span> <span class="o">=</span> <span class="n">process_rxes_mcd</span><span class="p">(</span>
     <span class="n">scan_ids</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span>
     <span class="n">source</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>
-    <span class="n">detector</span><span class="o">=</span><span class="s2">&quot;lambda250k&quot;</span><span class="p">,</span>
+    <span class="n">detector</span><span class="o">=</span><span class="s2">"lambda250k"</span><span class="p">,</span>
     <span class="n">curvature</span><span class="o">=</span><span class="n">curvature</span><span class="p">,</span>
     <span class="n">threshold</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
 <span class="p">)</span>
@@ -760,8 +760,8 @@ often help more than smaller datasets.</p></li>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

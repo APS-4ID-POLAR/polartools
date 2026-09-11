@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=bd9c2a1f"></script>
+    <script src="../_static/documentation_options.js?v=3dc191ff"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="Diffraction" href="diffraction.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post22+gfe4d36f1b" />
+  <meta name="docsearch:version" content="0.6.0.post24+g0c17b2617" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -544,21 +544,21 @@ volume, and inverts the calibrant’s EOS to give pressure.</p>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">xrd_calibrate_pressure</span><span class="p">(</span>
     <span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;apd&quot;</span><span class="p">,</span>
-    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;I0&quot;</span><span class="p">,</span>
-    <span class="n">calibrant</span><span class="o">=</span><span class="s2">&quot;Au&quot;</span><span class="p">,</span>  <span class="c1"># &quot;Au&quot;, &quot;Ag&quot;, or &quot;Pt&quot;</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">"tth"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">"apd"</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="s2">"I0"</span><span class="p">,</span>
+    <span class="n">calibrant</span><span class="o">=</span><span class="s2">"Au"</span><span class="p">,</span>  <span class="c1"># "Au", "Ag", or "Pt"</span>
     <span class="n">energy_keV</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
     <span class="n">temperature</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>  <span class="c1"># K</span>
     <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># which Bragg reflection</span>
-    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;PseudoVoigt&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">"PseudoVoigt"</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pressure: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;P_GPa&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GPa&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume:   </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;V_A3&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> Å³&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;2θ:       </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;tth_deg&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> °&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pressure: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">'P_GPa'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> GPa"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Volume:   </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">'V_A3'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> Å³"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"2θ:       </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">'tth_deg'</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> °"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This is the high-level helper most users want. Under the hood it:</p>
@@ -581,7 +581,7 @@ Holzapfel EOS (Pt) at the given temperature</p></li>
 <span class="p">)</span>
 
 <span class="n">params_au</span> <span class="o">=</span> <span class="n">load_au_params</span><span class="p">(</span><span class="n">temperature</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
-<span class="c1"># {&#39;V0&#39;: 67.847, &#39;K0&#39;: 167.0, &#39;Kp0&#39;: 5.5, ...}</span>
+<span class="c1"># {'V0': 67.847, 'K0': 167.0, 'Kp0': 5.5, ...}</span>
 
 <span class="n">params_ag</span> <span class="o">=</span> <span class="n">load_ag_params</span><span class="p">(</span><span class="n">temperature</span><span class="o">=</span><span class="mi">295</span><span class="p">)</span>
 <span class="n">params_pt</span> <span class="o">=</span> <span class="n">load_pt_params</span><span class="p">()</span>  <span class="c1"># T-independent reference values</span>
@@ -601,14 +601,14 @@ Holzapfel EOS (Pt) at the given temperature</p></li>
 <span class="c1"># 1. Fit the peak</span>
 <span class="n">peak_fit</span> <span class="o">=</span> <span class="n">fit_bragg_peak</span><span class="p">(</span>
     <span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
-    <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">,</span>
-    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;tth&quot;</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;apd&quot;</span><span class="p">,</span>
-    <span class="n">monitor</span><span class="o">=</span><span class="s2">&quot;I0&quot;</span><span class="p">,</span>
-    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;Gaussian&quot;</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">"tth"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">"apd"</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="s2">"I0"</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">"Gaussian"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">tth</span> <span class="o">=</span> <span class="n">peak_fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+<span class="n">tth</span> <span class="o">=</span> <span class="n">peak_fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">"center"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
 
 <span class="c1"># 2. Convert to volume (cubic FCC: a from d-spacing of (111))</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -619,7 +619,7 @@ Holzapfel EOS (Pt) at the given temperature</p></li>
 
 <span class="c1"># 3. Invert EOS for pressure</span>
 <span class="n">params</span> <span class="o">=</span> <span class="n">load_au_params</span><span class="p">(</span><span class="n">temperature</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
-<span class="n">P_GPa</span> <span class="o">=</span> <span class="n">calculate_pressure</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">calibrant</span><span class="o">=</span><span class="s2">&quot;Au&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+<span class="n">P_GPa</span> <span class="o">=</span> <span class="n">calculate_pressure</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">calibrant</span><span class="o">=</span><span class="s2">"Au"</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -631,12 +631,12 @@ appear at a given energy:</p>
 
 <span class="n">tth</span> <span class="o">=</span> <span class="n">calculate_tth</span><span class="p">(</span>
     <span class="n">pressure</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
-    <span class="n">calibrant</span><span class="o">=</span><span class="s2">&quot;Au&quot;</span><span class="p">,</span>
+    <span class="n">calibrant</span><span class="o">=</span><span class="s2">"Au"</span><span class="p">,</span>
     <span class="n">energy_keV</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
     <span class="n">temperature</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
     <span class="n">hkl</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Au (111) at 10 GPa, 20 keV, 300 K: 2θ = </span><span class="si">{</span><span class="n">tth</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> °&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Au (111) at 10 GPa, 20 keV, 300 K: 2θ = </span><span class="si">{</span><span class="n">tth</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> °"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Useful for choosing the detector position before a run.</p>
@@ -770,8 +770,8 @@ appear at a given energy:</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

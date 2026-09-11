@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -36,12 +36,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=bd9c2a1f"></script>
+    <script src="../../_static/documentation_options.js?v=3dc191ff"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post22+gfe4d36f1b" />
+  <meta name="docsearch:version" content="0.6.0.post24+g0c17b2617" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -513,7 +513,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for polartools.process_images</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Functions to process image files.</span>
 
 <span class="sd">.. autosummary::</span>
@@ -522,7 +522,7 @@
 <span class="sd">   ~get_curvature</span>
 <span class="sd">   ~get_spectrum</span>
 <span class="sd">   ~get_spectra</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">dask.array</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">da</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -538,7 +538,7 @@
 <div class="viewcode-block" id="clean_threshold">
 <a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.clean_threshold">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">clean_threshold</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Cleans image stack using a fixed threshold value.</span>
 
 <span class="sd">    Sets all value above the threshold to nan.</span>
@@ -554,7 +554,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    clean_images : stack of images</span>
 <span class="sd">        Clean images.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">clean_images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">clean_images</span><span class="p">[</span><span class="n">clean_images</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
     <span class="k">return</span> <span class="n">clean_images</span></div>
@@ -562,7 +562,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_cleanup_images</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Clean up images.</span>
 
 <span class="sd">    Parameters</span>
@@ -571,15 +571,15 @@
 <span class="sd">        Images to be cleaned.</span>
 <span class="sd">    parameters : dictionary</span>
 <span class="sd">        Clean up functions and arguments. Default options:</span>
-<span class="sd">        - {&#39;threshold&#39;: threshold_value}</span>
+<span class="sd">        - {'threshold': threshold_value}</span>
 <span class="sd">        For custom functions, use:</span>
-<span class="sd">        - {&#39;function&#39;: (myfunc, (arg1, arg2, ...))}</span>
+<span class="sd">        - {'function': (myfunc, (arg1, arg2, ...))}</span>
 <span class="sd">        where myfunc is a function with call: myfunc(images, arg1, arg2, ...)</span>
 <span class="sd">        These function can be stacked, but keys have to be different.</span>
 <span class="sd">        For example, the call:</span>
-<span class="sd">        {&#39;threshold1&#39;: 100,</span>
-<span class="sd">        &#39;threshold2&#39;: 10,</span>
-<span class="sd">        &#39;function&#39;: (myfunc, (arg1, arg2))}</span>
+<span class="sd">        {'threshold1': 100,</span>
+<span class="sd">        'threshold2': 10,</span>
+<span class="sd">        'function': (myfunc, (arg1, arg2))}</span>
 <span class="sd">        will run the threshold function twice with 100 and 10 as argument, then</span>
 <span class="sd">        myfunc with (arg1, arg2).</span>
 
@@ -587,17 +587,17 @@
 <span class="sd">    -------</span>
 <span class="sd">    images : dask array</span>
 <span class="sd">        Processed images.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">for</span> <span class="n">function</span><span class="p">,</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="s2">&quot;threshold&quot;</span> <span class="ow">in</span> <span class="n">function</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">"threshold"</span> <span class="ow">in</span> <span class="n">function</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
             <span class="n">images</span> <span class="o">=</span> <span class="n">clean_threshold</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="s2">&quot;function&quot;</span> <span class="ow">in</span> <span class="n">function</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="k">elif</span> <span class="s2">"function"</span> <span class="ow">in</span> <span class="n">function</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
             <span class="n">images</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">images</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;function must be either &#39;threshold&#39; for preset clean method, &quot;</span>
-                <span class="s2">&quot;or &#39;function&#39; for a custom clean method&quot;</span>
+                <span class="s2">"function must be either 'threshold' for preset clean method, "</span>
+                <span class="s2">"or 'function' for a custom clean method"</span>
             <span class="p">)</span>
     <span class="k">return</span> <span class="n">images</span>
 
@@ -607,7 +607,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">load_images</span><span class="p">(</span>
     <span class="n">scans</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">detector_key</span><span class="p">,</span> <span class="n">cleanup</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load scans with 2D images.</span>
 
 <span class="sd">    Note that this function forces explicity outputs:</span>
@@ -630,14 +630,14 @@
 <span class="sd">    cleanup : dictionary, optional</span>
 <span class="sd">        Clean up functions and arguments. Available functions:</span>
 
-<span class="sd">        - {&#39;threshold&#39;: threshold_value}</span>
+<span class="sd">        - {'threshold': threshold_value}</span>
 
 <span class="sd">        For custom functions, use:</span>
 
-<span class="sd">        - {&#39;function&#39;: (myfunc, (arg1, arg2, ...))} \</span>
+<span class="sd">        - {'function': (myfunc, (arg1, arg2, ...))} \</span>
 <span class="sd">        where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \</span>
 <span class="sd">        These function can be stacked. For example, the call: \</span>
-<span class="sd">        {&#39;threshold&#39;: 100, &#39;threshold&#39;: 10, &#39;function&#39;: (myfunc, (arg1, arg2))} \</span>
+<span class="sd">        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))} \</span>
 <span class="sd">        will run the threshold function twice with 100 and 10 as argument, then \</span>
 <span class="sd">        myfunc with (arg1, arg2).</span>
 
@@ -652,7 +652,7 @@
 <span class="sd">        Processed images.</span>
 <span class="sd">    positioner_values : numpy ndarray, optional</span>
 <span class="sd">        Values of the positioner. It is only returned if positioner is not None.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">scan</span> <span class="ow">in</span> <span class="n">scans</span><span class="p">:</span>
@@ -662,8 +662,8 @@
         <span class="k">if</span> <span class="n">cleanup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cleanup</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;cleanup must be a dictionary, but a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">cleanup</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
-                    <span class="s2">&quot;was entered.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"cleanup must be a dictionary, but a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">cleanup</span><span class="p">)</span><span class="si">}</span><span class="s2"> "</span>
+                    <span class="s2">"was entered."</span>
                 <span class="p">)</span>
 
             <span class="n">images</span> <span class="o">=</span> <span class="n">_cleanup_images</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">cleanup</span><span class="p">)</span>
@@ -698,7 +698,7 @@
 <div class="viewcode-block" id="get_curvature">
 <a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.get_curvature">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_curvature</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">binx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">constant_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the curvature of an image.</span>
 
 <span class="sd">    A second order polynomial is fit to the cross correlation of each slice</span>
@@ -732,7 +732,7 @@
 <span class="sd">    --------</span>
 <span class="sd">    :func:`pyrixs.fit_curvature`</span>
 <span class="sd">    :func:`pyrixs.get_curvature_offsets`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">im</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
     <span class="n">ph</span> <span class="o">=</span> <span class="n">_cleanup_photon_events</span><span class="p">(</span><span class="n">image_to_photon_events</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">transpose</span><span class="p">()))</span>
     <span class="k">if</span> <span class="n">constant_offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -747,12 +747,12 @@
             <span class="n">image</span><span class="o">.</span><span class="n">transpose</span><span class="p">(),</span>
             <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span> <span class="k">if</span> <span class="n">vmax</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">im</span><span class="p">),</span>
-            <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;plasma&quot;</span><span class="p">,</span>
+            <span class="n">cmap</span><span class="o">=</span><span class="s2">"plasma"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
         <span class="n">plot_curvature</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">ph</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;curvature = </span><span class="si">{</span><span class="n">curvature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"curvature = </span><span class="si">{</span><span class="n">curvature</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">curvature</span></div>
 
@@ -761,7 +761,7 @@
 <div class="viewcode-block" id="get_spectrum">
 <a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.get_spectrum">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_spectrum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Extract the spectrum of a single image.</span>
 
 <span class="sd">    Uses the `pyrixs` extract_ function.</span>
@@ -788,7 +788,7 @@
 <span class="sd">    See also</span>
 <span class="sd">    --------</span>
 <span class="sd">    :func:`pyrixs.extract`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
     <span class="n">ph</span> <span class="o">=</span> <span class="n">_cleanup_photon_events</span><span class="p">(</span><span class="n">image_to_photon_events</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">transpose</span><span class="p">()))</span>
@@ -799,7 +799,7 @@
 <div class="viewcode-block" id="get_spectra">
 <a class="viewcode-back" href="../../api/polartools/process_images/index.html#polartools.process_images.get_spectra">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_spectra</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Extract several spectrum.</span>
 
 <span class="sd">    Uses the `pyrixs` extract_ function.</span>
@@ -827,7 +827,7 @@
 <span class="sd">    --------</span>
 <span class="sd">    :func:`polartools.process_images.get_spectrum`</span>
 <span class="sd">    :func:`pyrixs.extract`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">spectra</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
@@ -849,7 +849,7 @@
     <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Wrapper with typical RXES data processing.</span>
 
 <span class="sd">    PARAMETERS</span>
@@ -866,14 +866,14 @@
 <span class="sd">    cleanup : dictionary, optional</span>
 <span class="sd">        Clean up functions and arguments. Available functions:</span>
 
-<span class="sd">        - {&#39;threshold&#39;: threshold_value}</span>
+<span class="sd">        - {'threshold': threshold_value}</span>
 
 <span class="sd">        For custom functions, use:</span>
 
-<span class="sd">        - {&#39;function&#39;: (myfunc, (arg1, arg2, ...))} \</span>
+<span class="sd">        - {'function': (myfunc, (arg1, arg2, ...))} \</span>
 <span class="sd">        where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \</span>
 <span class="sd">        These function can be stacked. For example, the call: \</span>
-<span class="sd">        {&#39;threshold&#39;: 100, &#39;threshold&#39;: 10, &#39;function&#39;: (myfunc, (arg1, arg2))} \</span>
+<span class="sd">        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))} \</span>
 <span class="sd">        will run the threshold function twice with 100 and 10 as argument, then \</span>
 <span class="sd">        myfunc with (arg1, arg2).</span>
 
@@ -891,7 +891,7 @@
 <span class="sd">        is not None).</span>
 <span class="sd">    positioner_values : numpy ndarray, optional</span>
 <span class="sd">        Values of the positioner. It is only returned if positioner is not None.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">load_images</span><span class="p">(</span>
         <span class="n">scans</span><span class="p">,</span>
@@ -902,7 +902,7 @@
         <span class="n">positioner</span><span class="o">=</span><span class="n">positioner</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">positioner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># &quot;Count&quot; scans</span>
+    <span class="k">if</span> <span class="n">positioner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># "Count" scans</span>
         <span class="k">return</span> <span class="n">get_spectrum</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="n">biny</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># Scans with a positioner</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">get_spectra</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(),</span> <span class="n">curvature</span><span class="p">,</span> <span class="n">biny</span><span class="o">=</span><span class="n">biny</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
@@ -921,7 +921,7 @@
     <span class="n">positioner</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">biny</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Wrapper with typical RXES-MCD data processing.</span>
 
 <span class="sd">    PARAMETERS</span>
@@ -937,12 +937,12 @@
 <span class="sd">        y = c0 + c1.x + c2.x^2.</span>
 <span class="sd">    cleanup : dictionary, optional</span>
 <span class="sd">        Clean up functions and arguments. Available functions:</span>
-<span class="sd">        - {&#39;threshold&#39;: threshold_value}</span>
+<span class="sd">        - {'threshold': threshold_value}</span>
 <span class="sd">        For custom functions, use:</span>
-<span class="sd">        - {&#39;function&#39;: (myfunc, (arg1, arg2, ...))} \</span>
+<span class="sd">        - {'function': (myfunc, (arg1, arg2, ...))} \</span>
 <span class="sd">        where myfunc is a function with call: myfunc(images, arg1, arg2, ...) \</span>
 <span class="sd">        These function can be stacked. For example, the call: \</span>
-<span class="sd">        {&#39;threshold&#39;: 100, &#39;threshold&#39;: 10, &#39;function&#39;: (myfunc, (arg1, arg2))} \</span>
+<span class="sd">        {'threshold': 100, 'threshold': 10, 'function': (myfunc, (arg1, arg2))} \</span>
 <span class="sd">        will run the threshold function twice with 100 and 10 as argument, then \</span>
 <span class="sd">        myfunc with (arg1, arg2).</span>
 <span class="sd">    normalize : string, optional</span>
@@ -961,11 +961,11 @@
 <span class="sd">        spectra (if positioner is not None).</span>
 <span class="sd">    positioner_values : numpy ndarray, optional</span>
 <span class="sd">        Values of the positioner. It is only returned if positioner is not None.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Need to get all images...</span>
     <span class="k">if</span> <span class="n">positioner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">positioner</span> <span class="o">=</span> <span class="s2">&quot;Time&quot;</span>
+        <span class="n">positioner</span> <span class="o">=</span> <span class="s2">"Time"</span>
 
     <span class="n">images</span><span class="p">,</span> <span class="n">positions</span> <span class="o">=</span> <span class="n">load_images</span><span class="p">(</span>
         <span class="n">scans</span><span class="p">,</span>
@@ -987,7 +987,7 @@
     <span class="n">mcd</span> <span class="o">=</span> <span class="n">specs_plus</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">mcd</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">specs_minus</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">positioner</span> <span class="o">==</span> <span class="s2">&quot;Time&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">positioner</span> <span class="o">==</span> <span class="s2">"Time"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">rxes</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">mcd</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">rxes</span><span class="p">,</span> <span class="n">mcd</span><span class="p">,</span> <span class="n">positions</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
@@ -1021,8 +1021,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

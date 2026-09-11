@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=bd9c2a1f"></script>
+    <script src="../_static/documentation_options.js?v=3dc191ff"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="Image processing" href="process_images.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post22+gfe4d36f1b" />
+  <meta name="docsearch:version" content="0.6.0.post24+g0c17b2617" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -551,8 +551,8 @@ not yet supported here (issue <a class="reference external" href="https://github
 
 <span class="n">to_databroker</span><span class="p">(</span>
     <span class="n">db</span><span class="p">,</span>  <span class="c1"># source databroker catalog</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/exports/run3&quot;</span><span class="p">,</span>  <span class="c1"># destination</span>
-    <span class="n">query</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;scan_id&quot;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">)},</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/exports/run3"</span><span class="p">,</span>  <span class="c1"># destination</span>
+    <span class="n">query</span><span class="o">=</span><span class="p">{</span><span class="s2">"scan_id"</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">)},</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -566,13 +566,13 @@ a <code class="docutils literal notranslate"><span class="pre">catalog.yml</span
 <span class="kn">from</span><span class="w"> </span><span class="nn">polartools.manage_database</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_databroker_inplace</span>
 
 <span class="n">from_databroker_inplace</span><span class="p">(</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/run3&quot;</span><span class="p">,</span>  <span class="c1"># the directory created by to_databroker</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;run3&quot;</span><span class="p">,</span>  <span class="c1"># the catalog name to register</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/run3"</span><span class="p">,</span>  <span class="c1"># the directory created by to_databroker</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"run3"</span><span class="p">,</span>  <span class="c1"># the catalog name to register</span>
     <span class="n">catalog</span><span class="o">=</span><span class="n">catalog</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Now use it like any other catalog</span>
-<span class="n">db</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">[</span><span class="s2">&quot;run3&quot;</span><span class="p">]</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">[</span><span class="s2">"run3"</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -586,8 +586,8 @@ a <code class="docutils literal notranslate"><span class="pre">catalog.yml</span
 
 <span class="n">to_csv_json</span><span class="p">(</span>
     <span class="n">db</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/exports/csv&quot;</span><span class="p">,</span>
-    <span class="n">query</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sample&quot;</span><span class="p">:</span> <span class="s2">&quot;Fe2O3&quot;</span><span class="p">},</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/exports/csv"</span><span class="p">,</span>
+    <span class="n">query</span><span class="o">=</span><span class="p">{</span><span class="s2">"sample"</span><span class="p">:</span> <span class="s2">"Fe2O3"</span><span class="p">},</span>
     <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
@@ -603,7 +603,7 @@ of a logging conflict (issue <a class="reference external" href="https://github.
 <h2>Removing a registered catalog<a class="headerlink" href="#removing-a-registered-catalog" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.manage_database</span><span class="w"> </span><span class="kn">import</span> <span class="n">remove_catalog</span>
 
-<span class="n">remove_catalog</span><span class="p">(</span><span class="s2">&quot;run3&quot;</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="n">catalog</span><span class="p">)</span>
+<span class="n">remove_catalog</span><span class="p">(</span><span class="s2">"run3"</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="n">catalog</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This removes the catalog <em>registration</em> but leaves the underlying data files
@@ -615,8 +615,8 @@ on disk — you can re-add them later with <code class="docutils literal notrans
 pass <code class="docutils literal notranslate"><span class="pre">external=True</span></code> to also pack the image files alongside the documents:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">to_databroker</span><span class="p">(</span>
     <span class="n">db</span><span class="p">,</span>
-    <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/exports/run3&quot;</span><span class="p">,</span>
-    <span class="n">query</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;scan_id&quot;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">)},</span>
+    <span class="n">folder</span><span class="o">=</span><span class="s2">"/exports/run3"</span><span class="p">,</span>
+    <span class="n">query</span><span class="o">=</span><span class="p">{</span><span class="s2">"scan_id"</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">)},</span>
     <span class="n">external</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
@@ -727,8 +727,8 @@ file paths — works if the destination machine can see them, breaks otherwise.<
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

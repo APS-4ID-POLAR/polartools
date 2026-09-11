@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
@@ -36,12 +36,12 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=bd9c2a1f"></script>
+    <script src="../../_static/documentation_options.js?v=3dc191ff"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post22+gfe4d36f1b" />
+  <meta name="docsearch:version" content="0.6.0.post24+g0c17b2617" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -513,7 +513,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for polartools.manage_database</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Functions to import and export Bluesky data.</span>
 
 <span class="sd">.. autosummary::</span>
@@ -521,7 +521,7 @@
 <span class="sd">   ~to_csv_json</span>
 <span class="sd">   ~from_databroker_inplace</span>
 <span class="sd">   ~remove_catalog</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># Copyright (c) 2021, UChicago Argonne, LLC.</span>
 <span class="c1"># See LICENSE file for details.</span>
@@ -550,7 +550,7 @@
 <div class="viewcode-block" id="to_databroker">
 <a class="viewcode-back" href="../../api/polartools/manage_database/index.html#polartools.manage_database.to_databroker">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_databroker</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Export a databroker catalog (or query subset) into msgpack files.</span>
 
 <span class="sd">    A narrow wrapper around the `databroker-pack`_ package, which also</span>
@@ -560,7 +560,7 @@
 
 <span class="sd">    .. warning::</span>
 <span class="sd">       When passing ``query``, run the query first and inspect the results</span>
-<span class="sd">       before exporting — it&#39;s easy to inadvertently export a very large</span>
+<span class="sd">       before exporting — it's easy to inadvertently export a very large</span>
 <span class="sd">       number of scans. See :func:`polartools.load_data.db_query`.</span>
 
 <span class="sd">    Parameters</span>
@@ -587,18 +587,18 @@
 <span class="sd">    :func:`databroker_pack.export_catalog`</span>
 <span class="sd">    :func:`databroker_pack.write_documents_manifest`</span>
 <span class="sd">    :func:`databroker_pack.write_msgpack_catalog_file`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">db_query</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="n">db</span><span class="o">.</span><span class="n">v2</span>
 
     <span class="n">makedirs</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">manager</span> <span class="o">=</span> <span class="n">MultiFileManager</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
 
     <span class="n">artifacts</span><span class="p">,</span> <span class="n">external_files</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">export_catalog</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">manager</span><span class="p">)</span>
-    <span class="n">write_documents_manifest</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">])</span>
+    <span class="n">write_documents_manifest</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">artifacts</span><span class="p">[</span><span class="s2">"all"</span><span class="p">])</span>
 
     <span class="n">root_map</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="n">external</span><span class="p">:</span>
-        <span class="n">target_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">&quot;external_files&quot;</span><span class="p">)</span>
+        <span class="n">target_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"external_files"</span><span class="p">)</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">unique_id</span><span class="p">),</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">external_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">new_root</span><span class="p">,</span> <span class="n">new_files</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">copy_external_files</span><span class="p">(</span>
                 <span class="n">target_directory</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">unique_id</span><span class="p">,</span> <span class="n">files</span>
@@ -611,7 +611,7 @@
             <span class="n">rel_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">new_files</span><span class="p">]</span>
             <span class="n">write_external_files_manifest</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="n">unique_id</span><span class="p">,</span> <span class="n">rel_paths</span><span class="p">)</span>
     <span class="n">write_msgpack_catalog_file</span><span class="p">(</span>
-        <span class="n">manager</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;./documents/*.msgpack&quot;</span><span class="p">],</span> <span class="n">root_map</span>
+        <span class="n">manager</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="p">[</span><span class="s2">"./documents/*.msgpack"</span><span class="p">],</span> <span class="n">root_map</span>
     <span class="p">)</span></div>
 
 
@@ -622,11 +622,11 @@
     <span class="n">db</span><span class="p">,</span>
     <span class="n">folder</span><span class="p">,</span>
     <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">fname_format</span><span class="o">=</span><span class="s2">&quot;scan_</span><span class="si">{}</span><span class="s2">_&quot;</span><span class="p">,</span>
+    <span class="n">fname_format</span><span class="o">=</span><span class="s2">"scan_</span><span class="si">{}</span><span class="s2">_"</span><span class="p">,</span>
     <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">max_attempts</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Exports scans into .csv and .json files.</span>
 
 
@@ -636,7 +636,7 @@
 
 <span class="sd">    .. warning::</span>
 <span class="sd">       When passing ``query``, run the query first and inspect the results</span>
-<span class="sd">       before exporting — it&#39;s easy to inadvertently export a very large</span>
+<span class="sd">       before exporting — it's easy to inadvertently export a very large</span>
 <span class="sd">       number of scans. See :func:`polartools.load_data.db_query`.</span>
 
 <span class="sd">    Parameters</span>
@@ -660,15 +660,15 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    - Each scan has one json &quot;-metadata.json&quot; file, plus ome csv file for \</span>
-<span class="sd">    each data stream, for instance &quot;-primary.csv&quot;.</span>
+<span class="sd">    - Each scan has one json "-metadata.json" file, plus ome csv file for \</span>
+<span class="sd">    each data stream, for instance "-primary.csv".</span>
 
 <span class="sd">    See also</span>
 <span class="sd">    --------</span>
 <span class="sd">    :func:`polartools.load_data.db_query`</span>
 <span class="sd">    :func:`suitcase.csv.export`</span>
 <span class="sd">    :func:`suitcase.json_metadata.export`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">my_exporter</span><span class="p">(</span><span class="n">docs</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">file_prefix</span><span class="p">):</span>
         <span class="n">docs1</span><span class="p">,</span> <span class="n">docs2</span> <span class="o">=</span> <span class="n">tee</span><span class="p">(</span><span class="n">docs</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -679,42 +679,42 @@
         <span class="n">new_fname</span> <span class="o">=</span> <span class="n">fname</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_attempts</span> <span class="o">+</span> <span class="mi">3</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;baseline.csv&quot;</span><span class="p">):</span>
-                <span class="n">new_fname</span> <span class="o">=</span> <span class="n">fname</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">-&quot;</span>
+            <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="s2">"baseline.csv"</span><span class="p">):</span>
+                <span class="n">new_fname</span> <span class="o">=</span> <span class="n">fname</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">-"</span>
                 <span class="n">base</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">new_fname</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">new_fname</span>
 
         <span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Reached maximum number of attempts (</span><span class="si">{</span><span class="n">max_attempts</span><span class="si">}</span><span class="s2">)&quot;</span>
-            <span class="sa">f</span><span class="s1">&#39;, the files with &quot;</span><span class="si">{</span><span class="n">new_fname</span><span class="si">}</span><span class="s1">&quot; prefix will be overwritten.&#39;</span>
+            <span class="sa">f</span><span class="s2">"Reached maximum number of attempts (</span><span class="si">{</span><span class="n">max_attempts</span><span class="si">}</span><span class="s2">)"</span>
+            <span class="sa">f</span><span class="s1">', the files with "</span><span class="si">{</span><span class="n">new_fname</span><span class="si">}</span><span class="s1">" prefix will be overwritten.'</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">new_fname</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span> <span class="ow">and</span> <span class="n">exists</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2"> already exists. Either select &quot;</span>
-            <span class="s2">&quot;`overwrite=True` or enter a another folder.&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2"> already exists. Either select "</span>
+            <span class="s2">"`overwrite=True` or enter a another folder."</span>
         <span class="p">)</span>
 
     <span class="n">results</span> <span class="o">=</span> <span class="n">db_query</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span> <span class="k">if</span> <span class="n">query</span> <span class="k">else</span> <span class="n">db</span><span class="o">.</span><span class="n">v2</span>
     <span class="k">for</span> <span class="n">uid</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
-        <span class="n">scanno</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">][</span><span class="s2">&quot;scan_id&quot;</span><span class="p">]</span>
+        <span class="n">scanno</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"start"</span><span class="p">][</span><span class="s2">"scan_id"</span><span class="p">]</span>
         <span class="n">fname</span> <span class="o">=</span> <span class="n">next_available_fname</span><span class="p">(</span>
             <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scanno</span><span class="p">),</span> <span class="n">max_attempts</span>
         <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;Exporting uid #</span><span class="si">{}</span><span class="s2">, scan_id #</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uid</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="n">scanno</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;... &quot;</span>
+            <span class="s2">"Exporting uid #</span><span class="si">{}</span><span class="s2">, scan_id #</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uid</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="n">scanno</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">"... "</span>
         <span class="p">)</span>
-        <span class="n">my_exporter</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="o">.</span><span class="n">documents</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">),</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done!&quot;</span><span class="p">)</span></div>
+        <span class="n">my_exporter</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span><span class="o">.</span><span class="n">documents</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"yes"</span><span class="p">),</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Done!"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="from_databroker_inplace">
 <a class="viewcode-back" href="../../api/polartools/manage_database/index.html#polartools.manage_database.from_databroker_inplace">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">from_databroker_inplace</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">catalog</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Load the exported databroker database.</span>
 
 <span class="sd">    This is a narrow usage of the `databroker-pack` package_. Note that this</span>
@@ -737,19 +737,19 @@
 <span class="sd">            from databroker import catalog</span>
 <span class="sd">            from polartools.manage_database import from_databroker_inplace</span>
 
-<span class="sd">            from_databroker_inplace(&#39;folder/to/files&#39;, &#39;my_data&#39;)</span>
-<span class="sd">            db = catalog[&#39;my_data&#39;]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">            from_databroker_inplace('folder/to/files', 'my_data')</span>
+<span class="sd">            db = catalog['my_data']</span>
+<span class="sd">    """</span>
     <span class="n">config_path</span> <span class="o">=</span> <span class="n">unpack_inplace</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="n">merge</span><span class="p">)</span>
     <span class="n">catalog</span><span class="o">.</span><span class="n">force_reload</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Placed configuration file at </span><span class="si">{</span><span class="n">config_path</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Placed configuration file at </span><span class="si">{</span><span class="n">config_path</span><span class="si">!s}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="remove_catalog">
 <a class="viewcode-back" href="../../api/polartools/manage_database/index.html#polartools.manage_database.remove_catalog">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_catalog</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Removes a catalog created by `to_databroker`.</span>
 
 <span class="sd">    Parameters</span>
@@ -764,21 +764,21 @@
 
 <span class="sd">    - It assumes that the catalog was created by `to_databroker` or \</span>
 <span class="sd">    `databroker_pack`. The actual name of the file is \</span>
-<span class="sd">    &#39;databroker_unpack_NAME.yml&#39;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    'databroker_unpack_NAME.yml'.</span>
+<span class="sd">    """</span>
 
     <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">catalog_search_path</span><span class="p">():</span>
-        <span class="n">filepath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;databroker_unpack_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.yml&quot;</span><span class="p">)</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"databroker_unpack_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.yml"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
             <span class="n">remove</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">catalog</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">catalog</span><span class="o">.</span><span class="n">force_reload</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> catalog was removed.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> catalog was removed."</span><span class="p">)</span>
             <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The catalog </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> was not found.&quot;</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The catalog </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> was not found."</span><span class="p">)</span></div>
 
 </pre></div>
 
@@ -809,8 +809,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

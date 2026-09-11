@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -37,12 +37,12 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=bd9c2a1f"></script>
+    <script src="../_static/documentation_options.js?v=3dc191ff"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="Quickstart" href="../quickstart.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post22+gfe4d36f1b" />
+  <meta name="docsearch:version" content="0.6.0.post24+g0c17b2617" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -550,24 +550,24 @@ to the right backend.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_table</span>
 
 <span class="c1"># SPEC file</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">)</span>
 
 <span class="c1"># HDF5 master file</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;hdf&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/run3&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">"hdf"</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/run3"</span><span class="p">)</span>
 
 <span class="c1"># CSV folder</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">1049</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/csv_export&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">1049</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">"csv"</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/csv_export"</span><span class="p">)</span>
 
 <span class="c1"># Databroker (legacy)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">databroker</span><span class="w"> </span><span class="kn">import</span> <span class="n">catalog</span>
 
-<span class="n">db</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">[</span><span class="s2">&quot;my_catalog&quot;</span><span class="p">]</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">[</span><span class="s2">"my_catalog"</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">1049</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">db</span><span class="p">)</span>
 
 <span class="c1"># Tiled (new)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tiled.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_profile</span>
 
-<span class="n">cat</span> <span class="o">=</span> <span class="n">from_profile</span><span class="p">(</span><span class="s2">&quot;polar&quot;</span><span class="p">)[</span><span class="s2">&quot;raw&quot;</span><span class="p">]</span>
+<span class="n">cat</span> <span class="o">=</span> <span class="n">from_profile</span><span class="p">(</span><span class="s2">"polar"</span><span class="p">)[</span><span class="s2">"raw"</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">2025</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">cat</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -578,9 +578,9 @@ to the right backend.</p>
 and let you pass backend-specific options:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_spec</span><span class="p">,</span> <span class="n">load_hdf5_data</span><span class="p">,</span> <span class="n">load_csv</span>
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_spec</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">spec_file</span><span class="o">=</span><span class="s2">&quot;myfile.dat&quot;</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/2024-1&quot;</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_hdf5_data</span><span class="p">(</span><span class="n">scan</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/run3&quot;</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_csv</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">1049</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">&quot;/data/csv_export&quot;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_spec</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">spec_file</span><span class="o">=</span><span class="s2">"myfile.dat"</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/2024-1"</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_hdf5_data</span><span class="p">(</span><span class="n">scan</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/run3"</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_csv</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">1049</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s2">"/data/csv_export"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -590,10 +590,10 @@ and let you pass backend-specific options:</p>
 it tries <code class="docutils literal notranslate"><span class="pre">databroker.catalog[name]</span></code> first, then falls back to a tiled profile:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_catalog</span>
 
-<span class="n">cat</span> <span class="o">=</span> <span class="n">load_catalog</span><span class="p">(</span><span class="s2">&quot;polar&quot;</span><span class="p">)</span>  <span class="c1"># tries databroker, then tiled</span>
+<span class="n">cat</span> <span class="o">=</span> <span class="n">load_catalog</span><span class="p">(</span><span class="s2">"polar"</span><span class="p">)</span>  <span class="c1"># tries databroker, then tiled</span>
 <span class="n">cat</span> <span class="o">=</span> <span class="n">load_catalog</span><span class="p">(</span>
-    <span class="s2">&quot;polar&quot;</span><span class="p">,</span>  <span class="c1"># tiled-only with explicit subpath</span>
-    <span class="n">tiled_path</span><span class="o">=</span><span class="s2">&quot;/raw/2024-1&quot;</span><span class="p">,</span>
+    <span class="s2">"polar"</span><span class="p">,</span>  <span class="c1"># tiled-only with explicit subpath</span>
+    <span class="n">tiled_path</span><span class="o">=</span><span class="s2">"/raw/2024-1"</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -605,14 +605,14 @@ profile is laid out differently.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">db_query</span><span class="p">,</span> <span class="n">show_meta</span><span class="p">,</span> <span class="n">collect_meta</span>
 
 <span class="c1"># Query by metadata</span>
-<span class="n">runs</span> <span class="o">=</span> <span class="n">db_query</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sample&quot;</span><span class="p">:</span> <span class="s2">&quot;Fe2O3&quot;</span><span class="p">,</span> <span class="s2">&quot;scan_type&quot;</span><span class="p">:</span> <span class="s2">&quot;ascan&quot;</span><span class="p">})</span>
+<span class="n">runs</span> <span class="o">=</span> <span class="n">db_query</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="p">{</span><span class="s2">"sample"</span><span class="p">:</span> <span class="s2">"Fe2O3"</span><span class="p">,</span> <span class="s2">"scan_type"</span><span class="p">:</span> <span class="s2">"ascan"</span><span class="p">})</span>
 
 <span class="c1"># Inspect what metadata is on a scan</span>
-<span class="n">show_meta</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">,</span> <span class="n">meta_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">])</span>
+<span class="n">show_meta</span><span class="p">(</span><span class="n">scan_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">,</span> <span class="n">meta_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"sample"</span><span class="p">,</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"uid"</span><span class="p">])</span>
 
 <span class="c1"># Aggregate the same metadata across many scans</span>
 <span class="n">table</span> <span class="o">=</span> <span class="n">collect_meta</span><span class="p">(</span>
-    <span class="n">scan_numbers</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="n">meta_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span>
+    <span class="n">scan_numbers</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span> <span class="n">meta_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"sample"</span><span class="p">,</span> <span class="s2">"energy"</span><span class="p">],</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -621,7 +621,7 @@ profile is laid out differently.</p>
 <h2>Lookup a motor position<a class="headerlink" href="#lookup-a-motor-position" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">lookup_position</span>
 
-<span class="n">th</span> <span class="o">=</span> <span class="n">lookup_position</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">scan</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">search_string</span><span class="o">=</span><span class="s2">&quot;th&quot;</span><span class="p">)</span>
+<span class="n">th</span> <span class="o">=</span> <span class="n">lookup_position</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">scan</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">search_string</span><span class="o">=</span><span class="s2">"th"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Returns the position of any motor whose name contains <code class="docutils literal notranslate"><span class="pre">&quot;th&quot;</span></code> at the start of
@@ -735,8 +735,8 @@ between scans (issue <a class="reference external" href="https://github.com/APS-
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
