@@ -41,6 +41,7 @@ Submodules
    /api/polartools/manage_database/index
    /api/polartools/pressure_calibration/index
    /api/polartools/process_images/index
+   /api/polartools/process_images_gui/index
    /api/polartools/xmcd_gui/index
 
 

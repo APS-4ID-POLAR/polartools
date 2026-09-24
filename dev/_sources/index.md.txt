@@ -32,6 +32,7 @@ examples/pressure_calibration
 examples/process_images
 examples/manage_database
 examples/xmcd_gui
+examples/process_images_gui
 ```
 
 ```{toctree}
@@ -109,6 +110,13 @@ Pack/unpack databroker catalogs, export to CSV/JSON.
 :link-type: doc
 
 The bundled `xmcd-gui` PyQt application for interactive XMCD processing.
+:::
+
+:::{grid-item-card} RXES Image Processor GUI
+:link: examples/process_images_gui
+:link-type: doc
+
+The bundled `process-images-gui` PyQt application for curvature/RXES/RXES-MCD.
 :::
 
 :::{grid-item-card} API reference
