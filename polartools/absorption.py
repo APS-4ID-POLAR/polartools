@@ -42,8 +42,8 @@ _spec_default_cols = dict(
 
 _bluesky_default_cols = dict(
     positioner="energy",
-    detector="4idhI0",
-    monitor="4idhI",
+    detector="hI1",
+    monitor="hI0",
     dc_col="LockDC",
     ac_col="LockAC",
     acoff_col="LockACoff",
