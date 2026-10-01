@@ -74,11 +74,6 @@ spectrum = get_spectrum(sum_image, curvature=curvature, biny=1)
 all_spectra = get_spectra(images, curvature=curvature, biny=1)
 ```
 
-If there's no clean peak to fit a curvature against, pass `curvature=None`
-(the default) to `get_spectrum`/`get_spectra`/`process_rxes`/
-`process_rxes_mcd` — this skips the correction entirely and simply
-integrates each image in the vertical direction.
-
 ## Resonant inelastic X-ray scattering (RIXS) workflows
 
 For an energy-loss × incident-energy 2D map (RXES):
