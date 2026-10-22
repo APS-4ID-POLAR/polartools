@@ -79,6 +79,7 @@ docs = [
 
 [project.scripts]
 xmcd-gui = "polartools.xmcd_gui:main"
+scan-viewer = "polartools.scan_viewer:main"
 
 [project.urls]
 Homepage = "https://github.com/APS-4ID-POLAR/polartools"
@@ -122,6 +123,12 @@ extend-exclude = [
     "polartools/_larch.py",
     "polartools/_pyrixs.py",
     "docs/source/conf.py",
+    # Vendored from /home/beams/POLAR/joerg/python, kept close to upstream so
+    # later fixes there still apply; not reformatted to this project's style.
+    "polartools/_scan_viewer_base.py",
+    "polartools/scan_viewer.py",
+    "polartools/spectrum_viewer.py",
+    "polartools/image_viewer.py",
 ]
 
 [tool.ruff.lint]
@@ -154,6 +161,11 @@ omit = [
     "polartools/_larch.py",
     "polartools/_pyrixs.py",
     "polartools/tests/*",
+    # Vendored GUI modules; no test coverage yet.
+    "polartools/_scan_viewer_base.py",
+    "polartools/scan_viewer.py",
+    "polartools/spectrum_viewer.py",
+    "polartools/image_viewer.py",
 ]
 
 [tool.coverage.report]
