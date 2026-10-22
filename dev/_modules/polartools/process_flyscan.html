@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>polartools.process_flyscan &#8212; polartools</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../_static/documentation_options.js?v=59986372"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/polartools/process_flyscan';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.6.0.post32+g38f63024d" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">polartools</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/flyscan_dichro.html">
+    Flyscan dichroism
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/flyscan_dichro.html">
+    Flyscan dichroism
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.process_flyscan</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for polartools.process_flyscan</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">h5py</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hdf5plugin</span>  <span class="c1"># noqa: F401  -- registers the HDF5 codecs these files use</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">FNAME_FORMAT</span> <span class="o">=</span> <span class="s2">"</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">/scan_</span><span class="si">{:06d}</span><span class="s2">.h5"</span>
+
+<span class="c1"># The eigerTrig divider is DivByN with N = 5 x N_ckIM and shares its reset</span>
+<span class="c1"># with the ckIM divider, so it emits its first pulse only after 5 ckIM ticks:</span>
+<span class="c1"># ckIM 1-5 carry eigerTrig 0 and belong to no exposure, and detector frame k</span>
+<span class="c1"># is exposed during the ckIM ticks carrying eigerTrig value k + FIRST_TRIGGER.</span>
+<span class="c1"># Both counters are recorded in the position stream (columns 1 and 2), and</span>
+<span class="c1"># this holds absolutely -- the counters are zeroed together at each scan.</span>
+<span class="n">FIRST_TRIGGER</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># ckIM ticks per eigerTrig pulse, i.e. position samples per exposure. Only a</span>
+<span class="c1"># fallback: the value actually used is measured per scan by `full_group_size`.</span>
+<span class="n">CKIM_PER_TRIGGER</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<div class="viewcode-block" id="PositionGroups">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.PositionGroups">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PositionGroups</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Per-trigger reduction of a position stream.</span>
+
+<span class="sd">    Every array has one entry per trigger group, in file order. ``trigs``</span>
+<span class="sd">    holds each group's trigger value, which is what associates a group with</span>
+<span class="sd">    a detector frame (see :func:`groups_for_frames`) — the association is</span>
+<span class="sd">    made by the hardware trigger counter, not by array position, so a</span>
+<span class="sd">    missing group drops one frame instead of shifting all the later ones.</span>
+<span class="sd">    """</span>
+
+    <span class="n">i0s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">xs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">ys</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">dxs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">dys</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">trigs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>  <span class="c1"># eigerTrig value of each group</span>
+    <span class="n">counts</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>  <span class="c1"># rows actually recorded in each group</span>
+    <span class="n">coverage</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>  <span class="c1"># ckIM ticks each group spans</span>
+    <span class="n">partial</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>  <span class="c1"># bool: group spans less than a full exposure</span></div>
+
+
+
+<div class="viewcode-block" id="PartialGroup">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.PartialGroup">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PartialGroup</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""One flagged trigger group, and how it differs from a full exposure."""</span>
+
+    <span class="n">group</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># index into the PositionGroups / TickResult arrays</span>
+    <span class="n">trig</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># its eigerTrig value</span>
+    <span class="n">frame</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># detector frame it holds; -1 if none maps to it</span>
+    <span class="n">coverage</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># ckIM ticks it spans — how much of the exposure</span>
+    <span class="n">expected</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># ckIM ticks in a full exposure</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># rows actually recorded (&lt; coverage if any dropped)</span>
+    <span class="n">x</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">y</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">span</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># distance the motor covered during the group</span>
+    <span class="n">full_span</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># typical span of a full group, for comparison</span>
+    <span class="n">last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># the scan's final group, where the detector may</span>
+    <span class="c1"># itself have been disarmed mid-exposure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dropped</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Ticks inside this group that the MCS never recorded."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span></div>
+
+
+
+<div class="viewcode-block" id="full_group_size">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.full_group_size">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">full_group_size</span><span class="p">(</span><span class="n">coverage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""ckIM ticks in a full exposure: the modal value, ties resolved upwards.</span>
+
+<span class="sd">    Group 0 spans whatever lies between the two dividers' resets — normally 5</span>
+<span class="sd">    ticks, but 1, 3 and 37 all occur — so it is not allowed to define what</span>
+<span class="sd">    "full" means.</span>
+<span class="sd">    """</span>
+    <span class="n">coverage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coverage</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">coverage</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">coverage</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">coverage</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">coverage</span>
+    <span class="n">vals</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="n">freq</span> <span class="o">==</span> <span class="n">freq</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="group_coverage">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.group_coverage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">group_coverage</span><span class="p">(</span><span class="n">ckim</span><span class="p">,</span> <span class="n">starts</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""ckIM ticks spanned by each trigger group.</span>
+
+<span class="sd">    Measured from the ckIM counter, not from the number of rows, so that a</span>
+<span class="sd">    sample the MCS failed to record does not look like a short exposure: a</span>
+<span class="sd">    group whose middle row is missing still spans its full five ticks. Only a</span>
+<span class="sd">    group that really covers less of the exposure — because the stream</span>
+<span class="sd">    started or stopped inside it, or lost its leading tick — comes out short.</span>
+<span class="sd">    """</span>
+    <span class="n">ends</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">starts</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="p">[</span><span class="n">n</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ckim</span><span class="p">)[</span><span class="n">ends</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">ckim</span><span class="p">)[</span><span class="n">starts</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">int64</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="flag_partial_groups">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.flag_partial_groups">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flag_partial_groups</span><span class="p">(</span><span class="n">coverage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Mark groups whose position samples don't span their whole exposure.</span>
+
+<span class="sd">    This is a statement about the position record, never about the detector:</span>
+<span class="sd">    the Eiger is triggered independently and integrates for its full frame</span>
+<span class="sd">    time regardless. What these groups lack is position data covering all of</span>
+<span class="sd">    that time, so their mean x/y and I0 describe only part of the travel.</span>
+
+<span class="sd">    They are the pre-trigger group, a final group cut off when the position</span>
+<span class="sd">    stream stopped mid-exposure, and any group that lost its leading ckIM</span>
+<span class="sd">    tick. A group that merely dropped an interior sample still spans its</span>
+<span class="sd">    whole exposure and is not flagged — see :func:`group_coverage`.</span>
+
+<span class="sd">    Called live as well as post-scan, so with only a couple of closed groups</span>
+<span class="sd">    the verdict can change as more data arrives.</span>
+<span class="sd">    """</span>
+    <span class="n">coverage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coverage</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">coverage</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">coverage</span> <span class="o">&lt;</span> <span class="n">full_group_size</span><span class="p">(</span><span class="n">coverage</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="describe_partial_groups">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.describe_partial_groups">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">describe_partial_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">n_frames</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""One :class:`PartialGroup` per flagged group, for display.</span>
+
+<span class="sd">    ``groups`` is anything carrying the per-group arrays ``xs``, ``ys``,</span>
+<span class="sd">    ``dxs``, ``dys``, ``trigs``, ``counts`` and ``partial`` — a</span>
+<span class="sd">    :class:`PositionGroups` or a live ``TickResult``. ``n_frames`` is how</span>
+<span class="sd">    many detector frames exist, used to say which frame each flagged group</span>
+<span class="sd">    holds (``-1`` when the group is not plotted at all, as for the</span>
+<span class="sd">    pre-trigger group).</span>
+<span class="sd">    """</span>
+    <span class="n">partial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">partial</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">partial</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">partial</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
+    <span class="n">coverage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">coverage</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">full_group_size</span><span class="p">(</span><span class="n">coverage</span><span class="p">)</span>
+    <span class="n">spans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">dxs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">dys</span><span class="p">))</span>
+    <span class="n">full</span> <span class="o">=</span> <span class="n">spans</span><span class="p">[</span><span class="o">~</span><span class="n">partial</span><span class="p">]</span>
+    <span class="n">full_span</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">full</span><span class="p">))</span> <span class="k">if</span> <span class="n">full</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">)</span>
+
+    <span class="n">frames</span><span class="p">,</span> <span class="n">gidx</span> <span class="o">=</span> <span class="n">groups_for_frames</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">trigs</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">)</span>
+    <span class="n">frame_of</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">gidx</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">frames</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">PartialGroup</span><span class="p">(</span>
+            <span class="n">group</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">),</span>
+            <span class="n">trig</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">trigs</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+            <span class="n">frame</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">frame_of</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span>
+            <span class="n">coverage</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">coverage</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+            <span class="n">expected</span><span class="o">=</span><span class="n">expected</span><span class="p">,</span>
+            <span class="n">count</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+            <span class="n">x</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">xs</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+            <span class="n">y</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">ys</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+            <span class="n">span</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">spans</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+            <span class="n">full_span</span><span class="o">=</span><span class="n">full_span</span><span class="p">,</span>
+            <span class="n">last</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">g</span> <span class="o">==</span> <span class="n">partial</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">partial</span><span class="p">)</span>
+    <span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="groups_for_frames">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.groups_for_frames">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">groups_for_frames</span><span class="p">(</span><span class="n">trigs</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Match detector frames to position groups by trigger value.</span>
+
+<span class="sd">    Detector frame ``k`` is exposed during the ckIM ticks carrying eigerTrig</span>
+<span class="sd">    value ``k + FIRST_TRIGGER`` (see that constant). Returns</span>
+<span class="sd">    ``(frames, groups)``: the frame indices that have a matching trigger</span>
+<span class="sd">    group, and the group index each maps to. Frames whose trigger group is</span>
+<span class="sd">    absent — because the position stream stopped first, or started late, or</span>
+<span class="sd">    because a group is missing from the middle — are simply left out, instead</span>
+<span class="sd">    of silently shifting the alignment of everything after them.</span>
+<span class="sd">    """</span>
+    <span class="n">trigs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">trigs</span><span class="p">)</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">n_frames</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">trigs</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">frames</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">frames</span><span class="p">[:</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">intp</span><span class="p">)</span>
+    <span class="c1"># Count from the first group's trigger value rather than from a literal 1,</span>
+    <span class="c1"># so this still works when the MCS counter was not zeroed at the start of</span>
+    <span class="c1"># the scan (scan 12 in the 26-3 test folder starts at 834).</span>
+    <span class="n">want</span> <span class="o">=</span> <span class="n">FIRST_TRIGGER</span> <span class="o">+</span> <span class="n">frames</span>
+    <span class="c1"># Don't assume the column is sorted: it is non-decreasing in a normal</span>
+    <span class="c1"># scan, but a counter that wraps mid-scan is not. Sorting first also</span>
+    <span class="c1"># makes duplicates resolve to their earliest group.</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">trigs</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"stable"</span><span class="p">)</span>
+    <span class="n">ordered</span> <span class="o">=</span> <span class="n">trigs</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">ordered</span><span class="p">,</span> <span class="n">want</span><span class="p">)</span>
+    <span class="n">ok</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">ordered</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">ok</span><span class="p">[</span><span class="n">ok</span><span class="p">]</span> <span class="o">=</span> <span class="n">ordered</span><span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="n">ok</span><span class="p">]]</span> <span class="o">==</span> <span class="n">want</span><span class="p">[</span><span class="n">ok</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">frames</span><span class="p">[</span><span class="n">ok</span><span class="p">],</span> <span class="n">order</span><span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="n">ok</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="group_for_frame">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.group_for_frame">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">group_for_frame</span><span class="p">(</span><span class="n">trigs</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Index of the position group holding detector frame ``frame``, or None."""</span>
+    <span class="n">frames</span><span class="p">,</span> <span class="n">groups</span> <span class="o">=</span> <span class="n">groups_for_frames</span><span class="p">(</span><span class="n">trigs</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">frames</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">frames</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">frame</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">groups</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="reduce_position_stream">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.reduce_position_stream">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">reduce_position_stream</span><span class="p">(</span><span class="n">scan_number</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">FNAME_FORMAT</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Aggregate the position stream into per-image x, y, and I0 values.</span>
+
+<span class="sd">    The position stream is sampled at a higher rate than the detector</span>
+<span class="sd">    triggers, so multiple position samples share the same trigger index.</span>
+<span class="sd">    This function groups samples by trigger and reduces each group to a</span>
+<span class="sd">    single value per image.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_number : int</span>
+<span class="sd">        Scan number used to build the HDF5 file name.</span>
+<span class="sd">    folder : str</span>
+<span class="sd">        Root folder containing the ``pos_stream`` subfolder.</span>
+<span class="sd">    fname_format : str, optional</span>
+<span class="sd">        Format string with three placeholders: ``folder``, stream name,</span>
+<span class="sd">        and scan number. Defaults to :data:`FNAME_FORMAT`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    groups : PositionGroups</span>
+<span class="sd">        Per-trigger-group arrays: ``i0s`` (range of column 0 within the</span>
+<span class="sd">        group), ``xs``/``ys`` (mean motor position, columns 3 and 4),</span>
+<span class="sd">        ``dxs``/``dys`` (position range within the group — a motor-jitter</span>
+<span class="sd">        diagnostic), plus ``trigs``, ``counts`` and ``partial``, which are</span>
+<span class="sd">        what let a caller match groups to detector frames and spot groups</span>
+<span class="sd">        that only saw part of an exposure.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Assumes the trigger column (column 2) is monotonically non-decreasing,</span>
+<span class="sd">    which is true for normal flyscan acquisition. The reduction uses</span>
+<span class="sd">    ``np.add.reduceat`` and friends so the cost is O(n_samples) regardless</span>
+<span class="sd">    of the number of images.</span>
+<span class="sd">    """</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">fname_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"pos_stream"</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">)</span>
+    <span class="n">pos_raw</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">)[</span><span class="s2">"entry/data/data"</span><span class="p">][()]</span>
+
+    <span class="c1"># The hardware sometimes records trailing samples after the scan</span>
+    <span class="c1"># finishes. Truncate at the first place where the sample counter</span>
+    <span class="c1"># (column 1) stops advancing. If the counter advances monotonically</span>
+    <span class="c1"># all the way to the end, there are no trailing samples to drop.</span>
+    <span class="n">plateau</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">pos_raw</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_raw</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">last_point</span> <span class="o">=</span> <span class="n">plateau</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">plateau</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="n">pos_raw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">pos_raw</span><span class="p">[:</span><span class="n">last_point</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="c1"># Column 2 is the detector trigger index. Samples with the same</span>
+    <span class="c1"># trigger index belong to the same image exposure.</span>
+    <span class="n">trig</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># `starts` holds the first sample index of each trigger group; together</span>
+    <span class="c1"># with `counts` it defines the contiguous slices used by `reduceat`.</span>
+    <span class="n">starts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">trig</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">starts</span><span class="p">,</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">trig</span><span class="p">)])))</span>
+
+    <span class="c1"># Per-image mean position and per-image position range.</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="n">pos</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">starts</span><span class="p">)</span> <span class="o">/</span> <span class="n">counts</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="n">pos</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">starts</span><span class="p">)</span> <span class="o">/</span> <span class="n">counts</span>
+    <span class="n">dxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="n">pos</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">starts</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span>
+        <span class="n">pos</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">starts</span>
+    <span class="p">)</span>
+    <span class="n">dys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="n">pos</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">starts</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span>
+        <span class="n">pos</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">starts</span>
+    <span class="p">)</span>
+
+    <span class="c1"># I0 is recorded as a running counter; the per-image value is the</span>
+    <span class="c1"># difference between its max and min within the trigger window.</span>
+    <span class="n">i0s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="n">pos</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">starts</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span>
+        <span class="n">pos</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">starts</span>
+    <span class="p">)</span>
+
+    <span class="n">coverage</span> <span class="o">=</span> <span class="n">group_coverage</span><span class="p">(</span><span class="n">pos</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">starts</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trig</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">PositionGroups</span><span class="p">(</span>
+        <span class="n">i0s</span><span class="o">=</span><span class="n">i0s</span><span class="p">,</span>
+        <span class="n">xs</span><span class="o">=</span><span class="n">xs</span><span class="p">,</span>
+        <span class="n">ys</span><span class="o">=</span><span class="n">ys</span><span class="p">,</span>
+        <span class="n">dxs</span><span class="o">=</span><span class="n">dxs</span><span class="p">,</span>
+        <span class="n">dys</span><span class="o">=</span><span class="n">dys</span><span class="p">,</span>
+        <span class="n">trigs</span><span class="o">=</span><span class="n">trig</span><span class="p">[</span><span class="n">starts</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+        <span class="n">counts</span><span class="o">=</span><span class="n">counts</span><span class="p">,</span>
+        <span class="n">coverage</span><span class="o">=</span><span class="n">coverage</span><span class="p">,</span>
+        <span class="n">partial</span><span class="o">=</span><span class="n">flag_partial_groups</span><span class="p">(</span><span class="n">coverage</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="process_position_stream">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.process_position_stream">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_position_stream</span><span class="p">(</span><span class="n">scan_number</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">FNAME_FORMAT</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""``(i0s, xs, ys, dxs, dys)`` from :func:`reduce_position_stream`.</span>
+
+<span class="sd">    Kept for callers that predate :class:`PositionGroups`; new code should</span>
+<span class="sd">    use :func:`reduce_position_stream` so it also gets the trigger values</span>
+<span class="sd">    and the partial-group flags.</span>
+<span class="sd">    """</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">reduce_position_stream</span><span class="p">(</span><span class="n">scan_number</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">fname_format</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">g</span><span class="o">.</span><span class="n">i0s</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">xs</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">ys</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">dxs</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">dys</span></div>
+
+
+
+<div class="viewcode-block" id="ScanGeometry">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.ScanGeometry">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScanGeometry</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Beam and detector geometry recorded for a scan.</span>
+
+<span class="sd">    Beam centre and detector distance come from the Eiger file's per-frame</span>
+<span class="sd">    NDAttributes (read at frame 0); wavelength and energy come from the</span>
+<span class="sd">    bluesky metadata in the scan's master file, which is the only place they</span>
+<span class="sd">    are written. Any field that could not be read is None.</span>
+<span class="sd">    """</span>
+
+    <span class="n">beam_center_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">beam_center_y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">beam_center_pv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># the 4idgSoftX:Eiger:Center PV</span>
+    <span class="n">detector_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">wavelength_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">energy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">energy_units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_master_path</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"</span><span class="si">{}</span><span class="s2">/scan_</span><span class="si">{:06d}</span><span class="s2">_master.hdf"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{}</span><span class="s2">/scan_</span><span class="si">{:d}</span><span class="s2">_master.hdf"</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">path</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_beam_from_master</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Pull the beam block out of the master file's diffractometer metadata."""</span>
+    <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">"entry/instrument/bluesky/metadata/diffractometers"</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="n">blob</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">key</span><span class="p">][()]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="n">blob</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">beam</span> <span class="o">=</span> <span class="p">(</span><span class="n">entry</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"beam"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">beam</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">beam</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="c1"># No PyYAML, or the blob isn't what we expect: pick the scalars out</span>
+        <span class="c1"># directly. `wavelength_PV` and `wavelength_units` don't match, since</span>
+        <span class="c1"># the key must be followed immediately by the colon.</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"wavelength"</span><span class="p">,</span> <span class="s2">"energy"</span><span class="p">):</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">rf</span><span class="s2">"^\s*</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">:\s*([-+0-9.eE]+)\s*$"</span><span class="p">,</span> <span class="n">blob</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">rf</span><span class="s2">"^\s*</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">_units:\s*(\S+)\s*$"</span><span class="p">,</span> <span class="n">blob</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">field</span> <span class="o">+</span> <span class="s2">"_units"</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+
+<div class="viewcode-block" id="read_scan_geometry">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.read_scan_geometry">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_scan_geometry</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">FNAME_FORMAT</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Beam centre, wavelength and detector distance for one scan.</span>
+
+<span class="sd">    Reads whatever it can and leaves the rest None — the two files are</span>
+<span class="sd">    written by different parts of the acquisition and either may be absent.</span>
+<span class="sd">    """</span>
+    <span class="n">geo</span> <span class="o">=</span> <span class="n">ScanGeometry</span><span class="p">()</span>
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">fname_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"eiger"</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s2">"</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">/scan_</span><span class="si">{:d}</span><span class="s2">.h5"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"eiger"</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">attrs</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">"entry/instrument/NDAttributes"</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="s2">"BeamCenterX"</span><span class="p">,</span> <span class="s2">"beam_center_x"</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">"BeamCenterY"</span><span class="p">,</span> <span class="s2">"beam_center_y"</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">"BeamCenterPV"</span><span class="p">,</span> <span class="s2">"beam_center_pv"</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">"DetectorDistance"</span><span class="p">,</span> <span class="s2">"detector_distance"</span><span class="p">),</span>
+                <span class="p">):</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">attrs</span> <span class="ow">and</span> <span class="n">attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+    <span class="n">master</span> <span class="o">=</span> <span class="n">_master_path</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">master</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">beam</span> <span class="o">=</span> <span class="n">_beam_from_master</span><span class="p">(</span><span class="n">master</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+            <span class="n">beam</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"wavelength"</span><span class="p">,</span> <span class="s2">"energy"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">beam</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">beam</span><span class="p">[</span><span class="n">field</span><span class="p">]))</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span> <span class="o">+</span> <span class="s2">"_units"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">units</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">field</span> <span class="o">+</span> <span class="s2">"_units"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">units</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">geo</span></div>
+
+
+
+<div class="viewcode-block" id="process_images_v0">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.process_images_v0">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_images_v0</span><span class="p">(</span><span class="n">scan_number</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">FNAME_FORMAT</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Sum a fixed ROI across all Eiger images in a scan (eager version).</span>
+
+<span class="sd">    Loads the entire image stack into memory before slicing. Kept as a</span>
+<span class="sd">    reference implementation; use :func:`process_images` for large scans</span>
+<span class="sd">    to avoid running out of memory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_number : int</span>
+<span class="sd">        Scan number used to build the HDF5 file name.</span>
+<span class="sd">    folder : str</span>
+<span class="sd">        Root folder containing the ``eiger`` subfolder.</span>
+<span class="sd">    fname_format : str, optional</span>
+<span class="sd">        Format string for the HDF5 path. Defaults to :data:`FNAME_FORMAT`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sums : ndarray, shape (n_images,)</span>
+<span class="sd">        ROI intensity sum for each image.</span>
+<span class="sd">    """</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">fname_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"eiger"</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">)</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">)[</span><span class="s2">"entry/data/data"</span><span class="p">][()]</span>
+    <span class="n">rois</span> <span class="o">=</span> <span class="p">((</span><span class="mi">678</span><span class="p">,</span> <span class="mi">888</span><span class="p">),</span> <span class="p">(</span><span class="mi">333</span><span class="p">,</span> <span class="mi">480</span><span class="p">))</span>
+    <span class="n">sums</span> <span class="o">=</span> <span class="n">images</span><span class="p">[:,</span> <span class="n">rois</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="n">rois</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">rois</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="n">rois</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+        <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">sums</span></div>
+
+
+
+<div class="viewcode-block" id="process_images">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.process_images">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_images</span><span class="p">(</span>
+    <span class="n">scan_number</span><span class="p">,</span>
+    <span class="n">folder</span><span class="p">,</span>
+    <span class="n">roi</span><span class="o">=</span><span class="p">((</span><span class="mi">678</span><span class="p">,</span> <span class="mi">888</span><span class="p">),</span> <span class="p">(</span><span class="mi">333</span><span class="p">,</span> <span class="mi">480</span><span class="p">)),</span>
+    <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">fname_format</span><span class="o">=</span><span class="n">FNAME_FORMAT</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Sum a fixed ROI across all Eiger images, reading in batches.</span>
+
+<span class="sd">    Reads only the ROI window of ``batch`` frames at a time, so peak</span>
+<span class="sd">    memory is bounded by ``batch * roi_height * roi_width`` regardless of</span>
+<span class="sd">    the total number of images in the scan.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_number : int</span>
+<span class="sd">        Scan number used to build the HDF5 file name.</span>
+<span class="sd">    folder : str</span>
+<span class="sd">        Root folder containing the ``eiger`` subfolder.</span>
+<span class="sd">    roi : tuple of tuple, optional</span>
+<span class="sd">        ROI as ``((col_start, col_stop), (row_start, row_stop))``. The</span>
+<span class="sd">        column range is the x extent and the row range is the y extent.</span>
+<span class="sd">    batch : int, optional</span>
+<span class="sd">        Number of frames to read per HDF5 access. Larger values reduce</span>
+<span class="sd">        per-call overhead at the cost of higher peak memory.</span>
+<span class="sd">    fname_format : str, optional</span>
+<span class="sd">        Format string for the HDF5 path. Defaults to :data:`FNAME_FORMAT`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sums : ndarray, shape (n_images,)</span>
+<span class="sd">        ROI intensity sum for each image, stored as float64.</span>
+<span class="sd">    """</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">fname_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"eiger"</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">)</span>
+    <span class="c1"># Unpack the ROI; note `roi[0]` is the x (column) range and `roi[1]`</span>
+    <span class="c1"># is the y (row) range, matching NumPy axis order (rows, cols).</span>
+    <span class="n">r0</span><span class="p">,</span> <span class="n">r1</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">c0</span><span class="p">,</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">"entry/data/data"</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">dset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="c1"># Stream the stack in `batch`-sized chunks. h5py reads only the</span>
+        <span class="c1"># ROI bytes from disk, and the sum keeps memory flat across loops.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">sums</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dset</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="n">r0</span><span class="p">:</span><span class="n">r1</span><span class="p">,</span> <span class="n">c0</span><span class="p">:</span><span class="n">c1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">sums</span></div>
+
+
+
+<div class="viewcode-block" id="process_vortex">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.process_vortex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_vortex</span><span class="p">(</span>
+    <span class="n">scan_number</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">900</span><span class="p">),</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">fname_format</span><span class="o">=</span><span class="n">FNAME_FORMAT</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Sum a Vortex fluorescence ROI across all spectra in a scan.</span>
+
+<span class="sd">    Reads the Vortex spectrum stack in batches and integrates a single</span>
+<span class="sd">    energy window (channel range) per spectrum. Memory use is bounded by</span>
+<span class="sd">    ``batch * n_channels_per_spectrum``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    scan_number : int</span>
+<span class="sd">        Scan number used to build the HDF5 file name.</span>
+<span class="sd">    folder : str</span>
+<span class="sd">        Root folder containing the ``vortex`` subfolder.</span>
+<span class="sd">    roi : tuple of int, optional</span>
+<span class="sd">        Energy channel range ``(start, stop)`` to integrate over.</span>
+<span class="sd">    batch : int, optional</span>
+<span class="sd">        Number of spectra to read per HDF5 access.</span>
+<span class="sd">    fname_format : str, optional</span>
+<span class="sd">        Format string for the HDF5 path. Defaults to :data:`FNAME_FORMAT`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sums : ndarray, shape (n_spectra,)</span>
+<span class="sd">        Integrated counts in the energy window for each spectrum.</span>
+<span class="sd">    """</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">fname_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"vortex"</span><span class="p">,</span> <span class="n">scan_number</span><span class="p">)</span>
+    <span class="n">e0</span><span class="p">,</span> <span class="n">e1</span> <span class="o">=</span> <span class="n">roi</span>
+    <span class="k">with</span> <span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">dset</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">"entry/data/data"</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">dset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="c1"># Sum over both the detector-element axis (axis 1) and the</span>
+        <span class="c1"># selected energy-channel slice (axis 2) for each spectrum.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">sums</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dset</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">,</span> <span class="p">:,</span> <span class="n">e0</span><span class="p">:</span><span class="n">e1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">sums</span></div>
+
+
+
+<div class="viewcode-block" id="plot_data">
+<a class="viewcode-back" href="../../api/polartools/process_flyscan/index.html#polartools.process_flyscan.plot_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">i0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plot a scalar field ``z(x, y)`` from a flyscan as scatter or contour.</span>
+
+<span class="sd">    Drops the first sample and, if needed, the last ``z`` value so the</span>
+<span class="sd">    three arrays align. Optionally normalizes by an incident-intensity</span>
+<span class="sd">    monitor ``i0``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x, y : array_like</span>
+<span class="sd">        Per-image x and y positions, typically the means returned by</span>
+<span class="sd">        :func:`process_position_stream`.</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">        Per-image scalar values (e.g. ROI sum from :func:`process_images`).</span>
+<span class="sd">        May be one shorter than ``x``/``y`` when image triggers and</span>
+<span class="sd">        position samples differ by one; in that case it is used as-is.</span>
+<span class="sd">    i0 : array_like or None, optional</span>
+<span class="sd">        Per-image incident intensity. When provided, ``z`` is divided by</span>
+<span class="sd">        ``i0`` element-wise before plotting.</span>
+<span class="sd">    scatter : bool, optional</span>
+<span class="sd">        If True, use ``plt.scatter`` with one marker per point. If False</span>
+<span class="sd">        (default), use ``plt.tricontourf`` for a filled contour plot.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Forwarded to the underlying matplotlib call.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib.figure.Figure</span>
+<span class="sd">    ax : matplotlib.axes.Axes</span>
+<span class="sd">    cbar : matplotlib.colorbar.Colorbar</span>
+<span class="sd">    """</span>
+    <span class="c1"># Drop the first position sample; the detector skips the first trigger.</span>
+    <span class="n">xi</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">yi</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="c1"># `z` may already match `yi` in length; otherwise trim its trailing element.</span>
+    <span class="n">zi</span> <span class="o">=</span> <span class="n">z</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">yi</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="n">z</span>
+
+    <span class="k">if</span> <span class="n">i0</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Align i0 to z the same way before normalizing.</span>
+        <span class="n">i0i</span> <span class="o">=</span> <span class="n">i0</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">i0</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">zi</span><span class="o">.</span><span class="n">size</span> <span class="k">else</span> <span class="n">i0</span>
+        <span class="n">zi</span> <span class="o">/=</span> <span class="n">i0i</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">scatter</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">zi</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tricontourf</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cbar</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

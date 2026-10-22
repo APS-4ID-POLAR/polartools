@@ -1,0 +1,1437 @@
+polartools.image_viewer
+=======================
+
+.. py:module:: polartools.image_viewer
+
+.. autoapi-nested-parse::
+
+   A 2D image-stack viewer for the detector files that accompany a master file.
+
+   ``MyNXWriter`` puts the scan's scalar channels in ``*_master.hdf`` but leaves the
+   area-detector frames out of it -- ``.../streams/primary/lambda250k`` carries only
+   ``EPOCH``/``time`` and no ``value``.  The pixels are written separately, by one of
+   two writers, and the master records which one and where.
+
+   The pvapy streaming consumer writes a sibling file, named in
+   ``entry/instrument/bluesky/metadata/pva_streaming``::
+
+       file_name: pva_tise2_2_00006.h5
+       file_path: ~/6idb-bits/sarah_26_3_2
+
+   An areaDetector plugin instead writes one file per detector into a subdirectory
+   of the master's own, listed in
+   ``entry/instrument/bluesky/metadata/detectors_file_relative_path``::
+
+       eiger: eiger/scan_000310.h5
+
+   -- or the literal ``{}`` when the scan wrote no frames at all. Both are resolved
+   against the master's own directory: ``pva_streaming``'s ``file_path`` and the
+   companion ``detectors_file_full_path`` name the filesystem the scan was taken
+   on, which a copy of the data is not. :func:`image_path_for_master` falls back to
+   deriving ``pva_<stem without "_master">.h5`` when neither is recorded, and opens
+   the first detector where a master names several.
+
+   The image file's layout. The pvapy writer produces all of this::
+
+       entry/data/data                (N, nx, ny)  the stack; ``pixel_order='xy'``,
+                                      i.e. ``frame[x, y]`` -- the same convention as
+                                      pyqtgraph's default col-major ImageItem
+       entry/data/frame_timestamp     (N,)         epoch seconds
+       entry/data/rois/<name>         (N, w, h)    pre-baked ROIs; the rectangle is in
+                                      the ``x``/``y``/``w``/``h`` attributes
+       entry/data/metadata/ca/<pv>    (N,)         one value per frame (eta, delta, cap, ...)
+
+   An areaDetector file carries the stack and nothing else from that list -- no
+   stored ROIs, no frame_timestamp -- but it does bring its own per-frame
+   attributes, which are read in the same way as the CA metadata above::
+
+       entry/instrument/NDAttributes/NDArrayEpicsTSSec   (N,)  the frame clock,
+       entry/instrument/NDAttributes/NDArrayEpicsTSnSec  (N,)  counted from 1990
+       entry/instrument/NDAttributes/<name>              (N,)  BeamCenterX, ...
+
+   Its frames are stored ``[frame, x, y]`` too, despite declaring no
+   ``pixel_order``: on an EIGER2 X 1M the 38-pixel module gap falls across the
+   *second* frame axis, splitting it 512/38/512, so that axis is the detector's
+   height and the first is its width. Nothing needs transposing to display.
+
+   The frame count need not match the master scan's point count (the detector
+   usually starts a little early), so this window is deliberately self-contained:
+   every per-frame quantity it plots comes from the image file itself.
+
+   ``entry/data/data`` is compressed with a filter ``hdf5plugin`` registers (blosc
+   from the pvapy writer, bitshuffle from areaDetector), so that package must be
+   importable. It is imported here if present; if it is not and the pixel read
+   fails, :class:`ImageData` raises a :class:`RuntimeError` naming it.
+
+   Where the matching ``*_master.hdf`` can be found -- beside the image file, or one
+   directory up when the frames sit in a per-detector subdirectory -- its primary
+   stream is offered too, under a ``scan/`` prefix, each frame taking the scan point
+   nearest it in time, since the detector free-runs and the two files rarely have
+   the same number of points.
+
+   Both ROI plots can **normalize** by any of the same quantities their axes offer
+   (a CA channel such as a monitor, or another ROI metric): the value axes are
+   divided by it point by point, after any background subtraction.
+
+   Any ROI can be marked as the **background**: its mean intensity per pixel is then
+   subtracted from every other ROI's sum (as ``background x pixel count``) and from
+   their mean/min/max, per frame and per file.
+
+   An **HKL 3D** button maps the frames into reciprocal space, taking the geometry
+   from the matching master file (see ``hkl_viewer.py``); it needs ``pyvista`` and
+   ``xrayutilities``, and says so plainly when they are absent.
+
+   Several files can be opened at once: they are shown side by side in one window,
+   sharing a single set of ROIs, one colour scale and one frame control, so scans can
+   be compared directly. The frame control spans the longest file; a file that has run
+   out of frames keeps showing its last one.
+
+   Run standalone on one or more image files with::
+
+       python image_viewer.py scan_000310.h5 [scan_000311.h5 ...]
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.image_viewer.HAVE_HDF5PLUGIN
+   polartools.image_viewer.IMAGE_DATA_PATH
+   polartools.image_viewer.FRAME_TIMESTAMP_PATH
+   polartools.image_viewer.ROI_GROUP_PATH
+   polartools.image_viewer.CA_GROUP_PATHS
+   polartools.image_viewer.EPICS_TS_SEC_PATH
+   polartools.image_viewer.EPICS_TS_NSEC_PATH
+   polartools.image_viewer.EPICS_EPOCH_OFFSET
+   polartools.image_viewer.PVA_STREAMING_PATH
+   polartools.image_viewer.DETECTORS_FILE_PATH
+   polartools.image_viewer.RECORDED_IMAGE_SOURCES
+   polartools.image_viewer.MASTER_PRIMARY_PATH
+   polartools.image_viewer.SCAN_PREFIX
+   polartools.image_viewer.MAX_STACK_BYTES
+   polartools.image_viewer.MAX_TOTAL_BYTES
+   polartools.image_viewer.HDF5PLUGIN_HINT
+   polartools.image_viewer.METRIC_KEYS
+   polartools.image_viewer.SINGLE_FRAME_KEYS
+   polartools.image_viewer.NO_NORMALIZATION
+   polartools.image_viewer.DISPLAY_NAMES
+   polartools.image_viewer.AXIS_LABELS
+   polartools.image_viewer.ROI_COLORS
+   polartools.image_viewer.FILE_COLORS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.image_viewer.ImageData
+   polartools.image_viewer.ContextRectROI
+   polartools.image_viewer.SharedRoi
+   polartools.image_viewer.ImagePanel
+   polartools.image_viewer.RoiPlotDock
+   polartools.image_viewer.Roi2DPlotDock
+   polartools.image_viewer.ImageViewerWindow
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.image_viewer.recorded_detector_file
+   polartools.image_viewer.image_path_for_master
+   polartools.image_viewer.master_path_for_image
+   polartools.image_viewer.nearest_index
+   polartools.image_viewer.read_scan_channels
+   polartools.image_viewer.is_image_file
+   polartools.image_viewer.resolve_image_file
+   polartools.image_viewer.add_metric_item
+   polartools.image_viewer.combo_key
+   polartools.image_viewer.set_combo_key
+   polartools.image_viewer.axis_label
+   polartools.image_viewer.roi_is_rotated
+   polartools.image_viewer.roi_bbox
+   polartools.image_viewer.roi_sub_frame
+   polartools.image_viewer.roi_pixel_count
+   polartools.image_viewer.roi_series
+   polartools.image_viewer.get_colormap
+   polartools.image_viewer.available_colormaps
+   polartools.image_viewer.value_brushes
+   polartools.image_viewer.main
+
+
+Module Contents
+---------------
+
+.. py:data:: HAVE_HDF5PLUGIN
+   :value: True
+
+
+.. py:data:: IMAGE_DATA_PATH
+   :value: 'entry/data/data'
+
+
+.. py:data:: FRAME_TIMESTAMP_PATH
+   :value: 'entry/data/frame_timestamp'
+
+
+.. py:data:: ROI_GROUP_PATH
+   :value: 'entry/data/rois'
+
+
+.. py:data:: CA_GROUP_PATHS
+   :value: ('entry/data/metadata/ca', 'entry/data/metadata/motor_positions', 'entry/instrument/NDAttributes')
+
+
+.. py:data:: EPICS_TS_SEC_PATH
+   :value: 'entry/instrument/NDAttributes/NDArrayEpicsTSSec'
+
+
+.. py:data:: EPICS_TS_NSEC_PATH
+   :value: 'entry/instrument/NDAttributes/NDArrayEpicsTSnSec'
+
+
+.. py:data:: EPICS_EPOCH_OFFSET
+   :value: 631152000.0
+
+
+.. py:data:: PVA_STREAMING_PATH
+   :value: 'entry/instrument/bluesky/metadata/pva_streaming'
+
+
+.. py:data:: DETECTORS_FILE_PATH
+   :value: 'entry/instrument/bluesky/metadata/detectors_file_relative_path'
+
+
+.. py:data:: RECORDED_IMAGE_SOURCES
+
+.. py:data:: MASTER_PRIMARY_PATH
+   :value: 'entry/instrument/bluesky/streams/primary'
+
+
+.. py:data:: SCAN_PREFIX
+   :value: 'scan/'
+
+
+.. py:data:: MAX_STACK_BYTES
+   :value: 8589934592
+
+
+.. py:data:: MAX_TOTAL_BYTES
+   :value: 8589934592
+
+
+.. py:data:: HDF5PLUGIN_HINT
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """The image stack is compressed and could not be decoded.
+      
+      This needs the 'hdf5plugin' package importable in the Python running this viewer:
+      
+          pip install hdf5plugin
+      
+      (or conda install -c conda-forge hdf5plugin)"""
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:function:: recorded_detector_file(master: pathlib.Path, detector: str | None = None) -> str | None
+
+   
+   The file *master* records for *detector*, exactly as written.
+
+   The one line of the ``detectors_file_relative_path`` block that *detector*
+   labels -- ``"vortex"`` picks ``vortex: vortex/scan_000055.h5`` -- or the
+   first line's value when *detector* is ``None``.
+
+   Public, and by name rather than by position, for ``spectrum_viewer``: that
+   module wants one detector's line out of a master that may list several,
+   where :func:`_recorded_image_paths` wants every source in the order worth
+   opening and takes the first line when a block is unlabelled. Reaching
+   across for :func:`_block_value` and :func:`_decode` instead would make
+   their underscores a lie, and hand-parsing the block a second time in
+   another file would duplicate exactly the ``{}`` and truncated-``eiger:``
+   reasoning those two were written down once to settle.
+
+   What comes back is a *claim*, not a path that exists: see
+   :func:`spectrum_path_for_master` for how far it can be trusted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: image_path_for_master(master: pathlib.Path) -> pathlib.Path | None
+
+   
+   The image file belonging to *master*, or ``None`` if none was found.
+
+   Prefers what the writer recorded -- a pvapy sibling, or an areaDetector
+   file in a per-detector subdirectory -- and falls back to the ``<master stem
+   minus "_master">`` -> ``pva_<stem>.h5`` convention. Everything is resolved
+   against the master's own directory, so that a copy of the data opens its
+   own frames rather than the originals it was copied from. Where a master
+   names several detectors, the first is the one opened.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: master_path_for_image(image: pathlib.Path) -> pathlib.Path | None
+
+   
+   The master file this image file belongs to, beside it or one level up.
+
+   An areaDetector writer puts the frames in a per-detector subdirectory of
+   the master's own, so ``<dir>/eiger/scan_000310.h5`` belongs to
+   ``<dir>/scan_000310_master.hdf``. The image's own directory is searched
+   first, so a pvapy sibling still pairs with the master beside it.
+
+   Looking a level up can in principle pair a stray file with a master that
+   merely shares its stem; the time-overlap check in
+   :func:`read_scan_channels` is what rejects those.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: nearest_index(frame_epoch: numpy.ndarray, scan_epoch: numpy.ndarray) -> numpy.ndarray
+
+   
+   For each frame, the scan point closest to it in time.
+
+   Shared with ``hkl_viewer``, which matches the master's diffractometer angles
+   onto the frames the same way.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: read_scan_channels(image: pathlib.Path, frame_epoch, n_frames: int | None = None) -> dict[str, numpy.ndarray]
+
+   
+   The master file's primary fields, resampled onto the image's frames.
+
+   The detector free-runs, so the two files rarely have the same number of
+   points -- 103 frames against 101 scan points is typical, the camera starting
+   a moment early. Each frame therefore takes the value of the scan point
+   nearest it in time; frames outside the scan hold the first or last point.
+
+   When the image file carries no per-frame timestamp at all, there is no
+   clock to match against, so frames are instead spread evenly across the
+   master's scan points by position (see ``_evenly_spaced_index``) -- a
+   rougher alignment, but the best available without a time base.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: is_image_file(path: pathlib.Path) -> bool
+
+   
+   Whether *path* is itself an image file (i.e. it holds an image stack).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: resolve_image_file(path: pathlib.Path) -> pathlib.Path | None
+
+   
+   The image file to open for *path*, which may be a master or an image file.
+
+   Selecting an image file directly in the file list is the obvious way to ask
+   for it, so that opens itself rather than hunting for a partner.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: ImageData(path: pathlib.Path)
+
+   
+   The whole contents of one detector image file, held in memory.
+
+   ``stack`` is ``(n_frames, nx, ny)`` float32 -- indexed ``[frame, x, y]``,
+   the pvapy writer's declared ``pixel_order='xy'`` convention and, as the
+   module docstring works out from where the module gap falls, areaDetector's
+   layout here as well. That is also what pyqtgraph's default (col-major)
+   ``ImageItem`` expects, so frames need no transposing to display the right
+   way round.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: path
+
+
+   .. py:property:: n_frames
+      :type: int
+
+
+
+   .. py:property:: frame_shape
+      :type: tuple[int, int]
+
+
+
+.. py:data:: METRIC_KEYS
+   :value: ['frame', 'time', 'sum', 'mean', 'min', 'max', 'comx', 'comy']
+
+
+.. py:data:: SINGLE_FRAME_KEYS
+   :value: ['proj_x', 'proj_y']
+
+
+.. py:data:: NO_NORMALIZATION
+   :value: '(none)'
+
+
+.. py:data:: DISPLAY_NAMES
+
+.. py:data:: AXIS_LABELS
+
+.. py:function:: add_metric_item(combo: PyQt6.QtWidgets.QComboBox, key: str)
+
+.. py:function:: combo_key(combo: PyQt6.QtWidgets.QComboBox, default: str = 'frame') -> str
+
+.. py:function:: set_combo_key(combo: PyQt6.QtWidgets.QComboBox, key: str)
+
+.. py:function:: axis_label(key: str) -> str
+
+.. py:function:: roi_is_rotated(roi) -> bool
+
+.. py:function:: roi_bbox(roi, shape: tuple[int, int]) -> tuple[int, int, int, int]
+
+   
+   The ROI's axis-aligned pixel bounds ``(x0, x1, y0, y1)``, clipped to *shape*.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: roi_sub_frame(frame: numpy.ndarray, roi, image_item=None) -> numpy.ndarray | None
+
+   
+   The pixels of one frame inside *roi*.
+
+   An unrotated ROI is a plain slice, which is both faster and exactly what
+   :func:`roi_series` reduces over -- going through ``getArrayRegion`` here
+   instead would round fractional edges differently and make the stats line
+   disagree with the plotted curve. Only a rotated ROI needs the resampling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: roi_pixel_count(roi, shape: tuple[int, int], image_item=None, frame=None) -> int
+
+   
+   How many pixels *roi* covers -- the N in a ``background x N`` correction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: roi_series(stack: numpy.ndarray, roi, image_item=None) -> dict[str, numpy.ndarray]
+
+   
+   Per-frame ROI metrics over the whole stack.
+
+   An unrotated ROI is a plain slice of the stack, so the reductions run over
+   all frames at once; a rotated one falls back to ``getArrayRegion`` per frame.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: ROI_COLORS
+   :value: [(255, 0, 0), (0, 255, 0), (80, 140, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255)]
+
+
+.. py:data:: FILE_COLORS
+   :value: [(255, 220, 60), (90, 200, 255), (255, 120, 120), (140, 230, 140), (220, 150, 255), (255, 175, 80)]
+
+
+.. py:class:: ContextRectROI(shared, panel, pos, size, pen)
+
+   Bases: :py:obj:`pyqtgraph.RectROI`
+
+
+   
+   One panel's drawn rectangle for a :class:`SharedRoi`.
+
+   Locking freezes position and size: ``translatable`` stops the body being
+   dragged, and :meth:`checkPointMove` -- the hook pyqtgraph's handles consult
+   before every resize or rotate -- refuses the move.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: shared
+
+
+   .. py:attribute:: panel
+
+
+   .. py:method:: checkPointMove(handle, pos, modifiers)
+
+      
+      When handles move, they must ask the ROI if the move is acceptable.
+      By default, this always returns True. Subclasses may wish override.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: mouseClickEvent(ev)
+
+
+.. py:class:: SharedRoi(viewer, name: str, color, pos, size, angle: float = 0.0)
+
+   Bases: :py:obj:`PyQt6.QtCore.QObject`
+
+
+   
+   One logical ROI, drawn once per open image and kept in step.
+
+   Every panel shows the same detector, so a rectangle means the same pixels in
+   all of them. Dragging any one copy mirrors the geometry onto the others; the
+   ROI plots listen to this object rather than to the individual rectangles.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: geometryChanged
+
+
+   .. py:attribute:: geometryFinished
+
+
+   .. py:attribute:: viewer
+
+
+   .. py:attribute:: name
+
+
+   .. py:attribute:: color
+
+
+   .. py:attribute:: locked
+      :value: False
+
+
+
+   .. py:attribute:: visible
+      :value: True
+
+
+
+   .. py:attribute:: items
+      :type:  list[ContextRectROI]
+      :value: []
+
+
+
+   .. py:method:: pos()
+
+
+   .. py:method:: size()
+
+
+   .. py:method:: angle() -> float
+
+
+   .. py:method:: add_item(panel) -> ContextRectROI
+
+
+   .. py:method:: item_for(panel) -> ContextRectROI | None
+
+
+   .. py:method:: remove_items()
+
+
+   .. py:method:: set_geometry(x: float, y: float, w: float, h: float, angle: float)
+
+
+   .. py:method:: swap_axes()
+
+      
+      Mirror the rectangle across x=y, to follow a Transpose of the images.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: set_locked(locked: bool)
+
+
+   .. py:method:: set_visible(visible: bool)
+
+
+.. py:class:: ImagePanel(viewer, data: ImageData, show_histogram: bool)
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QWidget`
+
+
+   
+   The image area for a single file: title, ImageView, crosshair.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: viewer
+
+
+   .. py:attribute:: data
+
+
+   .. py:attribute:: frame_index
+      :value: 0
+
+
+
+   .. py:attribute:: title_label
+
+
+   .. py:attribute:: plot_item
+
+
+   .. py:attribute:: image_view
+
+
+   .. py:method:: stack() -> numpy.ndarray
+
+
+   .. py:method:: set_transposed(transposed: bool)
+
+
+   .. py:method:: current_frame() -> numpy.ndarray
+
+
+   .. py:method:: image_item()
+
+
+   .. py:method:: set_frame(shared_index: int) -> bool
+
+      
+      Point this panel at *shared_index*, clamped to its own last frame.
+
+      Returns whether the panel ran out of frames (i.e. the index was clamped).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: update_title(clamped: bool)
+
+
+   .. py:method:: refresh_hover_text()
+
+
+.. py:class:: RoiPlotDock(viewer, roi: SharedRoi)
+
+   Bases: :py:obj:`_RoiDockBase`
+
+
+   
+   The "ROI plot": one curve per open file, so scans can be compared.
+
+   *Offset* stacks the curves -- curve *i* is drawn at ``y + i * offset`` -- which
+   separates traces that would otherwise sit on top of each other. 0 overlays them.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: stats_label
+
+
+   .. py:attribute:: radio_stack
+
+
+   .. py:attribute:: radio_single
+
+
+   .. py:attribute:: x_label
+
+
+   .. py:attribute:: x_select
+
+
+   .. py:attribute:: y_select
+
+
+   .. py:attribute:: norm_select
+
+
+   .. py:attribute:: offset_spin
+
+
+   .. py:attribute:: auto_offset_btn
+
+
+   .. py:attribute:: plot_item
+
+
+   .. py:attribute:: plot_widget
+
+
+   .. py:attribute:: frame_line
+
+
+   .. py:attribute:: series_by_panel
+      :type:  list[dict[str, numpy.ndarray]]
+      :value: []
+
+
+
+   .. py:attribute:: projections
+      :type:  list[tuple[numpy.ndarray, numpy.ndarray]]
+      :value: []
+
+
+
+   .. py:method:: recompute()
+
+
+   .. py:method:: refresh_options()
+
+
+   .. py:method:: update_plot()
+
+
+   .. py:method:: update_stats_label()
+
+
+   .. py:method:: on_frame_changed(index: int)
+
+
+   .. py:method:: retitle()
+
+
+.. py:class:: Roi2DPlotDock(viewer, roi: SharedRoi, panel: ImagePanel)
+
+   Bases: :py:obj:`_RoiDockBase`
+
+
+   
+   The "ROI 2D plot" for one file: a scatter point per frame, Z as colour.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: panel
+
+
+   .. py:attribute:: stats_label
+
+
+   .. py:attribute:: x_select
+
+
+   .. py:attribute:: y_select
+
+
+   .. py:attribute:: z_select
+
+
+   .. py:attribute:: norm_select
+
+
+   .. py:attribute:: cmap_select
+
+
+   .. py:attribute:: z_min_spin
+
+
+   .. py:attribute:: z_max_spin
+
+
+   .. py:attribute:: z_auto_check
+
+
+   .. py:attribute:: z_range_label
+
+
+   .. py:attribute:: plot_widget
+
+
+   .. py:attribute:: plot_item
+      :value: None
+
+
+
+   .. py:attribute:: scatter
+
+
+   .. py:attribute:: highlight
+
+
+   .. py:attribute:: series
+      :type:  dict[str, numpy.ndarray]
+
+
+   .. py:method:: recompute()
+
+
+   .. py:method:: refresh_options()
+
+
+   .. py:method:: series_for(key: str) -> numpy.ndarray
+
+
+   .. py:method:: update_stats_label()
+
+
+   .. py:method:: update_plot()
+
+
+   .. py:method:: on_frame_changed(index: int)
+
+
+   .. py:method:: retitle()
+
+
+.. py:function:: get_colormap(name: str)
+
+   
+   A pyqtgraph ColorMap by name, or ``None``.
+
+   pyqtgraph only ships some of these itself -- ``gray``, ``hot`` and ``jet``
+   come from matplotlib -- and ``get()`` raises rather than returning ``None``
+   for a name it cannot find, so try both sources.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: available_colormaps() -> list[str]
+
+   
+   The candidate colormaps this pyqtgraph build can actually supply.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: value_brushes(values: numpy.ndarray, vmin: float, vmax: float, cmap_name: str) -> list
+
+   
+   One brush per value, coloured by *cmap_name* over the ``[vmin, vmax]`` range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: ImageViewerWindow(paths, parent=None)
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QMainWindow`
+
+
+   
+   One or more image stacks side by side, sharing ROIs, levels and frame.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: frameChanged
+
+
+   .. py:attribute:: dataChanged
+
+
+   .. py:attribute:: backgroundChanged
+
+
+   .. py:attribute:: ROI_DOCK_WIDTH
+      :value: 240
+
+
+
+   .. py:attribute:: datasets
+
+
+   .. py:method:: show_all_docks()
+
+
+   .. py:method:: max_frames() -> int
+
+
+   .. py:method:: frame_shape() -> tuple[int, int]
+
+
+   .. py:method:: frame_index() -> int
+
+
+   .. py:method:: metric_keys() -> list[str]
+
+      
+      Base metrics plus every channel any open file records.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: stack() -> numpy.ndarray
+
+
+   .. py:method:: current_frame() -> numpy.ndarray
+
+
+   .. py:method:: image_item()
+
+
+   .. py:method:: showEvent(event)
+
+
+   .. py:method:: show_readout(panel: ImagePanel, x: int, y: int, value: float)
+
+
+   .. py:method:: set_frame(index: int)
+
+
+   .. py:method:: start_playback()
+
+
+   .. py:method:: pause_playback()
+
+
+   .. py:method:: add_roi(pos=None, size=None, angle=0.0, name=None, select=True, locked=False) -> SharedRoi
+
+
+   .. py:method:: set_roi_locked(roi: SharedRoi, locked: bool)
+
+      
+      Freeze or release the ROI's position and size in every panel.
+
+      A locked ROI keeps accepting right-clicks so its menu (and the unlock
+      entry in it) stays reachable.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: set_roi_visible(roi: SharedRoi, visible: bool)
+
+      
+      Show or hide the ROI. Its plots keep updating -- they follow geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: set_all_locked(locked: bool)
+
+
+   .. py:method:: background_roi() -> SharedRoi | None
+
+
+   .. py:method:: set_background_roi(roi: SharedRoi | None)
+
+      
+      Designate (or clear) the ROI whose per-pixel mean is subtracted.
+
+      Only one ROI can be the background, so picking a new one releases the
+      previous. Every open plot recomputes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: selected_roi() -> SharedRoi | None
+
+
+   .. py:method:: rename_roi(roi=None)
+
+
+   .. py:method:: delete_roi(roi=None)
+
+
+   .. py:method:: open_roi_plot(roi=None)
+
+      
+      One plot for this ROI holding every file's curve, for comparison.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: open_roi_2d_plot(roi=None)
+
+      
+      One 2D plot per open file -- the axes are per-file, so they cannot share.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: forget_roi_dock(dock: _RoiDockBase)
+
+
+   .. py:method:: show_roi_menu(roi: SharedRoi, global_pos)
+
+
+   .. py:method:: open_hkl_window()
+
+      
+      Open the reciprocal-space map for the panel currently in front.
+
+      hkl_viewer is imported here, not at module scope, so that this viewer
+      keeps working on an installation without pyvista or xrayutilities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: closeEvent(event)
+
+
+.. py:function:: main()
+

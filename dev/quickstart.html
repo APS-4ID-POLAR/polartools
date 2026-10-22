@@ -26,8 +26,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
@@ -36,12 +36,12 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="_static/documentation_options.js?v=b2b8f49c"></script>
+    <script src="_static/documentation_options.js?v=59986372"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -55,8 +55,9 @@
     <link rel="next" title="Loading data" href="examples/load_data.html" />
     <link rel="prev" title="Installation" href="installation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post25+gba66c8f9a" />
+  <meta name="docsearch:version" content="0.6.0.post32+g38f63024d" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -197,6 +198,20 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="examples/manage_database.html">
     Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="examples/viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="examples/flyscan_dichro.html">
+    Flyscan dichroism
   </a>
 </li>
 
@@ -387,6 +402,20 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples/viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples/flyscan_dichro.html">
+    Flyscan dichroism
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="examples/xmcd_gui.html">
     XMCD GUI
   </a>
@@ -533,6 +562,9 @@
   <section id="quickstart">
 <h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">#</a></h1>
 <p>A short tour of <code class="docutils literal notranslate"><span class="pre">polartools</span></code>: load a scan, look at it, fit a peak.</p>
+<p>In a hurry, and the data is a directory of <code class="docutils literal notranslate"><span class="pre">*_master.hdf</span></code> files? Run
+<code class="docutils literal notranslate"><span class="pre">scan-viewer</span></code> in it and everything below is a few clicks instead — see
+<a class="reference internal" href="examples/viewers.html"><span class="std std-doc">Scan viewers</span></a>.</p>
 <section id="load-a-spec-scan-into-a-dataframe">
 <h2>Load a SPEC scan into a DataFrame<a class="headerlink" href="#load-a-spec-scan-into-a-dataframe" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">polartools.load_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_table</span>
@@ -596,6 +628,8 @@ a CSV folder, a databroker catalog, or a tiled catalog and it returns a pandas
 <li><p><a class="reference internal" href="examples/load_data.html"><span class="std std-doc">Load data</span></a> — every supported source backend, with examples</p></li>
 <li><p><a class="reference internal" href="examples/absorption.html"><span class="std std-doc">XAS / XMCD</span></a> — normalization, dichroism, edge-step</p></li>
 <li><p><a class="reference internal" href="examples/diffraction.html"><span class="std std-doc">Diffraction</span></a> — peak fitting, peak series, HKL conversions</p></li>
+<li><p><a class="reference internal" href="examples/viewers.html"><span class="std std-doc">Scan viewers</span></a> — <code class="docutils literal notranslate"><span class="pre">scan-viewer</span></code> and the spectrum and image windows</p></li>
+<li><p><a class="reference internal" href="examples/flyscan_dichro.html"><span class="std std-doc">Flyscan dichroism</span></a> — CR/CL difference maps, in the GUI and scripted</p></li>
 <li><p><a class="reference internal" href="api/polartools/index.html"><span class="std std-doc">API reference</span></a> — full function-by-function reference</p></li>
 </ul>
 </section>
@@ -694,8 +728,8 @@ a CSV folder, a databroker catalog, or a tiled catalog and it returns a pandas
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -721,7 +755,7 @@ a CSV folder, a databroker catalog, or a tiled catalog and it returns a pandas
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
   </p>
 </div>
       

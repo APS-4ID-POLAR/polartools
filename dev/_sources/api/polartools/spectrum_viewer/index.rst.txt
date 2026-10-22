@@ -1,0 +1,1397 @@
+polartools.spectrum_viewer
+==========================
+
+.. py:module:: polartools.spectrum_viewer
+
+.. autoapi-nested-parse::
+
+   A fluorescence-spectrum viewer for the Vortex files beside a master file.
+
+   The softglue ("sg") edition. Identical to :mod:`spectrum_viewer` apart from
+   what the "Combine" box does and what the monitor list offers -- see **The sgz
+   layout** below. It is a copy and not a subclass because almost every change is
+   inside a long method rather than at a seam one could override, and because the
+   original has to keep running untouched while this one is tried on live data.
+
+   The multi-element silicon-drift detector writes its MCA spectra the way the
+   area detectors write their frames: not into ``*_master.hdf`` at all, but into a
+   file of its own in a subdirectory of the master's, listed in
+   ``entry/instrument/bluesky/metadata/detectors_file_relative_path``::
+
+       vortex: vortex/scan_000055.h5
+
+   The cube inside is ``entry/data/data``, shaped ``(frames, elements, bins)``::
+
+       entry/data/data   (800, 7, 4096)  uint32, gzip, chunks (1, 7, 4096)
+
+   Two things about that shape are not constants and must be read from the file.
+   The element count is one: ``/home/beams/POLAR/fluo_data/vortex/scan_000122.h5``,
+   from the 2025-1 run, is ``(240, 4, 4096)`` and ``uint16`` with no compression.
+   The dead-time bookkeeping is the other, and it is worse than a shape change --
+   the names *and the channel numbering* differ between the two vintages::
+
+       2026-3   entry/instrument/NDAttributes/CHAN1DTFactor .. CHAN7DTFactor   1-based
+       2025-1   entry/instrument/NDAttributes/ICR_0/OCR_0   .. ICR_3/OCR_3     0-based
+
+   so both are probed for, in that order, and a file carrying neither simply does
+   not offer the correction. ``corrected = raw * DTFactor`` is the XIA convention
+   and is confirmed rather than assumed here: ``(1 - 1/DTFactor) * 100`` reproduces
+   the ``CHAN{n}DTPercent`` the file records beside it to within rounding (1.0368
+   against 3.5448%). Where only ICR and OCR are recorded the same factor is
+   ``ICR / OCR``.
+
+   Why the correction is on by default, against this package's general habit of
+   showing what was recorded. On scan 55 element 3 runs 8 to 33 percent dead while
+   element 6 runs 0.2 percent. Draw seven raw curves in a window whose whole
+   purpose is comparing elements and the plot says "element 3 is weak", which is a
+   wrong conclusion about the hardware stated confidently. The checkbox turns it
+   off; the default is the one that is not misleading.
+
+   **Finding the file.** The recorded path is tried *second*, which is the reverse
+   of :func:`image_viewer.image_path_for_master` and needs saying why. In
+   ``2026-3/Jeremy_26-3/data/DefaultSample`` there are 97 masters and 66 vortex
+   files, and the recorded path resolves for **14** of them. From scan 76 the
+   IOC's file template drifted out of step with the writer::
+
+       master says   vortex/scan76.hdf5
+       disk holds    vortex/scan_000076.h5
+
+   for 52 masters, with ``detectors_file_full_path`` carrying the same wrong name.
+   The ``<master dir>/vortex/<stem minus "_master">.h5`` convention resolves all
+   66. So the convention leads and the recorded line is the fallback, for the
+   writers that do not follow it. Both are resolved against the master's *own*
+   directory for the reason :func:`image_viewer.image_path_for_master` gives: an
+   absolute path does not merely fail after the data is copied, it succeeds,
+   opening the original instead of the copy that was clicked.
+
+   **The cube is never loaded whole.** 8000 frames is 917 MB as uint32, and
+   several scans overlay in one window. Worse, re-reading it is not something a
+   frame selector can do per keystroke: it is gzip-compressed, so inflating it
+   costs ~1.3 s however it is sliced (64, 256 or 1024 frames at a time, or in one
+   bulk read -- all within 10% of each other, because the inflate is the cost and
+   not the I/O).
+
+   So one streamed pass at open builds a **cumulative sum per block of frames**:
+   with ``B = ceil(n_frames / PYRAMID_BLOCKS)``, ``_cum[i]`` is the sum of
+   everything before block ``i``. Any frame range is then ``_cum[j] - _cum[i]``
+   plus at most two short ragged ends. Measured on the 8000-frame worst case:
+   building both pyramids 2.2 s against 1.4 s for a plain total -- near enough
+   free -- 29 MB held per pyramid instead of 917 MB, and an arbitrary range
+   answered in **81 us** instead of 1.3 s. That is what makes dragging the frame
+   spin boxes possible at all.
+
+   The accumulator is ``float64``, deliberately and not idly: numpy promotes a
+   ``uint32`` sum to ``uint64``, and ``int64 += uint64`` resolves to ``float64``,
+   which ``+=`` then refuses under the ``same_kind`` casting rule. An ``int64``
+   accumulator raises ``UFuncTypeError`` on the first block. float64 takes any
+   source dtype without thinking, is exact for integers to 2**53 against a maximum
+   bin count here of 2.4e6, and is what dead-time correction and the plot both
+   want anyway.
+
+   **The energy axis is nominal.** Nothing in either file records a calibration.
+   The defaults here (10 eV/bin, 0 eV offset) come from reading known lines off
+   scan 55 -- Fe Ka at bin 635, the elastic peak at bin 1117, consistent over a
+   5 keV span -- so they are close, but they are an inference and the axis says
+   so. Type over them when the real gain is known.
+
+   **Frames are not scan points, but the detector records which is which.**
+   Division is the wrong instrument, and scan 125 shows why: it declares
+   ``num_points`` 100, was aborted after 9, and still wrote 800 frames. Divide by
+   the declaration and the note reads a tidy "8 frames per point", which is wrong
+   and does not look wrong; divide by the 9 rows the primary stream really holds
+   and the ratio is 88.9. So the count is read from the stream, never from the
+   metadata. The per-frame timestamps cannot rescue the mapping either --
+   ``NDArrayEpicsTSSec`` and ``nSec`` are all zero in these files, so
+   :mod:`image_viewer`'s ``nearest_index``/``_scan_time_base`` machinery has
+   nothing to work from.
+
+   What does rescue it is ``ArrayCounter``, which counts frames *within* a point
+   and resets to 1 at every one, so ``cumsum(counter == 1) - 1`` is an exact
+   frame-to-point map however ragged the scan -- see
+   :meth:`SpectrumData.point_index`. On scan 125 it finds **ten** complete
+   80-frame blocks against the 9 rows the scan recorded: the detector finished a
+   point the scan was aborted before writing down. So anything pairing frames
+   with stream rows takes the shorter of the two and says so. The 2025-1 vintage
+   records no ``ArrayCounter`` and is 1:1 anyway, where even division stands in.
+
+   **The second pane answers the question the first one cannot:** how the
+   intensity in one emission line moves as the scan proceeds. It is off until
+   "Plot ROI" is pressed, and then takes a third of the width -- off because it
+   costs a pass over the cube that a window opened to look at a spectrum should
+   not pay for unasked.
+
+   The region of interest is **a centre in keV and a half-width in eV**, shown as
+   the grey band on the spectrum and draggable there. It opens on the tallest bin
+   of everything loaded, one default half-width either side; "Peak" re-centres it
+   on the tallest bin of what is drawn inside the bins shown, which is how you
+   put it on a line after zooming to one. Be clear about what the opening guess
+   finds: on these files the tallest peak is the **elastic** line at the incident
+   energy, 11.20 keV, not a fluorescence line -- Fe Ka on scan 55 is 71 percent
+   of it -- and the elements do not even agree, element 1 peaking at bin 635
+   where the sum peaks at 1120.
+
+   Held as an energy and not as bins, which is the whole reason it is in keV:
+   correct the nominal gain below and the ROI stays on the energy it names, so a
+   band that walks away from a peak is telling you the calibration you typed is
+   wrong. The price is that a gain edit now moves the derived bins, so it
+   re-reads the cube where before it only relabelled an axis.
+
+   Beside the spectrum, then, **one curve per element** -- never a sum or a mean
+   across them, since which element sees a line is the comparison this pane
+   exists to make -- each the mean of the frames on show at each scan point, and
+   then the mean of the scans on show. Repeated scans are the thing worth
+   averaging; overlaying them instead would put seven curves times three scans on
+   one axis. A point the frame range only partly covers is a mean over fewer
+   frames, which is correct and is counted in the status line, and a point it
+   misses entirely is NaN rather than zero. The x axis defaults to the field the
+   scan's own hints nominate (``energy`` here, ``Samp_x`` on the ``lup`` scans),
+   which is also why it is read from the master rather than assumed: the motor
+   scans record no ``energy`` column at all. Moving the band costs one streamed
+   pass over the cube (~1 s on 8000 frames), cached on the bin pair, so every
+   element tick, dead-time toggle, frame range and axis change afterwards
+   replots from memory.
+
+   The monitor the trend is divided by is chosen by **liveness, not by name**.
+   Every 2026-3 scan here records ``bI0`` as identically zero while ``gI0`` and
+   ``hI0`` run, so a picker that went down a fixed list of names would open on a
+   divisor of zero and show a blank plot. A candidate is offered only where every
+   loaded scan records at least one positive reading of it -- see
+   :meth:`SpectrumViewerWindow._usable_monitors`.
+
+   **The sgz layout.** The softglue scans write more than one vortex frame per
+   scan point -- 88 of them on the ``qxscan`` runs this was written for -- and
+   those frames **alternate**, because the softglue toggles between two states
+   frame by frame. Measured on scan 597, point 0, totalled over all elements::
+
+       14830 16614 15031 16543 15007 16831 14920 16457 14953 16555 14677 16762
+       odd  (files 1,3,5..) 14827.9 +- 192.7     even (2,4,6..) 16528.8 +- 203.0
+       asymmetry -5.42%; of 400 random 44/44 splits of these same frames the
+       widest apart was 548 and the median 112
+
+   1701 counts apart with 200 of scatter inside each half, against a shuffle
+   that never managed a third of it: the split is the measurement, not noise.
+   Every element shows it, from -2.6% on element 1 to -8.5% on element 5, and
+   the whole 62-point scan comes to -4.83% (-4.88% dead-time corrected; every
+   number here is raw counts). So where a scan has more
+   than one frame per point the **Combine** box offers their difference as well
+   as their sum -- ``odd - even``, numbering the frames within their point from
+   1, which is the convention that fixes the sign and is repeated on every label
+   that carries it. ``ArrayCounter`` gives that numbering exactly, running 1..88
+   and restarting at each point; where a file lacks it, position within the point
+   stands in. "Odd only" and "Even only" are there because a difference is only
+   believable once both halves have been looked at.
+
+   This is also what ``vortex_total_el1`` and ``vortex_total_el7`` are doing in
+   the monitor list, where :mod:`spectrum_viewer` offers nothing of the kind.
+   Both are computed from the cube rather than read from the master, which is
+   what lets them differ between the odd frames and the even ones -- a recorded
+   channel has one reading per scan point and cannot. Dividing the **sum** by
+   one of them is still not normalisation: it is one region of this spectrum
+   over another, and it flattens the very trend being looked for. Dividing the
+   **difference** is the asymmetry, which is the quantity an XMCD measurement is
+   for. So they are offered, last, where a click can reach them, and never
+   chosen for you: ``gI0`` and ``hI0`` still open these scans.
+
+   Run standalone on one or more spectrum files, or let ``scan_viewer_sgz``'s
+   "Load Spectrum..." button open them for the scans it lists.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.spectrum_viewer.SPECTRUM_DATA_PATH
+   polartools.spectrum_viewer.NDATTR_PATH
+   polartools.spectrum_viewer.ARRAY_COUNTER_ATTR
+   polartools.spectrum_viewer.METADATA_PATH
+   polartools.spectrum_viewer.PRIMARY_STREAM_PATH
+   polartools.spectrum_viewer.SPECTRUM_SUBDIRS
+   polartools.spectrum_viewer.SPECTRUM_SUFFIXES
+   polartools.spectrum_viewer.DT_SOURCES
+   polartools.spectrum_viewer.PYRAMID_BLOCKS
+   polartools.spectrum_viewer.READ_CHUNK
+   polartools.spectrum_viewer.MAX_TOTAL_FRAMES
+   polartools.spectrum_viewer.DEFAULT_EV_PER_BIN
+   polartools.spectrum_viewer.DEFAULT_EV_OFFSET
+   polartools.spectrum_viewer.MIN_EV_PER_BIN
+   polartools.spectrum_viewer.REDRAW_DELAY_MS
+   polartools.spectrum_viewer.BIN_MASS_QUANTILE
+   polartools.spectrum_viewer.BIN_RANGE_MARGIN
+   polartools.spectrum_viewer.Y_MARGIN
+   polartools.spectrum_viewer.Y_LOG_MARGIN
+   polartools.spectrum_viewer.MONITOR_CANDIDATES
+   polartools.spectrum_viewer.COMPUTED_MONITORS
+   polartools.spectrum_viewer.WINDOW_TITLE
+   polartools.spectrum_viewer.SUM_KEY
+   polartools.spectrum_viewer.TREND_POINT_AXIS
+   polartools.spectrum_viewer.TREND_FRAME_AXIS
+   polartools.spectrum_viewer.COMBINE_MODES
+   polartools.spectrum_viewer.SIGNED_PARTS
+   polartools.spectrum_viewer.DEFAULT_ROI_WIDTH_EV
+   polartools.spectrum_viewer.DEFAULT_MONITOR_BINS
+   polartools.spectrum_viewer.SAME_X_STEPS
+   polartools.spectrum_viewer.SPIN_CHROME_PX
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.spectrum_viewer.SpectrumData
+   polartools.spectrum_viewer.MonitorRoiWindow
+   polartools.spectrum_viewer.SpectrumViewerWindow
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.spectrum_viewer.spectrum_path_for_master
+   polartools.spectrum_viewer.is_spectrum_file
+   polartools.spectrum_viewer.resolve_spectrum_file
+   polartools.spectrum_viewer.master_path_for_spectrum
+   polartools.spectrum_viewer.is_multi_frame_scan
+   polartools.spectrum_viewer.scan_axis_field
+   polartools.spectrum_viewer.primary_fields
+   polartools.spectrum_viewer.read_primary_field
+   polartools.spectrum_viewer.infer_bin_range
+   polartools.spectrum_viewer.stack_mean
+   polartools.spectrum_viewer.scan_number
+   polartools.spectrum_viewer.file_prefix
+   polartools.spectrum_viewer.scan_tags
+   polartools.spectrum_viewer.write_aligned_columns
+   polartools.spectrum_viewer.same_grid
+   polartools.spectrum_viewer.apply_bold_defaults
+   polartools.spectrum_viewer.fit_spin_width
+   polartools.spectrum_viewer.main
+
+
+Module Contents
+---------------
+
+.. py:data:: SPECTRUM_DATA_PATH
+   :value: 'entry/data/data'
+
+
+.. py:data:: NDATTR_PATH
+   :value: 'entry/instrument/NDAttributes'
+
+
+.. py:data:: ARRAY_COUNTER_ATTR
+   :value: 'ArrayCounter'
+
+
+.. py:data:: METADATA_PATH
+   :value: 'entry/instrument/bluesky/metadata'
+
+
+.. py:data:: PRIMARY_STREAM_PATH
+   :value: 'entry/instrument/bluesky/streams/primary'
+
+
+.. py:data:: SPECTRUM_SUBDIRS
+   :value: ('vortex',)
+
+
+.. py:data:: SPECTRUM_SUFFIXES
+   :value: ('.h5', '.hdf5', '.hdf')
+
+
+.. py:data:: DT_SOURCES
+   :value: ((('CHAN{n}DTFactor',), 1), (('ICR_{n}', 'OCR_{n}'), 0))
+
+
+.. py:data:: PYRAMID_BLOCKS
+   :value: 128
+
+
+.. py:data:: READ_CHUNK
+   :value: 512
+
+
+.. py:data:: MAX_TOTAL_FRAMES
+   :value: 200000
+
+
+.. py:data:: DEFAULT_EV_PER_BIN
+   :value: 10.0
+
+
+.. py:data:: DEFAULT_EV_OFFSET
+   :value: 0.0
+
+
+.. py:data:: MIN_EV_PER_BIN
+   :value: 0.01
+
+
+.. py:data:: REDRAW_DELAY_MS
+   :value: 150
+
+
+.. py:data:: BIN_MASS_QUANTILE
+   :value: 0.99
+
+
+.. py:data:: BIN_RANGE_MARGIN
+   :value: 0.05
+
+
+.. py:data:: Y_MARGIN
+   :value: 1.05
+
+
+.. py:data:: Y_LOG_MARGIN
+   :value: 1.6
+
+
+.. py:data:: MONITOR_CANDIDATES
+   :value: ('bI0', 'gI0', 'hI0', '4idgI0', 'Time1', 'Time')
+
+
+.. py:data:: COMPUTED_MONITORS
+
+.. py:data:: WINDOW_TITLE
+   :value: '4ID HDF5 Vortex softglue viewer'
+
+
+.. py:data:: SUM_KEY
+   :value: -1
+
+
+.. py:data:: TREND_POINT_AXIS
+   :value: 'scan point'
+
+
+.. py:data:: TREND_FRAME_AXIS
+   :value: 'frame'
+
+
+.. py:data:: COMBINE_MODES
+   :value: (('Sum', 'all', 'counts'), ('Odd - even', 'difference', 'odd - even counts'), ('Odd only',...
+
+
+.. py:data:: SIGNED_PARTS
+
+.. py:data:: DEFAULT_ROI_WIDTH_EV
+   :value: 200.0
+
+
+.. py:data:: DEFAULT_MONITOR_BINS
+   :value: (200, 1800)
+
+
+.. py:data:: SAME_X_STEPS
+   :value: 0.5
+
+
+.. py:function:: spectrum_path_for_master(master: pathlib.Path) -> pathlib.Path | None
+
+   
+   The spectrum file belonging to *master*, or ``None`` if none was found.
+
+   The ``<master dir>/vortex/<stem minus "_master">.h5`` convention is tried
+   first and the path the master records only second -- the reverse of
+   :func:`image_viewer.image_path_for_master`, because here the recorded value
+   is wrong far more often than it is right (52 of 66 in the 2026-3 run; see
+   the module docstring). Everything is resolved against the master's own
+   directory either way.
+
+   Two things keep the cost of that second chance off the common case, because
+   reading the recorded value means opening the master with h5py and this
+   function is asked of every row of the listing. The subdirectory is stat-ed
+   first: a run that took no fluorescence at all has no ``vortex/``, so 1254
+   TiSe2 masters answer "no spectrum" on one stat each instead of on an open
+   each -- 5.9 s of a listing refresh that was being spent to learn nothing.
+   And the convention candidates are tested as they are built rather than
+   collected first, so the 67 scans that do have a spectrum never open the
+   master either. Only a master with a ``vortex/`` beside it and no file of
+   the expected name in it is worth asking what it thinks it wrote.
+
+   The stat gate is also the column's definition rather than merely an
+   optimisation: "a spectrum in subdirectory ``vortex``" is the question being
+   answered, so no ``vortex/``, no tick, whatever the master records.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: is_spectrum_file(path: pathlib.Path) -> bool
+
+   
+   Whether *path* is itself a spectrum file (a 3-D MCA cube).
+
+   This one opens the file, so it is asked only of a file selected directly --
+   never of every row of a listing. :func:`resolve_spectrum_file` says why.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: resolve_spectrum_file(path: pathlib.Path) -> pathlib.Path | None
+
+   
+   The spectrum file to open for *path*, master or spectrum file.
+
+   Deliberately a ``stat`` and not an open. The browser calls this once per
+   row per refresh, and over the real mount opening each candidate to check
+   its dataset costs 6.2 ms against 7 us for :meth:`Path.is_file` -- 0.6 s
+   added to a listing of 97 scans, and far worse cold over NFS. So the
+   column's tick means "the file is there", and whether it holds a cube this
+   viewer can read is settled by :class:`SpectrumData`, which raises. That is
+   the same division :func:`image_viewer.image_path_for_master` makes, and for
+   the same reason.
+
+   A file selected directly is the exception: nothing else would resolve it,
+   and there is one of it rather than a listing's worth. A master is never
+   that exception, and the test below says so explicitly, because ``.hdf`` is
+   one of :data:`SPECTRUM_SUFFIXES` and the masters are ``*_master.hdf``.
+   Without the ``_master`` test every master that did not resolve would be
+   opened to be asked whether it is itself a cube -- 4.4 ms a row across 1254
+   TiSe2 masters, every one of which answers no. It would also be the one way
+   this function could put a tick on a row that has no spectrum, since an
+   image master with a 3-D ``entry/data/data`` would answer yes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: master_path_for_spectrum(spectrum: pathlib.Path) -> pathlib.Path | None
+
+   
+   The master whose scan wrote *spectrum*, one directory up.
+
+   ``<dir>/vortex/scan_000055.h5`` belongs to ``<dir>/scan_000055_master.hdf``.
+   Only wanted for the scan point count, so a miss costs nothing but the
+   "frames per point" note.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: is_multi_frame_scan(spectrum: pathlib.Path) -> bool
+
+   
+   Whether a cube holds more than one frame per scan point.
+
+   The sgz softglue layout, and the one condition under which this edition's
+   extra features mean anything: with one frame per point there are no two
+   halves for the Combine box to tell apart.
+
+   One open, and it reads the ``ArrayCounter`` and nothing else -- a vector
+   of small ints beside a cube of hundreds of megabytes. That is what makes
+   it affordable once per row of a directory listing, where constructing a
+   :class:`SpectrumData` is not: that builds the whole summary pyramid, which
+   is a streamed pass over every frame.
+
+   The answer is :attr:`SpectrumData.multi_frame`'s, computed the same way --
+   the median point's frame count, so that an aborted scan's short trailing
+   point does not speak for the scan. ``False`` for the 2025-1 vintage, which
+   records no counter and is one frame per point throughout, and ``False``
+   for anything unreadable: this decides a colour, and a colour is not worth
+   an exception.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: scan_axis_field(master: pathlib.Path | None, fields: list[str]) -> str | None
+
+   
+   The field this scan stepped, out of those *fields* actually holds.
+
+   The scan's own hints first and its ``motors`` metadata second -- the order
+   ``scan_viewer.scan_x_field`` uses -- so an energy scan opens on ``energy``
+   and a ``lup`` on ``Samp_x`` without either being written down here. That
+   matters more than it looks: the sample-motor scans record no ``energy``
+   field at all, so an axis hardcoded to energy would be dead on them.
+
+   ``None`` when the scan names no axis these fields carry, which is also
+   what a missing master gives.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: primary_fields(master: pathlib.Path | None) -> list[str]
+
+   
+   Names in the master's primary stream that carry a 1-D ``value``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: read_primary_field(master: pathlib.Path | None, name: str) -> numpy.ndarray | None
+
+   
+   One primary-stream field as float64, or ``None`` if it is not there.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: infer_bin_range(total: numpy.ndarray) -> tuple[int, int]
+
+   
+   The bin range worth opening on, from where the counts actually are.
+
+   *total* is one spectrum summed over every frame and element. The range
+   returned holds :data:`BIN_MASS_QUANTILE` of its counts, centred by taking
+   the same tail off each end, then padded by :data:`BIN_RANGE_MARGIN`.
+
+   Counts and not peak height, because the two other rules that suggest
+   themselves were measured against real files and neither survived. A
+   threshold at a fixed fraction of the maximum depends on how sharp the
+   tallest peak happens to be: at 1% of peak it gives bins 0-1173 on scan 55
+   but 0-2240 on scan 76, whose pileup peak at twice the elastic energy
+   clears the bar, and a useless 292-397 on the 4-element file, which is one
+   narrow line. A noise-floor rule -- the last bin standing clear of the
+   median of the dead high end -- is worse still, returning 0-3400 for every
+   2026 file, because those carry a real low-level continuum all the way out
+   and so the floor is never reached. Count mass is indifferent to both: 97
+   to 98 percent of every 2026 file's counts sit below the elastic peak and
+   99.9 percent below the pileup peak, and the 4-element file concentrates
+   at 297-662. One rule, five files, five sensible answers.
+
+   The last bin is dropped before anything is measured. It is not a spectrum
+   bin but the accumulator everything above the ADC range piles into, holding
+   17454 counts on scan 55 while bins 4090-4094 hold none, so leaving it in
+   anchors every inferred range to the right-hand edge of the axis.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: stack_mean(pieces: list[numpy.ndarray]) -> numpy.ndarray
+
+   
+   Mean of several 1-D arrays of unequal length, padding with NaN.
+
+   The same function, and the same reasoning, as ``scan_viewer.stack_mean``.
+   It is copied rather than imported because ``scan_viewer`` imports *this*
+   module, so the dependency cannot run the other way.
+
+   Row by row, never by interpolation: repeated scans step the same points,
+   and one stopped part way is then simply short. A short scan leaves NaN
+   where it did not reach, which is not the same as zero -- the mean over the
+   tail is over the scans that got there, and a point no scan reached comes
+   back NaN and is left off the plot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: scan_number(path: pathlib.Path) -> str
+
+   
+   The scan number in a file name: ``000597`` from ``scan_000597.h5``.
+
+   The same function as ``scan_viewer.scan_number``, copied for the reason
+   :func:`stack_mean` gives. The last run of digits wins, so a prefix's own
+   digits are ignored.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: file_prefix(path: pathlib.Path) -> str
+
+   
+   The part of a file name in front of the scan number: ``scan``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: scan_tags(paths: list[pathlib.Path]) -> dict[str, str]
+
+   
+   A short name per path, keyed by ``str(path)``: enough to tell them apart.
+
+   The scan number alone normally does it. Where two series in one directory
+   collide on it, every name gains its series.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: write_aligned_columns(path: pathlib.Path, names: list[str], columns: list[numpy.ndarray], header: list[str]) -> None
+
+   
+   Write *columns* side by side, space-aligned, under a commented header.
+
+   ``scan_viewer.write_columns`` written for whitespace instead of CSV,
+   because the beamline's own ``.dat`` files are SPEC-shaped -- a ``#``
+   header, an ``#L`` line of column names, space-separated numbers -- and a
+   file dropped beside them should read the same way. Every name here is one
+   word, which is what lets the names be whitespace-separated at all.
+
+   Each column is padded to the wider of its name and its widest value, so
+   the table lines up for an eye as well as for :func:`numpy.loadtxt`.
+
+   Columns of different lengths are squared off with blanks at the bottom. A
+   value that is NaN is written ``nan`` instead: a curve normalized by a
+   monitor that read zero has real holes in it, and "nothing was measured
+   here" must not look like "this curve stopped earlier".
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: same_grid(first: numpy.ndarray, second: numpy.ndarray) -> bool
+
+   
+   Whether two X columns step the same points, over the length they share.
+
+   :data:`SAME_X_STEPS` of a step is the tolerance. Shaped after
+   ``scan_viewer.same_grid``; the point of it here is only to decide whether
+   averaging the two is honest, so a disagreement is reported rather than
+   acted on.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: apply_bold_defaults(app) -> None
+
+   
+   Bold text everywhere this edition draws: Qt widgets and plots alike.
+
+   Both halves are needed and neither reaches the other --
+   ``QApplication.setFont`` knows nothing about matplotlib, and matplotlib's
+   rcParams know nothing about Qt. Called at application start rather than at
+   import, so that importing this module for a test leaves the process's
+   fonts alone.
+
+   ``axes.labelweight`` and ``axes.titleweight`` are set as well as
+   ``font.weight``: matplotlib keeps separate weights for those two and they
+   do not follow the general one, so without them the axis labels come back
+   normal under bold ticks.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: SPIN_CHROME_PX
+   :value: 34
+
+
+.. py:function:: fit_spin_width(spin, widest: str) -> None
+
+   
+   Size a spin box to the longest text it can ever show.
+
+   Measured in the font the box is actually using, not set to a constant:
+   this edition runs bold (:func:`apply_bold_defaults`), and a width that
+   fits "from 40.950 keV" in the normal face loses the suffix in the bold
+   one. Call it after :meth:`setRange`, :meth:`setPrefix` and
+   :meth:`setSuffix` -- *widest* is built from those.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: SpectrumData(path: pathlib.Path)
+
+   
+   One MCA cube, summarised so that any frame range is cheap to total.
+
+   Never holds the cube. What it holds is a cumulative sum per block of
+   frames, raw and dead-time-corrected, each ``(n_blocks + 1, n_elements,
+   n_bins)`` float64 -- see the module docstring for the measurements that
+   shape this.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: path
+
+
+   .. py:attribute:: master
+
+
+   .. py:attribute:: n_points
+      :value: None
+
+
+
+   .. py:property:: have_dead_time
+      :type: bool
+
+
+
+   .. py:property:: frames_per_point
+      :type: int | None
+
+
+      
+      Frames per scan point, where the two divide evenly.
+
+      ``None`` when they do not -- an aborted scan writes a ratio that means
+      nothing (scan 125: 800 frames, 100 points declared, 9 taken).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:property:: point_index
+      :type: numpy.ndarray | None
+
+
+      
+      Which scan point each frame belongs to, as ``(n_frames,)`` ints.
+
+      ``ArrayCounter`` first, because it is the only exact answer: it resets
+      to 1 at every point, so ``cumsum(counter == 1) - 1`` numbers the points
+      however ragged the scan. On scan 125 -- declared 100 points, aborted
+      after 9, 800 frames written -- it finds ten complete 80-frame blocks,
+      where dividing by either point count gives nonsense.
+
+      Even division second, for the 2025-1 vintage, which records no counter
+      and is 1:1 anyway. ``None`` when neither works, and then the caller
+      plots against frame number rather than inventing a mapping.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:property:: multi_frame
+      :type: bool
+
+
+      
+      Whether this scan took more than one vortex frame per point.
+
+      The sgz layout, and the one condition under which the odd/even
+      contrasts mean anything: with one frame per point there are no two
+      halves to tell apart.
+
+      Judged on the *median* point rather than the smallest. An aborted scan
+      leaves a short trailing point -- scan 125 writes ten 80-frame blocks
+      against the nine rows its stream recorded -- and that one ragged end
+      says nothing about how the scan was run.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:property:: odd_frames
+      :type: numpy.ndarray | None
+
+
+      
+      Mask of the odd-numbered frames, counting from 1 within their point.
+
+      Frame 1 of a point is odd, frame 2 even, and so on -- the user's
+      numbering, and the only thing that fixes the sign of a difference, so
+      it is repeated on every label that carries one.
+
+      ``ArrayCounter`` answers exactly, being a 1-based position that
+      restarts at each point (1..88 on the sgz scans). Where a file lacks it
+      the position within an evenly divided point stands in, and where
+      neither is available there is no numbering to speak of and this is
+      ``None`` -- which only happens on scans that are not ``multi_frame``
+      anyway.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: roi_trend(lo: int, hi: int, slot: str = 'roi') -> tuple[numpy.ndarray, numpy.ndarray | None]
+
+      
+      Counts in bins ``[lo, hi]`` per frame, as ``(n_frames, n_elements)``.
+
+      Raw and dead-time corrected, both from the one pass -- the correction
+      is a per-frame, per-element factor, constant across bins, so summing
+      the bins first and scaling after is the same number as scaling each bin
+      and summing, for a fraction of the arithmetic.
+
+      The pyramid cannot serve this: it is cumulative *per block*, so it has
+      no frame interiors left to report. So this reads the cube, in
+      ``READ_CHUNK`` blocks like :meth:`_sum_slice` -- 0.08 s for 800 frames,
+      1.0 s for 8000 -- and the result is cached on ``(lo, hi)``. One array
+      answers every element selection and both dead-time variants, which is
+      what keeps ticking an element off a redraw rather than a re-read.
+
+      *slot* is which cache the answer is kept in. Several callers want
+      different ranges at the same time -- the ROI band, and one band per
+      computed monitor -- and a single slot would make every redraw read
+      the cube again for each of them. A slot each, rather than a dict of
+      the last few ranges: a drag makes a new key per step, so an eviction
+      policy would throw away the other bands' arrays on every one of
+      them. Nothing is evicted, so the cost is one such array per slot in
+      use -- 0.6 MB per slot on scan 597, and only for a monitor that has
+      actually been divided by.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: range_sum(first: int, last: int, dead_time: bool, part: str = 'all') -> numpy.ndarray
+
+      
+      Total frames *first* to *last* inclusive, as ``(n_elements, n_bins)``.
+
+      Whole blocks come out of the pyramid by subtraction; the partial block
+      at each end is read from the file. Clamped rather than refused, because
+      one spin-box range is shared by scans of different length.
+
+      *part* picks which frames of each scan point are counted, numbering
+      them from 1: ``"all"``, ``"odd"``, ``"even"``, or ``"difference"`` for
+      odd minus even. Everything but ``"all"`` needs :attr:`odd_frames`, and
+      the first such call builds :meth:`_odd_pyramid`; after that they are
+      all subtractions and cost what ``"all"`` costs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: MonitorRoiWindow(parent, monitor: str)
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QDialog`
+
+
+   
+   Picks the energy window one computed monitor counts in.
+
+   Opened when a monitor from :data:`COMPUTED_MONITORS` is chosen, because
+   such a monitor is not a channel read from the master: it is one element of
+   this cube, summed over a window, and a window has to be chosen somewhere.
+   The master's own ``vortex_total_roi1`` is a fixed hardware region whose
+   bounds these files record nowhere, so there is nothing to inherit and the
+   choice has to be made here.
+
+   **One instance per computed monitor**, each holding its own band, rather
+   than one that retitles itself when the monitor changes. A single instance
+   would have to re-seed its two boxes on every switch, and those writes go
+   through :meth:`_set_range` while the viewer still holds the *old*
+   monitor's range -- which is the value the guard there compares against, so
+   the reseed would write one monitor's band into the other's. Two instances
+   have no such path.
+
+   Non-modal, and it drives the parent's redraw on every change: the way to
+   use it is to drag the band and watch the trend next door move. The range
+   outlives the window -- closing it keeps what was picked -- because it
+   belongs to the viewer, not to this dialog.
+
+   Shows its own element alone, over the frames the main window is showing,
+   and on a log axis by default: picking a region out of a fluorescence
+   spectrum means seeing the three decades under the line, which is exactly
+   what a linear axis hides.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: viewer
+
+
+   .. py:attribute:: monitor
+
+
+   .. py:attribute:: element
+
+
+   .. py:attribute:: span
+      :value: None
+
+
+
+   .. py:method:: refresh(*_)
+
+      
+      Redraw this monitor's element over the frames the main window shows.
+
+      Cheap enough to do on every parent redraw: the pyramid answers a frame
+      range without touching the cube, so this is arithmetic on arrays
+      already in memory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: closeEvent(event)
+
+      
+      Let the window shut without taking the chosen range with it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: SpectrumViewerWindow(paths, parent=None)
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QMainWindow`
+
+
+   
+   Plots one or more MCA spectra, overlaid, against bin number.
+
+   Several scans share one frame range and one set of element ticks, because
+   the reason to open them together is to compare them and a comparison needs
+   the same reduction on both sides. A scan shorter than the range gets what
+   it has, and the status bar says which were clamped.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: data
+
+
+   .. py:attribute:: max_elements
+
+
+   .. py:attribute:: max_frames
+
+
+   .. py:attribute:: max_bins
+
+
+   .. py:attribute:: any_dead_time
+
+
+   .. py:attribute:: default_bin_range
+
+
+   .. py:attribute:: roi_center_kev
+      :value: 0.0
+
+
+
+   .. py:attribute:: roi_width_ev
+      :value: 200.0
+
+
+
+   .. py:attribute:: roi_span
+      :value: None
+
+
+
+   .. py:attribute:: monitor_ranges_kev
+      :type:  dict[str, tuple[float, float]]
+
+
+   .. py:attribute:: monitor_windows
+      :type:  dict[str, MonitorRoiWindow]
+
+
+   .. py:method:: monitor_bins(monitor: str) -> tuple[int, int]
+
+      
+      The inclusive bin window one computed monitor is summed over.
+
+      Derived from :attr:`monitor_ranges_kev` on every use, exactly as
+      :meth:`_roi_bins` is derived from the ROI boxes: the range is an
+      energy, so a recalibration moves the monitor's bins without anyone
+      reopening the dialog.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: closeEvent(event)
+
+
+.. py:function:: main(argv=None)
+

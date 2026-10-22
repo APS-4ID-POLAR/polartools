@@ -1,0 +1,186 @@
+polartools.scan_viewer
+======================
+
+.. py:module:: polartools.scan_viewer
+
+.. autoapi-nested-parse::
+
+   The scan browser, with the softglue spectrum window behind its Spc button.
+
+   Everything in the browser itself -- the file tree, the scan table, the plots,
+   the reduce tab -- is :mod:`polartools._scan_viewer_base`, unchanged and
+   imported. The only difference is which spectrum viewer its "Load Spectrum"
+   button opens: :mod:`polartools.spectrum_viewer`, the softglue edition, which
+   adds the Combine box for scans that took more than one vortex frame per point
+   and offers ``vortex_total_el1`` and ``vortex_total_el7`` as monitors.
+
+   The browser itself gains five things, all through the same subclass: bold
+   text throughout; a blue scan number on any scan that wrote more than one
+   vortex frame per point -- the sgz softglue layout, and the scans this
+   edition's Combine box has something to say about; a Find row in the Baseline
+   window that jumps to a field by part of its name; a directory listing that
+   appears at once instead of after every file has been read, which on a
+   2714-scan directory is the difference between 0.05 s and 82 s; and an Auto
+   refresh button that adds scans to the listing as they land.
+
+   Listing a scan whose file is still being written is the one place this
+   edition deliberately shows something the plain browser does not: that file
+   is there, so it gets a row with its scan number and blank cells, rather than
+   being dropped for not opening yet.
+
+   This is a rebind and not a fork on purpose. ``_scan_viewer_base`` is 466 KB,
+   it is what the beamline runs every day, and it looks ``SpectrumViewerWindow``
+   up as a module global at the moment the button is pressed -- so swapping that
+   one name is the whole of the difference, and a copy of the file would only
+   mean every later fix to the browser had to be made twice. Run it the same
+   way::
+
+       scan-viewer [directory]
+
+   Both viewers can be open at once; they share no state.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.scan_viewer.SOFTGLUE_COLOR
+   polartools.scan_viewer.FILL_SLICE_MS
+   polartools.scan_viewer.PREFETCH_THREADS
+   polartools.scan_viewer.PREFETCH_BYTES
+   polartools.scan_viewer.PREFETCH_AHEAD
+   polartools.scan_viewer.PREFETCH_PROBE
+   polartools.scan_viewer.PREFETCH_IDLE_S
+   polartools.scan_viewer.REFRESH_INTERVAL_MS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.scan_viewer.SgHdfViewer
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.scan_viewer.main
+
+
+Module Contents
+---------------
+
+.. py:data:: SOFTGLUE_COLOR
+
+.. py:data:: FILL_SLICE_MS
+   :value: 5
+
+
+.. py:data:: PREFETCH_THREADS
+   :value: 16
+
+
+.. py:data:: PREFETCH_BYTES
+   :value: 65536
+
+
+.. py:data:: PREFETCH_AHEAD
+   :value: 64
+
+
+.. py:data:: PREFETCH_PROBE
+   :value: 32
+
+
+.. py:data:: PREFETCH_IDLE_S
+   :value: 0.001
+
+
+.. py:data:: REFRESH_INTERVAL_MS
+   :value: 5000
+
+
+.. py:class:: SgHdfViewer(*args, **kwargs)
+
+   Bases: :py:obj:`polartools._scan_viewer_base.HdfViewer`
+
+
+   
+   The browser, in bold, with softglue scan numbers in blue.
+
+   A subclass and not an edit to ``_scan_viewer_base.py``: that file is what the
+   beamline runs every day and stays byte-for-byte identical. Both additions
+   are things the base class has no hook for, so each overrides the smallest
+   method that can carry it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:method:: closeEvent(event)
+
+      
+      Stop the background work before the base class remembers and closes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:function:: main()
+
+   
+   Console entry point for the ``scan-viewer`` application.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
