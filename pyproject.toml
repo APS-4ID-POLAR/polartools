@@ -33,17 +33,21 @@ dependencies = [
     "dask",
     "databroker",
     "databroker-pack",
-    "h5py",
-    "hdf5plugin",
+    "h5py>=3",
+    "hdf5plugin>=3",
     "imageio",
-    "ipython",
     "lmfit",
-    "matplotlib",
+    # 3.5 is the first release with the binding-agnostic backend_qtagg,
+    # which every Qt figure canvas in the viewers imports.
+    "matplotlib>=3.5",
     "numpy",
     "pandas",
-    "pyqtgraph",
-    "PyQt6",
+    # 0.13 is the first release that handles PyQt6 and numpy 2 together.
+    "pyqtgraph>=0.13",
+    "PyQt6>=6.2",
     "pyresttable",
+    # Read by process_flyscan to parse the diffractometer metadata blob.
+    "PyYAML",
     "scipy",
     # setuptools provides the distutils shim that databroker-pack still
     # imports under Python 3.12+ (stdlib distutils was removed in 3.12).
@@ -51,7 +55,13 @@ dependencies = [
     "spec2nexus",
     "suitcase-csv",
     "suitcase-json-metadata",
+    # manage_database imports suitcase.utils directly; it would otherwise
+    # only arrive as a databroker-pack transitive.
+    "suitcase-utils",
     "tiled",
+    # diffraction imports xarray.DataArray directly; it would otherwise only
+    # arrive as a databroker transitive.
+    "xarray",
     "xraydb",
 ]
 
@@ -161,6 +171,9 @@ omit = [
     "polartools/scan_viewer.py",
     "polartools/spectrum_viewer.py",
     "polartools/image_viewer.py",
+    "polartools/flyscan_gui_dichro.py",
+    "polartools/dichro_maps.py",
+    "polartools/process_flyscan.py",
 ]
 
 [tool.coverage.report]

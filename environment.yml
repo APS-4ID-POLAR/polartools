@@ -11,7 +11,11 @@ dependencies:
   - python >=3.10,<3.13
   - pip
   - hdf5plugin
-  - pyqt
+  # pyqt6, not pyqt: conda-forge's `pyqt` is still PyQt5 and the viewers are
+  # PyQt6. It also pulls qt6-main, which brings xcb-util-cursor -- the PyPI
+  # PyQt6 wheel does not, and Qt >=6.5 cannot load the xcb platform plugin
+  # without it.
+  - pyqt6
   - suitcase-utils=0.5.3  # pinned to match older databroker-pack output
   - pip:
       - -e .[dev,docs]
