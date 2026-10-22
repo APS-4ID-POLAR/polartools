@@ -12,13 +12,17 @@ the three maps. The reduction itself -- position stream to per-frame x, y
 and I0, detector file to per-frame ROI sum -- is
 :mod:`polartools.process_flyscan`.
 
-Settings are remembered in ``flyscan_gui_dichro.config.json``, written to
-the working directory rather than to ``QSettings``: the folder, ROIs, scan
-numbers and colour limits that matter are the ones for the analysis
-directory you launched from, and a second experiment should not inherit
-them. Run with::
+Settings live in a JSON file rather than in ``QSettings``: the folder,
+ROIs, scan numbers and colour limits worth keeping are the ones for the
+analysis directory being worked in, and a second experiment should not
+inherit them. The file is read at startup -- ``./flyscan_gui_dichro.config.json`` unless
+``--config`` names another -- but nothing is written until the Autosave
+button in the status bar is pressed, so launching in a directory leaves
+no trace in it. The destination can be changed while running; neither it
+nor the Autosave state carries over to the next run, by design, so a
+session never writes somewhere forgotten. Run with::
 
-    flyscan-dichro-gui [--folder NdFeB] [--cr 490] [--cl 491]
+    flyscan-dichro-gui [--folder NdFeB] [--cr 490] [--cl 491] [--config FILE]
 """
 
 import argparse
@@ -201,25 +205,32 @@ def _get_frame_count(folder, stream, scan_number):
         return 0
 
 
-def _config_path():
+def _default_config_path():
     return os.path.join(os.getcwd(), CONFIG_FILENAME)
 
 
-def _load_config():
+def _load_config(path):
     try:
-        with open(_config_path(), "r") as f:
+        with open(path, "r") as f:
             data = json.load(f)
     except Exception:
         return {}
     return data if isinstance(data, dict) else {}
 
 
-def _save_config(cfg):
+def _save_config(cfg, path):
+    """Write ``cfg`` to ``path``; return ``None``, or why it failed.
+
+    Reported rather than swallowed, unlike the load side: the destination
+    is one the user picked, so a directory they cannot write to has to say
+    so instead of dropping every later change in silence.
+    """
     try:
-        with open(_config_path(), "w") as f:
+        with open(path, "w") as f:
             json.dump(cfg, f, indent=2)
-    except Exception:
-        pass
+    except Exception as e:
+        return repr(e)
+    return None
 
 
 def _align_and_normalize(x, y, z, i0=None):
@@ -1780,7 +1791,13 @@ class VortexTab(QtWidgets.QWidget):
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, initial_folder=None, cli_cr=None, cli_cl=None):
+    def __init__(
+        self,
+        initial_folder=None,
+        cli_cr=None,
+        cli_cl=None,
+        config_path=None,
+    ):
         super().__init__()
         self.setWindowTitle("Flyscan dichroism viewer")
         # Roughly square content area so the 2x2 grid cells are square-ish
@@ -1813,6 +1830,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._vortex_preview_scan = None
         self._folder_history = []
         self._loading_state = False  # guards auto-save while restoring config
+        self._config_path = config_path or _default_config_path()
 
         self.folder_combo = QtWidgets.QComboBox()
         self.folder_combo.setMinimumWidth(320)
@@ -1952,10 +1970,36 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status = self.statusBar()
         self.status.showMessage("Ready")
 
+        # The settings controls go in the status bar, not the top row: the
+        # window is plot-heavy, the top row is already full, and "where am I
+        # saving, and am I saving" is the question a status bar exists to
+        # answer. Permanent widgets sit to the right of showMessage(), so
+        # they survive every status update.
+        self.config_label = QtWidgets.QLabel()
+        self.config_label.setStyleSheet("QLabel { color: #666; }")
+        config_btn = QtWidgets.QPushButton("Settings file...")
+        config_btn.setToolTip(
+            "Choose where the settings are written.\n"
+            "A destination, not a file to open: what is on screen is kept."
+        )
+        config_btn.clicked.connect(self._choose_config_path)
+        self.autosave_btn = QtWidgets.QPushButton("Autosave")
+        self.autosave_btn.setCheckable(True)
+        self.autosave_btn.setToolTip(
+            "Write the settings file on every change, starting now.\n"
+            "Off at startup and not remembered between runs, so nothing is\n"
+            "written to the working directory unless you ask for it."
+        )
+        self.autosave_btn.toggled.connect(self._on_autosave_toggled)
+        self.status.addPermanentWidget(self.config_label)
+        self.status.addPermanentWidget(config_btn)
+        self.status.addPermanentWidget(self.autosave_btn)
+        self._update_config_label()
+
         # Restore persisted state before wiring auto-save so re-applied values
         # don't immediately trigger a re-save with the same content.
         self._apply_loaded_config(
-            _load_config(),
+            _load_config(self._config_path),
             cli_folder=initial_folder,
             cli_cr=cli_cr,
             cli_cl=cli_cl,
@@ -2106,9 +2150,59 @@ class MainWindow(QtWidgets.QMainWindow):
         del self._folder_history[FOLDER_HISTORY_MAX:]
         self._populate_folder_combo()
 
-    def _save_state(self):
-        if self._loading_state:
+    def _update_config_label(self):
+        """Show the destination, elided from the left.
+
+        From the left because these paths share their head and differ in
+        their tail -- .../NdFeB vs .../test -- so the start is the part
+        that can go.
+        """
+        self.config_label.setText(
+            self.config_label.fontMetrics().elidedText(
+                self._config_path, QtCore.Qt.TextElideMode.ElideLeft, 320
+            )
+        )
+        self.config_label.setToolTip(self._config_path)
+
+    def _choose_config_path(self):
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            "Settings file",
+            self._config_path,
+            "JSON (*.json);;All files (*)",
+        )
+        if not path:
             return
+        self._config_path = path
+        self._update_config_label()
+        # Only a destination is changed. Reading the file back would throw
+        # away the settings on screen, which are the ones being worked with.
+        if self.autosave_btn.isChecked():
+            self._write_config()
+        else:
+            self.status.showMessage(f"Settings will be written to {path}")
+
+    def _on_autosave_toggled(self, on):
+        if not on:
+            self.status.showMessage("Autosave off.")
+            return
+        # Write at once, so the file matches the screen rather than waiting
+        # for whatever spinbox happens to be touched next.
+        if self._write_config():
+            self.status.showMessage(f"Autosaving to {self._config_path}")
+
+    def _save_state(self):
+        if self._loading_state or not self.autosave_btn.isChecked():
+            return
+        self._write_config()
+
+    def _write_config(self):
+        """Write the settings now. Returns whether it worked.
+
+        A failed write switches autosave off instead of failing again on
+        every later change: the path is wrong, only the user can fix it, so
+        say so once and stop.
+        """
         cfg = {
             "folder": self._folder,
             "folder_history": self._folder_history,
@@ -2137,7 +2231,14 @@ class MainWindow(QtWidgets.QMainWindow):
             },
             "style": self.style_combo.currentText(),
         }
-        _save_config(cfg)
+        err = _save_config(cfg, self._config_path)
+        if err is None:
+            return True
+        self.status.showMessage(f"Could not write {self._config_path}: {err}")
+        self.autosave_btn.blockSignals(True)
+        self.autosave_btn.setChecked(False)
+        self.autosave_btn.blockSignals(False)
+        return False
 
     def closeEvent(self, event):
         self._save_state()
@@ -2551,6 +2652,14 @@ def main():
     parser.add_argument(
         "--cl", default=None, help="Initial CL scan(s): same syntax as --cr"
     )
+    parser.add_argument(
+        "--config",
+        default=None,
+        help=(
+            "Settings file to read at startup and autosave to "
+            f"(default: ./{CONFIG_FILENAME})"
+        ),
+    )
     args = parser.parse_args()
 
     app = QtWidgets.QApplication(sys.argv)
@@ -2558,6 +2667,7 @@ def main():
         initial_folder=args.folder,
         cli_cr=args.cr,
         cli_cl=args.cl,
+        config_path=args.config,
     )
     win.show()
     sys.exit(app.exec())
