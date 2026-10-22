@@ -80,6 +80,7 @@ docs = [
 [project.scripts]
 xmcd-gui = "polartools.xmcd_gui:main"
 scan-viewer = "polartools.scan_viewer:main"
+flyscan-dichro-gui = "polartools.flyscan_gui_dichro:main"
 
 [project.urls]
 Homepage = "https://github.com/APS-4ID-POLAR/polartools"
