@@ -329,9 +329,7 @@ class SgHdfViewer(_base.HdfViewer):
         """
         if not self._loading_cheap:
             return super()._scan_row(path)
-        return [_base.scan_number(path)] + [""] * (
-            len(_base.FILE_COLUMNS) - 1
-        )
+        return [_base.scan_number(path)] + [""] * (len(_base.FILE_COLUMNS) - 1)
 
     def _on_selection_changed(self):
         """Nothing during the cheap pass; :meth:`_reload_file_list` calls it after.
@@ -358,7 +356,11 @@ class SgHdfViewer(_base.HdfViewer):
         self._fill_paths = []
         for row in range(table.rowCount()):
             item = table.item(row, 0)
-            data = item.data(QtCore.Qt.ItemDataRole.UserRole) if item is not None else None
+            data = (
+                item.data(QtCore.Qt.ItemDataRole.UserRole)
+                if item is not None
+                else None
+            )
             self._fill_paths.append(Path(data) if data else None)
         self._fill_done = bytearray(len(self._fill_paths))
         self._prefetch_sent = bytearray(len(self._fill_paths))
@@ -430,7 +432,9 @@ class SgHdfViewer(_base.HdfViewer):
         them wait out the two thousand above.
         """
         first, last = self._visible_rows()
-        for row in range(max(first, 0), min(last, len(self._fill_paths) - 1) + 1):
+        for row in range(
+            max(first, 0), min(last, len(self._fill_paths) - 1) + 1
+        ):
             if not self._fill_done[row]:
                 return row
         while (
@@ -461,9 +465,13 @@ class SgHdfViewer(_base.HdfViewer):
             # read a thousand files that no one is waiting on.
             self._drop_prefetch_pool()
             return
-        self._prefetch_futures = [f for f in self._prefetch_futures if not f.done()]
+        self._prefetch_futures = [
+            f for f in self._prefetch_futures if not f.done()
+        ]
         room = PREFETCH_AHEAD - len(self._prefetch_futures)
-        for row in range(start, min(start + 4 * PREFETCH_AHEAD, len(self._fill_paths))):
+        for row in range(
+            start, min(start + 4 * PREFETCH_AHEAD, len(self._fill_paths))
+        ):
             if room <= 0:
                 break
             if self._prefetch_sent[row] or self._fill_done[row]:
@@ -896,7 +904,9 @@ class SgHdfViewer(_base.HdfViewer):
             self.baseline_table.item(target, 0),
             QtWidgets.QAbstractItemView.ScrollHint.PositionAtCenter,
         )
-        self.baseline_find_label.setText(f"{rows.index(target) + 1} / {len(rows)}")
+        self.baseline_find_label.setText(
+            f"{rows.index(target) + 1} / {len(rows)}"
+        )
 
     def _update_baseline(self):
         """Refill the table as the base class does, then re-answer the query.

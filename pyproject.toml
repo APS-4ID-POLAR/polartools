@@ -123,12 +123,6 @@ extend-exclude = [
     "polartools/_larch.py",
     "polartools/_pyrixs.py",
     "docs/source/conf.py",
-    # Vendored from /home/beams/POLAR/joerg/python, kept close to upstream so
-    # later fixes there still apply; not reformatted to this project's style.
-    "polartools/_scan_viewer_base.py",
-    "polartools/scan_viewer.py",
-    "polartools/spectrum_viewer.py",
-    "polartools/image_viewer.py",
 ]
 
 [tool.ruff.lint]

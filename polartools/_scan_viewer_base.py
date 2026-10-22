@@ -518,7 +518,10 @@ MODE_LABELS = {
 CONTRAST_SOURCES = {
     MODE_DICHRO: {key: "DC" for key in CONTRASTS},
     MODE_LOCKIN_POL: {
-        "xas": "DC", "xmucd": "DC", "xncd": "AC", "xmcd": "AC",
+        "xas": "DC",
+        "xmucd": "DC",
+        "xncd": "AC",
+        "xmcd": "AC",
     },
 }
 # The hints value that says a scan locked in -- qxscan_current_pr(lockin=True)
@@ -592,13 +595,25 @@ SAME_X_STEPS = 0.5
 # below are their only guide; without the modern names reduce_defaults falls
 # through to channels[0] and picks 4idbI0 twice -- a dead channel over itself.
 REDUCE_DETECTORS = (
-    "eiger_stats1_total", "vortex_total_roi1", "vortex_total_roi2",
-    "4idbI1", "4idgI1", "4idhI1",
-    "bI1", "bI0", "gI1", "APD",
+    "eiger_stats1_total",
+    "vortex_total_roi1",
+    "vortex_total_roi2",
+    "4idbI1",
+    "4idgI1",
+    "4idhI1",
+    "bI1",
+    "bI0",
+    "gI1",
+    "APD",
 )
 REDUCE_MONITORS = (
-    "4idgI0", "4idbI0", "4idhI0",
-    "bI0", "gI0", "hI0", "Time1",
+    "4idgI0",
+    "4idbI0",
+    "4idhI0",
+    "bI0",
+    "gI0",
+    "hI0",
+    "Time1",
 )
 # Where the "Clip map scale" box starts: on a 1500-cell raster, the eight most
 # extreme cells either way. Small enough that a map with nothing wrong with it
@@ -623,8 +638,18 @@ BEAM_GONE_FRACTION = 0.05
 # harder to pick from than it is useful. These cover the two things a map can
 # be asked to say.
 COLOR_MAPS = (
-    "viridis", "plasma", "inferno", "magma", "cividis", "turbo", "gray", "jet",
-    "seismic", "coolwarm", "bwr", "RdBu_r",
+    "viridis",
+    "plasma",
+    "inferno",
+    "magma",
+    "cividis",
+    "turbo",
+    "gray",
+    "jet",
+    "seismic",
+    "coolwarm",
+    "bwr",
+    "RdBu_r",
 )
 # Those of COLOR_MAPS built around a middle colour rather than running dark to
 # bright. The distinction is the whole of what "Center on 0" acts on: a
@@ -657,7 +682,13 @@ STATS_TABLE_CURVES = 3
 # as well as it indents.
 STATS_PEAK_INDENT = "    "
 STATS_COLUMNS = [
-    "Curve", "Max Y", "@X (max)", "Min Y", "@X (min)", "Center", "FWHM",
+    "Curve",
+    "Max Y",
+    "@X (max)",
+    "Min Y",
+    "@X (min)",
+    "Center",
+    "FWHM",
 ]
 # Appended to those, and only while "Integrate" is ticked. Kept off by
 # default because the table shares its height with the plot, and two more
@@ -675,7 +706,11 @@ CURVE_AREA_EXPORT = [("curve_area", "area"), ("curve_net_area", "net_area")]
 # area" are trapezoids over the points drawn; these five come from the
 # fitted model and will not agree with either -- see peak_fit.
 STATS_FIT_COLUMNS = [
-    "Fit center", "Fit FWHM", "Fit height", "Fit area", "R2",
+    "Fit center",
+    "Fit FWHM",
+    "Fit height",
+    "Fit area",
+    "R2",
 ]
 # Slipped in among those, and only while the shape being fitted has a
 # mixing to report -- the pseudo-Voigt and nothing else, see PEAK_MIX.
@@ -727,7 +762,16 @@ TREND_X_SCAN = "Scan number"
 BASELINE_TREND_NOISE = 1e-4
 BASELINE_TREND_SNR = 10.0
 HDF_SUFFIXES = (".hdf", ".h5", ".hdf5")
-FILE_COLUMNS = ["Scan", "Img", "Spc", "Plan", "Motor", "Range", "Pts", "Count [s]"]
+FILE_COLUMNS = [
+    "Scan",
+    "Img",
+    "Spc",
+    "Plan",
+    "Motor",
+    "Range",
+    "Pts",
+    "Count [s]",
+]
 # Starting widths. Every column is user-resizable from here; the motor name is
 # the one that can run long, so it starts wide and is elided rather than
 # allowed to shove the other columns aside.
@@ -797,7 +841,8 @@ def stream_fields(path: Path, stream: str) -> list[str]:
             names = [
                 name
                 for name in group.keys()
-                if isinstance(group[name], h5py.Group) and "value" in group[name]
+                if isinstance(group[name], h5py.Group)
+                and "value" in group[name]
             ]
             if _epoch_source(group) is not None:
                 names.append(EPOCH_FIELD)
@@ -850,7 +895,9 @@ def _resolve_hint_field(name: str, fields: list[str]) -> str | None:
     return None
 
 
-def stream_default_fields(stream: str, key: str, fields: list[str]) -> list[str]:
+def stream_default_fields(
+    stream: str, key: str, fields: list[str]
+) -> list[str]:
     """A stream's own default ``x``/``y``/``norm``/``right`` fields that *fields* holds.
 
     Empty for a stream with no entry in :data:`STREAM_DEFAULTS`, which is every
@@ -904,7 +951,9 @@ def scan_y_fields(
     return chosen
 
 
-def default_monitor_field(fields: list[str], stream: str = PRIMARY_STREAM) -> str:
+def default_monitor_field(
+    fields: list[str], stream: str = PRIMARY_STREAM
+) -> str:
     """What the Norm tick starts on -- nothing, unless the stream asks.
 
     A scan's ``hints`` nominate a monitor and this deliberately passes it over.
@@ -974,7 +1023,9 @@ def _as_text(value) -> str:
     if value.size == 0:
         return ""
     item = value[0]
-    return item.decode(errors="replace") if isinstance(item, bytes) else str(item)
+    return (
+        item.decode(errors="replace") if isinstance(item, bytes) else str(item)
+    )
 
 
 def _meta_text(group, key: str) -> str:
@@ -1024,7 +1075,7 @@ def _yaml_scalar(text: str, key: str) -> str:
     prefix = f"{key}:"
     for line in text.splitlines():
         if line.startswith(prefix):
-            return line[len(prefix):].strip().strip("'\"")
+            return line[len(prefix) :].strip().strip("'\"")
     return ""
 
 
@@ -1180,10 +1231,13 @@ def read_scan_info(path: Path) -> dict:
         # These are field names (``eiger_stats1_total``), unlike ``detectors``
         # above, which names the devices (``eiger``).
         "hints": {
-            "dimensions": [], "detectors": [], "monitor": "", "gridding": "",
+            "dimensions": [],
+            "detectors": [],
+            "monitor": "",
+            "gridding": "",
             "polarization": "",
         },
-        "ranges": [],          # (motor, first, last, n)
+        "ranges": [],  # (motor, first, last, n)
         "count_time": None,
         "started": "",
         "plan_args": "",
@@ -1199,7 +1253,8 @@ def read_scan_info(path: Path) -> dict:
                 info["motors"] = _yaml_items(_meta_text(meta, "motors"))
                 # grid_scan records the raster size here; a 1-D plan has none.
                 info["shape"] = [
-                    int(n) for n in _yaml_items(_meta_text(meta, "shape"))
+                    int(n)
+                    for n in _yaml_items(_meta_text(meta, "shape"))
                     if n.lstrip("-").isdigit()
                 ]
                 info["detectors"] = _yaml_items(_meta_text(meta, "detectors"))
@@ -1230,7 +1285,12 @@ def read_scan_info(path: Path) -> dict:
                     values = np.asarray(sub["value"][()], dtype=float).ravel()
                     if values.size:
                         info["ranges"].append(
-                            (motor, float(values[0]), float(values[-1]), int(values.size))
+                            (
+                                motor,
+                                float(values[0]),
+                                float(values[-1]),
+                                int(values.size),
+                            )
                         )
                 # The dwell per point, off the scaler's own clock channel.
                 # That channel is named for the scaler it belongs to --
@@ -1257,9 +1317,15 @@ def read_scan_info(path: Path) -> dict:
                     )
                 for name in primary:
                     field = primary[name]
-                    stamp = field.get("time") if isinstance(field, h5py.Group) else None
+                    stamp = (
+                        field.get("time")
+                        if isinstance(field, h5py.Group)
+                        else None
+                    )
                     if stamp is not None and "start_time_iso" in stamp.attrs:
-                        info["started"] = _as_text(stamp.attrs["start_time_iso"])[:19]
+                        info["started"] = _as_text(
+                            stamp.attrs["start_time_iso"]
+                        )[:19]
                         break
     except OSError:
         pass
@@ -1489,7 +1555,9 @@ def reduce_channels(path: Path) -> list[str]:
             )
         )
     )
-    channels = [name for name in fields if name != EPOCH_FIELD] if enough else []
+    channels = (
+        [name for name in fields if name != EPOCH_FIELD] if enough else []
+    )
     if key is not None:
         _REDUCE_CACHE[key] = channels
     return channels
@@ -1547,12 +1615,18 @@ def reduce_defaults(
     if not detectors or not monitors:
         return channels[0], channels[0]
     try:
-        data = read_stream(path, sorted(set(detectors + monitors)), PRIMARY_STREAM)
+        data = read_stream(
+            path, sorted(set(detectors + monitors)), PRIMARY_STREAM
+        )
     except OSError:
         return detectors[0], monitors[0]
     for detector in detectors:
         for monitor in monitors:
-            if detector == monitor or detector not in data or monitor not in data:
+            if (
+                detector == monitor
+                or detector not in data
+                or monitor not in data
+            ):
                 continue
             if np.isfinite(
                 absorption(data[detector], data[monitor], transmission)
@@ -1564,7 +1638,9 @@ def reduce_defaults(
     return detectors[0], monitors[0]
 
 
-def split_axes(path: Path, stream: str) -> tuple[list[str], list[str], list[str]]:
+def split_axes(
+    path: Path, stream: str
+) -> tuple[list[str], list[str], list[str]]:
     """What this stream splits into curves: axis names, values, setpoints.
 
     Two shapes of scan arrive here. A magneto-chiral scan is reduced by the
@@ -1630,7 +1706,7 @@ def _grid_levels(values, count) -> np.ndarray | None:
         return None
     order = np.argsort(values, kind="stable")
     gaps = np.diff(values[order])
-    cuts = np.sort(np.argsort(gaps, kind="stable")[-(count - 1):])
+    cuts = np.sort(np.argsort(gaps, kind="stable")[-(count - 1) :])
     within = np.delete(gaps, cuts)
     if len(within) and gaps[cuts].min() <= GRID_LEVEL_MARGIN * within.max():
         return None
@@ -1693,8 +1769,11 @@ def _build_grid(slow, fast, values, shape, slow_name, fast_name) -> dict | None:
 
 
 def read_grid(
-    path: Path, value_field: str, monitor_field: str = "",
-    stream: str = PRIMARY_STREAM, transmission: bool = False,
+    path: Path,
+    value_field: str,
+    monitor_field: str = "",
+    stream: str = PRIMARY_STREAM,
+    transmission: bool = False,
 ) -> dict | None:
     """*value_field* laid out over a two-motor grid scan, or ``None``.
 
@@ -1760,7 +1839,10 @@ def read_grid(
             if slow_name not in data or fast_name not in data:
                 continue
             grid = _build_grid(
-                data[slow_name], data[fast_name], values, info["shape"],
+                data[slow_name],
+                data[fast_name],
+                values,
+                info["shape"],
                 labels[0] if labels else slow_name,
                 labels[1] if labels else fast_name,
             )
@@ -1775,13 +1857,19 @@ def read_grid(
                 # scans whose positioners come out exact (156, 168) never
                 # reach here; scan 280's, which wander, are mapped by it.
                 snapped = _snap_grid_axes(
-                    data[slow_name], data[fast_name], len(values),
+                    data[slow_name],
+                    data[fast_name],
+                    len(values),
                     info["shape"],
                 )
                 if snapped is not None:
                     grid = _build_grid(
-                        snapped[0], snapped[1], values, info["shape"],
-                        labels[0], labels[1],
+                        snapped[0],
+                        snapped[1],
+                        values,
+                        info["shape"],
+                        labels[0],
+                        labels[1],
                     )
             if grid is not None:
                 return grid
@@ -1789,8 +1877,11 @@ def read_grid(
 
 
 def read_dichro_grid(
-    path: Path, detector_field: str, monitor_field: str,
-    stream: str = PRIMARY_STREAM, transmission: bool = False,
+    path: Path,
+    detector_field: str,
+    monitor_field: str,
+    stream: str = PRIMARY_STREAM,
+    transmission: bool = False,
 ) -> list[tuple[str, dict]] | None:
     """XAS and XMCD maps from a two-motor mesh scan with polarization pairing.
 
@@ -1824,13 +1915,18 @@ def read_dichro_grid(
         slow_options = _grid_axis_candidates(available, info["motors"][0])
         fast_options = _grid_axis_candidates(available, info["motors"][1])
         labels = ()
-    if (not slow_options or not fast_options or PR_FIELD not in available
-            or detector_field not in available
-            or monitor_field not in available):
+    if (
+        not slow_options
+        or not fast_options
+        or PR_FIELD not in available
+        or detector_field not in available
+        or monitor_field not in available
+    ):
         return None
 
     wanted = (
-        set(slow_options) | set(fast_options)
+        set(slow_options)
+        | set(fast_options)
         | {detector_field, monitor_field, PR_FIELD}
     )
     try:
@@ -1865,7 +1961,11 @@ def read_dichro_grid(
             slow = data[slow_name][:size]
             fast = data[fast_name][:size]
             result = _dichro_grid_from_cells(
-                slow, fast, mu, pr_plus, info["shape"],
+                slow,
+                fast,
+                mu,
+                pr_plus,
+                info["shape"],
                 labels[0] if labels else slow_name,
                 labels[1] if labels else fast_name,
             )
@@ -1875,8 +1975,13 @@ def read_dichro_grid(
 
 
 def _dichro_grid_from_cells(
-    slow: np.ndarray, fast: np.ndarray, mu: np.ndarray, pr_plus: np.ndarray,
-    shape: tuple, slow_name: str, fast_name: str,
+    slow: np.ndarray,
+    fast: np.ndarray,
+    mu: np.ndarray,
+    pr_plus: np.ndarray,
+    shape: tuple,
+    slow_name: str,
+    fast_name: str,
 ) -> list[tuple[str, dict]] | None:
     """Group *mu* by cell and retarder half, and lay the result on a raster.
 
@@ -1927,8 +2032,12 @@ def _dichro_grid_from_cells(
 
     def wrap(z):
         return {
-            "x_name": fast_name, "y_name": slow_name,
-            "x": x_axis, "y": y_axis, "z": z, "points": int(pairs),
+            "x_name": fast_name,
+            "y_name": slow_name,
+            "x": x_axis,
+            "y": y_axis,
+            "z": z,
+            "points": int(pairs),
         }
 
     return [("xas", wrap(xas)), ("xmcd", wrap(xmcd))]
@@ -1944,7 +2053,9 @@ def axis_edges(values: np.ndarray) -> np.ndarray:
     if v.size == 1:
         return np.array([v[0] - 0.5, v[0] + 0.5])
     middles = (v[1:] + v[:-1]) / 2.0
-    return np.concatenate(([2 * v[0] - middles[0]], middles, [2 * v[-1] - middles[-1]]))
+    return np.concatenate(
+        ([2 * v[0] - middles[0]], middles, [2 * v[-1] - middles[-1]])
+    )
 
 
 def clipped_limits(
@@ -1984,7 +2095,9 @@ def clipped_limits(
     finite = finite[np.isfinite(finite)]
     if finite.size < 3:
         return None, None, "neither"
-    low, high = (float(v) for v in np.percentile(finite, [percent, 100.0 - percent]))
+    low, high = (
+        float(v) for v in np.percentile(finite, [percent, 100.0 - percent])
+    )
     if not (np.isfinite(low) and np.isfinite(high)) or low >= high:
         # Flat, or so nearly flat that the percentiles coincide.
         return None, None, "neither"
@@ -2067,8 +2180,10 @@ def scale_extend(z: np.ndarray, low: float | None, high: float | None) -> str:
         high is not None and high < float(finite.max()),
     )
     return {
-        (True, True): "both", (True, False): "min",
-        (False, True): "max", (False, False): "neither",
+        (True, True): "both",
+        (True, False): "min",
+        (False, True): "max",
+        (False, False): "neither",
     }[cuts]
 
 
@@ -2189,7 +2304,9 @@ def step_groups(
         for column in columns:
             sample = column[step::steps]
             sample = sample[np.isfinite(sample)]
-            position.append(float(np.median(sample)) if sample.size else float("nan"))
+            position.append(
+                float(np.median(sample)) if sample.size else float("nan")
+            )
         values.append(tuple(position))
     if not average:
         return [(value, [step]) for step, value in enumerate(values)]
@@ -2299,8 +2416,11 @@ def _empty_contrasts(mode: str) -> dict:
         **{key: np.array([]) for key in CONTRASTS},
         "mode": mode,
         "sources": CONTRAST_SOURCES[mode],
-        "n_points": 0, "n_finite": 0, "n_energies": 0,
-        "n_complete": 0, "n_steps": 0,
+        "n_points": 0,
+        "n_finite": 0,
+        "n_energies": 0,
+        "n_complete": 0,
+        "n_steps": 0,
     }
 
 
@@ -2342,7 +2462,9 @@ def reduce_dichro(
     empty = _empty_contrasts(MODE_DICHRO)
     if size == 0:
         return empty
-    energy, pr, current, detector, monitor = (column[:size] for column in columns)
+    energy, pr, current, detector, monitor = (
+        column[:size] for column in columns
+    )
 
     mu = absorption(detector, monitor, transmission)
     on_grid = np.isfinite(energy) & np.isfinite(pr) & np.isfinite(current)
@@ -2539,7 +2661,11 @@ def read_baseline(path: Path) -> dict[str, tuple[object, object]]:
             if "value_start" in sub and "value_end" in sub:
                 before = _scalarize(sub["value_start"][()])
                 after = _scalarize(sub["value_end"][()])
-            elif "value" in sub and sub["value"].shape and sub["value"].shape[0] >= 2:
+            elif (
+                "value" in sub
+                and sub["value"].shape
+                and sub["value"].shape[0] >= 2
+            ):
                 value = np.asarray(sub["value"][()])
                 before, after = _scalarize(value[0]), _scalarize(value[-1])
             else:
@@ -2712,7 +2838,9 @@ def lockin_groups(paths: list[Path]) -> list[list[Path]]:
     Groups come back in the order their first scan appears, which is the
     table's own order.
     """
-    pooled = [path for path in paths if MAGNET_FIELD not in reduce_channels(path)]
+    pooled = [
+        path for path in paths if MAGNET_FIELD not in reduce_channels(path)
+    ]
     readings = {
         str(path): baseline_values(path, tuple(GROUP_FIELDS)) for path in pooled
     }
@@ -2812,7 +2940,10 @@ def scan_groups(paths: list[Path]) -> list[list[Path]]:
             key = (
                 signature,
                 tuple(
-                    (name, int(np.argmin(np.abs(settings[name] - reading[name]))))
+                    (
+                        name,
+                        int(np.argmin(np.abs(settings[name] - reading[name]))),
+                    )
                     for name in sorted(reading)
                 ),
             )
@@ -3177,9 +3308,8 @@ def _peak_lorentzian2(x: np.ndarray, centre: float, fwhm: float) -> np.ndarray:
 def _peak_pseudo_voigt_mixed(
     x: np.ndarray, centre: float, fwhm: float, eta: float
 ) -> np.ndarray:
-    return (
-        eta * _peak_lorentzian(x, centre, fwhm)
-        + (1.0 - eta) * _peak_gauss(x, centre, fwhm)
+    return eta * _peak_lorentzian(x, centre, fwhm) + (1.0 - eta) * _peak_gauss(
+        x, centre, fwhm
     )
 
 
@@ -3187,9 +3317,7 @@ def _peak_pseudo_voigt_mixed(
 # what it falls back to when a free eta will not stand. Kept as a function
 # of three parameters of its own because that is the signature PEAK_SHAPES
 # promises and that every shape without a mixing has.
-def _peak_pseudo_voigt(
-    x: np.ndarray, centre: float, fwhm: float
-) -> np.ndarray:
+def _peak_pseudo_voigt(x: np.ndarray, centre: float, fwhm: float) -> np.ndarray:
     return _peak_pseudo_voigt_mixed(x, centre, fwhm, 0.5)
 
 
@@ -3203,8 +3331,7 @@ def _pseudo_voigt_area(eta: float) -> float:
     before the mixing was fitted, to the last bit -- halving is exact.
     """
     return float(
-        eta * np.pi / 2.0
-        + (1.0 - eta) * np.sqrt(np.pi / (4.0 * np.log(2.0)))
+        eta * np.pi / 2.0 + (1.0 - eta) * np.sqrt(np.pi / (4.0 * np.log(2.0)))
     )
 
 
@@ -3442,7 +3569,9 @@ def peak_fit(
     width = fwhm_seed if fwhm_seed and fwhm_seed > 0.0 else span / 10.0
 
     def model(grid, height, centre, fwhm, line_slope, line_offset):
-        return height * peak(grid, centre, fwhm) + line_slope * grid + line_offset
+        return (
+            height * peak(grid, centre, fwhm) + line_slope * grid + line_offset
+        )
 
     try:
         # catch_warnings on its own only saves and restores the filter
@@ -3503,15 +3632,20 @@ def peak_fit(
     # of freedom PEAK_FIT_MIN_POINTS was chosen to leave.
     if mixed is not None and xs.size >= PEAK_FIT_MIN_POINTS + 1:
         refined = _peak_mix_refine(
-            xs, ys, mixed[0],
+            xs,
+            ys,
+            mixed[0],
             (height, centre, fwhm, line_slope, line_offset),
-            span, spread, step,
+            span,
+            spread,
+            step,
         )
         if refined is not None:
             height, centre, fwhm, line_slope, line_offset, eta = refined
             area_factor = mixed[1](eta)
     profile = (
-        peak(xs, centre, fwhm) if eta is None
+        peak(xs, centre, fwhm)
+        if eta is None
         else mixed[0](xs, centre, fwhm, eta)
     )
 
@@ -3561,11 +3695,7 @@ def fit_columns(mixed: bool) -> list[str]:
     if not mixed:
         return list(STATS_FIT_COLUMNS)
     at = STATS_FIT_COLUMNS.index("Fit FWHM") + 1
-    return (
-        STATS_FIT_COLUMNS[:at]
-        + [STATS_MIX_COLUMN]
-        + STATS_FIT_COLUMNS[at:]
-    )
+    return STATS_FIT_COLUMNS[:at] + [STATS_MIX_COLUMN] + STATS_FIT_COLUMNS[at:]
 
 
 def _blank_stats() -> dict[str, float | None]:
@@ -3703,12 +3833,15 @@ def _peak_solve(
     slope: float,
     offset: float,
     mixed=None,
-) -> tuple[
-    float | None,
-    list[tuple[float, float, float, float | None]],
-    float,
-    float,
-] | None:
+) -> (
+    tuple[
+        float | None,
+        list[tuple[float, float, float, float | None]],
+        float,
+        float,
+    ]
+    | None
+):
     """Solve one seeding and gate the answer, or ``None`` if it will not do.
 
     Returns ``(r2, [(centre, fwhm, height, eta), ...], slope, offset)``
@@ -3779,9 +3912,10 @@ def _peak_solve(
     def model(grid, *free):
         total = free[-2] * grid + free[-1]
         for k in range(peaks):
-            block = free[width * k:width * k + width]
+            block = free[width * k : width * k + width]
             total = total + block[0] * (
-                peak(grid, block[1], block[2]) if mixed is None
+                peak(grid, block[1], block[2])
+                if mixed is None
                 else mixed(grid, block[1], block[2], block[3])
             )
         return total
@@ -3851,7 +3985,8 @@ def _peak_solve(
         shaped = np.zeros_like(xs)
         for centre, fwhm, height, eta in found:
             shaped = shaped + height * (
-                peak(xs, centre, fwhm) if eta is None
+                peak(xs, centre, fwhm)
+                if eta is None
                 else mixed(xs, centre, fwhm, eta)
             )
         r2 = 1.0 - float(np.sum((target - shaped) ** 2)) / ss_total
@@ -3976,8 +4111,14 @@ def peak_fit_multi(
             seedings: list[list[tuple[float, float, float]]] = []
             for rises_first in (False, True):
                 seeds = _peak_seeds(
-                    xs, ys, peaks, step, peak,
-                    float(slope), float(offset), rises_first,
+                    xs,
+                    ys,
+                    peaks,
+                    step,
+                    peak,
+                    float(slope),
+                    float(offset),
+                    rises_first,
                 )
                 # The two orderings agree whenever find_peaks offers no
                 # more candidates than were asked for, which is most
@@ -4010,8 +4151,15 @@ def peak_fit_multi(
             for mix in attempts:
                 for seeds in seedings:
                     got = _peak_solve(
-                        xs, ys, peaks, step, peak, seeds,
-                        float(slope), float(offset), mix,
+                        xs,
+                        ys,
+                        peaks,
+                        step,
+                        peak,
+                        seeds,
+                        float(slope),
+                        float(offset),
+                        mix,
                     )
                     if got is None:
                         continue
@@ -4042,9 +4190,9 @@ def peak_fit_multi(
                 # off. The integral is the mixing's where one was
                 # fitted, so two components of one fit can take two
                 # different factors -- they are two different shapes.
-                "fit_area": height * fwhm * (
-                    area_factor if eta is None else mixed[1](eta)
-                ),
+                "fit_area": height
+                * fwhm
+                * (area_factor if eta is None else mixed[1](eta)),
                 # Blank unless this component's own mixing was fitted
                 # and kept, which peak_fit says more about.
                 "fit_eta": eta,
@@ -4373,8 +4521,10 @@ def export_table(
         # already taken by the column that scan writes itself.
         name = curve.get("combo")
         if name is None:
-            name = f"{tags[curve['path']]}: {curve['y_field']}" if overlay else (
-                curve["y_field"]
+            name = (
+                f"{tags[curve['path']]}: {curve['y_field']}"
+                if overlay
+                else (curve["y_field"])
             )
             if curve["tag"]:
                 name += f" @ {curve['tag']}"
@@ -4625,16 +4775,24 @@ class HdfViewer(QtWidgets.QMainWindow):
         self.file_table = QtWidgets.QTableWidget(0, len(FILE_COLUMNS))
         self.file_table.setHorizontalHeaderLabels(FILE_COLUMNS)
         self.file_table.verticalHeader().setVisible(False)
-        self.file_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.file_table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
-        self.file_table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection)
+        self.file_table.setEditTriggers(
+            QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers
+        )
+        self.file_table.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows
+        )
+        self.file_table.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
+        )
         file_header = self.file_table.horizontalHeader()
         # Interactive throughout: every column starts at a set width -- so a
         # long motor name does not push the others around -- and any of them
         # can be dragged wider or narrower. The last one takes up the slack.
         file_header.setStretchLastSection(True)
         for column, width in enumerate(FILE_COLUMN_WIDTHS):
-            file_header.setSectionResizeMode(column, QtWidgets.QHeaderView.ResizeMode.Interactive)
+            file_header.setSectionResizeMode(
+                column, QtWidgets.QHeaderView.ResizeMode.Interactive
+            )
             self.file_table.setColumnWidth(column, width)
         self.file_table.setWordWrap(False)
         self.file_table.setTextElideMode(QtCore.Qt.TextElideMode.ElideRight)
@@ -4695,8 +4853,12 @@ class HdfViewer(QtWidgets.QMainWindow):
         self.field_table = QtWidgets.QTableWidget(0, len(FIELD_COLUMNS))
         self.field_table.setHorizontalHeaderLabels(FIELD_COLUMNS)
         self.field_table.verticalHeader().setVisible(False)
-        self.field_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.field_table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
+        self.field_table.setEditTriggers(
+            QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers
+        )
+        self.field_table.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.NoSelection
+        )
         self.field_table.horizontalHeader().setSectionResizeMode(
             0, QtWidgets.QHeaderView.ResizeMode.Stretch
         )
@@ -4717,11 +4879,15 @@ class HdfViewer(QtWidgets.QMainWindow):
         layout = QtWidgets.QVBoxLayout(panel)
 
         self.file_label = QtWidgets.QLabel("No scan selected")
-        self.file_label.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.file_label.setTextInteractionFlags(
+            QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
+        )
         layout.addWidget(self.file_label)
 
         self.hkl_label = QtWidgets.QLabel("")
-        self.hkl_label.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.hkl_label.setTextInteractionFlags(
+            QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
+        )
         self.hkl_label.setWordWrap(True)
         self.hkl_label.setStyleSheet("color: gray;")
         self.hkl_label.setToolTip(
@@ -4895,7 +5061,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             "wider than either one's own swing: sharing a scale they sit at\n"
             "two heights in a frame stretched to hold both, and on separate\n"
             "ones each fills the frame and the shapes superimpose. The menu\n"
-            "lists the scans now selected, and any curve \"Add\" has made --\n"
+            'lists the scans now selected, and any curve "Add" has made --\n'
             "a difference is the one that needs this most. Sending every\n"
             "scan leaves nothing to compare against and so does nothing.\n"
             "Only active while two or more scans are plotted as curves."
@@ -4918,7 +5084,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             "lists the scans now selected; the ones left unticked are drawn\n"
             "as they were. Negating throws a scan clear of the one it is\n"
             "meant to be compared with, so it takes the right-hand scale\n"
-            "when nothing else is using it -- as a tick in \"Right scale\",\n"
+            'when nothing else is using it -- as a tick in "Right scale",\n'
             "to clear there if the shared scale was wanted after all.\n"
             "Only active while scans are plotted as curves."
         )
@@ -4934,10 +5100,10 @@ class HdfViewer(QtWidgets.QMainWindow):
             "first one's X by interpolation -- two runs rarely step quite the\n"
             "same points -- and where they do not overlap it is left blank.\n"
             "Both orders of the subtraction are offered, so either sign can\n"
-            "be had. A scan ticked in \"Invert\" is inverted first. A\n"
+            'be had. A scan ticked in "Invert" is inverted first. A\n'
             "difference is far smaller than the scans it came from, so the\n"
             "new curve takes the right-hand scale when nothing else is\n"
-            "using it; \"Right scale\" lists it either way, to move it back.\n"
+            'using it; "Right scale" lists it either way, to move it back.\n'
             "Only active while two or more scans are plotted as curves."
         )
         self._add_menu = QtWidgets.QMenu(self.add_btn)
@@ -4963,14 +5129,14 @@ class HdfViewer(QtWidgets.QMainWindow):
         self.integrate_btn.setCheckable(True)
         self.integrate_btn.setToolTip(
             "Add the area under every curve to the statistics below, in two\n"
-            "columns: \"Area\" as the curve stands, \"Net area\" above the\n"
+            'columns: "Area" as the curve stands, "Net area" above the\n'
             "straight line joining its first and last points. On a rocking\n"
             "curve measured several times over, the area is what compares\n"
             "the repeats -- scans 32 to 38 of TiSe2 spread 21% in peak\n"
             "height and 15% in area -- and the difference between the two\n"
             "columns is the sloping background, 9 to 15% there and not the\n"
             "same share in any two scans. Trapezoidal, over every point\n"
-            "drawn, so a gap left by \"Remove spikes\" is spanned by a\n"
+            'drawn, so a gap left by "Remove spikes" is spanned by a\n'
             "straight line rather than left out.\n"
             "Only active while the scans are drawn as curves or panels."
         )
@@ -5080,12 +5246,12 @@ class HdfViewer(QtWidgets.QMainWindow):
             " tails, and squared sits between them. Pseudo-Voigt blends a"
             " Gauss and a Lorentzian at one width, for a peak whose core"
             " and tails disagree about which it is, and fits the"
-            " proportion as well: \"Fit eta\" is how much of it is"
+            ' proportion as well: "Fit eta" is how much of it is'
             " Lorentzian, 1 all of it and 0 none.\n"
             "That column stands blank where a free mixing would not hold"
             " -- it starts at a half and is kept only if it settles clear"
-            " of either end, since a solver resting on \"pure Gauss\" or"
-            " \"pure Lorentzian\" has not measured a blend, and both of"
+            ' of either end, since a solver resting on "pure Gauss" or'
+            ' "pure Lorentzian" has not measured a blend, and both of'
             " those are in this combo already. The fixed half-and-half"
             " shape is fitted alongside in any case and whichever scores"
             " better is the one drawn, so the extra parameter can only"
@@ -5113,10 +5279,10 @@ class HdfViewer(QtWidgets.QMainWindow):
             " first -- 0.0421 against 0.0447 on scan 32.\n"
             "The height is likewise measured above that background, so it"
             " sits below the curve's own maximum.\n"
-            "\"Fit area\" is the integrated intensity of the peak alone,"
+            '"Fit area" is the integrated intensity of the peak alone,'
             " height x width x a constant of the shape, worked out over"
             " the whole line rather than summed over the points drawn. It"
-            " is therefore not \"Net area\" and will not match it -- 2219"
+            ' is therefore not "Net area" and will not match it -- 2219'
             " against 2791 on scan 32 -- and because it does not depend on"
             " how wide the scan was, it is the one to compare repeats"
             " with. On a Lorentzian 6 to 11% of it is tail beyond the ends"
@@ -5145,7 +5311,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             " beside the true one, and flips the height's sign between"
             " repeats that are otherwise identical (scans 32 to 38, R2 0.52"
             " to 0.71). Read R2 and the sign together.\n"
-            "\"Multi\" at two peaks is the way out of it: two lobes are two"
+            '"Multi" at two peaks is the way out of it: two lobes are two'
             " peaks, and fitting them as such takes those same scans to R2"
             " 0.96 to 0.99, with the heights coming back opposite in sign"
             " as the two lobes are.\n"
@@ -5173,7 +5339,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             " the first and shows no maximum of its own -- 0.982 to"
             " 0.992), and the derivative of a peak (scan 31 with dY/dX"
             " shown, 0.641 to 0.990).\n"
-            "That last one repairs the trap the \"Fit\" button warns"
+            'That last one repairs the trap the "Fit" button warns'
             " about: the derivative of a peak is a lobe up then a lobe"
             " down, and fitting two peaks fits both lobes instead of"
             " locking onto one -- scans 32 to 38 go from R2 0.52-0.71 to"
@@ -5207,7 +5373,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             " peak where there are two, because the second is a shoulder"
             " and not a maximum, and on scan 109 it offers six candidates"
             " where there are two.\n"
-            "Two answers all three of the cases \"Multi\" was built for,"
+            'Two answers all three of the cases "Multi" was built for,'
             " and three does not improve on them. Scan 34 reaches 0.997"
             " from 0.992 only by cutting its taller peak in two, and scan"
             " 109 is declined outright: the third component comes back as"
@@ -5219,7 +5385,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             " across scans has to be made at one setting -- on the knife"
             " edge, scan 101's width reads 0.0210 at one peak and 0.0234"
             " at two, which is wider than the drift being looked for.\n"
-            "Only active while \"Multi\" is on."
+            'Only active while "Multi" is on.'
         )
         self.peaks_combo.currentTextChanged.connect(self._update_plot)
         fit_row.addWidget(self.peaks_combo)
@@ -5227,13 +5393,13 @@ class HdfViewer(QtWidgets.QMainWindow):
         self.parts_btn.setCheckable(True)
         self.parts_btn.setToolTip(
             "Draw what the fit is made of, as well as the fit itself.\n"
-            "The sloping background goes in dash-dot, and with \"Multi\""
+            'The sloping background goes in dash-dot, and with "Multi"'
             " on each peak goes in dots -- drawn on the background, not"
             " from zero, so a component sits over the part of the curve"
             " it is claiming. Scan 109's background is around 800 counts,"
             " and from zero its peaks would be nowhere near the data.\n"
             "This is how to see a component that is not really there."
-            " \"Multi\" divides a single peak rather than refusing it, and"
+            ' "Multi" divides a single peak rather than refusing it, and'
             " the division reads perfectly well as a sum -- it is the two"
             " dotted lines that show one of them lying flat along the"
             " background, or two of them stacked on the same bump. On"
@@ -5302,7 +5468,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             " number the fitted area is eight points in a row; against eta"
             " it is the curve those eight were measured to draw.\n"
             "Only fields that actually moved are offered, the most moved"
-            " first, and \"moved\" is judged against how far each drifted"
+            ' first, and "moved" is judged against how far each drifted'
             " within a scan. Without that second half the list is headed by"
             " the beam diagnostics, which wander further than anything"
             " deliberate here and mean nothing on this axis.\n"
@@ -5327,18 +5493,18 @@ class HdfViewer(QtWidgets.QMainWindow):
             "One line per Y field, over whatever the fit ran on -- so with"
             " dY/dX shown it trends the derivative's fit, and the axis says"
             " so.\n"
-            "It plots the fitted numbers only, never the \"Center\"/\"FWHM\""
-            " crossings or the \"Net area\" trapezoid: mixing a fitted width"
+            'It plots the fitted numbers only, never the "Center"/"FWHM"'
+            ' crossings or the "Net area" trapezoid: mixing a fitted width'
             " and a measured one into one line would compare two different"
-            " measurements. That is why it needs \"Fit\".\n"
+            ' measurements. That is why it needs "Fit".\n'
             "Scans 101 to 127 are the case it was built for: a knife edge"
             " driven through the beam, whose derivative gives the beam size,"
             " trended over ten repeats to show it drifting between 0.0198"
             " and 0.0217.\n"
             "A scan whose fit was declined leaves a gap rather than a line"
             " drawn straight across it.\n"
-            "With \"Multi\" on there is a line per peak as well as per"
-            " field, named \"peak 1\", \"peak 2\" and so on from the left."
+            'With "Multi" on there is a line per peak as well as per'
+            ' field, named "peak 1", "peak 2" and so on from the left.'
             " Numbering them by position rather than by height is what"
             " makes a line follow one peak through a set of repeats, even"
             " across the scan where the two swap which is the taller.\n"
@@ -5348,7 +5514,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             "Averaged and combined curves are left out: they keep only their"
             " first member's file name, so they have no scan number of their"
             " own to sit at.\n"
-            "Only active while curves are plotted and \"Fit\" is on."
+            'Only active while curves are plotted and "Fit" is on.'
         )
         self.trend_btn.toggled.connect(self._update_plot)
         fit_row.addWidget(self.trend_btn)
@@ -5360,14 +5526,14 @@ class HdfViewer(QtWidgets.QMainWindow):
             " FWHM, height and area side by side, since those four are"
             " read together and four files would have to be joined back"
             " up. A pseudo-Voigt adds its fitted eta.\n"
-            "With \"Multi\" on each peak gets its own set of columns,"
+            'With "Multi" on each peak gets its own set of columns,'
             " named as the trend names its lines.\n"
-            "With \"Integrate\" on the curve's own trapezoids come too,"
+            'With "Integrate" on the curve\'s own trapezoids come too,'
             " as curve_area and curve_net_area -- one pair per Y field,"
             " since they measure the curve and not a peak of it.\n"
             "A scan whose fit was declined writes nan, as a gap in the"
             " plot beside it.\n"
-            "The header is the one the \"Export…\" at the top writes, so"
+            'The header is the one the "Export…" at the top writes, so'
             " the two files say the same thing about where the numbers"
             " came from. That one writes the curves themselves.\n"
             "Only active while the trend is shown."
@@ -5400,7 +5566,9 @@ class HdfViewer(QtWidgets.QMainWindow):
         # carried field names. Route the message to a label of our own, on the
         # row below, where it has the full width to itself.
         self.coord_label = QtWidgets.QLabel("")
-        self.coord_label.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.coord_label.setTextInteractionFlags(
+            QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
+        )
         if hasattr(self.toolbar, "locLabel"):
             self.toolbar.locLabel.hide()
         self.toolbar.set_message = self.coord_label.setText
@@ -5447,18 +5615,24 @@ class HdfViewer(QtWidgets.QMainWindow):
         self.plot_split.setStretchFactor(1, 1)
         layout.addWidget(self.plot_split, 1)
 
-        layout.addWidget(QtWidgets.QLabel("Peak statistics (per plotted curve):"))
+        layout.addWidget(
+            QtWidgets.QLabel("Peak statistics (per plotted curve):")
+        )
         self.stats_table = QtWidgets.QTableWidget(0, len(STATS_COLUMNS))
         self.stats_table.setHorizontalHeaderLabels(STATS_COLUMNS)
         self.stats_table.horizontalHeader().setStretchLastSection(True)
-        self.stats_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.stats_table.setEditTriggers(
+            QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers
+        )
         vertical_header = self.stats_table.verticalHeader()
         vertical_header.setMinimumSectionSize(16)
         # Compact rows, so that the few the table is allowed take as little
         # off the plot as possible.
         vertical_header.setDefaultSectionSize(18)
         # defaultSectionSize only wins when the rows are not auto-sized.
-        vertical_header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Fixed)
+        vertical_header.setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeMode.Fixed
+        )
         self._size_stats_table(0)
         layout.addWidget(self.stats_table)
         return panel
@@ -5479,7 +5653,9 @@ class HdfViewer(QtWidgets.QMainWindow):
             ["Field", "Before scan", "After scan", "Δ (after − before)"]
         )
         self.baseline_table.horizontalHeader().setStretchLastSection(True)
-        self.baseline_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.baseline_table.setEditTriggers(
+            QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers
+        )
         self.baseline_table.setSortingEnabled(True)
         layout.addWidget(self.baseline_table)
         return panel
@@ -5546,7 +5722,11 @@ class HdfViewer(QtWidgets.QMainWindow):
         # Only the scans: the detector image files carry no scan metadata, and
         # their frames are reached through "Load Image…" anyway. The listing is
         # not recursive either, so a per-detector subdirectory stays out of it.
-        files = [p for p in list_hdf_files(self._directory) if read_scan_info(p)["is_scan"]]
+        files = [
+            p
+            for p in list_hdf_files(self._directory)
+            if read_scan_info(p)["is_scan"]
+        ]
         self.file_table.setRowCount(len(files))
         restore: list[int] = []
         for row, path in enumerate(files):
@@ -5578,16 +5758,20 @@ class HdfViewer(QtWidgets.QMainWindow):
             selection.select(model.index(row, 0), model.index(row, last_column))
         self.file_table.selectionModel().select(
             selection,
-            QtCore.QItemSelectionModel.SelectionFlag.Select | QtCore.QItemSelectionModel.SelectionFlag.Rows,
+            QtCore.QItemSelectionModel.SelectionFlag.Select
+            | QtCore.QItemSelectionModel.SelectionFlag.Rows,
         )
 
     @staticmethod
     def _scan_row(path: Path) -> list[str]:
         """One file's cells: its scan number, then what that scan was."""
         info = read_scan_info(path)
-        motors = ", ".join(name for name, *_ in info["ranges"]) or ", ".join(info["motors"])
+        motors = ", ".join(name for name, *_ in info["ranges"]) or ", ".join(
+            info["motors"]
+        )
         span = ", ".join(
-            f"{start:.6g} → {stop:.6g}" for _name, start, stop, _n in info["ranges"]
+            f"{start:.6g} → {stop:.6g}"
+            for _name, start, stop, _n in info["ranges"]
         )
         return [
             scan_number(path),
@@ -5596,14 +5780,17 @@ class HdfViewer(QtWidgets.QMainWindow):
             info["plan"],
             motors,
             span,
-            "x".join(str(n) for n in info["shape"]) if len(info["shape"]) == 2
+            "x".join(str(n) for n in info["shape"])
+            if len(info["shape"]) == 2
             else str(info["points"]),
             "" if info["count_time"] is None else f"{info['count_time']:.6g}",
         ]
 
     def _selected_paths(self) -> list[Path]:
         paths = []
-        for row in sorted({index.row() for index in self.file_table.selectedIndexes()}):
+        for row in sorted(
+            {index.row() for index in self.file_table.selectedIndexes()}
+        ):
             item = self.file_table.item(row, 0)
             if item is not None:
                 paths.append(Path(item.data(QtCore.Qt.ItemDataRole.UserRole)))
@@ -5657,8 +5844,10 @@ class HdfViewer(QtWidgets.QMainWindow):
         :meth:`_update_plot` already, and two redraws for one gesture
         would strobe the plot area.
         """
-        if (self.stream_combo.currentText() != DICHRO_STREAM
-                or self.xmcd_btn.isChecked()):
+        if (
+            self.stream_combo.currentText() != DICHRO_STREAM
+            or self.xmcd_btn.isChecked()
+        ):
             return
         if not any(
             reduce_channels(path) or has_dichro_stream(path)
@@ -5818,7 +6007,9 @@ class HdfViewer(QtWidgets.QMainWindow):
                         & ~QtCore.Qt.ItemFlag.ItemIsSelectable
                     )
                     item.setCheckState(
-                        QtCore.Qt.CheckState.Checked if checked else QtCore.Qt.CheckState.Unchecked
+                        QtCore.Qt.CheckState.Checked
+                        if checked
+                        else QtCore.Qt.CheckState.Unchecked
                     )
                     item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
                     self.field_table.setItem(row, column, item)
@@ -5832,7 +6023,11 @@ class HdfViewer(QtWidgets.QMainWindow):
 
     def _remember_fields(self):
         """Hold on to the ticks, so the next scan of this kind opens on them."""
-        self._kept = (self._x_field(), self._checked_y_fields(), self._monitor_field())
+        self._kept = (
+            self._x_field(),
+            self._checked_y_fields(),
+            self._monitor_field(),
+        )
 
     def _refresh_reduce_channels(self, paths: list[Path]):
         """Offer the reducible scan's channels and settle on a detector and monitor.
@@ -5861,7 +6056,9 @@ class HdfViewer(QtWidgets.QMainWindow):
         transmission = self.transmission_btn.isChecked()
         detector = self.detector_combo.currentText()
         monitor = self.monitor_combo.currentText()
-        if channels and not self._pair_works(leader, detector, monitor, transmission):
+        if channels and not self._pair_works(
+            leader, detector, monitor, transmission
+        ):
             detector, monitor = reduce_defaults(leader, channels, transmission)
         self._syncing_channels = True
         try:
@@ -5877,7 +6074,9 @@ class HdfViewer(QtWidgets.QMainWindow):
             self._syncing_channels = False
 
     @staticmethod
-    def _pair_works(path, detector: str, monitor: str, transmission: bool) -> bool:
+    def _pair_works(
+        path, detector: str, monitor: str, transmission: bool
+    ) -> bool:
         """Whether this scan records both channels and they give any absorption."""
         if path is None or not detector or not monitor or detector == monitor:
             return False
@@ -5888,7 +6087,9 @@ class HdfViewer(QtWidgets.QMainWindow):
         if detector not in data or monitor not in data:
             return False
         return bool(
-            np.isfinite(absorption(data[detector], data[monitor], transmission)).any()
+            np.isfinite(
+                absorption(data[detector], data[monitor], transmission)
+            ).any()
         )
 
     def _on_channel_changed(self, _name: str = ""):
@@ -5904,7 +6105,11 @@ class HdfViewer(QtWidgets.QMainWindow):
         for row in range(self.field_table.rowCount()):
             tick = self.field_table.item(row, column)
             label = self.field_table.item(row, 0)
-            if tick is not None and label is not None and tick.checkState() == QtCore.Qt.CheckState.Checked:
+            if (
+                tick is not None
+                and label is not None
+                and tick.checkState() == QtCore.Qt.CheckState.Checked
+            ):
                 names.append(label.text())
         return names
 
@@ -5919,7 +6124,9 @@ class HdfViewer(QtWidgets.QMainWindow):
                 if tick is None or label is None:
                     continue
                 tick.setCheckState(
-                    QtCore.Qt.CheckState.Checked if label.text() in wanted else QtCore.Qt.CheckState.Unchecked
+                    QtCore.Qt.CheckState.Checked
+                    if label.text() in wanted
+                    else QtCore.Qt.CheckState.Unchecked
                 )
         finally:
             self._syncing_fields = False
@@ -6011,7 +6218,10 @@ class HdfViewer(QtWidgets.QMainWindow):
             return
         column = item.column()
         # X and Norm are single-choice: ticking one clears whatever held it.
-        if column in (FIELD_X, FIELD_NORM) and item.checkState() == QtCore.Qt.CheckState.Checked:
+        if (
+            column in (FIELD_X, FIELD_NORM)
+            and item.checkState() == QtCore.Qt.CheckState.Checked
+        ):
             self._syncing_fields = True
             try:
                 for row in range(self.field_table.rowCount()):
@@ -6033,11 +6243,15 @@ class HdfViewer(QtWidgets.QMainWindow):
                 missing += 1
                 continue
             text = format_scan_hkl(values)
-            lines.append(text if len(paths) == 1 else f"{scan_number(path)}:  {text}")
+            lines.append(
+                text if len(paths) == 1 else f"{scan_number(path)}:  {text}"
+            )
         if not lines:
             # Silent when nothing records it, rather than a standing complaint.
             self.hkl_label.setText(
-                "" if not paths else "huber_euler_h/k/l not recorded in this scan"
+                ""
+                if not paths
+                else "huber_euler_h/k/l not recorded in this scan"
             )
             return
         if missing:
@@ -6218,7 +6432,7 @@ class HdfViewer(QtWidgets.QMainWindow):
         tags = scan_tags(paths)
         self._add_menu.clear()
         for index, first in enumerate(paths):
-            for second in paths[index + 1:]:
+            for second in paths[index + 1 :]:
                 if self._add_menu.actions():
                     self._add_menu.addSeparator()
                 for key in (
@@ -6409,7 +6623,9 @@ class HdfViewer(QtWidgets.QMainWindow):
             self.axis_label.setText(text)
             return
         x_field = self._x_field() or "(pick one)"
-        shown = [f"{name} (right)" if name in right else name for name in y_fields]
+        shown = [
+            f"{name} (right)" if name in right else name for name in y_fields
+        ]
         text = f"X: {x_field}    Y: {', '.join(shown) or '(none)'}"
         if monitor:
             text += (
@@ -6494,9 +6710,13 @@ class HdfViewer(QtWidgets.QMainWindow):
         found = self._resolved_images(paths)
         self.image_btn.setEnabled(bool(found))
         if not paths:
-            self.image_btn.setToolTip("Select a master file to load its detector images.")
+            self.image_btn.setToolTip(
+                "Select a master file to load its detector images."
+            )
         elif not found:
-            self.image_btn.setToolTip("No detector image file found for the selected file(s).")
+            self.image_btn.setToolTip(
+                "No detector image file found for the selected file(s)."
+            )
         elif len(found) == 1:
             self.image_btn.setToolTip(f"Open {self._image_label(found[0])}")
         else:
@@ -6512,17 +6732,23 @@ class HdfViewer(QtWidgets.QMainWindow):
         missing = [master.name for master, image in pairs if image is None]
         images = self._resolved_images(paths)
         if not images:
-            self.status.showMessage(f"No image file found for: {', '.join(missing)}")
+            self.status.showMessage(
+                f"No image file found for: {', '.join(missing)}"
+            )
             return
 
         try:
             window = ImageViewerWindow(images, parent=self)
         except (RuntimeError, OSError) as exc:
-            QtWidgets.QMessageBox.critical(self, "Could not open images", str(exc))
+            QtWidgets.QMessageBox.critical(
+                self, "Could not open images", str(exc)
+            )
             return
 
         window.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
-        window.destroyed.connect(lambda _=None, w=window: self._forget_image_window(w))
+        window.destroyed.connect(
+            lambda _=None, w=window: self._forget_image_window(w)
+        )
         # Qt destroys a window that nothing holds a reference to.
         self._image_windows.append(window)
         window.show()
@@ -6535,11 +6761,15 @@ class HdfViewer(QtWidgets.QMainWindow):
     def _forget_image_window(self, window):
         # Identity, not equality: this runs from destroyed(), by which point the
         # underlying C++ object is gone and comparing wrappers can raise.
-        self._image_windows = [w for w in self._image_windows if w is not window]
+        self._image_windows = [
+            w for w in self._image_windows if w is not window
+        ]
 
     # -- Spectrum windows ---------------------------------------------------
 
-    def _spectrum_pairs(self, paths: list[Path]) -> list[tuple[Path, Path | None]]:
+    def _spectrum_pairs(
+        self, paths: list[Path]
+    ) -> list[tuple[Path, Path | None]]:
         return [(path, resolve_spectrum_file(path)) for path in paths]
 
     def _resolved_spectra(self, paths: list[Path]) -> list[Path]:
@@ -6572,7 +6802,9 @@ class HdfViewer(QtWidgets.QMainWindow):
                 "No spectrum file found for the selected file(s)."
             )
         elif len(found) == 1:
-            self.spectrum_btn.setToolTip(f"Open {self._spectrum_label(found[0])}")
+            self.spectrum_btn.setToolTip(
+                f"Open {self._spectrum_label(found[0])}"
+            )
         else:
             self.spectrum_btn.setToolTip(
                 f"Overlay {len(found)} spectra in one window:\n  "
@@ -6588,27 +6820,37 @@ class HdfViewer(QtWidgets.QMainWindow):
         """
         paths = self._selected_paths()
         pairs = self._spectrum_pairs(paths)
-        missing = [master.name for master, spectrum in pairs if spectrum is None]
+        missing = [
+            master.name for master, spectrum in pairs if spectrum is None
+        ]
         spectra = self._resolved_spectra(paths)
         if not spectra:
-            self.status.showMessage(f"No spectrum file found for: {', '.join(missing)}")
+            self.status.showMessage(
+                f"No spectrum file found for: {', '.join(missing)}"
+            )
             return
 
         # Summarising the cubes takes a couple of seconds apiece on the long
         # scans, and the window cannot be shown until it is done.
-        QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.CursorShape.WaitCursor)
+        QtWidgets.QApplication.setOverrideCursor(
+            QtCore.Qt.CursorShape.WaitCursor
+        )
         self.status.showMessage(f"Reading {len(spectra)} spectrum file(s)…")
         QtWidgets.QApplication.processEvents()
         try:
             window = SpectrumViewerWindow(spectra, parent=self)
         except (RuntimeError, OSError) as exc:
-            QtWidgets.QMessageBox.critical(self, "Could not open spectra", str(exc))
+            QtWidgets.QMessageBox.critical(
+                self, "Could not open spectra", str(exc)
+            )
             return
         finally:
             QtWidgets.QApplication.restoreOverrideCursor()
 
         window.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
-        window.destroyed.connect(lambda _=None, w=window: self._forget_spectrum_window(w))
+        window.destroyed.connect(
+            lambda _=None, w=window: self._forget_spectrum_window(w)
+        )
         # Qt destroys a window that nothing holds a reference to.
         self._spectrum_windows.append(window)
         window.show()
@@ -6655,15 +6897,23 @@ class HdfViewer(QtWidgets.QMainWindow):
         self.figure.clear()
         self._panels_across = across
         mains = (
-            self.figure.subplots(1, count, sharex=True, sharey=True, squeeze=False)[0]
+            self.figure.subplots(
+                1, count, sharex=True, sharey=True, squeeze=False
+            )[0]
             if across
-            else self.figure.subplots(count, 1, sharex=True, squeeze=False)[:, 0]
+            else self.figure.subplots(count, 1, sharex=True, squeeze=False)[
+                :, 0
+            ]
         )
         self._panels = [(main, main.twinx(), main.twinx()) for main in mains]
         self.ax, self.ax2, self.ax3 = self._panels[0]
-        self._twins = tuple(twin for _main, *twins in self._panels for twin in twins)
+        self._twins = tuple(
+            twin for _main, *twins in self._panels for twin in twins
+        )
         # Kept so each grid's own readout can be swapped in and out.
-        self._default_format_coord = [main.format_coord for main, *_ in self._panels]
+        self._default_format_coord = [
+            main.format_coord for main, *_ in self._panels
+        ]
         # The view history still points at the axes just discarded.
         self.toolbar.update()
         return True
@@ -6810,10 +7060,13 @@ class HdfViewer(QtWidgets.QMainWindow):
         # scan's primary holds sub-measurements its shape does not describe.
         demanded = [data[field] for field in setpoints if field in data]
         if setpoints and (
-            len(demanded) != len(setpoints) or not confirms_period(demanded, steps)
+            len(demanded) != len(setpoints)
+            or not confirms_period(demanded, steps)
         ):
             return 1, [], []
-        groups = step_groups(columns, steps, SPLIT_ATOL, self.average_btn.isChecked())
+        groups = step_groups(
+            columns, steps, SPLIT_ATOL, self.average_btn.isChecked()
+        )
         return steps, groups, names
 
     @staticmethod
@@ -6826,12 +7079,15 @@ class HdfViewer(QtWidgets.QMainWindow):
         step number is added so that no two curves share a label.
         """
         tags = [
-            ", ".join(f"{axis} {value:+.4g}" for axis, value in zip(axes, values))
+            ", ".join(
+                f"{axis} {value:+.4g}" for axis, value in zip(axes, values)
+            )
             for values, _members in groups
         ]
         if len(set(tags)) != len(tags):
             tags = [
-                f"{tag} #{members[0]}" for tag, (_values, members) in zip(tags, groups)
+                f"{tag} #{members[0]}"
+                for tag, (_values, members) in zip(tags, groups)
             ]
         return tags
 
@@ -6915,9 +7171,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             if normalize:
                 fields_needed.add(monitor_field)
             judge = (
-                self._spike_monitor(path, monitor_field)
-                if drop_spikes
-                else ""
+                self._spike_monitor(path, monitor_field) if drop_spikes else ""
             )
             if judge:
                 fields_needed.add(judge)
@@ -6983,7 +7237,11 @@ class HdfViewer(QtWidgets.QMainWindow):
                 for tag, piece_x, piece_y in pieces:
                     # Stacked, each plot's own Y label names the field, so the
                     # legend there need only say which group a curve is.
-                    short = (f"{path.name}: {tag}" if overlay else tag) if tag else base
+                    short = (
+                        (f"{path.name}: {tag}" if overlay else tag)
+                        if tag
+                        else base
+                    )
                     key = (path, tag) if tag else (path, y_field)
                     curves.append(
                         {
@@ -7029,8 +7287,11 @@ class HdfViewer(QtWidgets.QMainWindow):
         }
         buckets: dict[tuple, list[int]] = {}
         for index, curve in enumerate(curves):
-            key = (where.get(curve["path"], curve["path"]),
-                   curve["y_field"], curve["tag"])
+            key = (
+                where.get(curve["path"], curve["path"]),
+                curve["y_field"],
+                curve["tag"],
+            )
             buckets.setdefault(key, []).append(index)
         made: dict[int, dict] = {}
         gone: set[int] = set()
@@ -7061,7 +7322,9 @@ class HdfViewer(QtWidgets.QMainWindow):
                 label = f"{base} @ {first['tag']}" if first["tag"] else base
                 made[cluster[0]] = {
                     "label": label,
-                    "short": f"{name}: {first['tag']}" if first["tag"] else base,
+                    "short": f"{name}: {first['tag']}"
+                    if first["tag"]
+                    else base,
                     "y_field": first["y_field"],
                     # The first member's, so that anything looking a path up
                     # in tags still finds one. Never used to name it.
@@ -7129,8 +7392,10 @@ class HdfViewer(QtWidgets.QMainWindow):
                 continue
             for curve_a, curve_b in pairs:
                 x, y = combine_curves(
-                    curve_a["x"], curve_a["y"],
-                    curve_b["x"], curve_b["y"],
+                    curve_a["x"],
+                    curve_a["y"],
+                    curve_b["x"],
+                    curve_b["y"],
                     subtract,
                 )
                 # Named the way _read_curves names an overlaid curve, with
@@ -7154,9 +7419,7 @@ class HdfViewer(QtWidgets.QMainWindow):
                         # Past the loop that settles these for the curves
                         # that were read, so they are settled here instead.
                         "panel": (
-                            y_fields.index(curve_a["y_field"])
-                            if stacked
-                            else 0
+                            y_fields.index(curve_a["y_field"]) if stacked else 0
                         ),
                         # Nothing is inherited: a combination starts on the
                         # main scale and is sent right only by being ticked
@@ -7314,9 +7577,12 @@ class HdfViewer(QtWidgets.QMainWindow):
         readings = [
             value
             for path in paths
-            if (value := baseline_values(path, (TEMPERATURE_FIELD,)).get(
-                TEMPERATURE_FIELD
-            )) is not None
+            if (
+                value := baseline_values(path, (TEMPERATURE_FIELD,)).get(
+                    TEMPERATURE_FIELD
+                )
+            )
+            is not None
         ]
         return f"{np.mean(readings):.0f} K" if readings else ""
 
@@ -7344,7 +7610,9 @@ class HdfViewer(QtWidgets.QMainWindow):
         return f"{dropped} point(s)" if dropped else "none found"
 
     @staticmethod
-    def _contrast_message(reports: list[tuple], detector: str, monitor: str) -> str:
+    def _contrast_message(
+        reports: list[tuple], detector: str, monitor: str
+    ) -> str:
         """What the reduction made of each scan, for the status bar.
 
         One segment per unit, because the panels overlay several and a count
@@ -7579,8 +7847,8 @@ class HdfViewer(QtWidgets.QMainWindow):
             # area= line above, which explains the trapezoid but does not
             # know the fit is beside it.
             header.append(
-                "curve_area = the \"Integrate\" trapezoids of the row that"
-                " was fitted -- the derivative's own while \"Show dY/dX\""
+                'curve_area = the "Integrate" trapezoids of the row that'
+                ' was fitted -- the derivative\'s own while "Show dY/dX"'
                 " is on, since that is what the fit describes"
                 "   --   the area[..] column beside them is the fitted"
                 " peak's instead, and the two do not agree"
@@ -7679,7 +7947,8 @@ class HdfViewer(QtWidgets.QMainWindow):
                 f"{target.name} already exists in {target.parent}.\n\n"
                 f"The prefix follows what the file holds, so {typed.name} is "
                 f"written as {target.name}. Replace it?",
-                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                QtWidgets.QMessageBox.StandardButton.Yes
+                | QtWidgets.QMessageBox.StandardButton.No,
             )
             if reply != QtWidgets.QMessageBox.StandardButton.Yes:
                 return None
@@ -7714,7 +7983,8 @@ class HdfViewer(QtWidgets.QMainWindow):
             # which channel. Only where every unit agrees: a mixed overlay
             # has no one answer and the per-unit lines below carry it instead.
             modes = {
-                result["mode"] for _tag, result, _missing in plotted["reports"]
+                result["mode"]
+                for _tag, result, _missing in plotted["reports"]
                 if result is not None
             }
             lockin = modes == {MODE_LOCKIN_POL}
@@ -7750,7 +8020,11 @@ class HdfViewer(QtWidgets.QMainWindow):
                 f"detector = {detector}",
                 f"monitor = {monitor}",
                 "signal = "
-                + ("log(monitor/detector)" if transmission else "detector/monitor"),
+                + (
+                    "log(monitor/detector)"
+                    if transmission
+                    else "detector/monitor"
+                ),
             ]
             if lockin:
                 lines.append(f"ac = {AC_FIELD} - {ACOFF_FIELD}")
@@ -7762,7 +8036,9 @@ class HdfViewer(QtWidgets.QMainWindow):
             )
             for tag, result, missing in plotted["reports"]:
                 if result is None:
-                    lines.append(f"{tag} = not reduced, no {', '.join(missing)}")
+                    lines.append(
+                        f"{tag} = not reduced, no {', '.join(missing)}"
+                    )
                     continue
                 lines.append(
                     f"{tag} = {result['n_complete']} of {result['n_energies']}"
@@ -7860,8 +8136,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             )
             for label, area, net in plotted["areas"]:
                 lines.append(
-                    f"area[{label}] = {area_of(area)}"
-                    f"   --   net {area_of(net)}"
+                    f"area[{label}] = {area_of(area)}   --   net {area_of(net)}"
                 )
         # As above: the explaining line goes in whenever the button was on.
         # Here a blank means the fit was turned down as not describing a
@@ -7918,19 +8193,23 @@ class HdfViewer(QtWidgets.QMainWindow):
                     else ""
                 )
             )
-            for label, centre, fwhm, eta, height, area, r2, slope, offset in (
-                plotted["fits"]
-            ):
+            for (
+                label,
+                centre,
+                fwhm,
+                eta,
+                height,
+                area,
+                r2,
+                slope,
+                offset,
+            ) in plotted["fits"]:
                 lines.append(
                     f"fit[{label}] = {fit_of(centre)}"
                     f"   --   fwhm {fit_of(fwhm)}"
                     # Left out rather than written "(none)", so that a
                     # shape with no mixing exports the line it always did.
-                    + (
-                        f"   --   eta {fit_of(eta)}"
-                        if eta is not None
-                        else ""
-                    )
+                    + (f"   --   eta {fit_of(eta)}" if eta is not None else "")
                     + f"   --   height {fit_of(height)}"
                     f"   --   area {fit_of(area)}"
                     f"   --   r2 {fit_of(r2)}"
@@ -8062,15 +8341,22 @@ class HdfViewer(QtWidgets.QMainWindow):
             # and a scan showing dichro_monitor still has its primary beside
             # it.
             dichro_grids = read_dichro_grid(
-                paths[0], detector_channel, monitor_channel,
-                PRIMARY_STREAM, transmission,
+                paths[0],
+                detector_channel,
+                monitor_channel,
+                PRIMARY_STREAM,
+                transmission,
             )
         if dichro_grids:
             grids = dichro_grids
         else:
             for field in y_fields if paths and not reducing else []:
                 grid = read_grid(
-                    paths[0], field, monitor_field, stream, transmission,
+                    paths[0],
+                    field,
+                    monitor_field,
+                    stream,
+                    transmission,
                 )
                 if grid is not None:
                     grids.append((field, grid))
@@ -8094,10 +8380,12 @@ class HdfViewer(QtWidgets.QMainWindow):
         # to those as stacked 1D curves rather than running the four-quadrant
         # reducer, which has no field axis to split on here and shows four
         # empty panels under "Nothing reduced from this selection".
-        elif (reducing
-                and paths
-                and is_mesh_scan(paths[0])
-                and bool(dichro_stream_scans)):
+        elif (
+            reducing
+            and paths
+            and is_mesh_scan(paths[0])
+            and bool(dichro_stream_scans)
+        ):
             reducing = False
             dichro_stream_view = True
         # Three ways to draw a selection, and the reduction wins where it is
@@ -8143,7 +8431,10 @@ class HdfViewer(QtWidgets.QMainWindow):
         # Nothing to compare one scan against on its own, and a colour map has
         # no second Y scale to send it to.
         self.right_btn.setEnabled(
-            mode == "curves" and len(paths) > 1 and bool(x_field) and bool(y_fields)
+            mode == "curves"
+            and len(paths) > 1
+            and bool(x_field)
+            and bool(y_fields)
         )
         # One scan on its own is worth inverting -- a dip read as a peak is
         # what lets the statistics table measure its centre and width -- so
@@ -8151,11 +8442,17 @@ class HdfViewer(QtWidgets.QMainWindow):
         # the contrasts are shown: the choice is per scan and would take XAS,
         # an absorption positive by construction, negative along with XMCD.
         self.invert_btn.setEnabled(
-            mode == "curves" and bool(paths) and bool(x_field) and bool(y_fields)
+            mode == "curves"
+            and bool(paths)
+            and bool(x_field)
+            and bool(y_fields)
         )
         # Two scans to combine, and curves to combine them from.
         self.add_btn.setEnabled(
-            mode == "curves" and len(paths) > 1 and bool(x_field) and bool(y_fields)
+            mode == "curves"
+            and len(paths) > 1
+            and bool(x_field)
+            and bool(y_fields)
         )
         # Two scans to find repeats among. Live in the panels as well, where
         # it joins the repeats into one reduction instead of one curve: 239
@@ -8229,10 +8526,13 @@ class HdfViewer(QtWidgets.QMainWindow):
         self.cmap_combo.setEnabled(bool(grids))
         # Nothing to centre on a scale with no middle colour, so the button
         # goes dead unless at least one map on screen is drawn in one.
-        self.center_btn.setEnabled(bool(grids) and any(
-            self._map_colormap(field, stream) in DIVERGING_COLOR_MAPS
-            for field, _ in grids
-        ))
+        self.center_btn.setEnabled(
+            bool(grids)
+            and any(
+                self._map_colormap(field, stream) in DIVERGING_COLOR_MAPS
+                for field, _ in grids
+            )
+        )
 
         # Read every curve before touching the figure: how many plots the
         # figure needs depends on whether the scan splits into several curves
@@ -8247,9 +8547,7 @@ class HdfViewer(QtWidgets.QMainWindow):
         dropped = 0
         removed: dict[str, int] = {}
         tags = scan_tags(paths)
-        despiking = (
-            self.spike_btn.isEnabled() and self.spike_btn.isChecked()
-        )
+        despiking = self.spike_btn.isEnabled() and self.spike_btn.isChecked()
         if reducing:
             curves, reports, averaged, dropped = self._read_contrasts(
                 reducible,
@@ -8261,8 +8559,13 @@ class HdfViewer(QtWidgets.QMainWindow):
             )
         elif mode == "curves" and paths and x_field and y_fields:
             curves, split_axis, removed = self._read_curves(
-                paths, stream, x_field, y_fields, monitor_field,
-                transmission, despiking,
+                paths,
+                stream,
+                x_field,
+                y_fields,
+                monitor_field,
+                transmission,
+                despiking,
             )
         # Which reduction the panels are showing, where they all agree on
         # one. Only the lock-in answer is named: the four panels have been
@@ -8270,7 +8573,8 @@ class HdfViewer(QtWidgets.QMainWindow):
         # noise, while a lock-in panel carries the lock-in's own units and an
         # overlay of both kinds has no single answer to give.
         reduced_modes = {
-            result["mode"] for _tag, result, _missing in reports
+            result["mode"]
+            for _tag, result, _missing in reports
             if result is not None
         }
         reduced_mode = (
@@ -8298,7 +8602,8 @@ class HdfViewer(QtWidgets.QMainWindow):
             # see XAS and XMCD on their own panels, same as the four-quadrant
             # path does for ordinary dichro scans.
             stacked = dichro_stream_view or (
-                len({curve["tag"] for curve in curves}) > 1 and len(y_fields) > 1
+                len({curve["tag"] for curve in curves}) > 1
+                and len(y_fields) > 1
             )
             right_fields = set() if stacked else self._right_fields(y_fields)
             # Which scale each curve belongs to, settled before anything is
@@ -8311,9 +8616,12 @@ class HdfViewer(QtWidgets.QMainWindow):
             # which separates curves within a plot.
             right_scans = self._right_scans(paths)
             for curve in curves:
-                curve["panel"] = y_fields.index(curve["y_field"]) if stacked else 0
+                curve["panel"] = (
+                    y_fields.index(curve["y_field"]) if stacked else 0
+                )
                 curve["on_right"] = (
-                    curve["y_field"] in right_fields or curve["path"] in right_scans
+                    curve["y_field"] in right_fields
+                    or curve["path"] in right_scans
                 )
             # _right_fields guards against emptying the main scale by counting
             # ticked fields; the scan rule cannot, because a selected scan need
@@ -8407,7 +8715,9 @@ class HdfViewer(QtWidgets.QMainWindow):
                 else ""
             )
             mark += " (right)" if curve["on_right"] else ""
-            curve["legend"] = (curve["short"] if stacked else curve["label"]) + mark
+            curve["legend"] = (
+                curve["short"] if stacked else curve["label"]
+            ) + mark
             curve["stat"] = curve["label"] + mark
             curve["d_legend"] = f"d({curve['legend']})/d{x_label}"
             curve["d_stat"] = f"d({curve['stat']})/d{x_label}"
@@ -8455,7 +8765,9 @@ class HdfViewer(QtWidgets.QMainWindow):
         # reaches. Empty outside the reduction, where it compares equal to
         # itself and so changes nothing.
         reduce_key = (
-            (detector_channel, monitor_channel, transmission) if reducing else ()
+            (detector_channel, monitor_channel, transmission)
+            if reducing
+            else ()
         )
         # Which scans went into each curve. Not folded into reduce_key, which
         # Export reads back as the three channel settings. A lock-in group
@@ -8501,7 +8813,8 @@ class HdfViewer(QtWidgets.QMainWindow):
             # moving one there empties that much of the left scale, so it
             # belongs in the same test as asking for it in the first place.
             combined_key = (
-                frozenset(self._combine), frozenset(self._right_combos)
+                frozenset(self._combine),
+                frozenset(self._right_combos),
             )
             if not self.ax.get_autoscaley_on() and (
                 frozenset(right_scans) == self._last_right_scans
@@ -8512,7 +8825,8 @@ class HdfViewer(QtWidgets.QMainWindow):
         self._last_right_scans = frozenset(right_scans)
         self._last_inverted = frozenset(inverted)
         self._last_combined = (
-            frozenset(self._combine), frozenset(self._right_combos)
+            frozenset(self._combine),
+            frozenset(self._right_combos),
         )
         self._last_paths = path_key
         self._last_stream = stream
@@ -8619,7 +8933,9 @@ class HdfViewer(QtWidgets.QMainWindow):
         if self._set_panels(wanted, across):
             # Brand-new axes: whatever was zoomed to belonged to the old ones.
             prev_xlim = prev_ylim = None
-        for (main, *_twins), default in zip(self._panels, self._default_format_coord):
+        for (main, *_twins), default in zip(
+            self._panels, self._default_format_coord
+        ):
             main.clear()
             main.format_coord = default
         # Every plot and twin shares one X axis. matplotlib unions dataLim
@@ -8641,7 +8957,9 @@ class HdfViewer(QtWidgets.QMainWindow):
         # The X and Y ticks are what the reduction does not use, so while it
         # is running an empty one is no reason to refuse to draw.
         if not paths or (not reducing and (not x_field or not y_fields)):
-            self.ax.set_title("Select file(s), an X field and at least one Y field.")
+            self.ax.set_title(
+                "Select file(s), an X field and at least one Y field."
+            )
             for twin in self._twins:
                 twin.set_visible(False)
             self.canvas.draw_idle()
@@ -8664,10 +8982,13 @@ class HdfViewer(QtWidgets.QMainWindow):
             # in the colour-bar label would misrepresent what the colours
             # mean. The regular grids still name their ratio.
             self._plot_grids(
-                paths, grids,
+                paths,
+                grids,
                 "" if drawing_dichro_grid else monitor_field,
                 False if drawing_dichro_grid else log_norm,
-                stream, prev_xlim, prev_ylim,
+                stream,
+                prev_xlim,
+                prev_ylim,
             )
             return
 
@@ -8690,7 +9011,9 @@ class HdfViewer(QtWidgets.QMainWindow):
                 text += f" ({', '.join(scans)})"
             return text
 
-        def side(own: list[dict], on_right: bool) -> tuple[list[str], list[str]]:
+        def side(
+            own: list[dict], on_right: bool
+        ) -> tuple[list[str], list[str]]:
             """The fields, and the scans, drawn on one plot's one scale.
 
             Taken from the curves actually drawn rather than by subtracting
@@ -8801,10 +9124,7 @@ class HdfViewer(QtWidgets.QMainWindow):
                     # its numbers are on the component rows -- so the guard
                     # asks for either, and peak_model draws whichever it
                     # was given.
-                    if (
-                        into["fit_center"] is not None
-                        or into.get("fit_peaks")
-                    ):
+                    if into["fit_center"] is not None or into.get("fit_peaks"):
                         span = curve["x"][good]
                         grid = np.linspace(
                             span.min(), span.max(), PEAK_FIT_PLOT_POINTS
@@ -8858,9 +9178,7 @@ class HdfViewer(QtWidgets.QMainWindow):
                             for index, part in enumerate(
                                 peak_parts(grid, fit_shape, into)
                             ):
-                                (
-                                    derivative if show_derivative else axis
-                                ).plot(
+                                (derivative if show_derivative else axis).plot(
                                     grid,
                                     part,
                                     linewidth=1,
@@ -8882,8 +9200,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             for index, component in enumerate(components, start=1):
                 stats_rows.append(
                     (
-                        f"{STATS_PEAK_INDENT}peak {index}"
-                        f" of {len(components)}",
+                        f"{STATS_PEAK_INDENT}peak {index} of {len(components)}",
                         component,
                     )
                 )
@@ -8929,7 +9246,8 @@ class HdfViewer(QtWidgets.QMainWindow):
             else:
                 main.set_ylabel(
                     scale_label(
-                        [y_fields[index]] if stacked else left_fields, left_scans
+                        [y_fields[index]] if stacked else left_fields,
+                        left_scans,
                     )
                 )
             main.grid(True, alpha=0.3)
@@ -8944,7 +9262,9 @@ class HdfViewer(QtWidgets.QMainWindow):
             # old range after toggling dY/dX off and then selecting a new file.
             main.relim()
 
-            right_colors = [curve["color"] for curve in own if curve["on_right"]]
+            right_colors = [
+                curve["color"] for curve in own if curve["on_right"]
+            ]
             right.set_visible(bool(right_colors))
             if right_colors:
                 right_names, right_tags_here = side(own, True)
@@ -9080,8 +9400,12 @@ class HdfViewer(QtWidgets.QMainWindow):
             )
 
         record["trend"] = self._draw_trend(
-            curves, record["trended"], record["trend_quantity"],
-            show_derivative, notes, peak_count if multi else 0,
+            curves,
+            record["trended"],
+            record["trend_quantity"],
+            show_derivative,
+            notes,
+            peak_count if multi else 0,
             record["trend_against"],
         )
 
@@ -9090,7 +9414,9 @@ class HdfViewer(QtWidgets.QMainWindow):
 
         if reducing:
             self.status.showMessage(
-                self._contrast_message(reports, detector_channel, monitor_channel)
+                self._contrast_message(
+                    reports, detector_channel, monitor_channel
+                )
             )
         elif notes:
             self.status.showMessage("   ".join(notes))
@@ -9169,8 +9495,14 @@ class HdfViewer(QtWidgets.QMainWindow):
         self._stash_plot(record)
 
     def _plot_grids(
-        self, paths, grids, monitor_field, log_norm, stream,
-        prev_xlim, prev_ylim,
+        self,
+        paths,
+        grids,
+        monitor_field,
+        log_norm,
+        stream,
+        prev_xlim,
+        prev_ylim,
     ):
         """Draw each ticked field's raster as a colour map, side by side.
 
@@ -9191,7 +9523,9 @@ class HdfViewer(QtWidgets.QMainWindow):
         for twin in self._twins:
             twin.set_visible(False)
         first = grids[0][1]
-        named = f"{paths[0].name}  —  {len(first['x'])} x {len(first['y'])} grid"
+        named = (
+            f"{paths[0].name}  —  {len(first['x'])} x {len(first['y'])} grid"
+        )
         notes = []
         if len(paths) > 1:
             # Two scans' maps cannot share one pair of axes.
@@ -9234,16 +9568,27 @@ class HdfViewer(QtWidgets.QMainWindow):
                 # The widened scale cuts off less than the clipped one did,
                 # so the arrows have to be asked again rather than carried.
                 extend = scale_extend(grid["z"], low, high)
-            meshes.append((
-                main, label, extend,
-                main.pcolormesh(
-                    x_edges, y_edges, grid["z"],
-                    shading="flat", vmin=low, vmax=high, cmap=cmap,
-                ),
-            ))
+            meshes.append(
+                (
+                    main,
+                    label,
+                    extend,
+                    main.pcolormesh(
+                        x_edges,
+                        y_edges,
+                        grid["z"],
+                        shading="flat",
+                        vmin=low,
+                        vmax=high,
+                        cmap=cmap,
+                    ),
+                )
+            )
             main.set_xlabel(grid["x_name"])
             main.set_ylabel(grid["y_name"])
-            main.set_title(label if len(grids) > 1 else axes_heading, fontsize=9)
+            main.set_title(
+                label if len(grids) > 1 else axes_heading, fontsize=9
+            )
             main.grid(False)
             # Side by side the maps share both axes, so only the leftmost
             # needs its Y ticks and label.
@@ -9260,16 +9605,24 @@ class HdfViewer(QtWidgets.QMainWindow):
             # Report the value under the pointer too. The stock readout gives
             # only x and y (and, because of the twin axes, a second bare
             # coordinate pair), so replace it outright rather than append.
-            def format_coord(x, y, grid=grid, label=label,
-                             x_edges=x_edges, y_edges=y_edges):
-                parts = [f"{grid['x_name']}={x:.6g}", f"{grid['y_name']}={y:.6g}"]
+            def format_coord(
+                x, y, grid=grid, label=label, x_edges=x_edges, y_edges=y_edges
+            ):
+                parts = [
+                    f"{grid['x_name']}={x:.6g}",
+                    f"{grid['y_name']}={y:.6g}",
+                ]
                 column = int(np.searchsorted(x_edges, x) - 1)
                 row = int(np.searchsorted(y_edges, y) - 1)
                 if 0 <= column < len(grid["x"]) and 0 <= row < len(grid["y"]):
                     value = grid["z"][row, column]
                     parts.append(
                         f"{label}="
-                        + ("no data" if not np.isfinite(value) else f"{value:.6g}")
+                        + (
+                            "no data"
+                            if not np.isfinite(value)
+                            else f"{value:.6g}"
+                        )
                     )
                 return "   ".join(parts)
 
@@ -9322,10 +9675,13 @@ class HdfViewer(QtWidgets.QMainWindow):
                 at(stats["max_at"]),
                 "" if stats["min_z"] is None else f"{stats['min_z']:.6g}",
                 at(stats["min_at"]),
-                "", "",
+                "",
+                "",
             ]
             for column, text in enumerate(values):
-                self.stats_table.setItem(row, column, QtWidgets.QTableWidgetItem(text))
+                self.stats_table.setItem(
+                    row, column, QtWidgets.QTableWidgetItem(text)
+                )
         self.stats_table.resizeColumnsToContents()
         self._size_stats_table(len(stats_rows))
 
@@ -9424,7 +9780,9 @@ class HdfViewer(QtWidgets.QMainWindow):
                     fmt(stats.get("fit_r2")),
                 ]
             for col, text in enumerate(values):
-                self.stats_table.setItem(row, col, QtWidgets.QTableWidgetItem(text))
+                self.stats_table.setItem(
+                    row, col, QtWidgets.QTableWidgetItem(text)
+                )
         self.stats_table.resizeColumnsToContents()
         self._size_stats_table(len(rows), per_curve)
 
@@ -9447,7 +9805,6 @@ class HdfViewer(QtWidgets.QMainWindow):
         self._baseline_window.activateWindow()
         self._refresh_baseline_combo(self._selected_paths())
         self._update_baseline()
-
 
     def _update_baseline(self):
         window = getattr(self, "_baseline_window", None)
@@ -9479,7 +9836,9 @@ class HdfViewer(QtWidgets.QMainWindow):
                 delta,
             ]
             for col, text in enumerate(values):
-                self.baseline_table.setItem(row, col, QtWidgets.QTableWidgetItem(text))
+                self.baseline_table.setItem(
+                    row, col, QtWidgets.QTableWidgetItem(text)
+                )
         self.baseline_table.setSortingEnabled(True)
         self.baseline_table.resizeColumnsToContents()
 

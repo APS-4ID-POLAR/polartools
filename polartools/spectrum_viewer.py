@@ -879,7 +879,10 @@ def write_aligned_columns(
     """
     rows = max((column.size for column in columns), default=0)
     cells = [
-        [f"{column[row]:.8g}" if row < column.size else "" for row in range(rows)]
+        [
+            f"{column[row]:.8g}" if row < column.size else ""
+            for row in range(rows)
+        ]
         for column in columns
     ]
     widths = [
@@ -890,7 +893,10 @@ def write_aligned_columns(
         for line in header:
             stream.write(f"# {line}\n")
         stream.write(
-            "#L " + "  ".join(name.ljust(w) for name, w in zip(names, widths)).rstrip()
+            "#L "
+            + "  ".join(
+                name.ljust(w) for name, w in zip(names, widths)
+            ).rstrip()
             + "\n"
         )
         for row in range(rows):
@@ -918,7 +924,9 @@ def same_grid(first: np.ndarray, second: np.ndarray) -> bool:
     both = np.isfinite(a) & np.isfinite(b)
     if not both.any():
         return False
-    step = float(np.median(np.abs(np.diff(a[np.isfinite(a)])))) if n > 1 else 0.0
+    step = (
+        float(np.median(np.abs(np.diff(a[np.isfinite(a)])))) if n > 1 else 0.0
+    )
     if step <= 0:
         # One point, or a column that does not move: fall back to exact.
         return bool(np.allclose(a[both], b[both]))
@@ -946,11 +954,13 @@ def apply_bold_defaults(app) -> None:
     # matplotlib.rcParams and not pyplot's: this module builds Figures
     # directly, and importing pyplot here would bring its global figure
     # registry into a Qt application that manages its own canvases.
-    matplotlib.rcParams.update({
-        "font.weight": "bold",
-        "axes.labelweight": "bold",
-        "axes.titleweight": "bold",
-    })
+    matplotlib.rcParams.update(
+        {
+            "font.weight": "bold",
+            "axes.labelweight": "bold",
+            "axes.titleweight": "bold",
+        }
+    )
 
 
 # Room for the frame and the two arrows, which belong to the style and are
@@ -968,7 +978,9 @@ def fit_spin_width(spin, widest: str) -> None:
     one. Call it after :meth:`setRange`, :meth:`setPrefix` and
     :meth:`setSuffix` -- *widest* is built from those.
     """
-    spin.setFixedWidth(spin.fontMetrics().horizontalAdvance(widest) + SPIN_CHROME_PX)
+    spin.setFixedWidth(
+        spin.fontMetrics().horizontalAdvance(widest) + SPIN_CHROME_PX
+    )
 
 
 # -- Reading the spectrum file ----------------------------------------------
@@ -1000,7 +1012,9 @@ class SpectrumData:
                     f"{dset.ndim}-dimensional; a spectrum cube is "
                     "(frames, elements, bins)."
                 )
-            self.n_frames, self.n_elements, self.n_bins = (int(n) for n in dset.shape)
+            self.n_frames, self.n_elements, self.n_bins = (
+                int(n) for n in dset.shape
+            )
             if self.n_frames > MAX_TOTAL_FRAMES:
                 raise RuntimeError(
                     f"{self.path.name} holds {self.n_frames} frames, more than "
@@ -1044,7 +1058,10 @@ class SpectrumData:
                 continue
             columns = []
             for pair in names:
-                values = [np.asarray(group[name][()], dtype=np.float64) for name in pair]
+                values = [
+                    np.asarray(group[name][()], dtype=np.float64)
+                    for name in pair
+                ]
                 if len(values) == 1:
                     factor = values[0]
                 else:
@@ -1089,7 +1106,9 @@ class SpectrumData:
         shape = (n_blocks + 1, self.n_elements, self.n_bins)
         self._cum_raw = np.zeros(shape, dtype=np.float64)
         self._cum_dt = (
-            np.zeros(shape, dtype=np.float64) if self._factors is not None else None
+            np.zeros(shape, dtype=np.float64)
+            if self._factors is not None
+            else None
         )
 
         for b in range(n_blocks):
@@ -1100,7 +1119,9 @@ class SpectrumData:
             if self._cum_dt is not None:
                 self._cum_dt[b + 1] = self._cum_dt[b] + corrected
 
-    def _sum_slice(self, dset, lo: int, hi: int, mask: np.ndarray | None = None):
+    def _sum_slice(
+        self, dset, lo: int, hi: int, mask: np.ndarray | None = None
+    ):
         """Total frames ``[lo, hi)``, raw and corrected, reading in chunks.
 
         *mask*, where given, is a per-frame boolean over the whole scan; only
@@ -1117,7 +1138,9 @@ class SpectrumData:
         for start in range(lo, hi, READ_CHUNK):
             stop = min(start + READ_CHUNK, hi)
             block = dset[start:stop]
-            factors = None if self._factors is None else self._factors[start:stop]
+            factors = (
+                None if self._factors is None else self._factors[start:stop]
+            )
             if mask is not None:
                 keep = mask[start:stop]
                 if not keep.any():
@@ -1129,7 +1152,9 @@ class SpectrumData:
             if corrected is not None:
                 # einsum, not block * factors[:, :, None]: the latter would
                 # build a float64 copy of the chunk (59 MB) just to sum it.
-                corrected += np.einsum("ijk,ij->jk", block, factors, optimize=True)
+                corrected += np.einsum(
+                    "ijk,ij->jk", block, factors, optimize=True
+                )
         return raw, corrected
 
     def _read_num_points(self) -> int | None:
@@ -1148,7 +1173,11 @@ class SpectrumData:
                 if grp is None:
                     return None
                 for name in sorted(grp.keys()):
-                    value = grp[name].get("value") if hasattr(grp[name], "get") else None
+                    value = (
+                        grp[name].get("value")
+                        if hasattr(grp[name], "get")
+                        else None
+                    )
                     if value is not None and value.shape:
                         return int(value.shape[0])
                 return None
@@ -1391,7 +1420,9 @@ class SpectrumData:
         """Sum frames ``[lo, hi)`` straight from the file."""
         mask = self.odd_frames if odd_only else None
         with h5py.File(self.path, "r") as f:
-            raw, corrected = self._sum_slice(f[SPECTRUM_DATA_PATH], lo, hi, mask)
+            raw, corrected = self._sum_slice(
+                f[SPECTRUM_DATA_PATH], lo, hi, mask
+            )
         return corrected if dead_time and corrected is not None else raw
 
 
@@ -1461,7 +1492,9 @@ class MonitorRoiWindow(QtWidgets.QDialog):
             spin.setSuffix(" keV")
             spin.setKeyboardTracking(False)
             spin.setRange(*self._kev_limits())
-            fit_spin_width(spin, f"{spin.prefix()}{spin.maximum():.3f}{spin.suffix()}")
+            fit_spin_width(
+                spin, f"{spin.prefix()}{spin.maximum():.3f}{spin.suffix()}"
+            )
             # Set before connecting: these are the opening values, not an edit.
             spin.setValue(value)
             spin.valueChanged.connect(self._on_spin)
@@ -1473,34 +1506,38 @@ class MonitorRoiWindow(QtWidgets.QDialog):
         # anybody reads.
         lo_bin, hi_bin = self.viewer._default_monitor_bins()
         tip = (
-            f"The window element {self.element}'s counts are summed over to\n"
-            f"make '{self.monitor}'. Drag the band or its edges, or type the\n"
-            f"two ends. It opens on bins {lo_bin}-{hi_bin}, the same band on\n"
-            "either element -- wide enough to be a near-total (96% of this\n"
-            "element's counts) rather than a line divided by itself.\n"
-            "Every region of this detector alternates with the frames, so\n"
-            "normalising shrinks or inverts the odd - even contrast wherever\n"
-            "this band is put. There is no quiet corner to move it to; what\n"
-            "the two elements offer is a choice between two distortions,\n"
-            "measured on scan 597 at the 7.41 keV line, which reads -2.05%\n"
-            "raw:\n"
-        ) + (
-            "  element 1 is where the signal is, so its own alternation is\n"
-            "  small (-2.4% over the opening band, -2.4% whole spectrum).\n"
-            "  The band does contain the line, but the line is a small part\n"
-            "  of it, so the -2.05% reads as +0.37% here and +0.33% against\n"
-            "  the whole spectrum.\n"
-            if self.element == 1
-            else "  element 7 carries almost none of the line, so dividing by\n"
-            "  it is not dividing the signal by itself -- but element 7\n"
-            "  alternates far harder than element 1 (-7.4% over the opening\n"
-            "  band, -7.1% whole spectrum). The 7.41 keV line's -2.05% reads\n"
-            "  as +6.62% here and +6.19% against the whole spectrum: the\n"
-            "  sign flips. This is a second measurement, not a reference.\n"
-        ) + (
-            "That is the measurement and not a fault. Pick the region you\n"
-            "believe carries beam and not signal, read the rest off the\n"
-            "trend, and say in the figure which monitor it was."
+            (
+                f"The window element {self.element}'s counts are summed over to\n"
+                f"make '{self.monitor}'. Drag the band or its edges, or type the\n"
+                f"two ends. It opens on bins {lo_bin}-{hi_bin}, the same band on\n"
+                "either element -- wide enough to be a near-total (96% of this\n"
+                "element's counts) rather than a line divided by itself.\n"
+                "Every region of this detector alternates with the frames, so\n"
+                "normalising shrinks or inverts the odd - even contrast wherever\n"
+                "this band is put. There is no quiet corner to move it to; what\n"
+                "the two elements offer is a choice between two distortions,\n"
+                "measured on scan 597 at the 7.41 keV line, which reads -2.05%\n"
+                "raw:\n"
+            )
+            + (
+                "  element 1 is where the signal is, so its own alternation is\n"
+                "  small (-2.4% over the opening band, -2.4% whole spectrum).\n"
+                "  The band does contain the line, but the line is a small part\n"
+                "  of it, so the -2.05% reads as +0.37% here and +0.33% against\n"
+                "  the whole spectrum.\n"
+                if self.element == 1
+                else "  element 7 carries almost none of the line, so dividing by\n"
+                "  it is not dividing the signal by itself -- but element 7\n"
+                "  alternates far harder than element 1 (-7.4% over the opening\n"
+                "  band, -7.1% whole spectrum). The 7.41 keV line's -2.05% reads\n"
+                "  as +6.62% here and +6.19% against the whole spectrum: the\n"
+                "  sign flips. This is a second measurement, not a reference.\n"
+            )
+            + (
+                "That is the measurement and not a fault. Pick the region you\n"
+                "believe carries beam and not signal, read the rest off the\n"
+                "trend, and say in the figure which monitor it was."
+            )
         )
         self.lo_spin.setToolTip(tip)
         self.hi_spin.setToolTip(tip)
@@ -1578,7 +1615,8 @@ class MonitorRoiWindow(QtWidgets.QDialog):
             self.refresh()
             return
         self._set_range(
-            float(self.viewer._bin_to_kev(lo)), float(self.viewer._bin_to_kev(hi))
+            float(self.viewer._bin_to_kev(lo)),
+            float(self.viewer._bin_to_kev(hi)),
         )
 
     def _set_range(self, lo_kev: float, hi_kev: float):
@@ -1651,7 +1689,10 @@ class MonitorRoiWindow(QtWidgets.QDialog):
         self.ax.clear()
         drawn = 0
         for data in viewer.data:
-            if data.n_elements < self.element or min(last, data.n_frames - 1) < first:
+            if (
+                data.n_elements < self.element
+                or min(last, data.n_frames - 1) < first
+            ):
                 continue
             # part="all" whatever the Combine box says: the band is being put
             # on a spectrum, and the odd and even halves of one are the same
@@ -1691,7 +1732,9 @@ class MonitorRoiWindow(QtWidgets.QDialog):
         self.energy_axis = self.ax.secondary_xaxis(
             "top", functions=viewer._energy_map()
         )
-        self.energy_axis.set_xlabel("nominal energy [keV] - inferred, not recorded")
+        self.energy_axis.set_xlabel(
+            "nominal energy [keV] - inferred, not recorded"
+        )
         self._make_span()
         self.canvas.draw_idle()
 
@@ -1712,7 +1755,10 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
 
     def __init__(self, paths, parent=None):
         super().__init__(parent)
-        paths = [Path(p) for p in ([paths] if isinstance(paths, (str, Path)) else paths)]
+        paths = [
+            Path(p)
+            for p in ([paths] if isinstance(paths, (str, Path)) else paths)
+        ]
         if not paths:
             raise RuntimeError("No spectrum file to open.")
 
@@ -1834,7 +1880,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # The first scan's hint speaks for the window: several scans opened
         # together are opened to be compared, which means they are the same
         # kind of scan.
-        self.hinted_axis = scan_axis_field(self.data[0].master, self.axis_fields)
+        self.hinted_axis = scan_axis_field(
+            self.data[0].master, self.axis_fields
+        )
 
     def _usable_monitors(self, common: set) -> list[str]:
         """The monitors worth offering: recorded ones, then computed ones.
@@ -1863,7 +1911,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         for name in MONITOR_CANDIDATES:
             if name not in common:
                 continue
-            values = [self._field_values(i, name) for i in range(len(self.data))]
+            values = [
+                self._field_values(i, name) for i in range(len(self.data))
+            ]
             if all(v is not None and np.any(v > 0) for v in values):
                 usable.append(name)
         for name, element in COMPUTED_MONITORS.items():
@@ -1919,8 +1969,12 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.ax = self.figure.add_subplot(111)
         # Tracks the bottom axis through zoom and pan on its own; set_functions
         # is what a change of gain goes through, rather than rebuilding it.
-        self.energy_axis = self.ax.secondary_xaxis("top", functions=self._energy_map())
-        self.energy_axis.set_xlabel("nominal energy [keV] - inferred, not recorded")
+        self.energy_axis = self.ax.secondary_xaxis(
+            "top", functions=self._energy_map()
+        )
+        self.energy_axis.set_xlabel(
+            "nominal energy [keV] - inferred, not recorded"
+        )
         self.toolbar = NavigationToolbar2QT(self.canvas, panel)
 
         # A second figure, not a second axes on the first: a splitter resizes
@@ -1991,14 +2045,14 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.combine_combo.setToolTip(
             "What to do with the several frames of one scan point.\n"
             "Frames are numbered from 1 within their point, so frame 1 is odd:\n"
-            "\"Odd - even\" is (frames 1, 3, 5 ...) minus (frames 2, 4, 6 ...).\n"
+            '"Odd - even" is (frames 1, 3, 5 ...) minus (frames 2, 4, 6 ...).\n'
             "The softglue scans alternate frame by frame -- scan 597 point 0\n"
             "runs 5.4% apart, against 0.4% for a typical random split of\n"
             "the same frames -- and that difference is the measurement.\n"
             "Odd only and Even only show the two halves the difference is of;\n"
             "a difference is worth believing once both have been looked at."
-            if usable else
-            "Needs more than one vortex frame per scan point, in every scan\n"
+            if usable
+            else "Needs more than one vortex frame per scan point, in every scan\n"
             "loaded here. These have one, so there are no halves to tell apart."
         )
         self.combine_combo.currentIndexChanged.connect(self._schedule_redraw)
@@ -2025,7 +2079,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         return row
 
     def _frames_note(self) -> str:
-        """"800 frames, 20 per scan point", where the two divide evenly."""
+        """ "800 frames, 20 per scan point", where the two divide evenly."""
         if len(self.data) != 1:
             return f"of {self.max_frames}"
         per_point = self.data[0].frames_per_point
@@ -2085,7 +2139,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
 
         for label, slot in (("All", True), ("None", False)):
             btn = QtWidgets.QPushButton(label)
-            btn.clicked.connect(lambda _=False, on=slot: self._set_all_elements(on))
+            btn.clicked.connect(
+                lambda _=False, on=slot: self._set_all_elements(on)
+            )
             row.addWidget(btn)
 
         self.separate_box = QtWidgets.QCheckBox("Separate")
@@ -2159,7 +2215,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             f"{BIN_MASS_QUANTILE:.0%} of\nthe counts of every frame and element, "
             "plus a margin."
         )
-        auto_btn.clicked.connect(lambda: self._set_bin_range(*self.default_bin_range))
+        auto_btn.clicked.connect(
+            lambda: self._set_bin_range(*self.default_bin_range)
+        )
         row.addWidget(auto_btn)
 
         full_btn = QtWidgets.QPushButton("Full")
@@ -2167,7 +2225,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             f"All {self.max_bins} bins, including the last, which is not a\n"
             "spectrum bin but where everything over the ADC range piles up."
         )
-        full_btn.clicked.connect(lambda: self._set_bin_range(0, self.max_bins - 1))
+        full_btn.clicked.connect(
+            lambda: self._set_bin_range(0, self.max_bins - 1)
+        )
         row.addWidget(full_btn)
 
         row.addStretch(1)
@@ -2190,7 +2250,10 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # have its ROI clamped to the last bin and open on a sliver at the top
         # of the range -- a worse answer than finding the peak again.
         remembered = _REMEMBERED_ROI_BINS
-        if remembered is not None and 0 <= remembered[0] < remembered[1] <= self.max_bins - 1:
+        if (
+            remembered is not None
+            and 0 <= remembered[0] < remembered[1] <= self.max_bins - 1
+        ):
             lo, hi = remembered
             # The inverse of _roi_bins, as _on_span_select already writes it.
             # Round-trips exactly at the default 10 eV/bin and zero offset:
@@ -2198,8 +2261,10 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             # whole eV, both of which the boxes' 3 and 0 decimals hold.
             self.roi_center_kev = float(self._bin_to_kev((lo + hi) / 2.0))
             self.roi_width_ev = (
-                float(self._bin_to_kev(hi)) - float(self._bin_to_kev(lo))
-            ) * 1000.0 / 2.0
+                (float(self._bin_to_kev(hi)) - float(self._bin_to_kev(lo)))
+                * 1000.0
+                / 2.0
+            )
         else:
             self.roi_center_kev = self._peak_kev(
                 self._shown_total, *self.default_bin_range
@@ -2354,7 +2419,8 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         )
         self.x_combo.setMinimumContentsLength(12)
         self.x_combo.setSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Fixed,
         )
         self.x_combo.currentIndexChanged.connect(self._schedule_redraw)
         row.addWidget(self.x_combo, 1)
@@ -2589,7 +2655,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         """
         name = self.monitor_combo.currentText()
         wanted = name in COMPUTED_MONITORS
-        self.monitor_roi_btn.setEnabled(wanted and self.monitor_combo.isEnabled())
+        self.monitor_roi_btn.setEnabled(
+            wanted and self.monitor_combo.isEnabled()
+        )
         # Hide every other computed monitor's window first, so that switching
         # from one to the other cannot leave two up: only one of them is
         # dividing the trend, and two open bands would both look live.
@@ -2668,12 +2736,16 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         """The "Peak" button: re-centre on the tallest bin now on screen."""
         self._set_roi_kev(
             self._peak_kev(
-                self._shown_total, self.xmin_spin.value(), self.xmax_spin.value()
+                self._shown_total,
+                self.xmin_spin.value(),
+                self.xmax_spin.value(),
             ),
             self.roi_width_ev,
         )
 
-    def _set_roi_kev(self, center: float, width: float, update_span: bool = True):
+    def _set_roi_kev(
+        self, center: float, width: float, update_span: bool = True
+    ):
         """Move the ROI, and bring both views with it.
 
         The one place ``roi_center_kev``/``roi_width_ev`` change, and so the
@@ -2731,7 +2803,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         _REMEMBERED_ROI_BINS = self._roi_bins()
 
     def _on_roi_spin(self, *_):
-        self._set_roi_kev(self.roi_center_spin.value(), self.roi_width_spin.value())
+        self._set_roi_kev(
+            self.roi_center_spin.value(), self.roi_width_spin.value()
+        )
 
     def _on_span_select(self, low: float, high: float):
         """A drag of the shaded band on the spectrum, which is drawn in bins."""
@@ -2823,7 +2897,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
     # -- drawing ------------------------------------------------------------
 
     def _selected_elements(self) -> list[int]:
-        return [i for i, box in enumerate(self.element_boxes) if box.isChecked()]
+        return [
+            i for i, box in enumerate(self.element_boxes) if box.isChecked()
+        ]
 
     def _redraw(self):
         first = self.first_spin.value()
@@ -2835,7 +2911,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         xmin = self.xmin_spin.value()
         xmax = self.xmax_spin.value()
         if xmax <= xmin:
-            self.status.showMessage("The last bin shown is not after the first.")
+            self.status.showMessage(
+                "The last bin shown is not after the first."
+            )
             return
 
         # An empty selection is drawn, not short-circuited. Returning early
@@ -2916,7 +2994,11 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                     empty_half.append(data.path.name)
 
             totals = data.range_sum(first, last, dead_time, part)
-            sums = totals if part == "all" else data.range_sum(first, last, dead_time)
+            sums = (
+                totals
+                if part == "all"
+                else data.range_sum(first, last, dead_time)
+            )
             if separate:
                 for i in usable:
                     draw(totals[i], f"element {i + 1}", sums[i])
@@ -2969,7 +3051,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         if inside.size:
             top = float(inside.max())
             if log:
-                self.ax.set_ylim(float(inside.min()) / Y_LOG_MARGIN, top * Y_LOG_MARGIN)
+                self.ax.set_ylim(
+                    float(inside.min()) / Y_LOG_MARGIN, top * Y_LOG_MARGIN
+                )
             elif signed:
                 # Zero has to stay on the axis -- it is the line the two
                 # halves are being compared across -- but the floor cannot
@@ -2993,8 +3077,12 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.ax.grid(True, which="major", alpha=0.3)
 
         # The secondary axis was built before this clear() and went with it.
-        self.energy_axis = self.ax.secondary_xaxis("top", functions=self._energy_map())
-        self.energy_axis.set_xlabel("nominal energy [keV] - inferred, not recorded")
+        self.energy_axis = self.ax.secondary_xaxis(
+            "top", functions=self._energy_map()
+        )
+        self.energy_axis.set_xlabel(
+            "nominal energy [keV] - inferred, not recorded"
+        )
 
         # clear() takes the axes' callbacks with it -- checked on matplotlib
         # 3.9.1 rather than assumed -- so the zoom watcher is reconnected here
@@ -3015,7 +3103,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         if empty_half:
             notes.insert(
                 0,
-                f"no frames for \"{self._mode_label(part)}\" in {first}-{last}: "
+                f'no frames for "{self._mode_label(part)}" in {first}-{last}: '
                 + ", ".join(empty_half),
             )
         if hidden:
@@ -3044,7 +3132,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         """
         key = (index, name)
         if key not in self._field_cache:
-            self._field_cache[key] = read_primary_field(self.data[index].master, name)
+            self._field_cache[key] = read_primary_field(
+                self.data[index].master, name
+            )
         return self._field_cache[key]
 
     def _monitor_label(self, monitor: str) -> str:
@@ -3070,10 +3160,16 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         """
         mon = self._field_values(index, monitor)
         if mon is None:
-            return None, f"{data.path.name}: no {monitor} recorded, not normalized"
+            return (
+                None,
+                f"{data.path.name}: no {monitor} recorded, not normalized",
+            )
         index_of = data.point_index
         if index_of is None:
-            return None, f"{data.path.name}: frames cannot be paired with {monitor}"
+            return (
+                None,
+                f"{data.path.name}: frames cannot be paired with {monitor}",
+            )
 
         scale = np.full(data.n_frames, np.nan)
         inside = index_of < mon.size
@@ -3209,7 +3305,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         of monitor -- see :meth:`_recorded_scale` and :meth:`_computed_scale`.
         """
         if monitor in COMPUTED_MONITORS:
-            scale, note = self._computed_scale(data, monitor, part, dead_time, window)
+            scale, note = self._computed_scale(
+                data, monitor, part, dead_time, window
+            )
         else:
             scale, note = self._recorded_scale(index, data, monitor)
         if scale is None:
@@ -3225,7 +3323,10 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             # through a window opened on several -- or, for the computed one,
             # a monitor window sitting on a part of the spectrum with no
             # counts in it at all.
-            return None, f"{data.path.name}: {monitor} is zero throughout, not normalized"
+            return (
+                None,
+                f"{data.path.name}: {monitor} is zero throughout, not normalized",
+            )
         return scale, note
 
     @staticmethod
@@ -3256,8 +3357,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             return np.empty(0), np.empty((0, values.shape[1]))
         return np.concatenate(xs).astype(float), np.concatenate(ys)
 
-    def _trend_points(self, index, data, values, first, kind, field, part="all",
-                      scale=None):
+    def _trend_points(
+        self, index, data, values, first, kind, field, part="all", scale=None
+    ):
         """``(x, y, xlabel, notes)`` for one scan: the ROI against the axis.
 
         *values* is per frame and already cut to the frames on show; *first*
@@ -3310,8 +3412,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             if odd is None:
                 return frames, values, TREND_FRAME_AXIS, []
             if part == "difference":
-                x, y = self._frame_pairs(values, index_all[first : first + n_frames],
-                                         odd, first)
+                x, y = self._frame_pairs(
+                    values, index_all[first : first + n_frames], odd, first
+                )
                 return x, y, TREND_FRAME_AXIS, []
             keep = odd if part == "odd" else ~odd
             return frames[keep], values[keep], TREND_FRAME_AXIS, []
@@ -3321,7 +3424,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 np.arange(first, first + n_frames, dtype=float),
                 values,
                 TREND_FRAME_AXIS,
-                [f"{data.path.name}: no frame-to-point map, so plotted by frame"],
+                [
+                    f"{data.path.name}: no frame-to-point map, so plotted by frame"
+                ],
             )
 
         notes = []
@@ -3426,7 +3531,12 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             )
 
         if kind == "point":
-            return np.arange(points, dtype=float), grouped, TREND_POINT_AXIS, notes
+            return (
+                np.arange(points, dtype=float),
+                grouped,
+                TREND_POINT_AXIS,
+                notes,
+            )
 
         x = self._field_values(index, field)
         if x is None:
@@ -3456,7 +3566,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         event loop -- cannot have the numbers change under it and end up
         disagreeing with its own header.
         """
-        normalize = self.normalise_box.isChecked() and self.normalise_box.isEnabled()
+        normalize = (
+            self.normalise_box.isChecked() and self.normalise_box.isEnabled()
+        )
         kind, field = self.x_combo.currentData()
         low, high = self._roi_bins()
         return {
@@ -3552,7 +3664,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 # the same order the spectrum pane sums in, and the order
                 # that keeps a scan missing an element out of the others'
                 # sum. NaN propagates through the sum on purpose.
-                per_element.setdefault(SUM_KEY, []).append(y[:, usable].sum(axis=1))
+                per_element.setdefault(SUM_KEY, []).append(
+                    y[:, usable].sum(axis=1)
+                )
             used += 1
             per_point.add(data.frames_per_point)
 
@@ -3645,7 +3759,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             per_scan.append(y[:, 0])
         return stack_mean(per_scan) if per_scan else None
 
-    def _redraw_trend(self, chosen, dead_time, part="all", separate=True) -> list[str]:
+    def _redraw_trend(
+        self, chosen, dead_time, part="all", separate=True
+    ) -> list[str]:
         """Draw the ROI against the scan axis. Returns notes for the status bar.
 
         With *separate* -- the "Separate" tick, as the spectrum pane read it
@@ -3694,7 +3810,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             width = self.plot_split.width()
             if width > 0:
                 self.trend_pane.setMinimumWidth(0)
-                self.plot_split.setSizes([2 * width // 3, width - 2 * width // 3])
+                self.plot_split.setSizes(
+                    [2 * width // 3, width - 2 * width // 3]
+                )
 
         settings = self._trend_settings()
         normalize, monitor = settings["normalize"], settings["monitor"]
@@ -3810,7 +3928,11 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         again, because a run's exports belong with the run.
         """
         master = self.data[0].master
-        base = master.parent if master is not None else self.data[0].path.parent.parent
+        base = (
+            master.parent
+            if master is not None
+            else self.data[0].path.parent.parent
+        )
         return base / "export"
 
     def _export_folder(self) -> Path:
@@ -3887,7 +4009,12 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             if stop < first:
                 continue
             scale, _note = self._monitor_scale(
-                index, data, settings["monitor"], "all", dead_time, (first, stop)
+                index,
+                data,
+                settings["monitor"],
+                "all",
+                dead_time,
+                (first, stop),
             )
             if scale is not None:
                 return True
@@ -3925,14 +4052,17 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             f"{self.offset_spin.value():.1f} eV (nominal, not recorded)",
             "elements = "
             + (
-                ", ".join(str(e) for e in elements) + (" separate" if separate else " summed")
+                ", ".join(str(e) for e in elements)
+                + (" separate" if separate else " summed")
                 if elements
                 else "(none)"
             ),
             f"dead time = {'corrected' if dead_time else 'uncorrected'}",
         ]
         if self._normalizable(dead_time, settings):
-            lines.append(f"monitor = {self._monitor_label(settings['monitor'])}")
+            lines.append(
+                f"monitor = {self._monitor_label(settings['monitor'])}"
+            )
             lines.append(
                 "values = raw and normalised; both are totals over each "
                 "point's frames, not means, and so is every mon_ column"
@@ -4038,7 +4168,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         mean_x = np.empty(0)
 
         for label, part, _unit in COMBINE_MODES:
-            tag = _safe_name(label.replace(" - ", "").replace(" only", "")).lower()
+            tag = _safe_name(
+                label.replace(" - ", "").replace(" only", "")
+            ).lower()
             for suffix, these in (("raw", raw_settings), ("norm", settings)):
                 if suffix == "norm" and not normalize:
                     continue
@@ -4060,10 +4192,16 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         for part in ("all", "odd", "even"):
             column = self._monitor_trend(dead_time, part, settings)
             if column is not None:
-                names.append({"all": "mon_sum", "odd": "mon_odd", "even": "mon_even"}[part])
+                names.append(
+                    {"all": "mon_sum", "odd": "mon_odd", "even": "mon_even"}[
+                        part
+                    ]
+                )
                 columns.append(column)
 
-        points = np.arange(max((c.size for c in columns), default=mean_x.size), dtype=float)
+        points = np.arange(
+            max((c.size for c in columns), default=mean_x.size), dtype=float
+        )
         columns.insert(0, points)
         if settings["kind"] == "field" and mean_x.size:
             names.insert(1, _safe_name(settings["field"]))
@@ -4073,11 +4211,15 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
     def _export_trend(self):
         """Write the trend behind Plot ROI to an ASCII table."""
         if not self.plot_roi_btn.isChecked():
-            self.status.showMessage("Nothing is plotted -- press Plot ROI first.")
+            self.status.showMessage(
+                "Nothing is plotted -- press Plot ROI first."
+            )
             return
         chosen = self._selected_elements()
         if not chosen:
-            self.status.showMessage("No element is ticked, so there is nothing to export.")
+            self.status.showMessage(
+                "No element is ticked, so there is nothing to export."
+            )
             return
         # Snapshotted before the dialog, which runs a nested event loop: a
         # redraw behind it would otherwise leave the numbers disagreeing
@@ -4090,12 +4232,17 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             chosen, dead_time, separate, settings
         )
         if not columns or max(c.size for c in columns) == 0:
-            self.status.showMessage("The trend is empty, so there is nothing to export.")
+            self.status.showMessage(
+                "The trend is empty, so there is nothing to export."
+            )
             return
 
         default = self._export_folder() / (self._export_stem() + ".txt")
         path, _filter = QtWidgets.QFileDialog.getSaveFileName(
-            self, "Export the ROI trend", str(default), "Text (*.txt);;All files (*)"
+            self,
+            "Export the ROI trend",
+            str(default),
+            "Text (*.txt);;All files (*)",
         )
         if not path:  # cancelled
             return
@@ -4103,23 +4250,31 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         if not target.suffix:
             target = target.with_suffix(".txt")
 
-        header = self._export_header(settings, separate, dead_time, axis_note, xlabel)
+        header = self._export_header(
+            settings, separate, dead_time, axis_note, xlabel
+        )
         try:
             write_aligned_columns(target, names, columns, header + notes)
         except OSError as exc:
-            self.status.showMessage(f"Could not write {target}  -  {exc.strerror or exc}")
+            self.status.showMessage(
+                f"Could not write {target}  -  {exc.strerror or exc}"
+            )
             return
         rows = max(c.size for c in columns)
         self.status.showMessage(
             f"Wrote {target}  -  {len(columns)} columns, {rows} rows"
         )
 
-    def _status_text(self, first, last, clamped, uncorrected, skipped, notes) -> str:
+    def _status_text(
+        self, first, last, clamped, uncorrected, skipped, notes
+    ) -> str:
         parts = [f"Frames {first}-{last}"]
         if len(self.data) > 1:
             parts.append(f"{len(self.data)} scans")
         if clamped:
-            parts.append("clamped to their own last frame: " + ", ".join(clamped))
+            parts.append(
+                "clamped to their own last frame: " + ", ".join(clamped)
+            )
         if uncorrected:
             parts.append("no dead-time factors in: " + ", ".join(uncorrected))
         if skipped:

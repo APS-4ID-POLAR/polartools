@@ -93,6 +93,7 @@ import numpy as np
 
 try:  # Registers the blosc/lz4/bitshuffle filters that entry/data/data needs.
     import hdf5plugin  # noqa: F401
+
     HAVE_HDF5PLUGIN = True
 except ImportError:  # pragma: no cover - depends on the environment
     HAVE_HDF5PLUGIN = False
@@ -126,7 +127,9 @@ EPICS_TS_NSEC_PATH = "entry/instrument/NDAttributes/NDArrayEpicsTSnSec"
 # EPICS time counts from 1990-01-01, UNIX time from 1970-01-01.
 EPICS_EPOCH_OFFSET = 631152000.0
 PVA_STREAMING_PATH = "entry/instrument/bluesky/metadata/pva_streaming"
-DETECTORS_FILE_PATH = "entry/instrument/bluesky/metadata/detectors_file_relative_path"
+DETECTORS_FILE_PATH = (
+    "entry/instrument/bluesky/metadata/detectors_file_relative_path"
+)
 # Both writers record their file in a "name: value" block. The pvapy consumer
 # labels its line "file_name"; an areaDetector writer labels each line with the
 # detector's own name, so there the first line simply wins.
@@ -148,9 +151,9 @@ SCAN_PREFIX = "scan/"
 
 # Refuse rather than thrash: the stack is read into memory in one go (a 441 MB
 # 101x1028x1062 eiger stack decodes in well under a second).
-MAX_STACK_BYTES = 8 * 1024 ** 3
+MAX_STACK_BYTES = 8 * 1024**3
 # Several files are held at once when they are compared side by side.
-MAX_TOTAL_BYTES = 8 * 1024 ** 3
+MAX_TOTAL_BYTES = 8 * 1024**3
 
 HDF5PLUGIN_HINT = (
     "The image stack is compressed and could not be decoded.\n\n"
@@ -217,7 +220,9 @@ def _recorded_image_paths(master: Path) -> list[str]:
     return found
 
 
-def recorded_detector_file(master: Path, detector: str | None = None) -> str | None:
+def recorded_detector_file(
+    master: Path, detector: str | None = None
+) -> str | None:
     """The file *master* records for *detector*, exactly as written.
 
     The one line of the ``detectors_file_relative_path`` block that *detector*
@@ -297,7 +302,7 @@ def master_path_for_image(image: Path) -> Path | None:
     stem = image.stem
     for prefix in ("pva_", "pva"):
         if stem.startswith(prefix):
-            stem = stem[len(prefix):]
+            stem = stem[len(prefix) :]
             break
     for directory in (image.parent, image.parent.parent):
         for suffix in (".hdf", ".hdf5", ".h5"):
@@ -322,7 +327,7 @@ def _scan_time_base(group) -> np.ndarray | None:
         epoch = np.asarray(item["EPOCH"][()], dtype=float).ravel()
         if (
             epoch.size > 1
-            and epoch[0] > 1e9                      # later than 2001, so a real time
+            and epoch[0] > 1e9  # later than 2001, so a real time
             and np.all(np.diff(epoch) >= 0)
             and epoch[-1] > epoch[0]
         ):
@@ -330,15 +335,21 @@ def _scan_time_base(group) -> np.ndarray | None:
     return None
 
 
-def nearest_index(frame_epoch: np.ndarray, scan_epoch: np.ndarray) -> np.ndarray:
+def nearest_index(
+    frame_epoch: np.ndarray, scan_epoch: np.ndarray
+) -> np.ndarray:
     """For each frame, the scan point closest to it in time.
 
     Shared with ``hkl_viewer``, which matches the master's diffractometer angles
     onto the frames the same way.
     """
-    right = np.clip(np.searchsorted(scan_epoch, frame_epoch), 1, scan_epoch.size - 1)
+    right = np.clip(
+        np.searchsorted(scan_epoch, frame_epoch), 1, scan_epoch.size - 1
+    )
     left = right - 1
-    take_left = frame_epoch - scan_epoch[left] <= scan_epoch[right] - frame_epoch
+    take_left = (
+        frame_epoch - scan_epoch[left] <= scan_epoch[right] - frame_epoch
+    )
     return np.where(take_left, left, right)
 
 
@@ -417,7 +428,10 @@ def read_scan_channels(
                 # of time -- a mismatched master would otherwise be resampled
                 # into plausible-looking nonsense.
                 spacing = float(np.median(np.diff(scan_epoch))) or 1.0
-                if float(np.median(np.abs(frame_epoch - scan_epoch[index]))) > 5 * spacing:
+                if (
+                    float(np.median(np.abs(frame_epoch - scan_epoch[index])))
+                    > 5 * spacing
+                ):
                     return {}
                 n_scan_points = scan_epoch.size
             else:
@@ -509,16 +523,18 @@ class ImageData:
                 )
             if dset.nbytes > MAX_STACK_BYTES:
                 raise RuntimeError(
-                    f"{self.path.name} holds {dset.nbytes / 1024 ** 3:.1f} GB of image "
+                    f"{self.path.name} holds {dset.nbytes / 1024**3:.1f} GB of image "
                     f"data, more than this viewer loads at once "
-                    f"({MAX_STACK_BYTES / 1024 ** 3:.0f} GB)."
+                    f"({MAX_STACK_BYTES / 1024**3:.0f} GB)."
                 )
             try:
                 stack = np.asarray(dset[()], dtype=np.float32)
             except OSError as exc:
                 if not HAVE_HDF5PLUGIN:
                     raise RuntimeError(HDF5PLUGIN_HINT) from exc
-                raise RuntimeError(f"Could not read the image stack: {exc}") from exc
+                raise RuntimeError(
+                    f"Could not read the image stack: {exc}"
+                ) from exc
 
             if stack.ndim == 2:
                 stack = stack[np.newaxis, ...]
@@ -533,7 +549,9 @@ class ImageData:
             self.stored_rois = self._read_stored_rois(f)
 
         # Offered next to the image file's own channels, on the same frames.
-        self.channels.update(read_scan_channels(self.path, self.epoch, n_frames))
+        self.channels.update(
+            read_scan_channels(self.path, self.epoch, n_frames)
+        )
 
     @property
     def n_frames(self) -> int:
@@ -566,7 +584,11 @@ class ImageData:
         # the nanoseconds have to be scaled, so widen before doing any of it.
         seconds = np.asarray(sec[()], dtype=float).ravel()
         nanoseconds = np.asarray(nsec[()], dtype=float).ravel()
-        if not n_frames or seconds.size != n_frames or nanoseconds.size != n_frames:
+        if (
+            not n_frames
+            or seconds.size != n_frames
+            or nanoseconds.size != n_frames
+        ):
             return None
         epoch = seconds + nanoseconds * 1e-9 + EPICS_EPOCH_OFFSET
         # An attribute the driver never filled in leaves zeroes behind, which
@@ -727,7 +749,9 @@ def roi_sub_frame(frame: np.ndarray, roi, image_item=None) -> np.ndarray | None:
     return np.asarray(sub, dtype=np.float32)
 
 
-def roi_pixel_count(roi, shape: tuple[int, int], image_item=None, frame=None) -> int:
+def roi_pixel_count(
+    roi, shape: tuple[int, int], image_item=None, frame=None
+) -> int:
     """How many pixels *roi* covers -- the N in a ``background x N`` correction."""
     if roi_is_rotated(roi) and frame is not None:
         sub = roi_sub_frame(frame, roi, image_item)
@@ -738,19 +762,33 @@ def roi_pixel_count(roi, shape: tuple[int, int], image_item=None, frame=None) ->
 
 def _empty_series(n_frames: int) -> dict[str, np.ndarray]:
     zeros = np.zeros(n_frames, dtype=float)
-    return {key: zeros.copy() for key in ("sum", "mean", "min", "max", "comx", "comy")}
+    return {
+        key: zeros.copy()
+        for key in ("sum", "mean", "min", "max", "comx", "comy")
+    }
 
 
-def _reduce_sub(sub: np.ndarray) -> tuple[float, float, float, float, float, float]:
+def _reduce_sub(
+    sub: np.ndarray,
+) -> tuple[float, float, float, float, float, float]:
     """``(sum, mean, min, max, comx, comy)`` of one ROI sub-image indexed ``[x, y]``."""
     total = float(np.sum(sub))
     weight = total if total != 0.0 else 1.0
     comx = float((np.arange(sub.shape[0]) @ sub.sum(axis=1)) / weight)
     comy = float((sub.sum(axis=0) @ np.arange(sub.shape[1])) / weight)
-    return total, float(np.mean(sub)), float(np.min(sub)), float(np.max(sub)), comx, comy
+    return (
+        total,
+        float(np.mean(sub)),
+        float(np.min(sub)),
+        float(np.max(sub)),
+        comx,
+        comy,
+    )
 
 
-def roi_series(stack: np.ndarray, roi, image_item=None) -> dict[str, np.ndarray]:
+def roi_series(
+    stack: np.ndarray, roi, image_item=None
+) -> dict[str, np.ndarray]:
     """Per-frame ROI metrics over the whole stack.
 
     An unrotated ROI is a plain slice of the stack, so the reductions run over
@@ -765,7 +803,9 @@ def roi_series(stack: np.ndarray, roi, image_item=None) -> dict[str, np.ndarray]
             if sub is None:
                 continue
             values = _reduce_sub(sub)
-            for key, value in zip(("sum", "mean", "min", "max", "comx", "comy"), values):
+            for key, value in zip(
+                ("sum", "mean", "min", "max", "comx", "comy"), values
+            ):
                 series[key][i] = value
         return series
 
@@ -781,8 +821,10 @@ def roi_series(stack: np.ndarray, roi, image_item=None) -> dict[str, np.ndarray]
         "mean": sub.mean(axis=(1, 2), dtype=np.float64),
         "min": sub.min(axis=(1, 2)).astype(float),
         "max": sub.max(axis=(1, 2)).astype(float),
-        "comx": (sub.sum(axis=2, dtype=np.float64) @ np.arange(x1 - x0)) / weights,
-        "comy": (sub.sum(axis=1, dtype=np.float64) @ np.arange(y1 - y0)) / weights,
+        "comx": (sub.sum(axis=2, dtype=np.float64) @ np.arange(x1 - x0))
+        / weights,
+        "comy": (sub.sum(axis=1, dtype=np.float64) @ np.arange(y1 - y0))
+        / weights,
     }
 
 
@@ -820,7 +862,9 @@ class ContextRectROI(pg.RectROI):
         super().__init__(pos, size, pen=pen)
         self.shared = shared
         self.panel = panel
-        self.setAcceptedMouseButtons(QtCore.Qt.MouseButton.LeftButton | QtCore.Qt.MouseButton.RightButton)
+        self.setAcceptedMouseButtons(
+            QtCore.Qt.MouseButton.LeftButton | QtCore.Qt.MouseButton.RightButton
+        )
         self.addRotateHandle([1, 0], [0.5, 0.5])
 
     def checkPointMove(self, handle, pos, modifiers):
@@ -925,7 +969,9 @@ class SharedRoi(QtCore.QObject):
             return
         self.geometryFinished.emit(self)
 
-    def set_geometry(self, x: float, y: float, w: float, h: float, angle: float):
+    def set_geometry(
+        self, x: float, y: float, w: float, h: float, angle: float
+    ):
         self._pos = (float(x), float(y))
         self._size = (float(w), float(h))
         self._angle = float(angle)
@@ -954,7 +1000,8 @@ class SharedRoi(QtCore.QObject):
         item.setAcceptedMouseButtons(
             QtCore.Qt.MouseButton.RightButton
             if self.locked
-            else QtCore.Qt.MouseButton.LeftButton | QtCore.Qt.MouseButton.RightButton
+            else QtCore.Qt.MouseButton.LeftButton
+            | QtCore.Qt.MouseButton.RightButton
         )
         item.setVisible(self.visible)
         for handle in item.getHandles():
@@ -1063,7 +1110,9 @@ class ImagePanel(QtWidgets.QWidget):
             item.setZValue(1000)
             self.plot_item.addItem(item, ignoreBounds=True)
         self._mouse_proxy = pg.SignalProxy(
-            self.plot_item.scene().sigMouseMoved, rateLimit=60, slot=self._on_mouse_moved
+            self.plot_item.scene().sigMouseMoved,
+            rateLimit=60,
+            slot=self._on_mouse_moved,
         )
 
     def _on_mouse_moved(self, event):
@@ -1185,7 +1234,9 @@ class _RoiDockBase(QtWidgets.QDockWidget):
         with np.errstate(divide="ignore", invalid="ignore"):
             return np.where(divisor != 0.0, values / divisor, np.nan)
 
-    def normalize_scalar(self, values: np.ndarray, series: dict, index: int) -> np.ndarray:
+    def normalize_scalar(
+        self, values: np.ndarray, series: dict, index: int
+    ) -> np.ndarray:
         """Divide *values* by the normalization channel at one frame.
 
         Used for the single-frame projections, where the curve runs over pixels
@@ -1344,7 +1395,9 @@ class RoiPlotDock(_RoiDockBase):
         )
         axis_row.addWidget(self.offset_spin)
         self.auto_offset_btn = QtWidgets.QPushButton("Auto")
-        self.auto_offset_btn.setToolTip("Pick an offset from the curves' own span.")
+        self.auto_offset_btn.setToolTip(
+            "Pick an offset from the curves' own span."
+        )
         axis_row.addWidget(self.auto_offset_btn)
         layout.addLayout(axis_row)
 
@@ -1372,7 +1425,9 @@ class RoiPlotDock(_RoiDockBase):
         self.connect_signals()
         self.x_select.currentIndexChanged.connect(lambda _: self.update_plot())
         self.y_select.currentIndexChanged.connect(lambda _: self.update_plot())
-        self.norm_select.currentIndexChanged.connect(lambda _: self.update_plot())
+        self.norm_select.currentIndexChanged.connect(
+            lambda _: self.update_plot()
+        )
         self.offset_spin.valueChanged.connect(lambda _: self.update_plot())
         self.auto_offset_btn.clicked.connect(self._auto_offset)
         self.radio_stack.toggled.connect(lambda _: self._on_mode_changed())
@@ -1382,7 +1437,9 @@ class RoiPlotDock(_RoiDockBase):
     # -- data ---------------------------------------------------------------
 
     def recompute(self):
-        self.series_by_panel = [self.panel_series(p) for p in self.viewer.panels]
+        self.series_by_panel = [
+            self.panel_series(p) for p in self.viewer.panels
+        ]
         self.refresh_options()
         self.update_plot()
 
@@ -1421,7 +1478,10 @@ class RoiPlotDock(_RoiDockBase):
             else:
                 # Frames are indexed [x, y]: summing over y leaves a profile along X.
                 self.projections.append(
-                    (sub.sum(axis=1).astype(float), sub.sum(axis=0).astype(float))
+                    (
+                        sub.sum(axis=1).astype(float),
+                        sub.sum(axis=0).astype(float),
+                    )
                 )
 
     # -- curves --------------------------------------------------------------
@@ -1439,7 +1499,9 @@ class RoiPlotDock(_RoiDockBase):
                 # The projection runs over pixels, so the divisor is this
                 # frame's single value rather than a whole series.
                 y = self.normalize_scalar(y, series, panel.frame_index)
-                curves.append((panel.data.path.name, np.arange(len(y), dtype=float), y))
+                curves.append(
+                    (panel.data.path.name, np.arange(len(y), dtype=float), y)
+                )
             return curves
 
         x_key = combo_key(self.x_select, "frame")
@@ -1467,7 +1529,11 @@ class RoiPlotDock(_RoiDockBase):
         self.plot_item.clear()
         # addLegend() installs on the PlotItem, which clear() empties, so the
         # legend is rebuilt alongside the curves.
-        legend = self.plot_item.addLegend(offset=(-10, 10)) if len(self.viewer.panels) > 1 else None
+        legend = (
+            self.plot_item.addLegend(offset=(-10, 10))
+            if len(self.viewer.panels) > 1
+            else None
+        )
 
         curves = self._curves()
         offset = self.offset_spin.value()
@@ -1475,8 +1541,13 @@ class RoiPlotDock(_RoiDockBase):
             color = FILE_COLORS[index % len(FILE_COLORS)]
             shifted = y + index * offset
             item = self.plot_item.plot(
-                x, shifted, pen=pg.mkPen(color, width=1), symbol="o", symbolSize=4,
-                symbolBrush=color, symbolPen=None,
+                x,
+                shifted,
+                pen=pg.mkPen(color, width=1),
+                symbol="o",
+                symbolSize=4,
+                symbolBrush=color,
+                symbolPen=None,
             )
             if legend is not None:
                 suffix = f"  (+{index * offset:g})" if offset and index else ""
@@ -1488,7 +1559,9 @@ class RoiPlotDock(_RoiDockBase):
             self.plot_item.setLabel("bottom", axis_label("pixel"))
             self.plot_item.setLabel("left", axis_label(y_key) + note)
         else:
-            self.plot_item.setLabel("bottom", axis_label(combo_key(self.x_select, "frame")))
+            self.plot_item.setLabel(
+                "bottom", axis_label(combo_key(self.x_select, "frame"))
+            )
             self.plot_item.setLabel(
                 "left", axis_label(combo_key(self.y_select, "sum")) + note
             )
@@ -1515,7 +1588,8 @@ class RoiPlotDock(_RoiDockBase):
             return np.zeros(1)
         series = self.series_by_panel[0]
         return np.asarray(
-            series.get(combo_key(self.x_select, "frame"), series["frame"]), dtype=float
+            series.get(combo_key(self.x_select, "frame"), series["frame"]),
+            dtype=float,
         )
 
     def _move_line_to_frame(self, index: int):
@@ -1554,7 +1628,9 @@ class Roi2DPlotDock(_RoiDockBase):
     """The "ROI 2D plot" for one file: a scatter point per frame, Z as colour."""
 
     def __init__(self, viewer, roi: SharedRoi, panel: ImagePanel):
-        super().__init__(viewer, roi, f"ROI 2D plot - {roi.name} - {panel.data.path.name}")
+        super().__init__(
+            viewer, roi, f"ROI 2D plot - {roi.name} - {panel.data.path.name}"
+        )
         self.panel = panel
 
         container = QtWidgets.QWidget(self)
@@ -1594,7 +1670,10 @@ class Roi2DPlotDock(_RoiDockBase):
         cmap_row.addSpacing(12)
         self.z_min_spin = QtWidgets.QDoubleSpinBox()
         self.z_max_spin = QtWidgets.QDoubleSpinBox()
-        for label, spin in (("Z min:", self.z_min_spin), ("Z max:", self.z_max_spin)):
+        for label, spin in (
+            ("Z min:", self.z_min_spin),
+            ("Z max:", self.z_max_spin),
+        ):
             spin.setRange(-1e12, 1e12)
             spin.setDecimals(6)
             spin.setFixedWidth(110)
@@ -1633,8 +1712,13 @@ class Roi2DPlotDock(_RoiDockBase):
         set_combo_key(self.z_select, "max")
 
         self.connect_signals()
-        for combo in (self.x_select, self.y_select, self.z_select,
-                      self.norm_select, self.cmap_select):
+        for combo in (
+            self.x_select,
+            self.y_select,
+            self.z_select,
+            self.norm_select,
+            self.cmap_select,
+        ):
             combo.currentIndexChanged.connect(lambda _: self.update_plot())
         self.z_min_spin.valueChanged.connect(lambda _: self.update_plot())
         self.z_max_spin.valueChanged.connect(lambda _: self.update_plot())
@@ -1683,7 +1767,10 @@ class Roi2DPlotDock(_RoiDockBase):
             finite = z_data[np.isfinite(z_data)] if z_data.size else z_data
             z_min = float(np.min(finite)) if finite.size else 0.0
             z_max = float(np.max(finite)) if finite.size else 1.0
-            for spin, value in ((self.z_min_spin, z_min), (self.z_max_spin, z_max)):
+            for spin, value in (
+                (self.z_min_spin, z_min),
+                (self.z_max_spin, z_max),
+            ):
                 spin.blockSignals(True)
                 spin.setValue(value)
                 spin.blockSignals(False)
@@ -1704,14 +1791,22 @@ class Roi2DPlotDock(_RoiDockBase):
             self.scatter.setData([], [])
             self.highlight.setData([], [])
             return
-        x_data, y_data, z_data = x_data[:length], y_data[:length], z_data[:length]
+        x_data, y_data, z_data = (
+            x_data[:length],
+            y_data[:length],
+            z_data[:length],
+        )
 
         z_min, z_max = self._z_range(z_data)
-        brushes = value_brushes(z_data, z_min, z_max, combo_key(self.cmap_select, "viridis"))
+        brushes = value_brushes(
+            z_data, z_min, z_max, combo_key(self.cmap_select, "viridis")
+        )
         self.scatter.setData(x=x_data, y=y_data, brush=brushes)
 
         index = int(np.clip(self.panel.frame_index, 0, length - 1))
-        self.highlight.setData(x=[float(x_data[index])], y=[float(y_data[index])])
+        self.highlight.setData(
+            x=[float(x_data[index])], y=[float(y_data[index])]
+        )
 
         mode = "auto" if self.z_auto_check.isChecked() else "manual"
         note = self.normalization_note() + self.background_note()
@@ -1735,8 +1830,16 @@ class Roi2DPlotDock(_RoiDockBase):
 # -- Colormaps --------------------------------------------------------------
 
 _COLORMAP_CANDIDATES = (
-    "viridis", "plasma", "inferno", "magma", "turbo", "cividis",
-    "gray", "hot", "jet", "CET-L9",
+    "viridis",
+    "plasma",
+    "inferno",
+    "magma",
+    "turbo",
+    "cividis",
+    "gray",
+    "hot",
+    "jet",
+    "CET-L9",
 )
 _LUT_CACHE: dict[str, np.ndarray] = {}
 
@@ -1750,7 +1853,11 @@ def get_colormap(name: str):
     """
     for source in (None, "matplotlib"):
         try:
-            cmap = pg.colormap.get(name) if source is None else pg.colormap.get(name, source=source)
+            cmap = (
+                pg.colormap.get(name)
+                if source is None
+                else pg.colormap.get(name, source=source)
+            )
         except Exception:
             continue
         if cmap is not None:
@@ -1760,7 +1867,9 @@ def get_colormap(name: str):
 
 def available_colormaps() -> list[str]:
     """The candidate colormaps this pyqtgraph build can actually supply."""
-    names = [name for name in _COLORMAP_CANDIDATES if get_colormap(name) is not None]
+    names = [
+        name for name in _COLORMAP_CANDIDATES if get_colormap(name) is not None
+    ]
     return names or ["viridis"]
 
 
@@ -1776,10 +1885,14 @@ def _lookup_table(name: str) -> np.ndarray | None:
     return _LUT_CACHE[name]
 
 
-def value_brushes(values: np.ndarray, vmin: float, vmax: float, cmap_name: str) -> list:
+def value_brushes(
+    values: np.ndarray, vmin: float, vmax: float, cmap_name: str
+) -> list:
     """One brush per value, coloured by *cmap_name* over the ``[vmin, vmax]`` range."""
     span = vmax - vmin
-    values = np.nan_to_num(np.asarray(values, dtype=float), nan=vmin, posinf=vmax, neginf=vmin)
+    values = np.nan_to_num(
+        np.asarray(values, dtype=float), nan=vmin, posinf=vmax, neginf=vmin
+    )
     fraction = np.clip((values - vmin) / (span if span > 0 else 1.0), 0.0, 1.0)
     lut = _lookup_table(cmap_name)
     if lut is None:
@@ -1840,12 +1953,13 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         total = sum(d.stack.nbytes for d in self.datasets)
         if total > MAX_TOTAL_BYTES:
             listing = "\n".join(
-                f"  {d.path.name}: {d.stack.nbytes / 1024 ** 3:.2f} GB" for d in self.datasets
+                f"  {d.path.name}: {d.stack.nbytes / 1024**3:.2f} GB"
+                for d in self.datasets
             )
             raise RuntimeError(
                 f"These {len(self.datasets)} files need "
-                f"{total / 1024 ** 3:.1f} GB of memory together, more than this "
-                f"viewer loads at once ({MAX_TOTAL_BYTES / 1024 ** 3:.0f} GB):\n\n"
+                f"{total / 1024**3:.1f} GB of memory together, more than this "
+                f"viewer loads at once ({MAX_TOTAL_BYTES / 1024**3:.0f} GB):\n\n"
                 f"{listing}\n\nSelect fewer files."
             )
 
@@ -1875,7 +1989,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         root.addWidget(self.info_label)
 
         # One panel per file, side by side and resizable.
-        self.panel_splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Horizontal)
+        self.panel_splitter = QtWidgets.QSplitter(
+            QtCore.Qt.Orientation.Horizontal
+        )
         self.panels: list[ImagePanel] = []
         for index, data in enumerate(self.datasets):
             panel = ImagePanel(self, data, show_histogram=(index == 0))
@@ -1926,7 +2042,10 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
                 other = panel.plot_item.getViewBox()
                 if other is not view_box:
                     other.setRange(
-                        xRange=ranges[0], yRange=ranges[1], padding=0, update=True
+                        xRange=ranges[0],
+                        yRange=ranges[1],
+                        padding=0,
+                        update=True,
                     )
         finally:
             self._syncing_views = False
@@ -1952,7 +2071,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             self.cmap_combo.addItem(name, name)
         set_combo_key(self.cmap_combo, "viridis")
         self.cmap_combo.currentIndexChanged.connect(
-            lambda _: self._apply_colormap(combo_key(self.cmap_combo, "viridis"))
+            lambda _: self._apply_colormap(
+                combo_key(self.cmap_combo, "viridis")
+            )
         )
         row.addWidget(self.cmap_combo)
 
@@ -1977,7 +2098,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         # way back that does not live inside the dock.
         self.panels_btn = QtWidgets.QToolButton()
         self.panels_btn.setText("Panels ▾")
-        self.panels_btn.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup)
+        self.panels_btn.setPopupMode(
+            QtWidgets.QToolButton.ToolButtonPopupMode.InstantPopup
+        )
         row.addWidget(self.panels_btn)
 
         row.addStretch(1)
@@ -2005,14 +2128,18 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             spin.setDecimals(3)
             spin.setSingleStep(1.0)
             spin.setFixedWidth(130)
-            spin.setKeyboardTracking(False)  # apply on Enter/focus-out, not per digit
+            spin.setKeyboardTracking(
+                False
+            )  # apply on Enter/focus-out, not per digit
             spin.setToolTip(
                 "Colour-scale limit in data units (raw counts, even with Log scale on),\n"
                 "applied to every image. Typing a value switches off Auto levels."
             )
 
         full_btn = QtWidgets.QPushButton("Full range")
-        full_btn.setToolTip("Set min/max to the combined data range of this frame.")
+        full_btn.setToolTip(
+            "Set min/max to the combined data range of this frame."
+        )
         full_btn.clicked.connect(self._levels_to_frame_range)
         row.addWidget(full_btn)
 
@@ -2028,7 +2155,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         row.addWidget(QtWidgets.QLabel("Frame:"))
         self.prev_btn = QtWidgets.QPushButton("◀")
         self.prev_btn.setFixedWidth(36)
-        self.prev_btn.clicked.connect(lambda: self.set_frame(self._frame_index - 1))
+        self.prev_btn.clicked.connect(
+            lambda: self.set_frame(self._frame_index - 1)
+        )
         row.addWidget(self.prev_btn)
 
         self.frame_spin = QtWidgets.QSpinBox()
@@ -2041,7 +2170,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
 
         self.next_btn = QtWidgets.QPushButton("▶")
         self.next_btn.setFixedWidth(36)
-        self.next_btn.clicked.connect(lambda: self.set_frame(self._frame_index + 1))
+        self.next_btn.clicked.connect(
+            lambda: self.set_frame(self._frame_index + 1)
+        )
         row.addWidget(self.next_btn)
 
         row.addSpacing(16)
@@ -2087,9 +2218,15 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         self.roi_table.setMinimumWidth(1)
         self.roi_table.setMinimumHeight(90)
         self.roi_table.verticalHeader().setVisible(False)
-        self.roi_table.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
-        self.roi_table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
-        self.roi_table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
+        self.roi_table.setEditTriggers(
+            QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers
+        )
+        self.roi_table.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows
+        )
+        self.roi_table.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.SingleSelection
+        )
         self.roi_table.horizontalHeader().setStretchLastSection(False)
         self.roi_table.horizontalHeader().setSectionResizeMode(
             0, QtWidgets.QHeaderView.ResizeMode.Stretch
@@ -2103,8 +2240,12 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             "subtracted from every other ROI's sum, mean, min and max."
         )
         self.roi_table.itemChanged.connect(self._on_roi_table_item_changed)
-        self.roi_table.itemDoubleClicked.connect(self._on_roi_table_double_clicked)
-        self.roi_table.itemSelectionChanged.connect(self._sync_roi_geometry_panel)
+        self.roi_table.itemDoubleClicked.connect(
+            self._on_roi_table_double_clicked
+        )
+        self.roi_table.itemSelectionChanged.connect(
+            self._sync_roi_geometry_panel
+        )
         layout.addWidget(self.roi_table, 1)
 
         layout.addWidget(self._build_roi_geometry_box())
@@ -2132,7 +2273,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         dock.setWidget(container)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, dock)
         self.roi_dock = dock
-        self.resizeDocks([dock], [self.ROI_DOCK_WIDTH], QtCore.Qt.Orientation.Horizontal)
+        self.resizeDocks(
+            [dock], [self.ROI_DOCK_WIDTH], QtCore.Qt.Orientation.Horizontal
+        )
 
     def _build_roi_geometry_box(self) -> QtWidgets.QGroupBox:
         """Numeric position/size/angle entry for the selected ROI."""
@@ -2158,7 +2301,8 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             spin.setSuffix(suffix)
             spin.setKeyboardTracking(False)
             spin.setSizePolicy(
-                QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Fixed
+                QtWidgets.QSizePolicy.Policy.Ignored,
+                QtWidgets.QSizePolicy.Policy.Fixed,
             )
             spin.setMaximumWidth(84)
             spin.valueChanged.connect(self._on_roi_geometry_edited)
@@ -2208,7 +2352,11 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         for dock in self._live_docks():
             dock.setVisible(True)
         if getattr(self, "roi_dock", None) is not None:
-            self.resizeDocks([self.roi_dock], [self.ROI_DOCK_WIDTH], QtCore.Qt.Orientation.Horizontal)
+            self.resizeDocks(
+                [self.roi_dock],
+                [self.ROI_DOCK_WIDTH],
+                QtCore.Qt.Orientation.Horizontal,
+            )
 
     # -- data access ------------------------------------------------------
 
@@ -2250,7 +2398,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
 
     def _histogram_levels(self):
         try:
-            return self.panels[0].image_view.getHistogramWidget().item.getLevels()
+            return (
+                self.panels[0].image_view.getHistogramWidget().item.getLevels()
+            )
         except Exception:
             return None
 
@@ -2262,17 +2412,27 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
     # every panel.
 
     def _level_to_display(self, value: float) -> float:
-        return float(np.log1p(max(value, 0.0))) if self.log_check.isChecked() else float(value)
+        return (
+            float(np.log1p(max(value, 0.0)))
+            if self.log_check.isChecked()
+            else float(value)
+        )
 
     def _level_to_data(self, value: float) -> float:
-        return float(np.expm1(value)) if self.log_check.isChecked() else float(value)
+        return (
+            float(np.expm1(value))
+            if self.log_check.isChecked()
+            else float(value)
+        )
 
     def _wire_level_signals(self):
         self.auto_levels_check.toggled.connect(self._on_auto_levels_toggled)
         self.vmin_spin.valueChanged.connect(self._on_level_spin_changed)
         self.vmax_spin.valueChanged.connect(self._on_level_spin_changed)
         try:
-            self.panels[0].image_view.getHistogramWidget().item.sigLevelsChanged.connect(
+            self.panels[
+                0
+            ].image_view.getHistogramWidget().item.sigLevelsChanged.connect(
                 self._on_histogram_changed
             )
         except Exception:
@@ -2334,7 +2494,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
     def _frame_data_range(self) -> tuple[float, float]:
         """The combined min/max of every panel's current frame, in data units."""
         frames = [panel.current_frame() for panel in self.panels]
-        return float(min(f.min() for f in frames)), float(max(f.max() for f in frames))
+        return float(min(f.min() for f in frames)), float(
+            max(f.max() for f in frames)
+        )
 
     def _levels_to_frame_range(self):
         low, high = self._frame_data_range()
@@ -2356,12 +2518,20 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
 
     # -- frames -------------------------------------------------------------
 
-    def _show_frame(self, index: int, auto_range: bool = False, force_auto_levels: bool = False):
+    def _show_frame(
+        self,
+        index: int,
+        auto_range: bool = False,
+        force_auto_levels: bool = False,
+    ):
         index = int(np.clip(index, 0, self.max_frames() - 1))
         self._frame_index = index
 
         clamped = [panel.set_frame(index) for panel in self.panels]
-        displays = [self._display_transform(panel.current_frame()) for panel in self.panels]
+        displays = [
+            self._display_transform(panel.current_frame())
+            for panel in self.panels
+        ]
 
         if force_auto_levels or self.auto_levels_check.isChecked():
             low = float(min(d.min() for d in displays))
@@ -2376,8 +2546,10 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             levels = self._histogram_levels()
             auto_histogram = False
             if levels is None:
-                levels = (float(min(d.min() for d in displays)),
-                          float(max(d.max() for d in displays)))
+                levels = (
+                    float(min(d.min() for d in displays)),
+                    float(max(d.max() for d in displays)),
+                )
 
         self._syncing_levels = True
         try:
@@ -2413,9 +2585,14 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
 
     def _update_info_label(self):
         nx, ny = self.frame_shape()
-        parts = [f"{nx} x {ny} px", f"frame {self._frame_index} of {self.max_frames() - 1}"]
+        parts = [
+            f"{nx} x {ny} px",
+            f"frame {self._frame_index} of {self.max_frames() - 1}",
+        ]
         if len(self.panels) == 1 and self.datasets[0].timestamps is not None:
-            parts.append(f"t = {self.datasets[0].timestamps[self.panels[0].frame_index]:.3f} s")
+            parts.append(
+                f"t = {self.datasets[0].timestamps[self.panels[0].frame_index]:.3f} s"
+            )
         elif len(self.panels) > 1:
             parts.append(f"{len(self.panels)} files, ROIs shared")
         self.info_label.setText("   |   ".join(parts))
@@ -2441,7 +2618,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             panel.set_transposed(checked)
         for roi in self._rois:
             roi.swap_axes()
-        self._show_frame(self._frame_index, auto_range=True, force_auto_levels=True)
+        self._show_frame(
+            self._frame_index, auto_range=True, force_auto_levels=True
+        )
         self._sync_roi_geometry_panel()
         self.dataChanged.emit()
 
@@ -2519,7 +2698,13 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             self.roi_table.selectRow(0)
 
     def add_roi(
-        self, pos=None, size=None, angle=0.0, name=None, select=True, locked=False
+        self,
+        pos=None,
+        size=None,
+        angle=0.0,
+        name=None,
+        select=True,
+        locked=False,
     ) -> SharedRoi:
         nx, ny = self.frame_shape()
         if pos is None or size is None:
@@ -2554,13 +2739,22 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         name_item.setForeground(QtGui.QBrush(QtGui.QColor(*roi.color)))
         self.roi_table.setItem(row, 0, name_item)
 
-        states = ((1, roi.visible), (2, roi.locked), (3, roi is self._background_roi))
+        states = (
+            (1, roi.visible),
+            (2, roi.locked),
+            (3, roi is self._background_roi),
+        )
         for column, checked in states:
             item = QtWidgets.QTableWidgetItem()
             item.setFlags(
-                (item.flags() | QtCore.Qt.ItemFlag.ItemIsUserCheckable) & ~QtCore.Qt.ItemFlag.ItemIsSelectable
+                (item.flags() | QtCore.Qt.ItemFlag.ItemIsUserCheckable)
+                & ~QtCore.Qt.ItemFlag.ItemIsSelectable
             )
-            item.setCheckState(QtCore.Qt.CheckState.Checked if checked else QtCore.Qt.CheckState.Unchecked)
+            item.setCheckState(
+                QtCore.Qt.CheckState.Checked
+                if checked
+                else QtCore.Qt.CheckState.Unchecked
+            )
             item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
             self.roi_table.setItem(row, column, item)
         self._syncing_roi_table = False
@@ -2579,7 +2773,11 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         for column, checked in states:
             item = self.roi_table.item(row, column)
             if item is not None:
-                item.setCheckState(QtCore.Qt.CheckState.Checked if checked else QtCore.Qt.CheckState.Unchecked)
+                item.setCheckState(
+                    QtCore.Qt.CheckState.Checked
+                    if checked
+                    else QtCore.Qt.CheckState.Unchecked
+                )
         self._syncing_roi_table = False
 
     def _on_roi_table_item_changed(self, item: QtWidgets.QTableWidgetItem):
@@ -2638,7 +2836,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             return
         previous = self._background_roi
         if previous is not None:
-            previous.geometryChanged.disconnect(self._on_background_geometry_changed)
+            previous.geometryChanged.disconnect(
+                self._on_background_geometry_changed
+            )
         self._background_roi = roi
         if roi is not None:
             # Moving or resizing the background changes every other ROI's
@@ -2680,7 +2880,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             self.roi_geom_hint.setText("No ROI selected.")
             return
         self.roi_geom_hint.setText(
-            f"{roi.name} is locked — untick Lock to edit." if roi.locked else roi.name
+            f"{roi.name} is locked — untick Lock to edit."
+            if roi.locked
+            else roi.name
         )
 
         self._syncing_roi_geometry = True
@@ -2724,7 +2926,9 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
     def _require_roi(self, roi=None) -> SharedRoi | None:
         roi = roi or self.selected_roi()
         if roi is None:
-            self.statusBar().showMessage("No ROI selected -- use 'Add ROI' first.")
+            self.statusBar().showMessage(
+                "No ROI selected -- use 'Add ROI' first."
+            )
         return roi
 
     def rename_roi(self, roi=None):
@@ -2778,7 +2982,10 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
             existing.setVisible(True)
             existing.raise_()
             return
-        self._add_roi_dock(RoiPlotDock(self, roi), QtCore.Qt.DockWidgetArea.BottomDockWidgetArea)
+        self._add_roi_dock(
+            RoiPlotDock(self, roi),
+            QtCore.Qt.DockWidgetArea.BottomDockWidgetArea,
+        )
 
     def open_roi_2d_plot(self, roi=None):
         """One 2D plot per open file -- the axes are per-file, so they cannot share."""
@@ -2792,7 +2999,8 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
                 existing.raise_()
                 continue
             self._add_roi_dock(
-                Roi2DPlotDock(self, roi, panel), QtCore.Qt.DockWidgetArea.BottomDockWidgetArea
+                Roi2DPlotDock(self, roi, panel),
+                QtCore.Qt.DockWidgetArea.BottomDockWidgetArea,
             )
 
     def _add_roi_dock(self, dock: _RoiDockBase, area):
@@ -2864,10 +3072,14 @@ class ImageViewerWindow(QtWidgets.QMainWindow):
         try:
             window = HklWindow(panel.data.path, parent=self)
         except (RuntimeError, OSError) as exc:
-            QtWidgets.QMessageBox.critical(self, "Could not build the HKL map", str(exc))
+            QtWidgets.QMessageBox.critical(
+                self, "Could not build the HKL map", str(exc)
+            )
             return
         window.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
-        window.destroyed.connect(lambda _=None, w=window: self._forget_hkl_window(w))
+        window.destroyed.connect(
+            lambda _=None, w=window: self._forget_hkl_window(w)
+        )
         # Qt destroys a window that nothing holds a reference to.
         self._hkl_windows.append(window)
         window.show()
@@ -2890,7 +3102,9 @@ def main():
     try:
         window = ImageViewerWindow([Path(arg) for arg in sys.argv[1:]])
     except (RuntimeError, OSError) as exc:
-        QtWidgets.QMessageBox.critical(None, "Could not open image file", str(exc))
+        QtWidgets.QMessageBox.critical(
+            None, "Could not open image file", str(exc)
+        )
         return 1
     window.show()
     return app.exec()
