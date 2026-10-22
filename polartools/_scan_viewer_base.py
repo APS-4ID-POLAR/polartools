@@ -407,6 +407,11 @@ from .image_viewer import resolve_image_file
 from .spectrum_viewer import SpectrumViewerWindow
 from .spectrum_viewer import resolve_spectrum_file
 
+# numpy 2 renamed trapz to trapezoid and removed the old spelling. Nothing
+# here pins numpy, so both are still in the field: 1.26 has only trapz and
+# 2.x only trapezoid. Bound once, by name, rather than at each call site.
+_trapezoid = getattr(np, "trapezoid", None) or np.trapz
+
 STREAMS_PATH = "entry/instrument/bluesky/streams"
 PRIMARY_STREAM = "primary"
 PRIMARY_PATH = f"{STREAMS_PATH}/{PRIMARY_STREAM}"
@@ -3125,19 +3130,18 @@ def curve_stats(x: np.ndarray, y: np.ndarray) -> dict[str, float | None]:
     # read silently returns the negative: 171's LockAC gives -290364 that
     # way against +290364 sorted. Sorted into locals, never in place: the
     # caller's x is shared between a scan's curves and is what the export
-    # groups its columns by. np.trapz is numpy 1.x's spelling (1.26.4
-    # here); numpy 2 renamed it np.trapezoid.
+    # groups its columns by.
     if x.size >= 2:
         order = np.argsort(x, kind="stable")
         xs, ys = x[order], y[order]
-        stats["area"] = float(np.trapz(ys, xs))
+        stats["area"] = float(_trapezoid(ys, xs))
         # Both ends at one X leaves no line to draw -- and no width to
         # integrate over either, so the raw area is already 0. Blank, not a
         # copy of it, so the column never claims a background was removed.
         if xs[-1] != xs[0]:
             slope = (ys[-1] - ys[0]) / (xs[-1] - xs[0])
             stats["net_area"] = float(
-                np.trapz(ys - (ys[0] + (xs - xs[0]) * slope), xs)
+                _trapezoid(ys - (ys[0] + (xs - xs[0]) * slope), xs)
             )
     return stats
 
