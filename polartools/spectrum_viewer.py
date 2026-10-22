@@ -4297,7 +4297,7 @@ def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv:
         print(__doc__.strip().splitlines()[0])
-        print("\nusage: spectrum_viewer_sgz.py <file> [...]")
+        print(f"\nusage: {Path(sys.argv[0]).name} <file> [...]")
         return 2
 
     resolved: list[Path] = []
