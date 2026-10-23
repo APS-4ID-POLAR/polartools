@@ -362,6 +362,9 @@ class _MapCanvas(FigureCanvas):
             try:
                 self._cbar.remove()
             except Exception:
+                # Matplotlib raises assorted types when the colorbar's axes
+                # are already gone, which is the normal case on a redraw.
+                # The point is to end up without one either way.
                 pass
             self._cbar = None
         if message:
@@ -380,6 +383,8 @@ class _MapCanvas(FigureCanvas):
             try:
                 self._cbar.remove()
             except Exception:
+                # As in clear_axis: dropping the old colorbar is best-effort,
+                # and it is replaced on the next line regardless.
                 pass
         self._cbar = self.figure.colorbar(mappable, ax=self.ax)
 
@@ -707,6 +712,9 @@ class _DiffOptions(QtWidgets.QGroupBox):
                 try:
                     self.param_spin.setValue(float(state["smooth_param"]))
                 except (TypeError, ValueError):
+                    # Restored from a hand-editable JSON file, so the value
+                    # may be junk. Keep the widget's default rather than
+                    # refusing to open the window.
                     pass
             self._on_smooth_changed()
         finally:
@@ -810,11 +818,13 @@ class _PairVlim(QtWidgets.QGroupBox):
                 try:
                     self.vmin.setValue(float(state["vmin"]))
                 except (TypeError, ValueError):
+                    # Junk in the settings file; keep the current limit.
                     pass
             if "vmax" in state:
                 try:
                     self.vmax.setValue(float(state["vmax"]))
                 except (TypeError, ValueError):
+                    # Junk in the settings file; keep the current limit.
                     pass
             if "manual" in state:
                 checked = bool(state["manual"])
@@ -1660,6 +1670,8 @@ class VortexTab(QtWidgets.QWidget):
             try:
                 self._span_patch.remove()
             except Exception:
+                # The patch may already have gone with a previous axes
+                # clear. A fresh axvspan is drawn just below either way.
                 pass
         e0, e1 = self.get_roi()
         self._span_patch = ax.axvspan(e0, e1, alpha=0.25, color="red")
@@ -2069,6 +2081,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     try:
                         spin.setValue(int(eiger_roi[name]))
                     except (TypeError, ValueError):
+                        # Config file value is not an int; leave this ROI
+                        # field at its default and take the rest.
                         pass
 
             vortex_roi = cfg.get("vortex_roi") or {}
@@ -2080,6 +2094,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     try:
                         spin.setValue(int(vortex_roi[name]))
                     except (TypeError, ValueError):
+                        # As above: one bad ROI field does not sink the
+                        # rest of the restored config.
                         pass
 
             cfg_scans = cfg.get("scans") or {}
@@ -2421,6 +2437,10 @@ class MainWindow(QtWidgets.QMainWindow):
                             first_scan,
                         )
                 except Exception:
+                    # The preview is a convenience for picking an ROI, and
+                    # the scan may be mid-write, absent, or compressed with
+                    # a codec this machine lacks. Any of those leaves
+                    # eiger_preview None, which the panel draws as empty.
                     pass
             if vortex_preview is None:
                 try:
@@ -2434,6 +2454,8 @@ class MainWindow(QtWidgets.QMainWindow):
                             first_scan,
                         )
                 except Exception:
+                    # As for the eiger preview above: no spectrum to show
+                    # is a blank panel, not a failure to open the window.
                     pass
 
         self._eiger_preview_scan = eiger_preview_scan
