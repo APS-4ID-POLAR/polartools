@@ -8,6 +8,10 @@ beamline at the Advanced Photon Source: X-ray absorption (XAS/XMCD), diffraction
 standards, area-detector image processing, and import/export of Bluesky
 [databroker]/[tiled] catalogs.
 
+It also ships the beamline's graphical tools — `scan-viewer`,
+`flyscan-dichro-gui` and `xmcd-gui` — as console scripts, so they install and
+update with the library.
+
 [databroker]: https://blueskyproject.io/databroker/
 [tiled]: https://blueskyproject.io/tiled/
 
@@ -31,6 +35,8 @@ examples/diffraction
 examples/pressure_calibration
 examples/process_images
 examples/manage_database
+examples/viewers
+examples/flyscan_dichro
 examples/xmcd_gui
 ```
 
@@ -102,6 +108,21 @@ Threshold, curvature extraction, and RIXS image-to-spectrum reduction.
 :link-type: doc
 
 Pack/unpack databroker catalogs, export to CSV/JSON.
+:::
+
+:::{grid-item-card} Scan viewers
+:link: examples/viewers
+:link-type: doc
+
+`scan-viewer`: browse a directory of scans, plot, fit, and open the
+spectrum and image windows.
+:::
+
+:::{grid-item-card} Flyscan dichroism
+:link: examples/flyscan_dichro
+:link-type: doc
+
+`flyscan-dichro-gui` and the reduction behind it: CR/CL difference maps.
 :::
 
 :::{grid-item-card} XMCD GUI
