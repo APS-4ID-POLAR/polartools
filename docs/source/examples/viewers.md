@@ -41,6 +41,8 @@ Select one scan, or ctrl/shift-click several, and they are overlaid:
   peaks at once over one shared line.
 - **Show dY/dX** — overlays each curve's derivative and moves the fit onto it,
   which is how a knife edge or an absorption edge becomes measurable.
+- **Log X / Log Y** — beside the plot toolbar, put either axis on a log
+  scale (the right-hand Y axes too). Points at or below zero are left out.
 - **XMCD panels** — reduces the selected scans to XAS, XMCD, XMuCD and XNCD
   against energy, grouping each energy's points into the four
   (polarization, field) quadrants.

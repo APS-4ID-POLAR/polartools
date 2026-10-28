@@ -153,7 +153,9 @@ For each ``*_master.hdf`` file written by ``MyNXWriter``
   they are. The
   "2D map"
   button turns the map off to plot the raster as an ordinary X-Y curve, zoomable by dragging (via the
-  plot toolbar's rectangle-zoom tool), with a peak-statistics table (max,
+  plot toolbar's rectangle-zoom tool; "Log X" and "Log Y" beside it put
+  either axis on a log scale, leaving out what is at or below zero), with a
+  peak-statistics table (max,
   min, half-max center and FWHM) below the plot for each curve shown, and
   a "Show dY/dX" toggle that overlays each curve's numerical derivative on
   a further Y axis, stepped outward when a right-hand axis is already there.
@@ -5573,9 +5575,31 @@ class HdfViewer(QtWidgets.QMainWindow):
             self.toolbar.locLabel.hide()
         self.toolbar.set_message = self.coord_label.setText
 
+        # Beside the toolbar rather than in the button rows below: they only
+        # change how the axes are drawn, as the toolbar's own tools do, and
+        # those rows are already as wide as the window allows. Checkable, so
+        # the state survives every redraw -- _apply_log_scales puts it back
+        # on the fresh axes each draw makes.
+        self.log_x_btn = QtWidgets.QPushButton("Log X")
+        self.log_x_btn.setCheckable(True)
+        self.log_x_btn.setToolTip(
+            "Draw the X axis on a logarithmic scale.\n"
+            "Points at or below zero are left out while it is on."
+        )
+        self.log_x_btn.toggled.connect(self._toggle_log_scales)
+        self.log_y_btn = QtWidgets.QPushButton("Log Y")
+        self.log_y_btn.setCheckable(True)
+        self.log_y_btn.setToolTip(
+            "Draw the Y axes -- the right-hand ones too -- on a logarithmic\n"
+            "scale. Points at or below zero are left out while it is on."
+        )
+        self.log_y_btn.toggled.connect(self._toggle_log_scales)
+
         toolbar_row = QtWidgets.QHBoxLayout()
         toolbar_row.setContentsMargins(0, 0, 0, 0)
         toolbar_row.addWidget(self.toolbar)
+        toolbar_row.addWidget(self.log_x_btn)
+        toolbar_row.addWidget(self.log_y_btn)
         toolbar_row.addWidget(self.coord_label, 1)
         canvas_box.addLayout(toolbar_row)
         canvas_box.addWidget(self.canvas, 1)
@@ -6917,6 +6941,49 @@ class HdfViewer(QtWidgets.QMainWindow):
         # The view history still points at the axes just discarded.
         self.toolbar.update()
         return True
+
+    def _apply_log_scales(self, autoscale: bool = False):
+        """Put the Log X / Log Y states on the main figure's axes.
+
+        Every draw clears the axes, and clear() puts a linear scale back, so
+        this runs on each draw as well as on a press. Non-positive points are
+        masked rather than clipped: clipped, a zero is drawn at the bottom of
+        the frame and pulls a vertical stroke down to it from its neighbours.
+        *autoscale* refits the view, which a press wants -- limits sized for
+        a linear axis are no use on a log one, and the reverse -- and a draw
+        does not, since it sets its own limits afterwards.
+
+        An axis with nothing positive on it stays linear: a log locator with
+        no positive data raises on the next draw. That covers the empty and
+        hidden twins, and a channel such as XMCD that is negative throughout.
+        """
+
+        def scale(wanted: bool, minpos: float) -> dict:
+            if wanted and np.isfinite(minpos):
+                return {"value": "log", "nonpositive": "mask"}
+            return {"value": "linear"}
+
+        log_x = self.log_x_btn.isChecked()
+        log_y = self.log_y_btn.isChecked()
+        for main, *twins in self._panels:
+            if autoscale:
+                for axes in (main, *twins):
+                    axes.relim()
+            # The twins share main's X, so its scale reaches them too.
+            main.set_xscale(**scale(log_x, main.dataLim.minposx))
+            for axes in (main, *twins):
+                axes.set_yscale(
+                    **scale(log_y and axes.get_visible(), axes.dataLim.minposy)
+                )
+                if autoscale:
+                    axes.autoscale_view()
+        if autoscale:
+            for twin in self._twins:
+                twin.set_xlim(self.ax.get_xlim(), emit=False)
+
+    def _toggle_log_scales(self):
+        self._apply_log_scales(autoscale=True)
+        self.canvas.draw_idle()
 
     def _draw_trend(
         self,
@@ -8936,6 +9003,10 @@ class HdfViewer(QtWidgets.QMainWindow):
         for (main, *_twins), default in zip(
             self._panels, self._default_format_coord
         ):
+            # clear() resets the limits to 0..1 before the scale, so on a log
+            # axis it warns about the zero; _apply_log_scales puts it back.
+            main.set_xscale("linear")
+            main.set_yscale("linear")
             main.clear()
             main.format_coord = default
         # Every plot and twin shares one X axis. matplotlib unions dataLim
@@ -8947,6 +9018,7 @@ class HdfViewer(QtWidgets.QMainWindow):
         # back to an empty bbox is what actually excludes it from that
         # union; the twins only ever get their X range explicitly afterward.
         for twin in self._twins:
+            twin.set_yscale("linear")
             twin.clear()
             # clear() puts the Y label back on the left, where it lands on top
             # of self.ax's own; a twin's belongs with its ticks on the right.
@@ -9346,6 +9418,7 @@ class HdfViewer(QtWidgets.QMainWindow):
         top.patch.set_visible(False)
         if handles:
             top.legend(handles, labels, fontsize=8, loc="best")
+        self._apply_log_scales()
         if prev_xlim is not None:
             self.ax.set_xlim(prev_xlim)
         if prev_ylim is not None:
@@ -9629,6 +9702,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             main.format_coord = format_coord
             stats_rows.append((label, grid_stats(grid)))
 
+        self._apply_log_scales()
         if prev_xlim is not None:
             self.ax.set_xlim(prev_xlim)
         if prev_ylim is not None:
