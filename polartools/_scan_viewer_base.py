@@ -6968,6 +6968,13 @@ class HdfViewer(QtWidgets.QMainWindow):
         for main, *twins in self._panels:
             if autoscale:
                 for axes in (main, *twins):
+                    # A toolbar zoom turns autoscale off, and autoscale_view()
+                    # then does nothing: the new log axis would keep a linear
+                    # zoom's limits, below zero included. A map is the
+                    # exception -- relim() skips its pcolormesh, so a refit
+                    # would size it to nothing; its limits stay as drawn.
+                    if not main.collections:
+                        axes.set_autoscale_on(True)
                     axes.relim()
             # The twins share main's X, so its scale reaches them too.
             main.set_xscale(**scale(log_x, main.dataLim.minposx))
@@ -6983,6 +6990,9 @@ class HdfViewer(QtWidgets.QMainWindow):
 
     def _toggle_log_scales(self):
         self._apply_log_scales(autoscale=True)
+        # The view history holds limits sized for the old scale; Home would
+        # go back to them.
+        self.toolbar.update()
         self.canvas.draw_idle()
 
     def _draw_trend(
