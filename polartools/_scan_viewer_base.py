@@ -118,7 +118,12 @@ For each ``*_master.hdf`` file written by ``MyNXWriter``
   map is left out, a raster's wild cells being what "Clip map scale" below is
   for. A two-motor grid scan is instead drawn as a colour map over the two
   motors, one per ticked Y field, side by side on shared axes and each with
-  its own colour scale -- a dichro mesh
+  its own colour scale. Several selected grid scans over the same two motors
+  go on one map: scan 39 of Ryan_26-3/sro was stopped at h = 0.985 and scan
+  41 started again there, so apart they are two halves of one picture. A
+  cell more than one of them measured -- the 52 of that shared row -- is
+  their average, and the heading says how many there were; scans over other
+  motors are left out with a note. A dichro mesh
   scan's XAS and XMCD cover the same area but not remotely the same range, so
   one shared scale would wash the XMCD out. Those two are mapped off the
   scan's reduced stream, which holds one point per mesh position: primary has
@@ -1767,6 +1772,57 @@ def _build_grid(slow, fast, values, shape, slow_name, fast_name) -> dict | None:
         "y": y_axis,
         "z": grid,
         "points": n_points,
+    }
+
+
+def merge_grids(grids: list[dict]) -> dict:
+    """Several rasters over the same two motors laid onto one, or the only one.
+
+    A map stopped part way is finished by a second scan started where it
+    left off -- scan 39 of Ryan_26-3/sro reached h = 0.985 of 1.3, and scan
+    41 began again there, at half the step -- so the two belong on one pair
+    of axes. Each axis takes every level any of the scans has; levels nearer
+    than a hundredth of the finest step are one, which absorbs what two
+    setpoint lists differ by in the last bits. A cell measured more than
+    once is the mean of its finite values, and ``averaged`` counts them (the
+    52 cells of the h = 0.985 row both scans measured). Uneven steps are
+    left as they are: :func:`axis_edges` sizes each cell from its own
+    neighbours.
+    """
+    if len(grids) == 1:
+        return grids[0]
+    steps = [np.diff(grid[key]) for grid in grids for key in ("x", "y")]
+    positive = np.concatenate([step[step > 0] for step in steps])
+    tolerance = 0.01 * positive.min() if positive.size else 0.0
+
+    def union(key):
+        levels = np.sort(np.concatenate([grid[key] for grid in grids]))
+        return levels[np.r_[True, np.diff(levels) > tolerance]]
+
+    def index(levels, values):
+        return np.searchsorted(levels, values + tolerance, side="right") - 1
+
+    x_axis, y_axis = union("x"), union("y")
+    total = np.zeros((len(y_axis), len(x_axis)))
+    count = np.zeros((len(y_axis), len(x_axis)), dtype=int)
+    for grid in grids:
+        rows, columns = np.meshgrid(
+            index(y_axis, grid["y"]), index(x_axis, grid["x"]), indexing="ij"
+        )
+        finite = np.isfinite(grid["z"])
+        np.add.at(total, (rows[finite], columns[finite]), grid["z"][finite])
+        np.add.at(count, (rows[finite], columns[finite]), 1)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        z = np.where(count > 0, total / count, np.nan)
+    return {
+        "x_name": grids[0]["x_name"],
+        "y_name": grids[0]["y_name"],
+        "x": x_axis,
+        "y": y_axis,
+        "z": z,
+        "points": sum(grid["points"] for grid in grids),
+        "averaged": int(np.count_nonzero(count > 1)),
+        "scans": len(grids),
     }
 
 
@@ -8410,6 +8466,36 @@ class HdfViewer(QtWidgets.QMainWindow):
         # reducing: a scan that is not being asked for XMCD has no reason to
         # pay the file read, and the "2D map" button already governs the
         # fallback to per-cell counts.
+        # Every selected scan over the same two motors as the first goes on
+        # the one map, which is how a raster stopped part way is finished by
+        # a second scan -- scans 39 and 41 of Ryan_26-3/sro -- see
+        # :func:`merge_grids`. Matched on the motors rather than the grids'
+        # axis names, which say readback for one scan and setpoint for the
+        # next. The first scan still has to give a map of its own, as it did
+        # when it was the only one drawn.
+        motors = read_scan_info(paths[0])["motors"] if paths else None
+        same_motors = [
+            path for path in paths if read_scan_info(path)["motors"] == motors
+        ]
+
+        def merged(read) -> tuple[list[tuple[str, dict]], list[Path]]:
+            """Each label's maps over *same_motors* merged, and the scans used."""
+            by_label: dict[str, list[dict]] = {}
+            used = []
+            for path in same_motors:
+                found = read(path)
+                if not found:
+                    if not used:
+                        return [], []
+                    continue
+                used.append(path)
+                for label, grid in found:
+                    by_label.setdefault(label, []).append(grid)
+            return [
+                (label, merge_grids(found)) for label, found in by_label.items()
+            ], used
+
+        grid_paths: list[Path] = []
         dichro_grids = None
         if reducing and paths and is_mesh_scan(paths[0]):
             # Primary rather than the stream on screen for the same reason
@@ -8417,26 +8503,33 @@ class HdfViewer(QtWidgets.QMainWindow):
             # per-point retarder values the split needs are only in primary,
             # and a scan showing dichro_monitor still has its primary beside
             # it.
-            dichro_grids = read_dichro_grid(
-                paths[0],
-                detector_channel,
-                monitor_channel,
-                PRIMARY_STREAM,
-                transmission,
+            dichro_grids, grid_paths = merged(
+                lambda path: (
+                    is_mesh_scan(path)
+                    and read_dichro_grid(
+                        path,
+                        detector_channel,
+                        monitor_channel,
+                        PRIMARY_STREAM,
+                        transmission,
+                    )
+                )
             )
         if dichro_grids:
             grids = dichro_grids
-        else:
-            for field in y_fields if paths and not reducing else []:
-                grid = read_grid(
-                    paths[0],
-                    field,
-                    monitor_field,
-                    stream,
-                    transmission,
-                )
-                if grid is not None:
-                    grids.append((field, grid))
+        elif paths and not reducing:
+            grids, grid_paths = merged(
+                lambda path: [
+                    (field, grid)
+                    for field in y_fields
+                    if (
+                        grid := read_grid(
+                            path, field, monitor_field, stream, transmission
+                        )
+                    )
+                    is not None
+                ]
+            )
         self.grid_btn.setEnabled(bool(grids))
         if not self.grid_btn.isChecked():
             grids = []
@@ -9065,6 +9158,7 @@ class HdfViewer(QtWidgets.QMainWindow):
             # mean. The regular grids still name their ratio.
             self._plot_grids(
                 paths,
+                grid_paths,
                 grids,
                 "" if drawing_dichro_grid else monitor_field,
                 False if drawing_dichro_grid else log_norm,
@@ -9580,6 +9674,7 @@ class HdfViewer(QtWidgets.QMainWindow):
     def _plot_grids(
         self,
         paths,
+        grid_paths,
         grids,
         monitor_field,
         log_norm,
@@ -9592,6 +9687,11 @@ class HdfViewer(QtWidgets.QMainWindow):
         Every map keeps its own colour scale and bar. A dichro mesh scan's
         XMCD is a fraction of a percent of the XAS beside it, and on one
         shared scale it would be a flat wash of the middle colour.
+
+        *grid_paths* are the selected scans the maps were merged from -- see
+        :func:`merge_grids` -- and *paths* all those selected, so the heading
+        can say which went in, how many cells more than one of them measured,
+        and how many were left out for being over other motors.
 
         *stream* is wanted because the colour map each panel is drawn in
         depends on what the stream says about its field -- the grid dicts
@@ -9606,13 +9706,24 @@ class HdfViewer(QtWidgets.QMainWindow):
         for twin in self._twins:
             twin.set_visible(False)
         first = grids[0][1]
+        names = [path.name for path in grid_paths]
+        if len(names) > 3:
+            names = [names[0], f"{len(names) - 1} more"]
         named = (
-            f"{paths[0].name}  —  {len(first['x'])} x {len(first['y'])} grid"
+            f"{' + '.join(names)}  —  "
+            f"{len(first['x'])} x {len(first['y'])} grid"
         )
         notes = []
-        if len(paths) > 1:
-            # Two scans' maps cannot share one pair of axes.
-            notes.append(f"(first of {len(paths)} selected)")
+        if first.get("averaged"):
+            notes.append(
+                f"[{first['averaged']} cell(s) averaged over "
+                f"{first['scans']} scans]"
+            )
+        left_out = len(paths) - len(grid_paths)
+        if left_out:
+            # Two rasters over different motors cannot share one pair of
+            # axes, nor can a scan that is not a raster join one.
+            notes.append(f"({left_out} selected scan(s) not on this map)")
         missing = int(np.count_nonzero(~np.isfinite(first["z"])))
         if missing:
             notes.append(f"[{missing} point(s) not measured]")

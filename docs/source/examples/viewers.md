@@ -51,7 +51,10 @@ Select one scan, or ctrl/shift-click several, and they are overlaid:
   dead points is a beam-down run and is left visible.
 - **Two-motor grid scans** are drawn as colour maps instead, one per ticked Y
   field, with **Clip map scale** for the odd wild cell and **Center on 0** for
-  signed channels in a diverging colormap.
+  signed channels in a diverging colormap. Selected grid scans over the same
+  two motors — a map finished by a second scan started where the first
+  stopped — go on one map, and a cell measured by more than one of them is
+  their average.
 - **Auto refresh** adds scans to the listing as they land, so the browser can
   be left open during a run. A scan whose file is still being written gets a
   row with blank cells rather than being dropped.
