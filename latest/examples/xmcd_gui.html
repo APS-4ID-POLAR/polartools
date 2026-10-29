@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=226e0730"></script>
+    <script src="../_static/documentation_options.js?v=a0b5f602"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,11 +53,11 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="polartools" href="../api/polartools/index.html" />
-    <link rel="prev" title="Database management" href="manage_database.html" />
+    <link rel="prev" title="Flyscan dichroism" href="flyscan_dichro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post26+gfec00b604" />
+  <meta name="docsearch:version" content="0.6.0.post43+g0577f8ccb" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -198,6 +198,20 @@
 <li class=" ">
   <a class="nav-link dropdown-item nav-internal" href="manage_database.html">
     Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="flyscan_dichro.html">
+    Flyscan dichroism
   </a>
 </li>
 
@@ -387,6 +401,20 @@
 </li>
 
 
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="flyscan_dichro.html">
+    Flyscan dichroism
+  </a>
+</li>
+
+
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#" aria-current="page">
     XMCD GUI
@@ -538,6 +566,8 @@ processing workflow. It’s installed as a console script when you <code class="
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xmcd-gui
 </pre></div>
 </div>
+<p>It takes no arguments. For the other graphical tools in the package, see
+<a class="reference internal" href="viewers.html"><span class="std std-doc">Scan viewers</span></a> and <a class="reference internal" href="flyscan_dichro.html"><span class="std std-doc">Flyscan dichroism</span></a>.</p>
 <section id="what-it-does">
 <h2>What it does<a class="headerlink" href="#what-it-does" title="Link to this heading">#</a></h2>
 <p>Wraps the same functions documented in the <a class="reference internal" href="absorption.html"><span class="std std-doc">XAS / XMCD example</span></a>
@@ -573,7 +603,7 @@ useful, you can usually find it (or build it) in that module.</p>
 <h2>Reporting GUI bugs<a class="headerlink" href="#reporting-gui-bugs" title="Link to this heading">#</a></h2>
 <p>Open an issue with:</p>
 <ul class="simple">
-<li><p>The polartools version (<code class="docutils literal notranslate"><span class="pre">xmcd-gui</span> <span class="pre">--version</span></code> or <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">polartools;</span> <span class="pre">print(polartools.__version__)&quot;</span></code>)</p></li>
+<li><p>The polartools version (<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;import</span> <span class="pre">polartools;</span> <span class="pre">print(polartools.__version__)&quot;</span></code>)</p></li>
 <li><p>The PyQt6 version (<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">&quot;from</span> <span class="pre">PyQt6.QtCore</span> <span class="pre">import</span> <span class="pre">QT_VERSION_STR;</span> <span class="pre">print(QT_VERSION_STR)&quot;</span></code>)</p></li>
 <li><p>A screenshot of the failure if it’s visual</p></li>
 <li><p>The full traceback from the terminal you launched <code class="docutils literal notranslate"><span class="pre">xmcd-gui</span></code> from</p></li>
@@ -583,6 +613,9 @@ useful, you can usually find it (or build it) in that module.</p>
 <h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="absorption.html"><span class="std std-doc">XAS / XMCD</span></a> — the underlying scriptable API</p></li>
+<li><p><a class="reference internal" href="viewers.html"><span class="std std-doc">Scan viewers</span></a> — browse a directory of scans, and the XMCD
+panels the browser reduces them to</p></li>
+<li><p><a class="reference internal" href="../installation.html"><span class="std std-doc">Installation</span></a> — Qt system libraries on Linux</p></li>
 </ul>
 </section>
 </section>
@@ -598,12 +631,12 @@ useful, you can usually find it (or build it) in that module.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="manage_database.html"
+       href="flyscan_dichro.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Database management</p>
+        <p class="prev-next-title">Flyscan dichroism</p>
       </div>
     </a>
     <a class="right-next"

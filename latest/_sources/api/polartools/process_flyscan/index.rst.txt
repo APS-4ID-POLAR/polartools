@@ -1,0 +1,759 @@
+polartools.process_flyscan
+==========================
+
+.. py:module:: polartools.process_flyscan
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.process_flyscan.FNAME_FORMAT
+   polartools.process_flyscan.FIRST_TRIGGER
+   polartools.process_flyscan.CKIM_PER_TRIGGER
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.process_flyscan.PositionGroups
+   polartools.process_flyscan.PartialGroup
+   polartools.process_flyscan.ScanGeometry
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.process_flyscan.full_group_size
+   polartools.process_flyscan.group_coverage
+   polartools.process_flyscan.flag_partial_groups
+   polartools.process_flyscan.describe_partial_groups
+   polartools.process_flyscan.groups_for_frames
+   polartools.process_flyscan.group_for_frame
+   polartools.process_flyscan.reduce_position_stream
+   polartools.process_flyscan.process_position_stream
+   polartools.process_flyscan.read_scan_geometry
+   polartools.process_flyscan.process_images_v0
+   polartools.process_flyscan.process_images
+   polartools.process_flyscan.process_vortex
+   polartools.process_flyscan.plot_data
+
+
+Module Contents
+---------------
+
+.. py:data:: FNAME_FORMAT
+   :value: '{}/{}/scan_{:06d}.h5'
+
+
+.. py:data:: FIRST_TRIGGER
+   :value: 1
+
+
+.. py:data:: CKIM_PER_TRIGGER
+   :value: 5
+
+
+.. py:class:: PositionGroups
+
+   
+   Per-trigger reduction of a position stream.
+
+   Every array has one entry per trigger group, in file order. ``trigs``
+   holds each group's trigger value, which is what associates a group with
+   a detector frame (see :func:`groups_for_frames`) — the association is
+   made by the hardware trigger counter, not by array position, so a
+   missing group drops one frame instead of shifting all the later ones.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: i0s
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: xs
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: ys
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: dxs
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: dys
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: trigs
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: counts
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: coverage
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: partial
+      :type:  numpy.ndarray
+
+
+.. py:class:: PartialGroup
+
+   
+   One flagged trigger group, and how it differs from a full exposure.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: group
+      :type:  int
+
+
+   .. py:attribute:: trig
+      :type:  int
+
+
+   .. py:attribute:: frame
+      :type:  int
+
+
+   .. py:attribute:: coverage
+      :type:  int
+
+
+   .. py:attribute:: expected
+      :type:  int
+
+
+   .. py:attribute:: count
+      :type:  int
+
+
+   .. py:attribute:: x
+      :type:  float
+
+
+   .. py:attribute:: y
+      :type:  float
+
+
+   .. py:attribute:: span
+      :type:  float
+
+
+   .. py:attribute:: full_span
+      :type:  float
+
+
+   .. py:attribute:: last
+      :type:  bool
+      :value: False
+
+
+
+   .. py:property:: dropped
+
+      
+      Ticks inside this group that the MCS never recorded.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:function:: full_group_size(coverage)
+
+   
+   ckIM ticks in a full exposure: the modal value, ties resolved upwards.
+
+   Group 0 spans whatever lies between the two dividers' resets — normally 5
+   ticks, but 1, 3 and 37 all occur — so it is not allowed to define what
+   "full" means.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: group_coverage(ckim, starts, n)
+
+   
+   ckIM ticks spanned by each trigger group.
+
+   Measured from the ckIM counter, not from the number of rows, so that a
+   sample the MCS failed to record does not look like a short exposure: a
+   group whose middle row is missing still spans its full five ticks. Only a
+   group that really covers less of the exposure — because the stream
+   started or stopped inside it, or lost its leading tick — comes out short.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: flag_partial_groups(coverage)
+
+   
+   Mark groups whose position samples don't span their whole exposure.
+
+   This is a statement about the position record, never about the detector:
+   the Eiger is triggered independently and integrates for its full frame
+   time regardless. What these groups lack is position data covering all of
+   that time, so their mean x/y and I0 describe only part of the travel.
+
+   They are the pre-trigger group, a final group cut off when the position
+   stream stopped mid-exposure, and any group that lost its leading ckIM
+   tick. A group that merely dropped an interior sample still spans its
+   whole exposure and is not flagged — see :func:`group_coverage`.
+
+   Called live as well as post-scan, so with only a couple of closed groups
+   the verdict can change as more data arrives.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: describe_partial_groups(groups, n_frames=0)
+
+   
+   One :class:`PartialGroup` per flagged group, for display.
+
+   ``groups`` is anything carrying the per-group arrays ``xs``, ``ys``,
+   ``dxs``, ``dys``, ``trigs``, ``counts`` and ``partial`` — a
+   :class:`PositionGroups` or a live ``TickResult``. ``n_frames`` is how
+   many detector frames exist, used to say which frame each flagged group
+   holds (``-1`` when the group is not plotted at all, as for the
+   pre-trigger group).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: groups_for_frames(trigs, n_frames)
+
+   
+   Match detector frames to position groups by trigger value.
+
+   Detector frame ``k`` is exposed during the ckIM ticks carrying eigerTrig
+   value ``k + FIRST_TRIGGER`` (see that constant). Returns
+   ``(frames, groups)``: the frame indices that have a matching trigger
+   group, and the group index each maps to. Frames whose trigger group is
+   absent — because the position stream stopped first, or started late, or
+   because a group is missing from the middle — are simply left out, instead
+   of silently shifting the alignment of everything after them.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: group_for_frame(trigs, frame)
+
+   
+   Index of the position group holding detector frame ``frame``, or None.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: reduce_position_stream(scan_number, folder, fname_format=FNAME_FORMAT)
+
+   
+   Aggregate the position stream into per-image x, y, and I0 values.
+
+   The position stream is sampled at a higher rate than the detector
+   triggers, so multiple position samples share the same trigger index.
+   This function groups samples by trigger and reduces each group to a
+   single value per image.
+
+   :Parameters:
+
+       **scan_number** : int
+           Scan number used to build the HDF5 file name.
+
+       **folder** : str
+           Root folder containing the ``pos_stream`` subfolder.
+
+       **fname_format** : str, optional
+           Format string with three placeholders: ``folder``, stream name,
+           and scan number. Defaults to :data:`FNAME_FORMAT`.
+
+
+
+   :Returns:
+
+       **groups** : PositionGroups
+           Per-trigger-group arrays: ``i0s`` (range of column 0 within the
+           group), ``xs``/``ys`` (mean motor position, columns 3 and 4),
+           ``dxs``/``dys`` (position range within the group — a motor-jitter
+           diagnostic), plus ``trigs``, ``counts`` and ``partial``, which are
+           what let a caller match groups to detector frames and spot groups
+           that only saw part of an exposure.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Assumes the trigger column (column 2) is monotonically non-decreasing,
+   which is true for normal flyscan acquisition. The reduction uses
+   ``np.add.reduceat`` and friends so the cost is O(n_samples) regardless
+   of the number of images.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: process_position_stream(scan_number, folder, fname_format=FNAME_FORMAT)
+
+   
+   ``(i0s, xs, ys, dxs, dys)`` from :func:`reduce_position_stream`.
+
+   Kept for callers that predate :class:`PositionGroups`; new code should
+   use :func:`reduce_position_stream` so it also gets the trigger values
+   and the partial-group flags.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: ScanGeometry
+
+   
+   Beam and detector geometry recorded for a scan.
+
+   Beam centre and detector distance come from the Eiger file's per-frame
+   NDAttributes (read at frame 0); wavelength and energy come from the
+   bluesky metadata in the scan's master file, which is the only place they
+   are written. Any field that could not be read is None.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: beam_center_x
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: beam_center_y
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: beam_center_pv
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: detector_distance
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: wavelength
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: wavelength_units
+      :type:  str
+      :value: ''
+
+
+
+   .. py:attribute:: energy
+      :type:  float
+      :value: None
+
+
+
+   .. py:attribute:: energy_units
+      :type:  str
+      :value: ''
+
+
+
+.. py:function:: read_scan_geometry(folder, scan_number, fname_format=FNAME_FORMAT)
+
+   
+   Beam centre, wavelength and detector distance for one scan.
+
+   Reads whatever it can and leaves the rest None — the two files are
+   written by different parts of the acquisition and either may be absent.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: process_images_v0(scan_number, folder, fname_format=FNAME_FORMAT)
+
+   
+   Sum a fixed ROI across all Eiger images in a scan (eager version).
+
+   Loads the entire image stack into memory before slicing. Kept as a
+   reference implementation; use :func:`process_images` for large scans
+   to avoid running out of memory.
+
+   :Parameters:
+
+       **scan_number** : int
+           Scan number used to build the HDF5 file name.
+
+       **folder** : str
+           Root folder containing the ``eiger`` subfolder.
+
+       **fname_format** : str, optional
+           Format string for the HDF5 path. Defaults to :data:`FNAME_FORMAT`.
+
+
+
+   :Returns:
+
+       **sums** : ndarray, shape (n_images,)
+           ROI intensity sum for each image.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: process_images(scan_number, folder, roi=((678, 888), (333, 480)), batch=100, fname_format=FNAME_FORMAT)
+
+   
+   Sum a fixed ROI across all Eiger images, reading in batches.
+
+   Reads only the ROI window of ``batch`` frames at a time, so peak
+   memory is bounded by ``batch * roi_height * roi_width`` regardless of
+   the total number of images in the scan.
+
+   :Parameters:
+
+       **scan_number** : int
+           Scan number used to build the HDF5 file name.
+
+       **folder** : str
+           Root folder containing the ``eiger`` subfolder.
+
+       **roi** : tuple of tuple, optional
+           ROI as ``((col_start, col_stop), (row_start, row_stop))``. The
+           column range is the x extent and the row range is the y extent.
+
+       **batch** : int, optional
+           Number of frames to read per HDF5 access. Larger values reduce
+           per-call overhead at the cost of higher peak memory.
+
+       **fname_format** : str, optional
+           Format string for the HDF5 path. Defaults to :data:`FNAME_FORMAT`.
+
+
+
+   :Returns:
+
+       **sums** : ndarray, shape (n_images,)
+           ROI intensity sum for each image, stored as float64.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: process_vortex(scan_number, folder, roi=(800, 900), batch=100, fname_format=FNAME_FORMAT)
+
+   
+   Sum a Vortex fluorescence ROI across all spectra in a scan.
+
+   Reads the Vortex spectrum stack in batches and integrates a single
+   energy window (channel range) per spectrum. Memory use is bounded by
+   ``batch * n_channels_per_spectrum``.
+
+   :Parameters:
+
+       **scan_number** : int
+           Scan number used to build the HDF5 file name.
+
+       **folder** : str
+           Root folder containing the ``vortex`` subfolder.
+
+       **roi** : tuple of int, optional
+           Energy channel range ``(start, stop)`` to integrate over.
+
+       **batch** : int, optional
+           Number of spectra to read per HDF5 access.
+
+       **fname_format** : str, optional
+           Format string for the HDF5 path. Defaults to :data:`FNAME_FORMAT`.
+
+
+
+   :Returns:
+
+       **sums** : ndarray, shape (n_spectra,)
+           Integrated counts in the energy window for each spectrum.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_data(x, y, z, i0=None, scatter=False, **kwargs)
+
+   
+   Plot a scalar field ``z(x, y)`` from a flyscan as scatter or contour.
+
+   Drops the first sample and, if needed, the last ``z`` value so the
+   three arrays align. Optionally normalizes by an incident-intensity
+   monitor ``i0``.
+
+   :Parameters:
+
+       **x, y** : array_like
+           Per-image x and y positions, typically the means returned by
+           :func:`process_position_stream`.
+
+       **z** : array_like
+           Per-image scalar values (e.g. ROI sum from :func:`process_images`).
+           May be one shorter than ``x``/``y`` when image triggers and
+           position samples differ by one; in that case it is used as-is.
+
+       **i0** : array_like or None, optional
+           Per-image incident intensity. When provided, ``z`` is divided by
+           ``i0`` element-wise before plotting.
+
+       **scatter** : bool, optional
+           If True, use ``plt.scatter`` with one marker per point. If False
+           (default), use ``plt.tricontourf`` for a filled contour plot.
+
+       **\*\*kwargs**
+           Forwarded to the underlying matplotlib call.
+
+
+
+   :Returns:
+
+       **fig** : matplotlib.figure.Figure
+           ..
+
+       **ax** : matplotlib.axes.Axes
+           ..
+
+       **cbar** : matplotlib.colorbar.Colorbar
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>polartools.dichro_maps &#8212; polartools</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../_static/documentation_options.js?v=a0b5f602"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/polartools/dichro_maps/index';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="polartools.diffraction" href="../diffraction/index.html" />
+    <link rel="prev" title="polartools.area_detector_handlers" href="../area_detector_handlers/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.6.0.post43+g0577f8ccb" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">polartools</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/flyscan_dichro.html">
+    Flyscan dichroism
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../release-history.html">
+    Release history
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/flyscan_dichro.html">
+    Flyscan dichroism
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../release-history.html">
+    Release history
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../absorption/index.html">polartools.absorption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../area_detector_handlers/index.html">polartools.area_detector_handlers</a></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">polartools.dichro_maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../diffraction/index.html">polartools.diffraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../flyscan_gui_dichro/index.html">polartools.flyscan_gui_dichro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../image_viewer/index.html">polartools.image_viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../load_data/index.html">polartools.load_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../manage_database/index.html">polartools.manage_database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pressure_calibration/index.html">polartools.pressure_calibration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../process_flyscan/index.html">polartools.process_flyscan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../process_images/index.html">polartools.process_images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scan_viewer/index.html">polartools.scan_viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spectrum_viewer/index.html">polartools.spectrum_viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xmcd_gui/index.html">polartools.xmcd_gui</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">polartools</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.dichro_maps</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-polartools.dichro_maps">
+<span id="polartools-dichro-maps"></span><h1>polartools.dichro_maps<a class="headerlink" href="#module-polartools.dichro_maps" title="Link to this heading">#</a></h1>
+<p>Shared helpers for dichroism difference maps from flyscan pairs.</p>
+<p>A dichro measurement is a pair of flyscans taken at the two phase-plate
+settings; the map of interest is the difference between them. These functions
+find the pairs in a scan range, put the two members on a common grid, and plot
+a series of the resulting maps.</p>
+<p>Factored out of <code class="docutils literal notranslate"><span class="pre">data/experiment_plots.ipynb</span></code> so several notebooks can share
+one copy. The reduction itself lives in <code class="xref py py-mod docutils literal notranslate"><span class="pre">process_flyscan</span></code>.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.SWITCH_KEY" title="polartools.dichro_maps.SWITCH_KEY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SWITCH_KEY</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.baseline_value" title="polartools.dichro_maps.baseline_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">baseline_value</span></code></a>(scan, key, folder)</p></td>
+<td><p>One signal from a scan's baseline stream, or None if unavailable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.eiger_frame_count" title="polartools.dichro_maps.eiger_frame_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eiger_frame_count</span></code></a>(scan, folder)</p></td>
+<td><p>Frames in a scan's Eiger file, without reading any of them.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.find_pairs" title="polartools.dichro_maps.find_pairs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_pairs</span></code></a>(scans, label_key, folder[, ...])</p></td>
+<td><p>Consecutive scans sharing a label value but differing in phase plate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.normalised_map" title="polartools.dichro_maps.normalised_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalised_map</span></code></a>(scan, roi, folder[, batch])</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">z/I0)</span></code> for one flyscan.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.absorbance_map" title="polartools.dichro_maps.absorbance_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">absorbance_map</span></code></a>(scan, roi, folder[, batch, reference, ...])</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">mu*t)</span></code> for one flyscan.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.dichroic_ratio" title="polartools.dichro_maps.dichroic_ratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dichroic_ratio</span></code></a>(diff, mean[, floor_frac])</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(mu_L</span> <span class="pre">t</span> <span class="pre">-</span> <span class="pre">mu_R</span> <span class="pre">t)</span> <span class="pre">/</span> <span class="pre">(mu_L</span> <span class="pre">t</span> <span class="pre">+</span> <span class="pre">mu_R</span> <span class="pre">t)</span></code> from a difference and mean.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.pair_difference" title="polartools.dichro_maps.pair_difference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pair_difference</span></code></a>(scan_a, scan_b, roi, folder[, grid_n, ...])</p></td>
+<td><p>Regrid both scans of a pair and return <code class="docutils literal notranslate"><span class="pre">(XG,</span> <span class="pre">YG,</span> <span class="pre">difference,</span> <span class="pre">mean)</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.average_pairs" title="polartools.dichro_maps.average_pairs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">average_pairs</span></code></a>(pairs, roi, folder[, grid_n])</p></td>
+<td><p>Average several dichro pairs measured at the same position.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.averaged_series" title="polartools.dichro_maps.averaged_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">averaged_series</span></code></a>(groups, roi, folder[, grid_n, verbose])</p></td>
+<td><p>Build plottable entries from <code class="docutils literal notranslate"><span class="pre">[(title,</span> <span class="pre">[(a,</span> <span class="pre">b),</span> <span class="pre">...]),</span> <span class="pre">...]</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.build_series" title="polartools.dichro_maps.build_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_series</span></code></a>(pairs, roi, folder[, grid_n, verbose])</p></td>
+<td><p>Difference map for every pair, ordered by the series parameter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.plot_difference_series" title="polartools.dichro_maps.plot_difference_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_difference_series</span></code></a>(series, title[, label_fmt, ...])</p></td>
+<td><p>Difference maps on one shared symmetric scale, common offsets removed.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.plot_stitched" title="polartools.dichro_maps.plot_stitched"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_stitched</span></code></a>(series, title[, label_fmt, clip, width, ...])</p></td>
+<td><p>Lay every map of a series at its own coordinates on a single axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.write_gif" title="polartools.dichro_maps.write_gif"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_gif</span></code></a>(series, path, title[, label_fmt, clip, fps, ...])</p></td>
+<td><p>Animate a series of difference maps as a GIF, one frame per member.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.line_cut" title="polartools.dichro_maps.line_cut"><code class="xref py py-obj docutils literal notranslate"><span class="pre">line_cut</span></code></a>(entry, y0[, robust])</p></td>
+<td><p>One row of a map at the y nearest <code class="docutils literal notranslate"><span class="pre">y0</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.peak_fwhm" title="polartools.dichro_maps.peak_fwhm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">peak_fwhm</span></code></a>(x, y, k)</p></td>
+<td><p>Full width at half maximum of the peak of <code class="docutils literal notranslate"><span class="pre">y</span></code> at index <code class="docutils literal notranslate"><span class="pre">k</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.plot_line_cut" title="polartools.dichro_maps.plot_line_cut"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_line_cut</span></code></a>(entry, y0[, title, window, figsize, clip])</p></td>
+<td><p>Map, the dichroic difference along one row, and its x-derivative.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.edge_position" title="polartools.dichro_maps.edge_position"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_position</span></code></a>(x, y[, window])</p></td>
+<td><p>Sub-pixel x of the steepest point of a step in <code class="docutils literal notranslate"><span class="pre">y(x)</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.align_series" title="polartools.dichro_maps.align_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">align_series</span></code></a>(series[, method, y0, step, reference, ...])</p></td>
+<td><p>Line frames up in x, undoing the xeryon stage runout.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.overlap_report" title="polartools.dichro_maps.overlap_report"><code class="xref py py-obj docutils literal notranslate"><span class="pre">overlap_report</span></code></a>(tile_a, tile_b[, field])</p></td>
+<td><p>Compare two x-adjacent tiles where their travel overlaps.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.stitch_x" title="polartools.dichro_maps.stitch_x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stitch_x</span></code></a>(tiles[, fields, step, seam, level_match])</p></td>
+<td><p>Join x-adjacent tiles into one map, using each point only once.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.interior_columns" title="polartools.dichro_maps.interior_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interior_columns</span></code></a>(x[, lo_frac, hi_frac])</p></td>
+<td><p>Columns in the central band of a scan -- by default its middle third.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.shift_rows" title="polartools.dichro_maps.shift_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shift_rows</span></code></a>(image, x, dx)</p></td>
+<td><p>Shift each row of <code class="docutils literal notranslate"><span class="pre">image</span></code> along <code class="docutils literal notranslate"><span class="pre">x</span></code> by <code class="docutils literal notranslate"><span class="pre">dx</span></code> (scalar or per row).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.line_shifts" title="polartools.dichro_maps.line_shifts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">line_shifts</span></code></a>(ref, moving, x[, max_shift, min_points])</p></td>
+<td><p>Per-row displacement of <code class="docutils literal notranslate"><span class="pre">moving</span></code> relative to <code class="docutils literal notranslate"><span class="pre">ref</span></code>, in x.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.realign_pair" title="polartools.dichro_maps.realign_pair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">realign_pair</span></code></a>(diff, mean, x[, mode, manual, max_shift, ...])</p></td>
+<td><p>Re-derive a pair's difference with the two polarisations aligned in x.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.dichro_maps.tile_pairs" title="polartools.dichro_maps.tile_pairs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tile_pairs</span></code></a>(pairs, roi, folder[, grid_n, open_pct, ...])</p></td>
+<td><p>Reduce several CR/CL pairs against <strong>one</strong> open-beam reference.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.dichro_maps.common_y_range" title="polartools.dichro_maps.common_y_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">common_y_range</span></code></a>(first_scans, folder[, group])</p></td>
+<td><p>The y interferometer range shared by several angle groups.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.dichro_maps.SWITCH_KEY">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">SWITCH_KEY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pr2_pzt_localdc'</span></span><a class="headerlink" href="#polartools.dichro_maps.SWITCH_KEY" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.baseline_value">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">baseline_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#baseline_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.baseline_value" title="Link to this definition">#</a></dt>
+<dd><p>One signal from a scan’s baseline stream, or None if unavailable.</p>
+<p>The baseline is the trustworthy source for per-scan device values. The
+<code class="docutils literal notranslate"><span class="pre">diffractometers</span></code> metadata blob also carries a mono energy, but it can be
+stale – it read 6.200 keV for a whole energy series – so labels must not
+come from there.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.eiger_frame_count">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">eiger_frame_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#eiger_frame_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.eiger_frame_count" title="Link to this definition">#</a></dt>
+<dd><p>Frames in a scan’s Eiger file, without reading any of them.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.find_pairs">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">find_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#find_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.find_pairs" title="Link to this definition">#</a></dt>
+<dd><p>Consecutive scans sharing a label value but differing in phase plate.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">[(label,</span> <span class="pre">scan_a,</span> <span class="pre">scan_b),</span> <span class="pre">...]</span></code> with <code class="docutils literal notranslate"><span class="pre">scan_a</span></code> the lower number.
+Pairs without a position stream are dropped unless asked for.</p>
+<p><code class="docutils literal notranslate"><span class="pre">atol</span></code> is how far the label may differ between the two members and still
+count as one setting. Motor readbacks jitter – <code class="docutils literal notranslate"><span class="pre">huber_hp_z</span></code> gives 0.0500
+for one member and 0.0501 for the other – so those series need a
+tolerance, well below the spacing between settings. The default of 0 means
+exact equality, right for setpoint-valued series.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.normalised_map">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">normalised_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#normalised_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.normalised_map" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">z/I0)</span></code> for one flyscan.</p>
+<p>Detector frame k is exposed during the position samples carrying eigerTrig
+k+1, and <code class="docutils literal notranslate"><span class="pre">groups_for_frames</span></code> matches them by that trigger value, so a
+frame whose trigger group is missing drops out instead of shifting every
+later frame along by one.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.absorbance_map">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">absorbance_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'open'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_pct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">99.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#absorbance_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.absorbance_map" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y,</span> <span class="pre">mu*t)</span></code> for one flyscan.</p>
+<p><code class="docutils literal notranslate"><span class="pre">reference=&quot;open&quot;</span></code> (default) gives <strong>true absorbance</strong>,
+<code class="docutils literal notranslate"><span class="pre">mu*t</span> <span class="pre">=</span> <span class="pre">ln(I_open</span> <span class="pre">/</span> <span class="pre">I)</span></code>: zero where the beam is clear, rising to the
+sample’s own absorbance. <code class="docutils literal notranslate"><span class="pre">I_open</span></code> is the <code class="docutils literal notranslate"><span class="pre">open_pct</span></code> percentile of
+<code class="docutils literal notranslate"><span class="pre">I/I0</span></code> over the scan, which is the unobstructed level provided the scan
+actually runs off the sample at one end – if it does not, the reference
+lands on the thinnest part of the sample and every value is offset low.</p>
+<p><code class="docutils literal notranslate"><span class="pre">reference=&quot;i0&quot;</span></code> uses <code class="docutils literal notranslate"><span class="pre">ln(I0</span> <span class="pre">/</span> <span class="pre">I)</span></code> literally. <code class="docutils literal notranslate"><span class="pre">I</span></code> is a detector sum
+and <code class="docutils literal notranslate"><span class="pre">I0</span></code> a monitor counter, so that carries a constant ln(gain) offset
+(about -11.9 in the open beam here).</p>
+<p>The offset cancels in a CL - CR <em>difference</em> either way, but <strong>not</strong> in
+their sum, so anything normalising by <code class="docutils literal notranslate"><span class="pre">mu_L</span> <span class="pre">t</span> <span class="pre">+</span> <span class="pre">mu_R</span> <span class="pre">t</span></code> needs the open
+reference to mean anything.</p>
+<p>Absorbance, not transmission, is what is linear in path length, so this is
+the quantity a tomographic reconstruction wants.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.dichroic_ratio">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">dichroic_ratio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">floor_frac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#dichroic_ratio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.dichroic_ratio" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">(mu_L</span> <span class="pre">t</span> <span class="pre">-</span> <span class="pre">mu_R</span> <span class="pre">t)</span> <span class="pre">/</span> <span class="pre">(mu_L</span> <span class="pre">t</span> <span class="pre">+</span> <span class="pre">mu_R</span> <span class="pre">t)</span></code> from a difference and mean.</p>
+<p>The denominator is twice the mean absorbance, which goes to zero wherever
+the beam is clear – the ratio is 0/0 in the open beam and would amplify
+noise without bound there. Points whose sum falls below <code class="docutils literal notranslate"><span class="pre">floor_frac</span></code> of
+its 99th percentile are masked out instead of returned as huge numbers.</p>
+<p>Being a ratio of absorbances it divides out the sample thickness, so it
+measures the magnetisation itself rather than magnetisation x path length.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.pair_difference">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">pair_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scan_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scan_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'transmission'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#pair_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.pair_difference" title="Link to this definition">#</a></dt>
+<dd><p>Regrid both scans of a pair and return <code class="docutils literal notranslate"><span class="pre">(XG,</span> <span class="pre">YG,</span> <span class="pre">difference,</span> <span class="pre">mean)</span></code>.</p>
+<p>The two scans don’t visit the same points – the stage free-runs – so each
+is interpolated onto a common grid before subtracting. The grid spans only
+the overlap of the two scans’ travel, so neither is extrapolated.</p>
+<p><code class="docutils literal notranslate"><span class="pre">quantity</span></code> selects what is differenced: <code class="docutils literal notranslate"><span class="pre">&quot;transmission&quot;</span></code> gives
+<code class="docutils literal notranslate"><span class="pre">I/I0</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;absorbance&quot;</span></code> gives <code class="docutils literal notranslate"><span class="pre">mu*t</span> <span class="pre">=</span> <span class="pre">ln(I0/I)</span></code>. The transform is
+applied per point <em>before</em> interpolating, because a log of an interpolated
+value is not the interpolation of the logs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.average_pairs">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">average_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#average_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.average_pairs" title="Link to this definition">#</a></dt>
+<dd><p>Average several dichro pairs measured at the same position.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pairs</span></code> is <code class="docutils literal notranslate"><span class="pre">[(scan_a,</span> <span class="pre">scan_b),</span> <span class="pre">...]</span></code>. Every pair is put on one common
+grid – the intersection of all their travel – before differencing, since
+each is otherwise regridded to its own overlap and they share no sample
+points. Each pair’s own common-mode offset is removed first: those differ
+from pair to pair and would bias the mean.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">(XG,</span> <span class="pre">YG,</span> <span class="pre">mean_difference,</span> <span class="pre">mean_transmission,</span> <span class="pre">stack)</span></code>, where
+<code class="docutils literal notranslate"><span class="pre">stack</span></code> holds the individual offset-removed differences so the caller can
+see how far the repeats agree.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.averaged_series">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">averaged_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#averaged_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.averaged_series" title="Link to this definition">#</a></dt>
+<dd><p>Build plottable entries from <code class="docutils literal notranslate"><span class="pre">[(title,</span> <span class="pre">[(a,</span> <span class="pre">b),</span> <span class="pre">...]),</span> <span class="pre">...]</span></code>.</p>
+<p>One entry per group, holding the mean of that group’s repeats. The offsets
+are already removed inside <a class="reference internal" href="#polartools.dichro_maps.average_pairs" title="polartools.dichro_maps.average_pairs"><code class="xref py py-func docutils literal notranslate"><span class="pre">average_pairs()</span></code></a>, so <code class="docutils literal notranslate"><span class="pre">offset</span></code> is zero.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.build_series">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">build_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#build_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.build_series" title="Link to this definition">#</a></dt>
+<dd><p>Difference map for every pair, ordered by the series parameter.</p>
+<p>Sorted by label rather than scan number: settings are not always visited in
+order, and a trend drawn in acquisition order would double back on itself.
+A pair that fails to load – a scan still being written – is skipped rather
+than losing the ones that did.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.plot_difference_series">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">plot_difference_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{:.3f}'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">99.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">share</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#plot_difference_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.plot_difference_series" title="Link to this definition">#</a></dt>
+<dd><p>Difference maps on one shared symmetric scale, common offsets removed.</p>
+<p>The two phase-plate settings don’t transmit equally, so every difference
+sits on a large constant offset that would swamp the structure. It is
+instrumental, so it is subtracted per panel.</p>
+<p><code class="docutils literal notranslate"><span class="pre">share</span></code> links the panel axes, which is what makes a series comparable
+point to point. Turn it off when the members sit at different places on
+the sample: shared limits would then span the whole excursion and squash
+every map into a sliver.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.plot_stitched">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">plot_stitched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{:.4f}'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">99.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">34.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'seismic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#plot_stitched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.plot_stitched" title="Link to this definition">#</a></dt>
+<dd><p>Lay every map of a series at its own coordinates on a single axes.</p>
+<p>For a set of maps taken at stepped sample positions: rather than one panel
+each, they are drawn where they actually sit, so the strip reads as one
+picture of the sample. The tiles are positioned by the interferometer
+coordinates, which do follow the coarse stage – a 10 um move in
+<code class="docutils literal notranslate"><span class="pre">huber_hp_y</span></code> shows up as about +10000 here.</p>
+<p>Each tile still has its own common-mode offset removed. Without that the
+instrumental offset, which differs from pair to pair, would put a visible
+step at every tile boundary.</p>
+<p>The default colour map is <code class="docutils literal notranslate"><span class="pre">seismic</span></code> rather than the <code class="docutils literal notranslate"><span class="pre">RdBu_r</span></code> used for
+panel figures. Most of a dichroic difference sits well inside the clipped
+range – the median deviation is under a third of the 99th percentile –
+and <code class="docutils literal notranslate"><span class="pre">RdBu_r</span></code> spends that whole span near white, which washes the domains
+out. <code class="docutils literal notranslate"><span class="pre">seismic</span></code> changes lightness about four times faster at zero, so the
+structure carries. It saturates harder at the ends, which also makes
+per-scan artefact bands obvious.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.write_gif">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">write_gif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'{:.1f}'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">99.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RdBu_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pingpong</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'frame'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#write_gif"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.write_gif" title="Link to this definition">#</a></dt>
+<dd><p>Animate a series of difference maps as a GIF, one frame per member.</p>
+<p>All frames share one colour scale and one set of axis limits, so what moves
+between frames is the data and not the rendering. <code class="docutils literal notranslate"><span class="pre">pingpong</span></code> plays the
+sweep forwards then backwards, which avoids the jump a looping monotonic
+sweep otherwise makes when it wraps from the last setting back to the first.</p>
+<p>The writer is driven directly rather than through <code class="docutils literal notranslate"><span class="pre">FuncAnimation</span></code>: that
+calls the draw function an extra time for setup, and the correspondence
+between requested frames and grabbed images is then not one to one – the
+first angle of a sweep goes missing. Here one explicit grab follows each
+draw.</p>
+<p>Returns the path written.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.line_cut">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">line_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#line_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.line_cut" title="Link to this definition">#</a></dt>
+<dd><p>One row of a map at the y nearest <code class="docutils literal notranslate"><span class="pre">y0</span></code>.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">(y_actual,</span> <span class="pre">x,</span> <span class="pre">i_a,</span> <span class="pre">i_b,</span> <span class="pre">mean,</span> <span class="pre">diff,</span> <span class="pre">kept)</span></code>. The two polarisations
+are recovered from the stored mean and difference (<code class="docutils literal notranslate"><span class="pre">diff</span> <span class="pre">=</span> <span class="pre">i_b</span> <span class="pre">-</span> <span class="pre">i_a</span></code>),
+so no re-read is needed.</p>
+<p><code class="docutils literal notranslate"><span class="pre">griddata</span></code> leaves a few wild values on the rim of the interpolated area –
+a single such column sits at the left edge of the #778-781 map, where the
+difference reads -12709 against a row median of -35. They are dropped here
+rather than allowed to dominate the derivative; <code class="docutils literal notranslate"><span class="pre">kept</span></code> is the mask.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.peak_fwhm">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">peak_fwhm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#peak_fwhm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.peak_fwhm" title="Link to this definition">#</a></dt>
+<dd><p>Full width at half maximum of the peak of <code class="docutils literal notranslate"><span class="pre">y</span></code> at index <code class="docutils literal notranslate"><span class="pre">k</span></code>.</p>
+<p>Walks out to each side until the curve falls through half the peak height
+and interpolates the crossing. Returns <code class="docutils literal notranslate"><span class="pre">(fwhm,</span> <span class="pre">x_lo,</span> <span class="pre">x_hi)</span></code>, with NaNs if
+the peak does not come back down inside the cut.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.plot_line_cut">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">plot_line_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(11,</span> <span class="pre">3.3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">99.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#plot_line_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.plot_line_cut" title="Link to this definition">#</a></dt>
+<dd><p>Map, the dichroic difference along one row, and its x-derivative.</p>
+<p>The derivative peaks where the difference crosses between domains, so its
+extrema locate the walls and their width sets an upper bound on the probe
+size convolved with the true wall width.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.edge_position">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">edge_position</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#edge_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.edge_position" title="Link to this definition">#</a></dt>
+<dd><p>Sub-pixel x of the steepest point of a step in <code class="docutils literal notranslate"><span class="pre">y(x)</span></code>.</p>
+<p>The derivative peak is located on the smoothed curve, then refined by a
+parabola through the peak sample and its two neighbours, so the result is
+not quantised to the 50 nm grid step.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">(x_edge,</span> <span class="pre">slope)</span></code>; <code class="docutils literal notranslate"><span class="pre">slope</span></code> carries the sign of the step.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.align_series">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">align_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'map'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#align_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.align_series" title="Link to this definition">#</a></dt>
+<dd><p>Line frames up in x, undoing the xeryon stage runout.</p>
+<p>Rotating the xeryon translates the sample sideways, so the frames of an
+animation jump about. Each frame is registered against a reference frame and
+its x coordinates offset by the measured displacement. <strong>Only the coordinates
+move</strong> – the data are never resampled, so no interpolation blur is added.</p>
+<p><code class="docutils literal notranslate"><span class="pre">method=&quot;map&quot;</span></code> cross-correlates the whole difference map, <code class="docutils literal notranslate"><span class="pre">method=&quot;cut&quot;</span></code>
+only the row nearest <code class="docutils literal notranslate"><span class="pre">y0</span></code>. The map is the safer default: it uses every
+pixel, and it also measures the vertical component, which is the assumption
+the correction rests on. For scans 807-878 that assumption holds well –
+dy rms 34-36 nm against dx rms 326-373 nm.</p>
+<p>The reference defaults to the middle frame, which correlates better with both
+ends of a sweep than either end does with the other. <code class="docutils literal notranslate"><span class="pre">max_shift</span></code> leaves a
+frame alone if its measured displacement is implausibly large.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">(aligned_series,</span> <span class="pre">report)</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.overlap_report">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">overlap_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'diff'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#overlap_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.overlap_report" title="Link to this definition">#</a></dt>
+<dd><p>Compare two x-adjacent tiles where their travel overlaps.</p>
+<p>The overlap is the one place the same sample is measured twice, so it is
+the only direct check that the two tiles agree – on level, and on whether
+they are placed correctly relative to each other.</p>
+<p>Returns a dict with the overlap span, the median <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">-</span> <span class="pre">a</span></code> offset, and the
+correlation between the two copies. A high correlation with a non-zero
+offset means the tiles are aligned but sit on different baselines; a low
+correlation means the x placement itself is suspect.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.stitch_x">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">stitch_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('diff',</span> <span class="pre">'mean')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level_match</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#stitch_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.stitch_x" title="Link to this definition">#</a></dt>
+<dd><p>Join x-adjacent tiles into one map, using each point only once.</p>
+<p>Tiles are placed by their own interferometer coordinates – nothing is
+fitted or slid – and the duplicated strip where two tiles overlap is
+resolved by cutting at its midpoint, so each tile contributes the half
+nearer its own centre and no sample point is counted twice.</p>
+<p><code class="docutils literal notranslate"><span class="pre">seam</span></code> overrides the cut position (a list of x values, one per gap).
+<code class="docutils literal notranslate"><span class="pre">level_match</span></code> shifts each tile after the first by the median difference
+measured in its overlap with the previous one; off by default, because a
+step at the seam is usually worth seeing rather than hiding.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">(XG,</span> <span class="pre">YG,</span> <span class="pre">{field:</span> <span class="pre">array},</span> <span class="pre">info)</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.interior_columns">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">interior_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lo_frac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span> <span class="pre">/</span> <span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi_frac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span> <span class="pre">/</span> <span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#interior_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.interior_columns" title="Link to this definition">#</a></dt>
+<dd><p>Columns in the central band of a scan – by default its middle third.</p>
+<p>Used to set colour limits from the sample’s interior rather than from its
+absorption edges, where a sub-pixel CR/CL position mismatch across a large
+intensity step makes a difference many times any real dichroism (8.5x on
+the #946-949 tiles). Scaling to the whole map therefore renders the
+interior flat, hiding the domains.</p>
+<p>The middle third is interior by construction: the sample is centred in the
+scan, which is what the short absorption alignment scan before each angle
+establishes. Taking a fixed fraction is deliberate – it clips the same way
+on every scan, where locating the edges from the intensity shifts with the
+contrast and can creep back towards them on a weakly absorbing sample.</p>
+<p>Returns a boolean mask over <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.shift_rows">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">shift_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#shift_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.shift_rows" title="Link to this definition">#</a></dt>
+<dd><p>Shift each row of <code class="docutils literal notranslate"><span class="pre">image</span></code> along <code class="docutils literal notranslate"><span class="pre">x</span></code> by <code class="docutils literal notranslate"><span class="pre">dx</span></code> (scalar or per row).</p>
+<p>Positive <code class="docutils literal notranslate"><span class="pre">dx</span></code> moves the row’s content towards +x. Points shifted in from
+beyond the measured range become NaN rather than being extrapolated.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.line_shifts">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">line_shifts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moving</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1500.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#line_shifts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.line_shifts" title="Link to this definition">#</a></dt>
+<dd><p>Per-row displacement of <code class="docutils literal notranslate"><span class="pre">moving</span></code> relative to <code class="docutils literal notranslate"><span class="pre">ref</span></code>, in x.</p>
+<p>One normalised cross-correlation per row, refined by a parabola through
+the peak. Normalising matters: a plain dot product shrinks as the overlap
+shrinks with lag, so it always peaks at zero and reports no shift at all.</p>
+<p>Rows with too little overlap give NaN, which <a class="reference internal" href="#polartools.dichro_maps.shift_rows" title="polartools.dichro_maps.shift_rows"><code class="xref py py-func docutils literal notranslate"><span class="pre">shift_rows()</span></code></a> treats as
+“leave this row alone”.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.realign_pair">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">realign_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'line'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1500.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#realign_pair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.realign_pair" title="Link to this definition">#</a></dt>
+<dd><p>Re-derive a pair’s difference with the two polarisations aligned in x.</p>
+<p>Takes the difference and mean a pair was already reduced to – the two
+polarisations are recovered exactly as <code class="docutils literal notranslate"><span class="pre">mean</span> <span class="pre">-/+</span> <span class="pre">diff/2</span></code> – so this needs
+no re-reading of the scans and can be re-run interactively.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mode</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;global&quot;</span></code> (one shift for the whole map, the
+median of the per-line measurements) or <code class="docutils literal notranslate"><span class="pre">&quot;line&quot;</span></code>. <code class="docutils literal notranslate"><span class="pre">manual</span></code> adds a fixed
+offset in nm on top, for tuning by eye.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">(diff,</span> <span class="pre">mean,</span> <span class="pre">shifts)</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.tile_pairs">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">tile_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_pct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">99.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#tile_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.tile_pairs" title="Link to this definition">#</a></dt>
+<dd><p>Reduce several CR/CL pairs against <strong>one</strong> open-beam reference.</p>
+<p>Referencing each scan to its own high percentile treats the datasets
+differently, in two ways that both corrupt a stitch:</p>
+<ul class="simple">
+<li><p>Within a pair, the difference picks up <code class="docutils literal notranslate"><span class="pre">ln(ref_CL</span> <span class="pre">/</span> <span class="pre">ref_CR)</span></code> – a
+constant that has nothing to do with dichroism and differs from tile to
+tile. On #1959-1962 that alone put the two tiles at -0.0053 and +0.0007.</p></li>
+<li><p>Across tiles, a scan that never runs off the sample references itself to
+its own thinnest point and reports every absorbance too low by a
+constant. #1959 peaked at 2648 where #1961 plateaued at 3651, so tile A
+came out 0.349 low throughout – about 12%.</p></li>
+</ul>
+<p>Transmission cannot exceed the unobstructed beam, so the largest
+percentile across all the scans is the best available estimate of it, and
+using that one value for every scan makes the tiles directly comparable:
+the reference cancels exactly in every difference, and absorbances share a
+zero. Pass <code class="docutils literal notranslate"><span class="pre">open_level</span></code> to override it.</p>
+<p>Each scan is read once, however many pairs mention it. Returns
+<code class="docutils literal notranslate"><span class="pre">(tiles,</span> <span class="pre">open_level)</span></code>; each tile carries <code class="docutils literal notranslate"><span class="pre">XG</span></code>, <code class="docutils literal notranslate"><span class="pre">YG</span></code>, <code class="docutils literal notranslate"><span class="pre">diff</span></code>,
+<code class="docutils literal notranslate"><span class="pre">mean</span></code>, <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.dichro_maps.common_y_range">
+<span class="sig-prename descclassname"><span class="pre">polartools.dichro_maps.</span></span><span class="sig-name descname"><span class="pre">common_y_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_scans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/polartools/dichro_maps.html#common_y_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polartools.dichro_maps.common_y_range" title="Link to this definition">#</a></dt>
+<dd><p>The y interferometer range shared by several angle groups.</p>
+<p>The stage drifts in y over a long tomographic series – about 1.56 µm
+between #1716 (25°) and #2479 (203.8°) – so the slice measured at one
+angle is not the slice measured at another. Only the overlap of every
+angle can be reconstructed; outside it, different angles are looking at
+different parts of the sample.</p>
+<p>Reads position streams only, never detector frames, so it is cheap. Pass
+the <em>first</em> scan of each group; <code class="docutils literal notranslate"><span class="pre">group</span></code> scans are examined from each.
+Returns <code class="docutils literal notranslate"><span class="pre">(lo,</span> <span class="pre">hi)</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if no scan could be read.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../area_detector_handlers/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">polartools.area_detector_handlers</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../diffraction/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">polartools.diffraction</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.SWITCH_KEY"><code class="docutils literal notranslate"><span class="pre">SWITCH_KEY</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.baseline_value"><code class="docutils literal notranslate"><span class="pre">baseline_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.eiger_frame_count"><code class="docutils literal notranslate"><span class="pre">eiger_frame_count()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.find_pairs"><code class="docutils literal notranslate"><span class="pre">find_pairs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.normalised_map"><code class="docutils literal notranslate"><span class="pre">normalised_map()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.absorbance_map"><code class="docutils literal notranslate"><span class="pre">absorbance_map()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.dichroic_ratio"><code class="docutils literal notranslate"><span class="pre">dichroic_ratio()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.pair_difference"><code class="docutils literal notranslate"><span class="pre">pair_difference()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.average_pairs"><code class="docutils literal notranslate"><span class="pre">average_pairs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.averaged_series"><code class="docutils literal notranslate"><span class="pre">averaged_series()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.build_series"><code class="docutils literal notranslate"><span class="pre">build_series()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.plot_difference_series"><code class="docutils literal notranslate"><span class="pre">plot_difference_series()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.plot_stitched"><code class="docutils literal notranslate"><span class="pre">plot_stitched()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.write_gif"><code class="docutils literal notranslate"><span class="pre">write_gif()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.line_cut"><code class="docutils literal notranslate"><span class="pre">line_cut()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.peak_fwhm"><code class="docutils literal notranslate"><span class="pre">peak_fwhm()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.plot_line_cut"><code class="docutils literal notranslate"><span class="pre">plot_line_cut()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.edge_position"><code class="docutils literal notranslate"><span class="pre">edge_position()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.align_series"><code class="docutils literal notranslate"><span class="pre">align_series()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.overlap_report"><code class="docutils literal notranslate"><span class="pre">overlap_report()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.stitch_x"><code class="docutils literal notranslate"><span class="pre">stitch_x()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.interior_columns"><code class="docutils literal notranslate"><span class="pre">interior_columns()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.shift_rows"><code class="docutils literal notranslate"><span class="pre">shift_rows()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.line_shifts"><code class="docutils literal notranslate"><span class="pre">line_shifts()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.realign_pair"><code class="docutils literal notranslate"><span class="pre">realign_pair()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.tile_pairs"><code class="docutils literal notranslate"><span class="pre">tile_pairs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.dichro_maps.common_y_range"><code class="docutils literal notranslate"><span class="pre">common_y_range()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/APS-4ID-POLAR/polartools/edit/main/docs/source/api/polartools/dichro_maps/index.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/api/polartools/dichro_maps/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,338 @@
+polartools.flyscan_gui_dichro
+=============================
+
+.. py:module:: polartools.flyscan_gui_dichro
+
+.. autoapi-nested-parse::
+
+   Post-scan dichroism flyscan viewer.
+
+   Loads two scans (e.g. circular-right and circular-left polarizations),
+   displays their per-image scalar maps side-by-side, and computes a
+   ``(CL - CR)`` difference map interpolated onto a common ``(x, y)`` grid.
+   Either polarization may be disabled, in which case only that map is drawn
+   and the difference panel is left blank -- so the viewer also covers the
+   single-scan case.
+
+   Eiger and Vortex each get a tab, with their own ROI and their own copy of
+   the three maps. The reduction itself -- position stream to per-frame x, y
+   and I0, detector file to per-frame ROI sum -- is
+   :mod:`polartools.process_flyscan`.
+
+   Settings live in a JSON file rather than in ``QSettings``: the folder,
+   ROIs, scan numbers and colour limits worth keeping are the ones for the
+   analysis directory being worked in, and a second experiment should not
+   inherit them. The file is read at startup -- ``./flyscan_gui_dichro.config.json`` unless
+   ``--config`` names another -- but nothing is written until the Autosave
+   button in the status bar is pressed, so launching in a directory leaves
+   no trace in it. The destination can be changed while running; neither it
+   nor the Autosave state carries over to the next run, by design, so a
+   session never writes somewhere forgotten. Run with::
+
+       flyscan-dichro-gui [--folder NdFeB] [--cr 490] [--cl 491] [--config FILE]
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.flyscan_gui_dichro.SCALE_MODES
+   polartools.flyscan_gui_dichro.CMAPS
+   polartools.flyscan_gui_dichro.DEFAULT_EIGER_ROI
+   polartools.flyscan_gui_dichro.DEFAULT_VORTEX_ROI
+   polartools.flyscan_gui_dichro.PROCESS_BATCH
+   polartools.flyscan_gui_dichro.CONFIG_FILENAME
+   polartools.flyscan_gui_dichro.FOLDER_HISTORY_MAX
+   polartools.flyscan_gui_dichro.POL_KEYS
+   polartools.flyscan_gui_dichro.POL_LABEL
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.flyscan_gui_dichro.ProcessWorker
+   polartools.flyscan_gui_dichro.EigerTab
+   polartools.flyscan_gui_dichro.VortexTab
+   polartools.flyscan_gui_dichro.MainWindow
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.flyscan_gui_dichro.main
+
+
+Module Contents
+---------------
+
+.. py:data:: SCALE_MODES
+   :value: ('Whole map', 'Interior', 'Symlog')
+
+
+.. py:data:: CMAPS
+   :value: ('RdBu_r', 'seismic', 'bwr')
+
+
+.. py:data:: DEFAULT_EIGER_ROI
+   :value: ((769, 832), (400, 463))
+
+
+.. py:data:: DEFAULT_VORTEX_ROI
+   :value: (800, 900)
+
+
+.. py:data:: PROCESS_BATCH
+   :value: 100
+
+
+.. py:data:: CONFIG_FILENAME
+   :value: 'flyscan_gui_dichro.config.json'
+
+
+.. py:data:: FOLDER_HISTORY_MAX
+   :value: 20
+
+
+.. py:data:: POL_KEYS
+   :value: ('cr', 'cl')
+
+
+.. py:data:: POL_LABEL
+
+.. py:class:: ProcessWorker(func, args, kwargs)
+
+   Bases: :py:obj:`PyQt6.QtCore.QThread`
+
+
+   .. py:attribute:: finished_ok
+
+
+   .. py:attribute:: failed
+
+
+   .. py:method:: run()
+
+
+.. py:class:: EigerTab(parent=None)
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QWidget`
+
+
+   .. py:attribute:: process_requested
+
+
+   .. py:attribute:: redraw_requested
+
+
+   .. py:attribute:: frame_requested
+
+
+   .. py:attribute:: x_cen
+
+
+   .. py:attribute:: y_cen
+
+
+   .. py:attribute:: width
+
+
+   .. py:attribute:: height
+
+
+   .. py:attribute:: process_btn
+
+
+   .. py:attribute:: diff_options
+
+
+   .. py:attribute:: pair_vlim
+
+
+   .. py:attribute:: scale_combo
+
+
+   .. py:attribute:: vmax_spin
+
+
+   .. py:attribute:: preview_canvas
+
+
+   .. py:attribute:: map_canvases
+
+
+   .. py:attribute:: diff_canvas
+
+
+   .. py:attribute:: diff_controls
+
+
+   .. py:method:: get_roi()
+
+
+   .. py:method:: set_preview(frame, frame_count=0)
+
+
+   .. py:method:: update_preview_frame(frame, index)
+
+      
+      Refresh the preview image without resetting the current zoom.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: clear_maps()
+
+
+   .. py:method:: draw_maps(data, normalize=True, scatter=True)
+
+
+.. py:class:: VortexTab(parent=None)
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QWidget`
+
+
+   .. py:attribute:: process_requested
+
+
+   .. py:attribute:: redraw_requested
+
+
+   .. py:attribute:: frame_requested
+
+
+   .. py:attribute:: e_start
+
+
+   .. py:attribute:: e_stop
+
+
+   .. py:attribute:: process_btn
+
+
+   .. py:attribute:: diff_options
+
+
+   .. py:attribute:: pair_vlim
+
+
+   .. py:attribute:: scale_combo
+
+
+   .. py:attribute:: preview_canvas
+
+
+   .. py:attribute:: map_canvases
+
+
+   .. py:attribute:: diff_canvas
+
+
+   .. py:attribute:: diff_controls
+
+
+   .. py:method:: get_roi()
+
+
+   .. py:method:: set_preview(spectrum, frame_count=0)
+
+
+   .. py:method:: update_preview_frame(spectrum, index)
+
+      
+      Refresh the preview spectrum without resetting the current zoom.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: clear_maps()
+
+
+   .. py:method:: draw_maps(data, normalize=True, scatter=True)
+
+
+.. py:class:: MainWindow(initial_folder=None, cli_cr=None, cli_cl=None, config_path=None)
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QMainWindow`
+
+
+   .. py:attribute:: folder_combo
+
+
+   .. py:attribute:: enable_chk
+
+
+   .. py:attribute:: scan_input
+
+
+   .. py:attribute:: scan_steppers
+
+
+   .. py:attribute:: norm_chk
+
+
+   .. py:attribute:: style_combo
+
+
+   .. py:attribute:: tabs
+
+
+   .. py:attribute:: eiger_tab
+
+
+   .. py:attribute:: vortex_tab
+
+
+   .. py:attribute:: status
+
+
+   .. py:attribute:: config_label
+
+
+   .. py:attribute:: autosave_btn
+
+
+   .. py:method:: closeEvent(event)
+
+
+.. py:function:: main()
+
