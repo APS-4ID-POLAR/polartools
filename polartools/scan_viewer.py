@@ -190,6 +190,9 @@ def _warm(path: Path):
         with open(path, "rb") as handle:
             handle.read(PREFETCH_BYTES)
     except OSError:
+        # Pure read-ahead: warming the page cache is an optimization, so a
+        # file that has gone away or cannot be opened is the caller's
+        # problem to report when it actually reads it, not ours.
         pass
 
 

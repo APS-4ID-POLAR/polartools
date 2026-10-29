@@ -1335,6 +1335,9 @@ def read_scan_info(path: Path) -> dict:
                         )[:19]
                         break
     except OSError:
+        # A file still being written, or not HDF5 at all, contributes no
+        # timestamp. The listing shows the row with blank cells rather than
+        # dropping the scan, which is the documented behaviour.
         pass
 
     if key is not None:
@@ -4678,6 +4681,9 @@ def _migrate_settings(settings: QtCore.QSettings):
         stale.unlink()
         stale.parent.rmdir()
     except OSError:
+        # Tidying the migrated settings file is best-effort: another session
+        # may still hold it, or the directory may not be empty. Its values
+        # were copied across above, so leaving it costs nothing.
         pass
     # Written out now rather than left to the event loop, so that a session
     # that ends badly in its first second does not lose what was just read

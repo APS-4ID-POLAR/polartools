@@ -379,6 +379,8 @@ def read_scan_geometry(folder, scan_number, fname_format=FNAME_FORMAT):
                     if name in attrs and attrs[name].shape[0]:
                         setattr(geo, field, float(attrs[name][0]))
         except (OSError, KeyError):
+            # The NDAttributes block is optional and older files omit it.
+            # Geometry stays at whatever the master file supplies below.
             pass
 
     master = _master_path(folder, scan_number)
