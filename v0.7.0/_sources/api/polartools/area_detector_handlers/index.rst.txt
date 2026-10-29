@@ -1,0 +1,256 @@
+polartools.area_detector_handlers
+=================================
+
+.. py:module:: polartools.area_detector_handlers
+
+.. autoapi-nested-parse::
+
+   Classes to enable databroker to load area detector images.
+
+   Note that these have to registered ::
+
+       from databroker import catalog
+       from polartools.area_detector_handlers import LambdaHDF5Handler
+       cat = catalog['my_catalog']
+       cat.register_handler("AD_HDF5_lambda", LambdaHDF5Handler, overwrite=True)
+
+   .. autosummary::
+      ~LambdaHDF5Handler
+      ~EigerHandler
+      ~SPEHandler
+
+   ..
+       !! processed by numpydoc !!
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.area_detector_handlers.SPEHandler
+   polartools.area_detector_handlers.LambdaHDF5Handler
+   polartools.area_detector_handlers.EigerHandler
+
+
+Module Contents
+---------------
+
+.. py:class:: SPEHandler(fpath, template, filename, frame_per_point=1)
+
+   Bases: :py:obj:`area_detector_handlers.HandlerBase`
+
+
+   
+   Base-class for Handlers to provide the boiler plate to
+   make them usable in context managers by provding stubs of
+   ``__enter__``, ``__exit__`` and ``close``
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: specs
+
+      
+      Handler for the Princeton detector SPE files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: get_file_list(datum_kwarg_gen)
+
+
+.. py:class:: LambdaHDF5Handler(fpath, template, filename, frame_per_point=1)
+
+   Bases: :py:obj:`area_detector_handlers.handlers.AreaDetectorHDF5SingleHandler`
+
+
+   
+   Handler for hdf5 data stored 1 image per file by areadetector
+
+
+   :Parameters:
+
+       **fpath** : string
+           filepath
+
+       **template** : string
+           filename template string.
+
+       **filename** : string
+           filename
+
+       **frame_per_point** : float
+           the number of frames per point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: specs
+
+      
+      Handler for the Lambda detector HDF5 files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: EigerHandler(fpath, images_per_file=None, frame_per_point=None)
+
+   Bases: :py:obj:`area_detector_handlers.eiger.EigerHandler`
+
+
+   Modified Eiger handler -> APS seems to use a different file naming.
+
+
+   Initializer for Eiger handler.
+
+
+   :Parameters:
+
+       **fpath: str**
+           the partial file path
+
+       **images_per_file: int, optional**
+           images per file. If not set, must set frame_per_point
+
+       **frame_per_point: int, optional. If not set, must set**
+           images_per_file
+
+       **This one is backwards compatible for both versions of resources**
+           ..
+
+       **saved in databroker. Old resources used 'frame_per_point' as a**
+           ..
+
+       **kwarg. Newer resources call this 'images_per_file'.**
+           ..
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+   .. py:attribute:: specs
+
+
+   .. py:method:: get_file_list()
+
+      
+      Get the file list.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+   .. py:method:: get_file_sizes()
+
+      
+      Get the file size.
+      Returns size in bytes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

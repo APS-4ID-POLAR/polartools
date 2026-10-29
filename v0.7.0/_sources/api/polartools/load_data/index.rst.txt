@@ -1,0 +1,639 @@
+polartools.load_data
+====================
+
+.. py:module:: polartools.load_data
+
+.. autoapi-nested-parse::
+
+   Base functions to load data from various sources.
+
+   .. autosummary::
+       ~load_spec
+       ~load_csv
+       ~load_hdf5_data
+       ~hdf5_to_dataframe
+       ~load_hdf5_master
+       ~load_databroker
+       ~load_table
+       ~is_Bluesky_specfile
+       ~db_query
+       ~show_meta
+       ~collect_meta
+       ~lookup_position
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.load_data.HDF_DEFAULT_FNAME_FORMAT
+   polartools.load_data.BLUESKY_DEFAULT_LOCATION
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.load_data.load_catalog
+   polartools.load_data.load_spec
+   polartools.load_data.load_csv
+   polartools.load_data.load_databroker
+   polartools.load_data.hdf5_to_dataframe
+   polartools.load_data.load_hdf5_master
+   polartools.load_data.load_hdf5_data
+   polartools.load_data.load_table
+   polartools.load_data.is_Bluesky_specfile
+   polartools.load_data.db_query
+   polartools.load_data.show_meta
+   polartools.load_data.collect_meta
+   polartools.load_data.lookup_position
+
+
+Module Contents
+---------------
+
+.. py:data:: HDF_DEFAULT_FNAME_FORMAT
+   :value: 'scan_{:06d}_master.hdf'
+
+
+.. py:data:: BLUESKY_DEFAULT_LOCATION
+   :value: 'entry/instrument/bluesky/streams/primary'
+
+
+.. py:function:: load_catalog(name=None, query=None, handlers=None, tiled_path='/raw')
+
+   
+   Loads a databroker catalog and register data handlers.
+
+
+   :Parameters:
+
+       **name** : str, optional
+           Name of the database. Defaults to 4-ID-D name.
+
+       **query** : dict, optional
+           Dictionary with search parameters for the database.
+
+       **handlers** : dict, optional
+           Dictionary organized as {handler_name: handler_class}. If None,
+           defaults to handlers used at 4-ID-D.
+
+
+
+   :Returns:
+
+       **cat** : databroker catalog
+           Catalog after running the query, and registering the handler.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_spec(scan_id, spec_file, folder='')
+
+   
+   Load data from spec file.
+
+   If `spec_file` is the file name, it will load the spec file internally
+   which is time consuming.
+
+   :Parameters:
+
+       **scan_id** : int
+           Scan_id of the scan to be retrieved.
+
+       **spec_file** : string or spec2nexus.spec.SpecDataFile
+           Either the spec file name or a SpecDataFile instance.
+
+       **folder** : string, optional
+           Folder where spec file is located.
+
+
+
+   :Returns:
+
+       **data** : pandas.DataFrame
+           Table with the data from scan.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`spec2nexus.spec.SpecDataFile`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_csv(scan_id, folder='', name_format='scan_{}_primary.csv')
+
+   
+   Load data from the 'primary' stream from exported csv files.
+
+
+   :Parameters:
+
+       **scan_id** : int
+           Scan_id of the scan to be retrieved.
+
+       **folder** : string, optional
+           Folder where csv files are located.
+
+       **name_format** : string, optional
+           General format of file name. The correct name must be
+           retrievable through: `file_name_format.format(scan_id)`
+
+
+
+   :Returns:
+
+       **data** : pandas.DataFrame
+           Table with the data from the primary stream.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`pandas.read_csv`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_databroker(scan_id, db=None, stream='primary', query=None, use_db_v1=True)
+
+   
+   Load data of the first scan with the provided scan_id.
+
+   Currently defaults to databroker.v1 because it is faster. See issue #28.
+
+   For further details, refer to the `databroker` `documentation`_.
+
+   .. _documentation: https://blueskyproject.io/databroker/
+
+   :Parameters:
+
+       **scan_id** : int
+           Scan_id of the scan to be retrieved
+
+       **db**
+           `databroker` database
+
+       **stream** : string, optional
+           Selects the stream from which data will be loaded.
+
+       **query** : dict, optional
+           Dictionary with search parameters for the database.
+
+       **use_db_v1** : bool, optional
+           Chooses databroker API version between 'v1' or 'v2', defaults to 'v1'.
+
+
+
+   :Returns:
+
+       **data** : pandas.DataFrame
+           Table with the data from the primary stream.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: hdf5_to_dataframe(data)
+
+   
+   Convert an h5py object into a DataFrame.
+
+   .. warning::
+      Assumes a specific layout: for each top-level key, the data is read
+      from the ``"value"`` sub-key (i.e. ``data[key]["value"][()]``).
+
+   :Parameters:
+
+       **data** : h5py.File or h5py.Group
+           Object with the data. Each key needs to have a ``"value"`` sub-key.
+
+
+
+   :Returns:
+
+       pandas.DataFrame
+           Table with one column per top-level key.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_hdf5_master`
+           ..
+       :func:`h5py.File`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_hdf5_master(scan, folder, fname_format=HDF_DEFAULT_FNAME_FORMAT)
+
+   
+   Wrapper that loads HDF files using `h5py`.
+
+
+   :Parameters:
+
+       **scan_id** : int
+           Scan_id of the scan to be retrieved.
+
+       **folder** : string, optional
+           Folder where the master files are located.
+
+       **fname_format** : string, optional
+           General format of file name. The correct name must be retrievable
+           through: `file_name_format.format(scan_id)`
+
+
+
+   :Returns:
+
+       **data** : h5py.File
+           Loaded HDF file.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`h5py.File`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_hdf5_data(scan, folder, fname_format=HDF_DEFAULT_FNAME_FORMAT, h5_location=BLUESKY_DEFAULT_LOCATION)
+
+   
+   Wrapper that loads HDF files using `h5py`.
+
+
+   :Parameters:
+
+       **scan_id** : int
+           Scan_id of the scan to be retrieved.
+
+       **folder** : string, optional
+           Folder where the master files are located.
+
+       **fname_format** : string, optional
+           General format of file name. The correct name must be retrievable
+           through: `file_name_format.format(scan_id)`
+
+       **h5_location** : string, optional
+           Location of the Bluesky data stream.
+
+
+
+   :Returns:
+
+       **data** : pandas.DataFrame
+           Table with the data from the primary stream.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_hdf5_master`
+           ..
+       :func:`polartools.load_data.hdf5_to_dataframe`
+           ..
+       :func:`h5py.File`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: load_table(scan, source=None, **kwargs)
+
+   
+   Automated scan table loader.
+
+   The automation is based on the source argument.
+
+   - if source == 'csv' -> uses `load_csv`.
+   - else if source is a string or nexus2spec.spec.SpecDataFile -> uses    `load_spec`.
+   - else -> uses `load_databroker`.
+
+   :Parameters:
+
+       **scan** : int
+           Scan_id our uid. If scan_id is passed, it will load the last scan with
+           that scan_id. See kwargs for search options.
+
+       **source** : databroker database, name of the spec file, or 'csv'
+           Note that applicable kwargs depend on this selection.
+
+       **kwargs**
+           The necessary kwargs are passed to the loading functions defined by the
+           `source` argument:
+           
+           - csv -> possible kwargs: folder, name_format.
+           - spec -> possible kwargs: folder.
+           - databroker -> possible kwargs: stream, query, use_db_v1.
+           
+           Note that a warning will be printed if the an unnecessary kwarg is
+           passed.
+
+
+
+   :Returns:
+
+       **table** : pandas.DataFrame
+           Table with the scan data.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`polartools.load_data.load_databroker`
+           ..
+       :func:`polartools.load_data.load_csv`
+           ..
+       :func:`polartools.load_data.load_spec`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: is_Bluesky_specfile(source, folder='')
+
+   
+   Check if the specfile was created by Bluesky.
+
+   It looks for a "Bluesky" comment in the file header.
+
+   :Parameters:
+
+       **source** : string or spec2nexus.spec.SpecDataFile
+           Either the spec file name or a SpecDataFile instance.
+
+       **folder** : string, optional
+           Folder where spec file is located.
+
+
+
+   :Returns:
+
+       **y** : bool
+           True if spec_file was generated by Bluesky, False otherwise.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`spec2nexus.spec.SpecDataFile`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: db_query(db, query)
+
+   
+   Searches the databroker v2 database.
+
+
+   :Parameters:
+
+       **db**
+           `databroker` database.
+
+       **query: dict**
+           Search parameters.
+
+
+
+   :Returns:
+
+       _db
+           Subset of db that satisfy the search parameters. Note that it has the
+           same format as db.
+
+
+
+
+
+
+
+   .. seealso::
+
+       
+       :func:`databroker.catalog.search`
+           ..
+       
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: show_meta(last=None, scans=None, scans_to=None, db=None, query=None, meta_keys='short', table_fmt='plain')
+
+   
+   Print metadata of scans.
+
+
+   :Parameters:
+
+       **last** : int
+           last number of scans to be displayed
+
+       **scans** : int, list
+           List of scan numbers to process.
+
+       **scans_to** : int, list
+           Final scan number to process. Note that this is only meaningful if
+           an integer is passed to `scans`.
+
+       **db** : databroker database (optional)
+           Searcheable database
+
+       **query** : dictionary, optional
+           Search parameters.
+
+       **meta_keys** : string or iterable, optional
+           List with metadata keys to read. There are two preset metadata lists
+           that can be used with `meta_keys="short"` or `meta_keys="long"`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: collect_meta(scan_numbers, meta_keys, db=None, query=None)
+
+   
+   Extracts metadata of a list of scans.
+
+
+   :Parameters:
+
+       **scan_numbers** : list
+           List of scan number range to be displayed
+
+       **db** : databroker database
+           Searcheable database
+
+       **meta_keys** : iterable
+           List with metadata keys to read.
+
+       **query** : dictionary, optional
+           Search parameters.
+
+
+
+   :Returns:
+
+       **meta** : dictionary
+           Metadata organized by scan number or uid (whatever is given in
+           `scans`).
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: lookup_position(db, scan, search_string='', query=None)
+
+   
+   Lookup positioner values in past scans.
+
+
+   :Parameters:
+
+       **db** : databroker database
+           Searcheable database
+
+       **scan** : integer
+           Scan numbers or uids.
+
+       **search_string** : string
+           Full or part of positioner name.
+
+       **query: dict**
+           Search parameters.
+
+
+
+   :Returns:
+
+       output: list
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

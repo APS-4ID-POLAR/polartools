@@ -1,0 +1,147 @@
+polartools.xmcd_gui
+===================
+
+.. py:module:: polartools.xmcd_gui
+
+.. autoapi-nested-parse::
+
+   XMCD processing GUI using PyQt6 + pyqtgraph.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.xmcd_gui.C_PLUS_RAW
+   polartools.xmcd_gui.C_MINUS_RAW
+   polartools.xmcd_gui.C_PRE
+   polartools.xmcd_gui.C_POST
+   polartools.xmcd_gui.C_E0
+   polartools.xmcd_gui.C_PRE1
+   polartools.xmcd_gui.C_PRE2
+   polartools.xmcd_gui.C_POST1
+   polartools.xmcd_gui.C_POST2
+   polartools.xmcd_gui.C_PLUS_NORM
+   polartools.xmcd_gui.C_MINUS_NORM
+   polartools.xmcd_gui.C_PLUS_XMCD
+   polartools.xmcd_gui.C_MINUS_XMCD
+   polartools.xmcd_gui.C_MEAN_XMCD
+   polartools.xmcd_gui.C_ARTIFACT
+   polartools.xmcd_gui.NORM_DELAY_MS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.xmcd_gui.MainWindow
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.xmcd_gui.main
+
+
+Module Contents
+---------------
+
+.. py:data:: C_PLUS_RAW
+   :value: '#4C72B0'
+
+
+.. py:data:: C_MINUS_RAW
+   :value: '#DD8452'
+
+
+.. py:data:: C_PRE
+   :value: '#FF8800'
+
+
+.. py:data:: C_POST
+   :value: '#00AA44'
+
+
+.. py:data:: C_E0
+   :value: '#222222'
+
+
+.. py:data:: C_PRE1
+   :value: '#FF6600'
+
+
+.. py:data:: C_PRE2
+   :value: '#CC4400'
+
+
+.. py:data:: C_POST1
+   :value: '#00AA44'
+
+
+.. py:data:: C_POST2
+   :value: '#006622'
+
+
+.. py:data:: C_PLUS_NORM
+   :value: '#4C72B0'
+
+
+.. py:data:: C_MINUS_NORM
+   :value: '#DD8452'
+
+
+.. py:data:: C_PLUS_XMCD
+   :value: '#4C72B0'
+
+
+.. py:data:: C_MINUS_XMCD
+   :value: '#DD8452'
+
+
+.. py:data:: C_MEAN_XMCD
+   :value: '#5A3E8A'
+
+
+.. py:data:: C_ARTIFACT
+   :value: '#888888'
+
+
+.. py:data:: NORM_DELAY_MS
+   :value: 50
+
+
+.. py:class:: MainWindow
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QMainWindow`
+
+
+.. py:function:: main()
+
+   
+   Console entry point for the ``xmcd-gui`` application.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

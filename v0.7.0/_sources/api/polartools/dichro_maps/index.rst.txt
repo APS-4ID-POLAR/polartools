@@ -1,0 +1,880 @@
+polartools.dichro_maps
+======================
+
+.. py:module:: polartools.dichro_maps
+
+.. autoapi-nested-parse::
+
+   Shared helpers for dichroism difference maps from flyscan pairs.
+
+   A dichro measurement is a pair of flyscans taken at the two phase-plate
+   settings; the map of interest is the difference between them. These functions
+   find the pairs in a scan range, put the two members on a common grid, and plot
+   a series of the resulting maps.
+
+   Factored out of ``data/experiment_plots.ipynb`` so several notebooks can share
+   one copy. The reduction itself lives in :mod:`process_flyscan`.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.dichro_maps.SWITCH_KEY
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.dichro_maps.baseline_value
+   polartools.dichro_maps.eiger_frame_count
+   polartools.dichro_maps.find_pairs
+   polartools.dichro_maps.normalised_map
+   polartools.dichro_maps.absorbance_map
+   polartools.dichro_maps.dichroic_ratio
+   polartools.dichro_maps.pair_difference
+   polartools.dichro_maps.average_pairs
+   polartools.dichro_maps.averaged_series
+   polartools.dichro_maps.build_series
+   polartools.dichro_maps.plot_difference_series
+   polartools.dichro_maps.plot_stitched
+   polartools.dichro_maps.write_gif
+   polartools.dichro_maps.line_cut
+   polartools.dichro_maps.peak_fwhm
+   polartools.dichro_maps.plot_line_cut
+   polartools.dichro_maps.edge_position
+   polartools.dichro_maps.align_series
+   polartools.dichro_maps.overlap_report
+   polartools.dichro_maps.stitch_x
+   polartools.dichro_maps.interior_columns
+   polartools.dichro_maps.shift_rows
+   polartools.dichro_maps.line_shifts
+   polartools.dichro_maps.realign_pair
+   polartools.dichro_maps.tile_pairs
+   polartools.dichro_maps.common_y_range
+
+
+Module Contents
+---------------
+
+.. py:data:: SWITCH_KEY
+   :value: 'pr2_pzt_localdc'
+
+
+.. py:function:: baseline_value(scan, key, folder)
+
+   
+   One signal from a scan's baseline stream, or None if unavailable.
+
+   The baseline is the trustworthy source for per-scan device values. The
+   ``diffractometers`` metadata blob also carries a mono energy, but it can be
+   stale -- it read 6.200 keV for a whole energy series -- so labels must not
+   come from there.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: eiger_frame_count(scan, folder)
+
+   
+   Frames in a scan's Eiger file, without reading any of them.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: find_pairs(scans, label_key, folder, require_positions=True, atol=0.0)
+
+   
+   Consecutive scans sharing a label value but differing in phase plate.
+
+   Returns ``[(label, scan_a, scan_b), ...]`` with ``scan_a`` the lower number.
+   Pairs without a position stream are dropped unless asked for.
+
+   ``atol`` is how far the label may differ between the two members and still
+   count as one setting. Motor readbacks jitter -- ``huber_hp_z`` gives 0.0500
+   for one member and 0.0501 for the other -- so those series need a
+   tolerance, well below the spacing between settings. The default of 0 means
+   exact equality, right for setpoint-valued series.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: normalised_map(scan, roi, folder, batch=200)
+
+   
+   ``(x, y, z/I0)`` for one flyscan.
+
+   Detector frame k is exposed during the position samples carrying eigerTrig
+   k+1, and ``groups_for_frames`` matches them by that trigger value, so a
+   frame whose trigger group is missing drops out instead of shifting every
+   later frame along by one.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: absorbance_map(scan, roi, folder, batch=200, reference='open', open_pct=99.0)
+
+   
+   ``(x, y, mu*t)`` for one flyscan.
+
+   ``reference="open"`` (default) gives **true absorbance**,
+   ``mu*t = ln(I_open / I)``: zero where the beam is clear, rising to the
+   sample's own absorbance. ``I_open`` is the ``open_pct`` percentile of
+   ``I/I0`` over the scan, which is the unobstructed level provided the scan
+   actually runs off the sample at one end -- if it does not, the reference
+   lands on the thinnest part of the sample and every value is offset low.
+
+   ``reference="i0"`` uses ``ln(I0 / I)`` literally. ``I`` is a detector sum
+   and ``I0`` a monitor counter, so that carries a constant ln(gain) offset
+   (about -11.9 in the open beam here).
+
+   The offset cancels in a CL - CR *difference* either way, but **not** in
+   their sum, so anything normalising by ``mu_L t + mu_R t`` needs the open
+   reference to mean anything.
+
+   Absorbance, not transmission, is what is linear in path length, so this is
+   the quantity a tomographic reconstruction wants.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: dichroic_ratio(diff, mean, floor_frac=0.1)
+
+   
+   ``(mu_L t - mu_R t) / (mu_L t + mu_R t)`` from a difference and mean.
+
+   The denominator is twice the mean absorbance, which goes to zero wherever
+   the beam is clear -- the ratio is 0/0 in the open beam and would amplify
+   noise without bound there. Points whose sum falls below ``floor_frac`` of
+   its 99th percentile are masked out instead of returned as huge numbers.
+
+   Being a ratio of absorbances it divides out the sample thickness, so it
+   measures the magnetisation itself rather than magnetisation x path length.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: pair_difference(scan_a, scan_b, roi, folder, grid_n=200, quantity='transmission')
+
+   
+   Regrid both scans of a pair and return ``(XG, YG, difference, mean)``.
+
+   The two scans don't visit the same points -- the stage free-runs -- so each
+   is interpolated onto a common grid before subtracting. The grid spans only
+   the overlap of the two scans' travel, so neither is extrapolated.
+
+   ``quantity`` selects what is differenced: ``"transmission"`` gives
+   ``I/I0``, ``"absorbance"`` gives ``mu*t = ln(I0/I)``. The transform is
+   applied per point *before* interpolating, because a log of an interpolated
+   value is not the interpolation of the logs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: average_pairs(pairs, roi, folder, grid_n=200)
+
+   
+   Average several dichro pairs measured at the same position.
+
+   ``pairs`` is ``[(scan_a, scan_b), ...]``. Every pair is put on one common
+   grid -- the intersection of all their travel -- before differencing, since
+   each is otherwise regridded to its own overlap and they share no sample
+   points. Each pair's own common-mode offset is removed first: those differ
+   from pair to pair and would bias the mean.
+
+   Returns ``(XG, YG, mean_difference, mean_transmission, stack)``, where
+   ``stack`` holds the individual offset-removed differences so the caller can
+   see how far the repeats agree.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: averaged_series(groups, roi, folder, grid_n=200, verbose=True)
+
+   
+   Build plottable entries from ``[(title, [(a, b), ...]), ...]``.
+
+   One entry per group, holding the mean of that group's repeats. The offsets
+   are already removed inside :func:`average_pairs`, so ``offset`` is zero.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: build_series(pairs, roi, folder, grid_n=200, verbose=True)
+
+   
+   Difference map for every pair, ordered by the series parameter.
+
+   Sorted by label rather than scan number: settings are not always visited in
+   order, and a trend drawn in acquisition order would double back on itself.
+   A pair that fails to load -- a scan still being written -- is skipped rather
+   than losing the ones that did.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_difference_series(series, title, label_fmt='{:.3f}', ncol=3, clip=99.0, share=True)
+
+   
+   Difference maps on one shared symmetric scale, common offsets removed.
+
+   The two phase-plate settings don't transmit equally, so every difference
+   sits on a large constant offset that would swamp the structure. It is
+   instrumental, so it is subtracted per panel.
+
+   ``share`` links the panel axes, which is what makes a series comparable
+   point to point. Turn it off when the members sit at different places on
+   the sample: shared limits would then span the whole excursion and squash
+   every map into a sliver.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_stitched(series, title, label_fmt='{:.4f}', clip=99.0, width=5.0, max_height=34.0, cmap='seismic')
+
+   
+   Lay every map of a series at its own coordinates on a single axes.
+
+   For a set of maps taken at stepped sample positions: rather than one panel
+   each, they are drawn where they actually sit, so the strip reads as one
+   picture of the sample. The tiles are positioned by the interferometer
+   coordinates, which do follow the coarse stage -- a 10 um move in
+   ``huber_hp_y`` shows up as about +10000 here.
+
+   Each tile still has its own common-mode offset removed. Without that the
+   instrumental offset, which differs from pair to pair, would put a visible
+   step at every tile boundary.
+
+   The default colour map is ``seismic`` rather than the ``RdBu_r`` used for
+   panel figures. Most of a dichroic difference sits well inside the clipped
+   range -- the median deviation is under a third of the 99th percentile --
+   and ``RdBu_r`` spends that whole span near white, which washes the domains
+   out. ``seismic`` changes lightness about four times faster at zero, so the
+   structure carries. It saturates harder at the ends, which also makes
+   per-scan artefact bands obvious.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: write_gif(series, path, title, label_fmt='{:.1f}', clip=99.0, fps=2.5, cmap='RdBu_r', width=5.4, pingpong=True, dpi=100, scale='frame')
+
+   
+   Animate a series of difference maps as a GIF, one frame per member.
+
+   All frames share one colour scale and one set of axis limits, so what moves
+   between frames is the data and not the rendering. ``pingpong`` plays the
+   sweep forwards then backwards, which avoids the jump a looping monotonic
+   sweep otherwise makes when it wraps from the last setting back to the first.
+
+   The writer is driven directly rather than through ``FuncAnimation``: that
+   calls the draw function an extra time for setup, and the correspondence
+   between requested frames and grabbed images is then not one to one -- the
+   first angle of a sweep goes missing. Here one explicit grab follows each
+   draw.
+
+   Returns the path written.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: line_cut(entry, y0, robust=8.0)
+
+   
+   One row of a map at the y nearest ``y0``.
+
+   Returns ``(y_actual, x, i_a, i_b, mean, diff, kept)``. The two polarisations
+   are recovered from the stored mean and difference (``diff = i_b - i_a``),
+   so no re-read is needed.
+
+   ``griddata`` leaves a few wild values on the rim of the interpolated area --
+   a single such column sits at the left edge of the #778-781 map, where the
+   difference reads -12709 against a row median of -35. They are dropped here
+   rather than allowed to dominate the derivative; ``kept`` is the mask.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: peak_fwhm(x, y, k)
+
+   
+   Full width at half maximum of the peak of ``y`` at index ``k``.
+
+   Walks out to each side until the curve falls through half the peak height
+   and interpolates the crossing. Returns ``(fwhm, x_lo, x_hi)``, with NaNs if
+   the peak does not come back down inside the cut.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plot_line_cut(entry, y0, title=None, window=11, figsize=(11, 3.3), clip=99.0)
+
+   
+   Map, the dichroic difference along one row, and its x-derivative.
+
+   The derivative peaks where the difference crosses between domains, so its
+   extrema locate the walls and their width sets an upper bound on the probe
+   size convolved with the true wall width.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: edge_position(x, y, window=11)
+
+   
+   Sub-pixel x of the steepest point of a step in ``y(x)``.
+
+   The derivative peak is located on the smoothed curve, then refined by a
+   parabola through the peak sample and its two neighbours, so the result is
+   not quantised to the 50 nm grid step.
+
+   Returns ``(x_edge, slope)``; ``slope`` carries the sign of the step.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: align_series(series, method='map', y0=None, step=50.0, reference=None, max_shift=4000.0)
+
+   
+   Line frames up in x, undoing the xeryon stage runout.
+
+   Rotating the xeryon translates the sample sideways, so the frames of an
+   animation jump about. Each frame is registered against a reference frame and
+   its x coordinates offset by the measured displacement. **Only the coordinates
+   move** -- the data are never resampled, so no interpolation blur is added.
+
+   ``method="map"`` cross-correlates the whole difference map, ``method="cut"``
+   only the row nearest ``y0``. The map is the safer default: it uses every
+   pixel, and it also measures the vertical component, which is the assumption
+   the correction rests on. For scans 807-878 that assumption holds well --
+   dy rms 34-36 nm against dx rms 326-373 nm.
+
+   The reference defaults to the middle frame, which correlates better with both
+   ends of a sweep than either end does with the other. ``max_shift`` leaves a
+   frame alone if its measured displacement is implausibly large.
+
+   Returns ``(aligned_series, report)``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: overlap_report(tile_a, tile_b, field='diff')
+
+   
+   Compare two x-adjacent tiles where their travel overlaps.
+
+   The overlap is the one place the same sample is measured twice, so it is
+   the only direct check that the two tiles agree -- on level, and on whether
+   they are placed correctly relative to each other.
+
+   Returns a dict with the overlap span, the median ``b - a`` offset, and the
+   correlation between the two copies. A high correlation with a non-zero
+   offset means the tiles are aligned but sit on different baselines; a low
+   correlation means the x placement itself is suspect.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: stitch_x(tiles, fields=('diff', 'mean'), step=None, seam=None, level_match=False)
+
+   
+   Join x-adjacent tiles into one map, using each point only once.
+
+   Tiles are placed by their own interferometer coordinates -- nothing is
+   fitted or slid -- and the duplicated strip where two tiles overlap is
+   resolved by cutting at its midpoint, so each tile contributes the half
+   nearer its own centre and no sample point is counted twice.
+
+   ``seam`` overrides the cut position (a list of x values, one per gap).
+   ``level_match`` shifts each tile after the first by the median difference
+   measured in its overlap with the previous one; off by default, because a
+   step at the seam is usually worth seeing rather than hiding.
+
+   Returns ``(XG, YG, {field: array}, info)``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: interior_columns(x, lo_frac=1.0 / 3.0, hi_frac=2.0 / 3.0)
+
+   
+   Columns in the central band of a scan -- by default its middle third.
+
+   Used to set colour limits from the sample's interior rather than from its
+   absorption edges, where a sub-pixel CR/CL position mismatch across a large
+   intensity step makes a difference many times any real dichroism (8.5x on
+   the #946-949 tiles). Scaling to the whole map therefore renders the
+   interior flat, hiding the domains.
+
+   The middle third is interior by construction: the sample is centred in the
+   scan, which is what the short absorption alignment scan before each angle
+   establishes. Taking a fixed fraction is deliberate -- it clips the same way
+   on every scan, where locating the edges from the intensity shifts with the
+   contrast and can creep back towards them on a weakly absorbing sample.
+
+   Returns a boolean mask over ``x``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: shift_rows(image, x, dx)
+
+   
+   Shift each row of ``image`` along ``x`` by ``dx`` (scalar or per row).
+
+   Positive ``dx`` moves the row's content towards +x. Points shifted in from
+   beyond the measured range become NaN rather than being extrapolated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: line_shifts(ref, moving, x, max_shift=1500.0, min_points=40)
+
+   
+   Per-row displacement of ``moving`` relative to ``ref``, in x.
+
+   One normalised cross-correlation per row, refined by a parabola through
+   the peak. Normalising matters: a plain dot product shrinks as the overlap
+   shrinks with lag, so it always peaks at zero and reports no shift at all.
+
+   Rows with too little overlap give NaN, which :func:`shift_rows` treats as
+   "leave this row alone".
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: realign_pair(diff, mean, x, mode='line', manual=0.0, max_shift=1500.0, shifts=None)
+
+   
+   Re-derive a pair's difference with the two polarisations aligned in x.
+
+   Takes the difference and mean a pair was already reduced to -- the two
+   polarisations are recovered exactly as ``mean -/+ diff/2`` -- so this needs
+   no re-reading of the scans and can be re-run interactively.
+
+   ``mode`` is ``"none"``, ``"global"`` (one shift for the whole map, the
+   median of the per-line measurements) or ``"line"``. ``manual`` adds a fixed
+   offset in nm on top, for tuning by eye.
+
+   Returns ``(diff, mean, shifts)``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: tile_pairs(pairs, roi, folder, grid_n=200, open_pct=99.0, open_level=None)
+
+   
+   Reduce several CR/CL pairs against **one** open-beam reference.
+
+   Referencing each scan to its own high percentile treats the datasets
+   differently, in two ways that both corrupt a stitch:
+
+   * Within a pair, the difference picks up ``ln(ref_CL / ref_CR)`` -- a
+     constant that has nothing to do with dichroism and differs from tile to
+     tile. On #1959-1962 that alone put the two tiles at -0.0053 and +0.0007.
+   * Across tiles, a scan that never runs off the sample references itself to
+     its own thinnest point and reports every absorbance too low by a
+     constant. #1959 peaked at 2648 where #1961 plateaued at 3651, so tile A
+     came out 0.349 low throughout -- about 12%.
+
+   Transmission cannot exceed the unobstructed beam, so the largest
+   percentile across all the scans is the best available estimate of it, and
+   using that one value for every scan makes the tiles directly comparable:
+   the reference cancels exactly in every difference, and absorbances share a
+   zero. Pass ``open_level`` to override it.
+
+   Each scan is read once, however many pairs mention it. Returns
+   ``(tiles, open_level)``; each tile carries ``XG``, ``YG``, ``diff``,
+   ``mean``, ``a``, ``b``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: common_y_range(first_scans, folder, group=4)
+
+   
+   The y interferometer range shared by several angle groups.
+
+   The stage drifts in y over a long tomographic series -- about 1.56 µm
+   between #1716 (25°) and #2479 (203.8°) -- so the slice measured at one
+   angle is not the slice measured at another. Only the overlap of every
+   angle can be reconstructed; outside it, different angles are looking at
+   different parts of the sample.
+
+   Reads position streams only, never detector frames, so it is cheap. Pass
+   the *first* scan of each group; ``group`` scans are examined from each.
+   Returns ``(lo, hi)``, or ``None`` if no scan could be read.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
