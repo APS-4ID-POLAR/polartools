@@ -633,20 +633,20 @@ def load_series(
             else:
                 dataz[index] = table[detector]
             if log:
-                dataz[index].replace(0, 1, inplace=True)
+                dataz[index] = dataz[index].replace(0, 1)
                 dataz[index] = np.log10(dataz[index])
             if scale:
+                # Clamped through np.clip rather than by writing into
+                # .values: pandas 3 hands back a read-only array there, so
+                # the old in-place write raises "assignment destination is
+                # read-only". np.clip keeps the Series and takes None for
+                # the open end, which is the one-sided case.
                 if len(scale) > 1:
-                    dataz[index].values[dataz[index] < float(scale[0])] = float(
-                        scale[0]
-                    )
-                    dataz[index].values[dataz[index] > float(scale[1])] = float(
-                        scale[1]
+                    dataz[index] = np.clip(
+                        dataz[index], float(scale[0]), float(scale[1])
                     )
                 else:
-                    dataz[index].values[dataz[index] > float(scale[0])] = float(
-                        scale[0]
-                    )
+                    dataz[index] = np.clip(dataz[index], None, float(scale[0]))
             index += 1
     return datax, datay, dataz, detector, positioner
 
@@ -844,7 +844,7 @@ def load_mesh(
     yb = float(scan_range["y1"])
     ys = (yb - ya) / (yr - 1)
     if log:
-        zp.replace(0, 1, inplace=True)
+        zp = zp.replace(0, 1)
         zp = np.log10(zp)
     xi = x.unique()
     yi = y.unique()
@@ -1787,7 +1787,11 @@ def plot_data(
                 if normalize:
                     data[detector] = data[detector] / data[monitor]
                 if log:
-                    data[detector].replace(0, 1, inplace=True)
+                    # Rebound rather than replaced in place: pandas 3 treats
+                    # data[detector].replace(inplace=True) as chained
+                    # assignment and drops it, which would leave the zeros
+                    # for log10 to turn into -inf.
+                    data[detector] = data[detector].replace(0, 1)
                     data[detector] = np.log10(data[detector])
                 x = data[positioner].to_numpy()
                 y = data[detector].to_numpy()
