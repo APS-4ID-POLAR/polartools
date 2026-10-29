@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=b687976d"></script>
+    <script src="../_static/documentation_options.js?v=32321c23"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post35+g865c10efd" />
+  <meta name="docsearch:version" content="0.6.0.post39+gc468f718a" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -597,6 +597,8 @@ centre, FWHM, height, area and R² reported per curve. <strong>Multi</strong> fi
 peaks at once over one shared line.</p></li>
 <li><p><strong>Show dY/dX</strong> — overlays each curve’s derivative and moves the fit onto it,
 which is how a knife edge or an absorption edge becomes measurable.</p></li>
+<li><p><strong>Log X / Log Y</strong> — beside the plot toolbar, put either axis on a log
+scale (the right-hand Y axes too). Points at or below zero are left out.</p></li>
 <li><p><strong>XMCD panels</strong> — reduces the selected scans to XAS, XMCD, XMuCD and XNCD
 against energy, grouping each energy’s points into the four
 (polarization, field) quadrants.</p></li>
@@ -605,7 +607,10 @@ the monitor against its own scan’s median. Only lone points go; a stretch of
 dead points is a beam-down run and is left visible.</p></li>
 <li><p><strong>Two-motor grid scans</strong> are drawn as colour maps instead, one per ticked Y
 field, with <strong>Clip map scale</strong> for the odd wild cell and <strong>Center on 0</strong> for
-signed channels in a diverging colormap.</p></li>
+signed channels in a diverging colormap. Selected grid scans over the same
+two motors — a map finished by a second scan started where the first
+stopped — go on one map, and a cell measured by more than one of them is
+their average.</p></li>
 <li><p><strong>Auto refresh</strong> adds scans to the listing as they land, so the browser can
 be left open during a run. A scan whose file is still being written gets a
 row with blank cells rather than being dropped.</p></li>
