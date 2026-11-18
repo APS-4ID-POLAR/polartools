@@ -2,6 +2,7 @@
 # See LICENSE file for details.
 
 from polartools import absorption
+import numpy as np
 from numpy import allclose
 from os.path import join
 
@@ -31,6 +32,23 @@ def test_load_multi_lockin():
         scans, "absorption.dat", folder=path
     )
     assert allclose(xmcd.mean(), -2935.7871485943774)
+
+
+def test_mean_over_scans_skips_non_finite():
+    # A zero monitor reading gives NaN (log(0/0)) or inf (x/0) in one scan;
+    # that scan is left out at that point only.
+    values = np.array(
+        [
+            [np.nan, 2.0, 3.0, np.nan],
+            [np.inf, 4.0, 5.0, np.nan],
+            [1.0, 6.0, 7.0, np.nan],
+        ]
+    )
+    mean, error = absorption._mean_over_scans(values)
+    assert allclose(mean[:3], [1.0, 4.0, 5.0])
+    assert allclose(error[1], np.std([2.0, 4.0, 6.0]) / np.sqrt(3))
+    assert error[0] == 0.0
+    assert np.isnan(mean[3]) and np.isnan(error[3])
 
 
 def test_load_absorption():

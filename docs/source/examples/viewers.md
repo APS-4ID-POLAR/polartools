@@ -31,7 +31,9 @@ Select one scan, or ctrl/shift-click several, and they are overlaid:
   field each, Y any number. They start on whatever the scan's own `hints`
   nominate, so a scan plots itself the way it was meant to be read. Norm
   starts clear, because normalizing rescales every number on the plot and in
-  the statistics table.
+  the statistics table. Selecting a different kind of scan re-reads X and Y
+  from its hints, but Norm carries over: a monitor you ticked stays ticked,
+  and one left clear stays clear.
 - **log(mon/det)** — plots the absorption rather than a plain ratio, which is
   what makes a transmission XAS scan readable straight off `primary`.
 - **Statistics, Integrate, Fit** — max, min, half-max centre and FWHM per

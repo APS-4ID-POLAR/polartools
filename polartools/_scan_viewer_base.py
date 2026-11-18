@@ -34,9 +34,12 @@ For each ``*_master.hdf`` file written by ``MyNXWriter``
   scan changes -- the columns on offer, or which of them the scan asks for.
   Step along a run of lineup scans and the ticks made on the first stand for
   the rest, which is the comparison they were made for; open something else
-  and all three are read back from that scan's own hints, so nothing you
+  and X and Y are read back from that scan's own hints, so nothing you
   ticked an hour ago, on a scan since forgotten, is still deciding what you
-  are looking at now. (``hints``
+  are looking at now. Norm is the exception: a monitor you ticked stays
+  ticked across a change of kind, and one left clear stays clear, because
+  normalizing is a choice about the whole selection rather than about the
+  scan that happens to lead it. (``hints``
   describes ``primary``; a reduced stream brings its own defaults instead.
   The stream itself is the exception, and is kept when picked by hand.)
   Curves are overlaid across every selected file, optionally normalized by
@@ -6024,23 +6027,27 @@ class HdfViewer(QtWidgets.QMainWindow):
         # ticks also stand while the scan that seeded them is still selected,
         # whichever end the new one was added at.
         kind = scan_kind(paths[0], fields, stream)
-        preferred_x, hinted_y, preferred_norm = kind[2], kind[3], kind[4]
+        preferred_x, hinted_y = kind[2], kind[3]
         preferred_y = list(hinted_y)
         keeping = kind == self._fields_kind or self._fields_leader in {
             str(path) for path in paths
         }
+        # Norm is the exception to the kind rule: a monitor ticked on one scan
+        # still divides the next, whatever kind of scan that is, and one left
+        # clear stays clear. It is never read off the hints here, which is
+        # where it starts anyway (see default_monitor_field). A monitor the
+        # selection no longer records gives way to nothing.
+        kept_x, kept_y, kept_norm = self._kept
+        preferred_norm = kept_norm if kept_norm in seen else ""
         if keeping:
             # What was ticked wins, as long as the selection still records it:
             # the kept ticks outlive the table they were made on, and a second
             # scan can be dropped as well as added, so a tick whose field went
-            # with it has to give way to the hint. An empty Norm is a choice
-            # and stays empty; an empty Y is only ever what is left when every
-            # ticked field has gone.
-            kept_x, kept_y, kept_norm = self._kept
+            # with it has to give way to the hint. An empty Y is only ever what
+            # is left when every ticked field has gone.
             live_y = [name for name in kept_y if name in seen]
             preferred_x = kept_x if kept_x in seen else preferred_x
             preferred_y = live_y if live_y or not kept_y else preferred_y
-            preferred_norm = kept_norm if kept_norm in seen else ""
         else:
             # Only a re-seed records the kind, so that the ticks stay attached
             # to the kind of scan they were made for rather than to a mixed
