@@ -60,6 +60,13 @@ Select one scan, or ctrl/shift-click several, and they are overlaid:
 - **Auto refresh** adds scans to the listing as they land, so the browser can
   be left open during a run. A scan whose file is still being written gets a
   row with blank cells rather than being dropped.
+- **Baseline… / Metadata…** — open windows for one selected file at a time.
+  Baseline shows each baseline field before and after the scan. Metadata
+  shows the run-start metadata in `entry/instrument/bluesky/metadata` (plan,
+  arguments, hints, versions, session state, ...). The writer stores dict and
+  list values as YAML text, and this window opens them back up as trees, with
+  numpy arrays decoded. A filter box finds a key or value anywhere in the
+  tree.
 
 :::{note}
 Read the module docstrings for the full behaviour — they are long and they
