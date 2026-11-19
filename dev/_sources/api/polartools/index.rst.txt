@@ -46,6 +46,7 @@ Submodules
    /api/polartools/process_flyscan/index
    /api/polartools/process_images/index
    /api/polartools/scan_viewer/index
+   /api/polartools/spectrum_fit/index
    /api/polartools/spectrum_viewer/index
    /api/polartools/xmcd_gui/index
 

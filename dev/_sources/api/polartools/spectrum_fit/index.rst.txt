@@ -1,0 +1,421 @@
+polartools.spectrum_fit
+=======================
+
+.. py:module:: polartools.spectrum_fit
+
+.. autoapi-nested-parse::
+
+   Gaussian peak fitting for the spectrum viewer's trend.
+
+   The trend in :mod:`spectrum_viewer` totals a box ROI per frame. This module
+   offers the alternative of fitting several Gaussians and a background over a
+   window of bins, and taking the *area* of the chosen peaks instead -- for lines
+   that overlap, or sit on a background a box cannot take out.
+
+   **The shape is fitted once, the areas are a projection.** The centres and
+   widths are fitted (with lmfit) to a summed spectrum -- many frames, both
+   halves of a contrast -- and then held fixed. With the shape fixed, the
+   least-squares areas of any spectrum ``y`` over the same window are linear in
+   ``y``: ``areas = pinv(G) @ y``, where ``G`` holds one unit-area Gaussian per
+   peak and the background's columns. :func:`area_weights` returns the row of
+   ``pinv(G)`` for the peaks wanted, so that one frame's fitted area is a dot
+   product with its spectrum.
+
+   That linearity is the whole design. The area of a sum of frames is the sum
+   of the frames' areas, exactly as for an ROI sum, so the viewer can compute a
+   per-frame area and hand it to the same machinery that totals ROI counts over
+   points, halves and monitor-normalised ratios. A free fit at every point
+   would follow a line that moves, and would lose that: the halves and the
+   monitors could no longer share the reduction, and it is three orders of
+   magnitude slower. Measured on a 2026-3 dichro scan's Pt line, the fixed-shape
+   areas agree with free per-frame fits to 0.09 % (median), and cost 0.07 ms
+   for 312 frames against 140 ms. Shape-from-the-sum is also the physics a
+   contrast wants: polarization changes intensities, not the detector's line
+   shape. It is the wrong tool for the elastic and Compton lines of an energy
+   scan, which move with the incident energy.
+
+   **The background costs noise.** Its columns are estimated from the wings of
+   the window, which hold few counts. On that same Pt line, an isolated one,
+   the point-to-point noise of the XMCD/XAS ratio is 9.0e-3 from an ROI sum,
+   9.9e-3 from a fitted area with no background, and 1.26e-2 with a constant or
+   linear one. Fitting pays where peaks overlap or the background slopes; on a
+   clean line a box ROI is as good.
+
+   The least-squares projection is unweighted on purpose. Poisson weights
+   would be better per spectrum, but they depend on ``y``, and the projection
+   then stops being linear -- the property everything above rests on. The
+   shape fit itself is Poisson-weighted, since it is done once on a spectrum of
+   many counts.
+
+   No Qt here, so that all of it can be tested on synthetic spectra.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.spectrum_fit.SQRT_2PI
+   polartools.spectrum_fit.FWHM_PER_SIGMA
+   polartools.spectrum_fit.BACKGROUNDS
+   polartools.spectrum_fit.MIN_SIGMA_BINS
+   polartools.spectrum_fit.CENTRE_SLACK_SIGMAS
+   polartools.spectrum_fit.CENTRE_SLACK_BINS
+   polartools.spectrum_fit.MAX_SIGMA_GROWTH
+   polartools.spectrum_fit.MIN_RELATIVE_WIDTH
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.spectrum_fit.PeakSpec
+   polartools.spectrum_fit.ShapeFit
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.spectrum_fit.unit_gaussian
+   polartools.spectrum_fit.background_columns
+   polartools.spectrum_fit.design_matrix
+   polartools.spectrum_fit.fit_shape
+   polartools.spectrum_fit.area_weights
+   polartools.spectrum_fit.decompose
+   polartools.spectrum_fit.suggest_peaks
+
+
+Module Contents
+---------------
+
+.. py:data:: SQRT_2PI
+
+.. py:data:: FWHM_PER_SIGMA
+
+.. py:data:: BACKGROUNDS
+   :value: ('none', 'constant', 'linear')
+
+
+.. py:data:: MIN_SIGMA_BINS
+   :value: 0.5
+
+
+.. py:data:: CENTRE_SLACK_SIGMAS
+   :value: 3.0
+
+
+.. py:data:: CENTRE_SLACK_BINS
+   :value: 5.0
+
+
+.. py:data:: MAX_SIGMA_GROWTH
+   :value: 4.0
+
+
+.. py:data:: MIN_RELATIVE_WIDTH
+   :value: 0.3333333333333333
+
+
+.. py:class:: PeakSpec
+
+   
+   One peak's starting values, in bins.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: centre
+      :type:  float
+
+
+   .. py:attribute:: sigma
+      :type:  float
+
+
+   .. py:attribute:: vary_centre
+      :type:  bool
+      :value: True
+
+
+
+.. py:class:: ShapeFit
+
+   
+   A fitted shape over bins ``lo..hi`` inclusive.
+
+   *centres* and *sigmas* are in bins; *areas* are the fit's own, on the
+   spectrum it was made from. ``success`` False means the fit raised or did
+   not converge, and *message* says why.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+   .. py:attribute:: lo
+      :type:  int
+
+
+   .. py:attribute:: hi
+      :type:  int
+
+
+   .. py:attribute:: background
+      :type:  str
+
+
+   .. py:attribute:: centres
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: sigmas
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: areas
+      :type:  numpy.ndarray
+
+
+   .. py:attribute:: redchi
+      :type:  float
+
+
+   .. py:attribute:: success
+      :type:  bool
+      :value: False
+
+
+
+   .. py:attribute:: message
+      :type:  str
+      :value: ''
+
+
+
+   .. py:property:: n_peaks
+      :type: int
+
+
+
+.. py:function:: unit_gaussian(x: numpy.ndarray, centre: float, sigma: float) -> numpy.ndarray
+
+   
+   A Gaussian of unit area, so a coefficient on it is an area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: background_columns(x: numpy.ndarray, background: str) -> list[numpy.ndarray]
+
+   
+   The background's columns of the design matrix.
+
+   The slope column is centred and scaled to the window, so that it is not
+   nearly parallel to the constant one and ``pinv`` stays well conditioned.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: design_matrix(lo: int, hi: int, centres, sigmas, background: str) -> numpy.ndarray
+
+   
+   ``(hi - lo + 1, n_peaks + n_background)``: peaks first, then background.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: fit_shape(y: numpy.ndarray, lo: int, hi: int, peaks: list[PeakSpec], background: str = 'linear', shared_width: bool = False) -> ShapeFit
+
+   
+   Fit centres, widths and areas of *peaks* to ``y[lo:hi + 1]``.
+
+   *y* is a whole spectrum, indexed by bin. Poisson-weighted, with the
+   centres kept inside the window and near where they started
+   (:data:`CENTRE_SLACK_SIGMAS`), and, with *shared_width*, every width
+   tied to the first -- the detector's resolution changes little across a
+   few hundred eV. Never raises: a failure comes back as ``success`` False.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: area_weights(shape: ShapeFit, used) -> numpy.ndarray
+
+   
+   Weights over bins ``lo..hi`` whose dot product with a spectrum is its area.
+
+   The summed area of the peaks indexed by *used*, solved by unweighted
+   least squares with *shape*'s centres and widths held fixed. Linear in the
+   spectrum, so totals over frames commute with it -- see the module
+   docstring. Zeros when nothing is used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: decompose(y: numpy.ndarray, shape: ShapeFit) -> tuple[numpy.ndarray, numpy.ndarray]
+
+   
+   ``(coefficients, matrix)``: *y*'s fixed-shape least-squares solve.
+
+   The same projection the trend uses, so the curves drawn from it and the
+   areas listed beside them are the numbers the trend sums. Coefficients
+   are the peaks' areas first, then the background's.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: suggest_peaks(y: numpy.ndarray, lo: int, hi: int, max_peaks: int = 6, prominence: float = 0.05, smooth: int = 7) -> list[PeakSpec]
+
+   
+   Starting peaks for ``y[lo:hi + 1]``, the most prominent first.
+
+   Found as peaks of the curvature ``-y''`` rather than of ``y``, because
+   the lines worth fitting are the ones that overlap, and a weak line on a
+   strong one's tail is a shoulder, not a maximum: ``find_peaks`` on the
+   counts misses it outright. Every Gaussian, shoulder or not, is a
+   maximum of ``-y''``. The derivative is taken through a Savitzky-Golay
+   filter *smooth* bins wide, since a raw second difference of counts is
+   mostly noise.
+
+   *prominence* is a fraction of the largest curvature in the window, and
+   a candidate narrower than :data:`MIN_RELATIVE_WIDTH` of the most
+   prominent peak is dropped as a ripple.
+   A Gaussian's curvature changes sign at one sigma either side of its
+   centre, so half the run over which ``-y''`` stays positive is the
+   starting width -- overlapping lines narrow it, and the fit corrects it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

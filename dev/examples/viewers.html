@@ -26,27 +26,27 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=6a604523" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../_static/documentation_options.js?v=d075bfc8"></script>
+    <script src="../_static/documentation_options.js?v=2167108d"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../_static/design-tabs.js?v=fcb327ea"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'examples/viewers';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.7.0.post1+g883b0aaa5" />
+  <meta name="docsearch:version" content="0.6.0.post44+gb559b3510" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -105,7 +105,7 @@
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
     <span class="fa-solid fa-bars"></span>
   </button>
   
@@ -262,14 +262,14 @@
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
   </ul>
 </div></div>
       
@@ -315,7 +315,7 @@
   
 
   
-    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
       <span class="fa-solid fa-outdent"></span>
     </button>
   
@@ -329,7 +329,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
       <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
@@ -449,14 +449,14 @@
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
   </ul>
 </div></div>
         
@@ -539,7 +539,7 @@
     
     <li class="breadcrumb-item breadcrumb-home">
       <a href="../index.html" class="nav-link" aria-label="Home">
-        <i class="fa-solid fa-home"></i>
+        <i class="fa-solid fa-house"></i>
       </a>
     </li>
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Scan viewers</span></li>
@@ -587,7 +587,9 @@ it computed to <code class="docutils literal notranslate"><span class="pre">dich
 field each, Y any number. They start on whatever the scan’s own <code class="docutils literal notranslate"><span class="pre">hints</span></code>
 nominate, so a scan plots itself the way it was meant to be read. Norm
 starts clear, because normalizing rescales every number on the plot and in
-the statistics table.</p></li>
+the statistics table. Selecting a different kind of scan re-reads X and Y
+from its hints, but Norm carries over: a monitor you ticked stays ticked,
+and one left clear stays clear.</p></li>
 <li><p><strong>log(mon/det)</strong> — plots the absorption rather than a plain ratio, which is
 what makes a transmission XAS scan readable straight off <code class="docutils literal notranslate"><span class="pre">primary</span></code>.</p></li>
 <li><p><strong>Statistics, Integrate, Fit</strong> — max, min, half-max centre and FWHM per
@@ -614,6 +616,13 @@ their average.</p></li>
 <li><p><strong>Auto refresh</strong> adds scans to the listing as they land, so the browser can
 be left open during a run. A scan whose file is still being written gets a
 row with blank cells rather than being dropped.</p></li>
+<li><p><strong>Baseline… / Metadata…</strong> — open windows for one selected file at a time.
+Baseline shows each baseline field before and after the scan. Metadata
+shows the run-start metadata in <code class="docutils literal notranslate"><span class="pre">entry/instrument/bluesky/metadata</span></code> (plan,
+arguments, hints, versions, session state, …). The writer stores dict and
+list values as YAML text, and this window opens them back up as trees, with
+numpy arrays decoded. A filter box finds a key or value anywhere in the
+tree.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -647,7 +656,34 @@ on one test scan element 3 runs 8–33% dead while element 6 runs 0.2%, so seven
 raw curves in a window meant for comparing elements state a wrong conclusion
 about the hardware rather confidently. The checkbox turns it off.</p>
 <p>The <strong>Combine</strong> box handles scans that took more than one frame per point, and
-<code class="docutils literal notranslate"><span class="pre">vortex_total_el1</span></code> / <code class="docutils literal notranslate"><span class="pre">vortex_total_el7</span></code> are offered as monitors.</p>
+<code class="docutils literal notranslate"><span class="pre">vortex_total_el1</span></code> / <code class="docutils literal notranslate"><span class="pre">vortex_total_el7</span></code> are offered as monitors. The spectra
+can be divided by the monitor too: the <strong>/ monitor</strong> tick beside Log Y uses the
+monitor picked for the ROI trend. Each spectrum is divided by the monitor
+summed over the same frames, and under a contrast each half by its own.</p>
+<p>It also handles slow dichro scans: one frame per point, with the retarder
+flipped from point to point. These are scans whose hints read
+<code class="docutils literal notranslate"><span class="pre">polarization:</span> <span class="pre">dichro</span></code>. For them Combine offers <strong>Sum</strong>, <strong>Dichro (plus −
+minus)</strong>, <strong>Plus pol.</strong> and <strong>Minus pol.</strong> Plus is the larger reading of the
+polarization field and minus the smaller. That field is picked automatically
+from <code class="docutils literal notranslate"><span class="pre">pr{2,1,3}_pzt_localdc</span></code> or <code class="docutils literal notranslate"><span class="pre">pr{1,2,3}_th</span></code>, whichever toggles, and can be
+changed in the <strong>Pol.</strong> box. The rows taken at one energy (four, <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">−</span> <span class="pre">−</span> <span class="pre">+</span></code>,
+on the usual scans) become one point of the ROI trend. This re-does the
+scan’s <code class="docutils literal notranslate"><span class="pre">dichro_monitor</span></code> reduction over an ROI of your choosing: normalised,
+Sum is the XAS and Dichro the XMCD. If a scan has several frames per point
+and also reads <code class="docutils literal notranslate"><span class="pre">polarization:</span> <span class="pre">dichro</span></code>, the odd/even split is the one used.</p>
+<p>The trend can plot fitted peak areas instead of the ROI’s counts. <strong>Fit
+peaks…</strong> opens a separate Peak fit window. Set a fit window, add peaks (by
+clicking, or <strong>Find peaks</strong>, which also finds shoulders), choose a background,
+and press <strong>Fit</strong>. Every element of every scan is fitted on its own summed
+spectrum, with a residual plot to judge the fit. Tick <strong>Use</strong> for the peaks
+whose summed area the trend should plot; peaks left unticked still take their
+share of an overlap. <strong>Signal</strong> then switches the trend between <em>ROI sum</em> and
+<em>Fit area</em>. The peak shapes are fitted once and held fixed, so each frame’s
+area is a linear projection that totals over points, polarization halves and
+monitors exactly as ROI counts do. That suits fluorescence lines, not the
+elastic line of an energy scan, which moves. Fitting pays where lines overlap
+or the background is polarization-dependent or sloped. On an isolated line a
+background term makes the result noisier than an ROI.</p>
 </section>
 <section id="the-image-viewer-img">
 <h2>The image viewer — <code class="docutils literal notranslate"><span class="pre">Img</span></code><a class="headerlink" href="#the-image-viewer-img" title="Link to this heading">#</a></h2>
@@ -724,7 +760,7 @@ not. Keep the subdirectory layout intact when copying data off the beamline.</p>
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
@@ -782,8 +818,8 @@ not. Keep the subdirectory layout intact when copying data off the beamline.</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

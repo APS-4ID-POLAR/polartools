@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>polartools.spectrum_fit &#8212; polartools</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=6a604523" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
+
+    <script src="../../_static/documentation_options.js?v=2167108d"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../_static/design-tabs.js?v=fcb327ea"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/polartools/spectrum_fit';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.6.0.post44+gb559b3510" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">polartools</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/flyscan_dichro.html">
+    Flyscan dichroism
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../quickstart.html">
+    Quickstart
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/load_data.html">
+    Loading data
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/absorption.html">
+    XAS / XMCD
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/diffraction.html">
+    Diffraction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/pressure_calibration.html">
+    Pressure calibration
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/process_images.html">
+    Image processing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/manage_database.html">
+    Database management
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/viewers.html">
+    Scan viewers
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/flyscan_dichro.html">
+    Flyscan dichroism
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/xmcd_gui.html">
+    XMCD GUI
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/polartools/index.html">
+    polartools
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../release-history.html">
+    Release history
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/APS-4ID-POLAR/polartools" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/polartools/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-house"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">polartools.spectrum_fit</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for polartools.spectrum_fit</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Gaussian peak fitting for the spectrum viewer's trend.</span>
+
+<span class="sd">The trend in :mod:`spectrum_viewer` totals a box ROI per frame. This module</span>
+<span class="sd">offers the alternative of fitting several Gaussians and a background over a</span>
+<span class="sd">window of bins, and taking the *area* of the chosen peaks instead -- for lines</span>
+<span class="sd">that overlap, or sit on a background a box cannot take out.</span>
+
+<span class="sd">**The shape is fitted once, the areas are a projection.** The centres and</span>
+<span class="sd">widths are fitted (with lmfit) to a summed spectrum -- many frames, both</span>
+<span class="sd">halves of a contrast -- and then held fixed. With the shape fixed, the</span>
+<span class="sd">least-squares areas of any spectrum ``y`` over the same window are linear in</span>
+<span class="sd">``y``: ``areas = pinv(G) @ y``, where ``G`` holds one unit-area Gaussian per</span>
+<span class="sd">peak and the background's columns. :func:`area_weights` returns the row of</span>
+<span class="sd">``pinv(G)`` for the peaks wanted, so that one frame's fitted area is a dot</span>
+<span class="sd">product with its spectrum.</span>
+
+<span class="sd">That linearity is the whole design. The area of a sum of frames is the sum</span>
+<span class="sd">of the frames' areas, exactly as for an ROI sum, so the viewer can compute a</span>
+<span class="sd">per-frame area and hand it to the same machinery that totals ROI counts over</span>
+<span class="sd">points, halves and monitor-normalised ratios. A free fit at every point</span>
+<span class="sd">would follow a line that moves, and would lose that: the halves and the</span>
+<span class="sd">monitors could no longer share the reduction, and it is three orders of</span>
+<span class="sd">magnitude slower. Measured on a 2026-3 dichro scan's Pt line, the fixed-shape</span>
+<span class="sd">areas agree with free per-frame fits to 0.09 % (median), and cost 0.07 ms</span>
+<span class="sd">for 312 frames against 140 ms. Shape-from-the-sum is also the physics a</span>
+<span class="sd">contrast wants: polarization changes intensities, not the detector's line</span>
+<span class="sd">shape. It is the wrong tool for the elastic and Compton lines of an energy</span>
+<span class="sd">scan, which move with the incident energy.</span>
+
+<span class="sd">**The background costs noise.** Its columns are estimated from the wings of</span>
+<span class="sd">the window, which hold few counts. On that same Pt line, an isolated one,</span>
+<span class="sd">the point-to-point noise of the XMCD/XAS ratio is 9.0e-3 from an ROI sum,</span>
+<span class="sd">9.9e-3 from a fitted area with no background, and 1.26e-2 with a constant or</span>
+<span class="sd">linear one. Fitting pays where peaks overlap or the background slopes; on a</span>
+<span class="sd">clean line a box ROI is as good.</span>
+
+<span class="sd">The least-squares projection is unweighted on purpose. Poisson weights</span>
+<span class="sd">would be better per spectrum, but they depend on ``y``, and the projection</span>
+<span class="sd">then stops being linear -- the property everything above rests on. The</span>
+<span class="sd">shape fit itself is Poisson-weighted, since it is done once on a spectrum of</span>
+<span class="sd">many counts.</span>
+
+<span class="sd">No Qt here, so that all of it can be tested on synthetic spectra.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lmfit.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantModel</span><span class="p">,</span> <span class="n">GaussianModel</span><span class="p">,</span> <span class="n">LinearModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_peaks</span><span class="p">,</span> <span class="n">savgol_filter</span>
+
+<span class="n">SQRT_2PI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">FWHM_PER_SIGMA</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>
+
+<span class="n">BACKGROUNDS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"none"</span><span class="p">,</span> <span class="s2">"constant"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">)</span>
+
+<span class="c1"># Bounds on a fitted width, in bins: below half a bin a Gaussian is a spike</span>
+<span class="c1"># the bins cannot describe, and the upper bound is set per window.</span>
+<span class="n">MIN_SIGMA_BINS</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="c1"># How far a centre may move from where it started: this many starting</span>
+<span class="c1"># widths, and at least CENTRE_SLACK_BINS. Unbounded, a weak peak can walk</span>
+<span class="c1"># under a strong one, and two Gaussians on one line split its area at random</span>
+<span class="c1"># -- seen on a softglue scan, where a third peak started at 7.9 keV ended at</span>
+<span class="c1"># 7.35, under the 7.41 keV line.</span>
+<span class="n">CENTRE_SLACK_SIGMAS</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">CENTRE_SLACK_BINS</span> <span class="o">=</span> <span class="mf">5.0</span>
+<span class="c1"># How wide a peak may grow, as a multiple of its starting width. Unbounded,</span>
+<span class="c1"># a Gaussian left with nothing to fit spreads out to soak up a neighbour's</span>
+<span class="c1"># tail or the background -- seen growing from 12 to 1566 eV FWHM.</span>
+<span class="n">MAX_SIGMA_GROWTH</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="c1"># The narrowest a found peak may be, as a fraction of the most prominent</span>
+<span class="c1"># one's width: every line is broadened by the same detector, so a curvature</span>
+<span class="c1"># bump far narrower than the main line is noise, not a line.</span>
+<span class="n">MIN_RELATIVE_WIDTH</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span>
+
+
+<div class="viewcode-block" id="PeakSpec">
+<a class="viewcode-back" href="../../api/polartools/spectrum_fit/index.html#polartools.spectrum_fit.PeakSpec">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PeakSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""One peak's starting values, in bins."""</span>
+
+    <span class="n">centre</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">vary_centre</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<div class="viewcode-block" id="ShapeFit">
+<a class="viewcode-back" href="../../api/polartools/spectrum_fit/index.html#polartools.spectrum_fit.ShapeFit">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeFit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A fitted shape over bins ``lo..hi`` inclusive.</span>
+
+<span class="sd">    *centres* and *sigmas* are in bins; *areas* are the fit's own, on the</span>
+<span class="sd">    spectrum it was made from. ``success`` False means the fit raised or did</span>
+<span class="sd">    not converge, and *message* says why.</span>
+<span class="sd">    """</span>
+
+    <span class="n">lo</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">hi</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">background</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">centres</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">sigmas</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">areas</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">redchi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">)</span>
+    <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centres</span><span class="o">.</span><span class="n">size</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="unit_gaussian">
+<a class="viewcode-back" href="../../api/polartools/spectrum_fit/index.html#polartools.spectrum_fit.unit_gaussian">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unit_gaussian</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centre</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A Gaussian of unit area, so a coefficient on it is an area."""</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">centre</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">SQRT_2PI</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="background_columns">
+<a class="viewcode-back" href="../../api/polartools/spectrum_fit/index.html#polartools.spectrum_fit.background_columns">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">background_columns</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">background</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The background's columns of the design matrix.</span>
+
+<span class="sd">    The slope column is centred and scaled to the window, so that it is not</span>
+<span class="sd">    nearly parallel to the constant one and ``pinv`` stays well conditioned.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">background</span> <span class="o">==</span> <span class="s2">"none"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">background</span> <span class="o">==</span> <span class="s2">"linear"</span><span class="p">:</span>
+        <span class="n">half</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">half</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">background</span> <span class="o">!=</span> <span class="s2">"constant"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no such background </span><span class="si">{</span><span class="n">background</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">columns</span></div>
+
+
+
+<div class="viewcode-block" id="design_matrix">
+<a class="viewcode-back" href="../../api/polartools/spectrum_fit/index.html#polartools.spectrum_fit.design_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">design_matrix</span><span class="p">(</span>
+    <span class="n">lo</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">hi</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">centres</span><span class="p">,</span> <span class="n">sigmas</span><span class="p">,</span> <span class="n">background</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""``(hi - lo + 1, n_peaks + n_background)``: peaks first, then background."""</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit_gaussian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">centres</span><span class="p">,</span> <span class="n">sigmas</span><span class="p">)]</span>
+    <span class="n">columns</span> <span class="o">+=</span> <span class="n">background_columns</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">background</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="fit_shape">
+<a class="viewcode-back" href="../../api/polartools/spectrum_fit/index.html#polartools.spectrum_fit.fit_shape">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fit_shape</span><span class="p">(</span>
+    <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">hi</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">peaks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PeakSpec</span><span class="p">],</span>
+    <span class="n">background</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"linear"</span><span class="p">,</span>
+    <span class="n">shared_width</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ShapeFit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Fit centres, widths and areas of *peaks* to ``y[lo:hi + 1]``.</span>
+
+<span class="sd">    *y* is a whole spectrum, indexed by bin. Poisson-weighted, with the</span>
+<span class="sd">    centres kept inside the window and near where they started</span>
+<span class="sd">    (:data:`CENTRE_SLACK_SIGMAS`), and, with *shared_width*, every width</span>
+<span class="sd">    tied to the first -- the detector's resolution changes little across a</span>
+<span class="sd">    few hundred eV. Never raises: a failure comes back as ``success`` False.</span>
+<span class="sd">    """</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">ShapeFit</span><span class="p">(</span><span class="n">lo</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">lo</span><span class="p">),</span> <span class="n">hi</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span> <span class="n">background</span><span class="o">=</span><span class="n">background</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">peaks</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"no peaks to fit"</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">if</span> <span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"window too narrow for that many peaks"</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">lo</span> <span class="p">:</span> <span class="n">hi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"no counts in the window"</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)):</span>
+        <span class="n">part</span> <span class="o">=</span> <span class="n">GaussianModel</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_"</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">part</span> <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">model</span> <span class="o">+</span> <span class="n">part</span>
+    <span class="k">if</span> <span class="n">background</span> <span class="o">==</span> <span class="s2">"constant"</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="o">+</span> <span class="n">ConstantModel</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"bg_"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">background</span> <span class="o">==</span> <span class="s2">"linear"</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="o">+</span> <span class="n">LinearModel</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"bg_"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">background</span> <span class="o">!=</span> <span class="s2">"none"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no such background </span><span class="si">{</span><span class="n">background</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">make_params</span><span class="p">()</span>
+    <span class="n">floor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span> <span class="k">if</span> <span class="n">background</span> <span class="o">!=</span> <span class="s2">"none"</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">max_sigma</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span><span class="p">),</span> <span class="n">MIN_SIGMA_BINS</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">peak</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">peaks</span><span class="p">):</span>
+        <span class="n">centre</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">peak</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">))</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">peak</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">MIN_SIGMA_BINS</span><span class="p">,</span> <span class="n">max_sigma</span><span class="p">))</span>
+        <span class="n">widest</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_sigma</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">MAX_SIGMA_GROWTH</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">centre</span><span class="p">))</span> <span class="o">-</span> <span class="n">lo</span><span class="p">])</span> <span class="o">-</span> <span class="n">floor</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">slack</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">CENTRE_SLACK_SIGMAS</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">CENTRE_SLACK_BINS</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_center"</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">centre</span><span class="p">,</span>
+            <span class="nb">min</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">centre</span> <span class="o">-</span> <span class="n">slack</span><span class="p">),</span>
+            <span class="nb">max</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="n">centre</span> <span class="o">+</span> <span class="n">slack</span><span class="p">),</span>
+            <span class="n">vary</span><span class="o">=</span><span class="n">peak</span><span class="o">.</span><span class="n">vary_centre</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_sigma"</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="n">MIN_SIGMA_BINS</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="n">widest</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_amplitude"</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">height</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">SQRT_2PI</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">shared_width</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_sigma"</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">expr</span><span class="o">=</span><span class="s2">"p0_sigma"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">background</span> <span class="o">==</span> <span class="s2">"constant"</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">"bg_c"</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">floor</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">background</span> <span class="o">==</span> <span class="s2">"linear"</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">"bg_intercept"</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">floor</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">"bg_slope"</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># lmfit raises a variety; all mean "no fit"</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"fit failed: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">centres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_center"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">sigmas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_sigma"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">areas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_amplitude"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">redchi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">redchi</span><span class="p">)</span>
+    <span class="c1"># lmfit's own success flag also drops for "could not estimate</span>
+    <span class="c1"># error-bars", which says nothing about the parameters, and the areas</span>
+    <span class="c1"># use no error bars. So a fit is good when it ran to finite numbers;</span>
+    <span class="c1"># lmfit's message is kept as a warning.</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">centres</span><span class="p">))</span>
+        <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">sigmas</span><span class="p">))</span>
+        <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">redchi</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">""</span> <span class="k">if</span> <span class="n">fit</span><span class="o">.</span><span class="n">success</span> <span class="k">else</span> <span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">message</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">message</span> <span class="ow">or</span> <span class="s2">"the fit gave non-finite values"</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="area_weights">
+<a class="viewcode-back" href="../../api/polartools/spectrum_fit/index.html#polartools.spectrum_fit.area_weights">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">area_weights</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">ShapeFit</span><span class="p">,</span> <span class="n">used</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Weights over bins ``lo..hi`` whose dot product with a spectrum is its area.</span>
+
+<span class="sd">    The summed area of the peaks indexed by *used*, solved by unweighted</span>
+<span class="sd">    least squares with *shape*'s centres and widths held fixed. Linear in the</span>
+<span class="sd">    spectrum, so totals over frames commute with it -- see the module</span>
+<span class="sd">    docstring. Zeros when nothing is used.</span>
+<span class="sd">    """</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">shape</span><span class="o">.</span><span class="n">lo</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">used</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">used</span> <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">shape</span><span class="o">.</span><span class="n">n_peaks</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">used</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+    <span class="n">projector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span>
+        <span class="n">design_matrix</span><span class="p">(</span>
+            <span class="n">shape</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">centres</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">sigmas</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">background</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">projector</span><span class="p">[</span><span class="n">used</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="decompose">
+<a class="viewcode-back" href="../../api/polartools/spectrum_fit/index.html#polartools.spectrum_fit.decompose">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decompose</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">ShapeFit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""``(coefficients, matrix)``: *y*'s fixed-shape least-squares solve.</span>
+
+<span class="sd">    The same projection the trend uses, so the curves drawn from it and the</span>
+<span class="sd">    areas listed beside them are the numbers the trend sums. Coefficients</span>
+<span class="sd">    are the peaks' areas first, then the background's.</span>
+<span class="sd">    """</span>
+    <span class="n">matrix</span> <span class="o">=</span> <span class="n">design_matrix</span><span class="p">(</span>
+        <span class="n">shape</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">centres</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">sigmas</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">background</span>
+    <span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">shape</span><span class="o">.</span><span class="n">lo</span> <span class="p">:</span> <span class="n">shape</span><span class="o">.</span><span class="n">hi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="o">@</span> <span class="n">data</span><span class="p">,</span> <span class="n">matrix</span></div>
+
+
+
+<div class="viewcode-block" id="suggest_peaks">
+<a class="viewcode-back" href="../../api/polartools/spectrum_fit/index.html#polartools.spectrum_fit.suggest_peaks">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">suggest_peaks</span><span class="p">(</span>
+    <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">lo</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">hi</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">max_peaks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="n">prominence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">smooth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">PeakSpec</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Starting peaks for ``y[lo:hi + 1]``, the most prominent first.</span>
+
+<span class="sd">    Found as peaks of the curvature ``-y''`` rather than of ``y``, because</span>
+<span class="sd">    the lines worth fitting are the ones that overlap, and a weak line on a</span>
+<span class="sd">    strong one's tail is a shoulder, not a maximum: ``find_peaks`` on the</span>
+<span class="sd">    counts misses it outright. Every Gaussian, shoulder or not, is a</span>
+<span class="sd">    maximum of ``-y''``. The derivative is taken through a Savitzky-Golay</span>
+<span class="sd">    filter *smooth* bins wide, since a raw second difference of counts is</span>
+<span class="sd">    mostly noise.</span>
+
+<span class="sd">    *prominence* is a fraction of the largest curvature in the window, and</span>
+<span class="sd">    a candidate narrower than :data:`MIN_RELATIVE_WIDTH` of the most</span>
+<span class="sd">    prominent peak is dropped as a ripple.</span>
+<span class="sd">    A Gaussian's curvature changes sign at one sigma either side of its</span>
+<span class="sd">    centre, so half the run over which ``-y''`` stays positive is the</span>
+<span class="sd">    starting width -- overlapping lines narrow it, and the fit corrects it.</span>
+<span class="sd">    """</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">lo</span> <span class="p">:</span> <span class="n">hi</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">smooth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">smooth</span> <span class="o">|</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">smooth</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">curvature</span> <span class="o">=</span> <span class="o">-</span><span class="n">savgol_filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">smooth</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">deriv</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">curvature</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">top</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">found</span><span class="p">,</span> <span class="n">props</span> <span class="o">=</span> <span class="n">find_peaks</span><span class="p">(</span><span class="n">curvature</span><span class="p">,</span> <span class="n">prominence</span><span class="o">=</span><span class="n">prominence</span> <span class="o">*</span> <span class="n">top</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="s2">"prominences"</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">p</span><span class="p">,</span> <span class="n">p</span>
+        <span class="k">while</span> <span class="n">left</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">curvature</span><span class="p">[</span><span class="n">left</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">right</span> <span class="o">&lt;</span> <span class="n">curvature</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">curvature</span><span class="p">[</span><span class="n">right</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">right</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">((</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">MIN_SIGMA_BINS</span><span class="p">)</span>
+
+    <span class="n">sigmas</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">):</span> <span class="n">width</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">found</span><span class="p">[</span><span class="n">order</span><span class="p">]}</span>
+    <span class="n">floor</span> <span class="o">=</span> <span class="n">MIN_RELATIVE_WIDTH</span> <span class="o">*</span> <span class="n">sigmas</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">found</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">0</span><span class="p">]])]</span>
+    <span class="n">kept</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">found</span><span class="p">[</span><span class="n">order</span><span class="p">]</span> <span class="k">if</span> <span class="n">sigmas</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span> <span class="o">&gt;=</span> <span class="n">floor</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">PeakSpec</span><span class="p">(</span><span class="n">centre</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">p</span><span class="p">),</span> <span class="n">sigma</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">sigmas</span><span class="p">[</span><span class="n">p</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">kept</span><span class="p">[:</span><span class="n">max_peaks</span><span class="p">])</span>
+    <span class="p">]</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2020-2026, UChicago Argonne, LLC.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.1.
+  </p>
+</div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
