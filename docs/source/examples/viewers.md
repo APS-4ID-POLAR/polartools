@@ -122,6 +122,20 @@ scan's `dichro_monitor` reduction over an ROI of your choosing: normalised,
 Sum is the XAS and Dichro the XMCD. If a scan has several frames per point
 and also reads `polarization: dichro`, the odd/even split is the one used.
 
+The trend can plot fitted peak areas instead of the ROI's counts. **Fit
+peaks…** opens a separate Peak fit window. Set a fit window, add peaks (by
+clicking, or **Find peaks**, which also finds shoulders), choose a background,
+and press **Fit**. Every element of every scan is fitted on its own summed
+spectrum, with a residual plot to judge the fit. Tick **Use** for the peaks
+whose summed area the trend should plot; peaks left unticked still take their
+share of an overlap. **Signal** then switches the trend between *ROI sum* and
+*Fit area*. The peak shapes are fitted once and held fixed, so each frame's
+area is a linear projection that totals over points, polarization halves and
+monitors exactly as ROI counts do. That suits fluorescence lines, not the
+elastic line of an energy scan, which moves. Fitting pays where lines overlap
+or the background is polarization-dependent or sloped. On an isolated line a
+background term makes the result noisier than an ROI.
+
 ## The image viewer — `Img`
 
 Area-detector frames are likewise written outside the master file, by one of
