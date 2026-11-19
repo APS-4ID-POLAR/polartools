@@ -98,7 +98,22 @@ raw curves in a window meant for comparing elements state a wrong conclusion
 about the hardware rather confidently. The checkbox turns it off.
 
 The **Combine** box handles scans that took more than one frame per point, and
-`vortex_total_el1` / `vortex_total_el7` are offered as monitors.
+`vortex_total_el1` / `vortex_total_el7` are offered as monitors. The spectra
+can be divided by the monitor too: the **/ monitor** tick beside Log Y uses the
+monitor picked for the ROI trend. Each spectrum is divided by the monitor
+summed over the same frames, and under a contrast each half by its own.
+
+It also handles slow dichro scans: one frame per point, with the retarder
+flipped from point to point. These are scans whose hints read
+`polarization: dichro`. For them Combine offers **Sum**, **Dichro (plus −
+minus)**, **Plus pol.** and **Minus pol.** Plus is the larger reading of the
+polarization field and minus the smaller. That field is picked automatically
+from `pr{2,1,3}_pzt_localdc` or `pr{1,2,3}_th`, whichever toggles, and can be
+changed in the **Pol.** box. The rows taken at one energy (four, `+ − − +`,
+on the usual scans) become one point of the ROI trend. This re-does the
+scan's `dichro_monitor` reduction over an ROI of your choosing: normalised,
+Sum is the XAS and Dichro the XMCD. If a scan has several frames per point
+and also reads `polarization: dichro`, the odd/even split is the one used.
 
 ## The image viewer — `Img`
 

@@ -101,7 +101,7 @@ nothing to work from.
 What does rescue it is ``ArrayCounter``, which counts frames *within* a point
 and resets to 1 at every one, so ``cumsum(counter == 1) - 1`` is an exact
 frame-to-point map however ragged the scan -- see
-:meth:`SpectrumData.point_index`. On scan 125 it finds **ten** complete
+:meth:`SpectrumData.row_index`. On scan 125 it finds **ten** complete
 80-frame blocks against the 9 rows the scan recorded: the detector finished a
 point the scan was aborted before writing down. So anything pairing frames
 with stream rows takes the shorter of the two and says so. The 2025-1 vintage
@@ -184,6 +184,37 @@ over another, and it flattens the very trend being looked for. Dividing the
 **difference** is the asymmetry, which is the quantity an XMCD measurement is
 for. So they are offered, last, where a click can reach them, and never
 chosen for you: ``gI0`` and ``hI0`` still open these scans.
+
+**The slow dichro layout.** The other way a point's frames split in two. A
+dichro scan run without the softglue writes one vortex frame per primary row
+and flips the retarder between rows, so the halves are told apart not by
+position but by what the retarder read. The 2026-3 scan this was written on
+has as many frames as rows, ``ArrayCounter`` 1 throughout, and four rows per
+energy, ``pr2_pzt_localdc`` running ``25.24 14.76 14.76 25.24`` at every one.
+Such a scan says so in its hints, ``polarization: dichro``, and that is what
+turns this on -- together with a retarder field that toggles, the first of
+:data:`POLARIZATION_CANDIDATES` to do so, which the "Pol." box can override.
+
+"Plus" is the larger reading and "minus" the smaller, which is
+``_scan_viewer_base.reduce_dichro``'s convention, so Combine offers Sum,
+Dichro (plus - minus), Plus pol. and Minus pol. A plotted point is then not a
+row but the rows of one energy: the count comes from the scan's own
+``dichro_monitor`` stream, primary rows over its rows, and failing
+that from the shortest cycle the retarder repeats on. The trend's x is the
+mean over those rows, and a recorded monitor still divides row by row.
+
+That stream also holds the beamline's own reduction, over the fixed ROI the
+IOC was set to; the point of this window is to redo it over an ROI chosen
+here. Set to that ROI -- the per-element ``vortex_stats{n}_roi1`` sums are a
+bin range of the cube, frame k against row k -- dead-time corrected and divided by ``hI0``, the
+normalised Sum reproduces ``dichro_xas`` to 1e-5 and the normalised Dichro
+``dichro_xmcd`` with correlation 0.99997. Not to the last digit, because the
+stream averages each row's ratio and this pane takes the ratio of the totals,
+as it does for every other scan.
+
+A multi-frame scan keeps its odd/even split even when its hints say dichro:
+the softglue frames alternate within a row, which the parity split measures
+and the polarization split, one setting per row, could not see.
 
 Run standalone on one or more spectrum files, or let ``scan_viewer_sgz``'s
 "Load Spectrum..." button open them for the scans it lists.
@@ -342,12 +373,55 @@ TREND_FRAME_AXIS = "frame"
 # word range_sum and the trend both take. One table rather than three, so
 # that a fifth contrast cannot be added to the menu and forgotten on an axis.
 # Sum first, so the box opens on what every other viewer here shows.
-COMBINE_MODES = (
-    ("Sum", "all", "counts"),
-    ("Odd - even", "difference", "odd - even counts"),
-    ("Odd only", "odd", "odd-numbered counts"),
-    ("Even only", "even", "even-numbered counts"),
+#
+# One table per way of splitting a point's frames in two -- see "The slow
+# dichro layout" in the module docstring. The parts are named for the parity
+# split, which came first, and mean "first half" and "second half" to the
+# arithmetic: under the polarization split "odd" is the plus frames and "even"
+# the minus ones. The fourth entry is the stem of the export's column names.
+COMBINE_MODES = {
+    "parity": (
+        ("Sum", "all", "counts", "sum"),
+        ("Odd - even", "difference", "odd - even counts", "oddeven"),
+        ("Odd only", "odd", "odd-numbered counts", "odd"),
+        ("Even only", "even", "even-numbered counts", "even"),
+    ),
+    "polarization": (
+        ("Sum", "all", "counts", "sum"),
+        (
+            "Dichro (plus - minus)",
+            "difference",
+            "plus - minus counts",
+            "dichro",
+        ),
+        ("Plus pol.", "odd", "plus-polarization counts", "plus"),
+        ("Minus pol.", "even", "minus-polarization counts", "minus"),
+    ),
+}
+# What each split calls its two halves, in prose.
+HALF_NAMES = {"parity": ("odd", "even"), "polarization": ("plus", "minus")}
+
+# The slow dichro layout: the scan's hint that says so, and the primary-stream
+# fields that can record the retarder, the first that toggles being the one
+# used. pr2's piezo first, since it is what every dichro scan here has used.
+DICHRO_HINT = "dichro"
+POLARIZATION_CANDIDATES = (
+    "pr2_pzt_localdc",
+    "pr1_pzt_localdc",
+    "pr3_pzt_localdc",
+    "pr1_th",
+    "pr2_th",
+    "pr3_th",
 )
+# How far a retarder field must move to count as toggling: _scan_viewer_base's
+# PR_ATOL, copied for the import-cycle reason given above _yaml_block_items.
+POLARIZATION_ATOL = 0.1
+# The stream a dichro scan reduces into, one row per point. Only its length
+# is read here -- the rows per point -- never its values, which are the
+# beamline's reduction over its own fixed ROIs.
+DICHRO_STREAM_PATH = "entry/instrument/bluesky/streams/dichro_monitor"
+# The longest polarization cycle looked for when the dichro stream is missing.
+MAX_POLARIZATION_PERIOD = 16
 # Modes that subtract one half of the frames from the other, and so can go
 # negative. Collected rather than compared against "difference" in five
 # places, since a second contrast would otherwise have to find all five.
@@ -580,7 +654,7 @@ def is_multi_frame_scan(spectrum: Path) -> bool:
             if node is not None:
                 counter = np.asarray(node[()]).ravel()
                 starts = counter == 1
-                # The same guard point_index uses: a file whose first frame is
+                # The same guard row_index uses: a file whose first frame is
                 # not the start of a point cannot be cut into points at all.
                 if starts.size and starts.any() and starts[0]:
                     index = np.cumsum(starts) - 1
@@ -699,6 +773,106 @@ def scan_axis_field(master: Path | None, fields: list[str]) -> str | None:
             if candidate in fields:
                 return candidate
     return None
+
+
+def hint_scalar(master: Path | None, key: str) -> str:
+    """One ``key: value`` line of the scan's hints, as text, or ``""``.
+
+    ``_scan_viewer_base._yaml_scalar`` for the one shape needed here -- the
+    ``polarization: dichro`` line -- read here for the import-cycle reason
+    given above :func:`_yaml_block_items`.
+    """
+    if master is None:
+        return ""
+    for line in _meta_text(master, "hints").splitlines():
+        name, sep, value = line.partition(":")
+        if sep and name == key:
+            return value.strip()
+    return ""
+
+
+def stream_length(master: Path | None, stream_path: str) -> int | None:
+    """Rows in one stream of the master, from its first 1-D field."""
+    if master is None:
+        return None
+    try:
+        with h5py.File(master, "r") as f:
+            grp = f.get(stream_path)
+            if grp is None:
+                return None
+            for name in sorted(grp.keys()):
+                node = grp[name]
+                value = node.get("value") if hasattr(node, "get") else None
+                if value is not None and value.shape:
+                    return int(value.shape[0])
+    except (OSError, AttributeError, ValueError, IndexError):
+        return None
+    return None
+
+
+def polarization_period(plus: np.ndarray) -> int | None:
+    """The shortest cycle the plus/minus sequence repeats on, or ``None``.
+
+    The fallback for finding the rows of one dichro point when the scan wrote
+    no dichro stream to count them by. ``+ - - +`` repeats on 4 and not on 2
+    or 3; a cycle has to hold both polarizations to be one, or a scan that
+    sat at one setting would read as a cycle of one.
+    """
+    n = plus.size
+    for period in range(2, min(MAX_POLARIZATION_PERIOD, n) + 1):
+        cycle = plus[:period]
+        if not (cycle.any() and (~cycle).any()):
+            continue
+        if np.array_equal(plus[period:], plus[: n - period]):
+            return period
+    return None
+
+
+def rows_per_dichro_point(master: Path | None, plus: np.ndarray) -> int | None:
+    """How many primary rows make one point of a slow dichro scan.
+
+    The dichro stream's row count first: the scan wrote one row there per
+    point, so primary rows over that is the cycle -- 4 on the 2026-3 scans.
+    Rounded rather than required to divide, because a scan stopped part way
+    leaves the two a row or so out of step; and checked against *plus*,
+    since a cycle that leaves a point with one polarization only is not the
+    cycle. Failing that, :func:`polarization_period` reads the cycle off the
+    retarder itself.
+    """
+    rows = plus.size
+    points = stream_length(master, DICHRO_STREAM_PATH)
+    if points:
+        k = int(round(rows / points))
+        complete = (rows // k) * k if k >= 2 else 0
+        if complete:
+            groups = plus[:complete].reshape(-1, k)
+            if groups.any(axis=1).all() and (~groups).any(axis=1).all():
+                return k
+    return polarization_period(plus)
+
+
+def polarization_fields(master: Path | None) -> dict[str, tuple]:
+    """The retarder fields a slow dichro scan can be split by.
+
+    Field name -> ``(values, rows_per_point)``, in the order of
+    :data:`POLARIZATION_CANDIDATES`. A field qualifies by toggling -- two
+    settings at least :data:`POLARIZATION_ATOL` apart -- and by the rows it
+    splits falling into points (:func:`rows_per_dichro_point`). Recorded is
+    not enough: a scan records every retarder whether it moved or not.
+    """
+    found = {}
+    for name in POLARIZATION_CANDIDATES:
+        values = read_primary_field(master, name)
+        if values is None:
+            continue
+        finite = values[np.isfinite(values)]
+        if finite.size < 2 or np.ptp(finite) <= POLARIZATION_ATOL:
+            continue
+        plus = values > (finite.min() + finite.max()) / 2.0
+        k = rows_per_dichro_point(master, plus)
+        if k:
+            found[name] = (values, k)
+    return found
 
 
 def primary_fields(master: Path | None) -> list[str]:
@@ -1030,11 +1204,32 @@ class SpectrumData:
         # variants, so the cache turns element ticking into no file reads at
         # all; see roi_trend.
         self._trends: dict[str, tuple[tuple[int, int], tuple]] = {}
-        # The odd-numbered frames' own pyramid, built on first use and kept.
-        # A second streamed pass (0.98 s on scan 597's 5456 frames) that a
-        # window left on "Sum" never pays; see _odd_pyramid.
-        self._cum_odd_raw: np.ndarray | None = None
-        self._cum_odd_dt: np.ndarray | None = None
+        # The first half's own pyramid -- odd frames, or plus ones -- built on
+        # first use and kept. A second streamed pass (0.98 s on scan 597's
+        # 5456 frames) that a window left on "Sum" never pays; see
+        # _half_pyramid.
+        self._cum_half_raw: np.ndarray | None = None
+        self._cum_half_dt: np.ndarray | None = None
+
+        # How the frames of a point split in two, if they do: "parity" for
+        # the softglue layout, "polarization" for the slow dichro one, None
+        # for neither. Softglue first, so that a multi-frame scan keeps its
+        # odd/even split even when its hints also say dichro.
+        self.split: str | None = None
+        self.pol_fields: dict[str, tuple] = {}
+        self.pol_field: str | None = None
+        self._pol: np.ndarray | None = None
+        self._rows_per_point = 1
+        if self.multi_frame and self.odd_frames is not None:
+            self.split = "parity"
+        elif (
+            hint_scalar(self.master, "polarization") == DICHRO_HINT
+            and self.row_index is not None
+        ):
+            self.pol_fields = polarization_fields(self.master)
+            if self.pol_fields:
+                self.split = "polarization"
+                self.set_pol_field(next(iter(self.pol_fields)))
 
     # -- building -----------------------------------------------------------
 
@@ -1190,9 +1385,22 @@ class SpectrumData:
     def have_dead_time(self) -> bool:
         return self._cum_dt is not None
 
+    def set_pol_field(self, name: str) -> None:
+        """Split by retarder field *name*, one of :attr:`pol_fields`.
+
+        Drops the half pyramid, which was built over the old field's plus
+        frames; the next contrast asked for rebuilds it.
+        """
+        if name == self.pol_field or name not in self.pol_fields:
+            return
+        self.pol_field = name
+        self._pol, self._rows_per_point = self.pol_fields[name]
+        self._cum_half_raw = None
+        self._cum_half_dt = None
+
     @property
-    def frames_per_point(self) -> int | None:
-        """Frames per scan point, where the two divide evenly.
+    def frames_per_row(self) -> int | None:
+        """Frames per primary-stream row, where the two divide evenly.
 
         ``None`` when they do not -- an aborted scan writes a ratio that means
         nothing (scan 125: 800 frames, 100 points declared, 9 taken).
@@ -1204,8 +1412,54 @@ class SpectrumData:
         return self.n_frames // self.n_points
 
     @property
+    def frames_per_point(self) -> int | None:
+        """Frames per plotted point: per row, times the rows of a dichro point."""
+        per_row = self.frames_per_row
+        if per_row is None:
+            return None
+        if self.split == "polarization":
+            return per_row * self._rows_per_point
+        return per_row
+
+    @property
+    def rows_per_point(self) -> int:
+        """Primary rows per plotted point: 1 but on a slow dichro scan."""
+        return self._rows_per_point if self.split == "polarization" else 1
+
+    @property
     def point_index(self) -> np.ndarray | None:
-        """Which scan point each frame belongs to, as ``(n_frames,)`` ints.
+        """Which plotted point each frame belongs to, as ``(n_frames,)`` ints.
+
+        :attr:`row_index` everywhere but on a slow dichro scan, where a point
+        is the :attr:`rows_per_point` rows taken at one energy -- the four
+        polarization settings of a ``+ - - +`` cycle.
+        """
+        rows = self.row_index
+        if rows is None:
+            return None
+        return rows // self.rows_per_point
+
+    def reduce_rows(self, column: np.ndarray) -> np.ndarray:
+        """A per-row primary column as one value per plotted point.
+
+        The mean over the point's rows, ignoring NaN, on a slow dichro scan --
+        where the energy readback differs in the fifth decimal between the
+        four rows of one point -- and *column* itself otherwise.
+        """
+        k = self.rows_per_point
+        if k == 1:
+            return column
+        group = np.arange(column.size) // k
+        finite = np.isfinite(column)
+        n = np.bincount(group[finite], minlength=group[-1] + 1)
+        total = np.bincount(
+            group[finite], weights=column[finite], minlength=group[-1] + 1
+        )
+        return np.where(n > 0, total / np.maximum(n, 1), np.nan)
+
+    @property
+    def row_index(self) -> np.ndarray | None:
+        """Which primary-stream row each frame belongs to, as ``(n_frames,)`` ints.
 
         ``ArrayCounter`` first, because it is the only exact answer: it resets
         to 1 at every point, so ``cumsum(counter == 1) - 1`` numbers the points
@@ -1225,9 +1479,9 @@ class SpectrumData:
             # informed, but at least it does not silently mislabel it.
             if starts.any() and starts[0]:
                 return np.cumsum(starts) - 1
-        per_point = self.frames_per_point
-        if per_point:
-            return np.arange(self.n_frames) // per_point
+        per_row = self.frames_per_row
+        if per_row:
+            return np.arange(self.n_frames) // per_row
         return None
 
     @property
@@ -1243,7 +1497,7 @@ class SpectrumData:
         against the nine rows its stream recorded -- and that one ragged end
         says nothing about how the scan was run.
         """
-        index = self.point_index
+        index = self.row_index
         if index is None or index.size == 0:
             return False
         return float(np.median(np.bincount(index))) >= 2.0
@@ -1268,11 +1522,45 @@ class SpectrumData:
             starts = counter == 1
             if starts.any() and starts[0]:
                 return (counter % 2) == 1
-        per_point = self.frames_per_point
-        if per_point:
+        per_row = self.frames_per_row
+        if per_row:
             # Position 0 is frame 1, so an even position is an odd frame.
-            return (np.arange(self.n_frames) % per_point) % 2 == 0
+            return (np.arange(self.n_frames) % per_row) % 2 == 0
         return None
+
+    @property
+    def half_mask(self) -> np.ndarray | None:
+        """The frames of the first half, as a per-frame boolean.
+
+        :attr:`odd_frames` under the parity split. Under the polarization
+        split the frames whose row read the retarder field above the middle
+        of its range: "plus" is the larger reading, the convention
+        ``_scan_viewer_base.reduce_dichro`` uses, binary however many
+        settings the readback shows.
+
+        A frame past the last row the scan recorded -- the detector can
+        finish a point the scan never wrote down -- takes the setting of the
+        same place in the first point's cycle, since the cycle is fixed;
+        otherwise it would fall into the minus half by default. ``None`` when
+        there is no split.
+        """
+        if self.split == "parity":
+            return self.odd_frames
+        if self.split != "polarization":
+            return None
+        pol = self._pol
+        finite = pol[np.isfinite(pol)]
+        plus_rows = pol > (finite.min() + finite.max()) / 2.0
+        k = self._rows_per_point
+        # A row whose readback was not recorded is placed the same way.
+        unread = np.flatnonzero(~np.isfinite(pol))
+        plus_rows[unread] = plus_rows[unread % k]
+        rows = self.row_index
+        known = rows < plus_rows.size
+        mask = np.empty(self.n_frames, dtype=bool)
+        mask[known] = plus_rows[rows[known]]
+        mask[~known] = plus_rows[rows[~known] % k]
+        return mask
 
     def roi_trend(
         self, lo: int, hi: int, slot: str = "roi"
@@ -1321,14 +1609,17 @@ class SpectrumData:
         self._trends[slot] = ((lo, hi), (raw, corrected))
         return self._trends[slot][1]
 
-    def _odd_pyramid(self):
-        """Build, once, the same cumulative pyramid over odd frames alone.
+    def _half_pyramid(self):
+        """Build, once, the same cumulative pyramid over the first half alone.
+
+        The odd frames under the parity split, the plus ones under the
+        polarization split -- whatever :attr:`half_mask` selects.
 
         A second streamed pass -- 0.98 s over scan 597's 5456 frames, against
         1.27 s for the pass at open -- paid the first time a contrast is asked
         for and never by a window that stays on "Sum".
 
-        Only the odd half is stored: the even half is the whole minus this, so
+        Only the first half is stored: the second is the whole minus this, so
         the file is read once more rather than twice and one array pair is
         kept rather than two.
 
@@ -1337,17 +1628,17 @@ class SpectrumData:
         5456-frame scan, which is odd, so from the second block on the
         positions within a block and the frames within a point disagree.
         """
-        if self._cum_odd_raw is not None:
+        if self._cum_half_raw is not None:
             return
-        mask = self.odd_frames
+        mask = self.half_mask
         if mask is None:
             raise ValueError(
-                f"{self.path.name} records no frame numbering within its scan "
-                "points, so its frames cannot be split into odd and even."
+                f"{self.path.name} records no way to split the frames of its "
+                "scan points in two."
             )
         n_blocks = self._cum_raw.shape[0] - 1
-        self._cum_odd_raw = np.zeros_like(self._cum_raw)
-        self._cum_odd_dt = (
+        self._cum_half_raw = np.zeros_like(self._cum_raw)
+        self._cum_half_dt = (
             None if self._cum_dt is None else np.zeros_like(self._cum_dt)
         )
         with h5py.File(self.path, "r") as f:
@@ -1356,9 +1647,9 @@ class SpectrumData:
                 lo = b * self._block
                 hi = min(lo + self._block, self.n_frames)
                 raw, corrected = self._sum_slice(dset, lo, hi, mask)
-                self._cum_odd_raw[b + 1] = self._cum_odd_raw[b] + raw
-                if self._cum_odd_dt is not None:
-                    self._cum_odd_dt[b + 1] = self._cum_odd_dt[b] + corrected
+                self._cum_half_raw[b + 1] = self._cum_half_raw[b] + raw
+                if self._cum_half_dt is not None:
+                    self._cum_half_dt[b + 1] = self._cum_half_dt[b] + corrected
 
     def range_sum(
         self, first: int, last: int, dead_time: bool, part: str = "all"
@@ -1371,8 +1662,10 @@ class SpectrumData:
 
         *part* picks which frames of each scan point are counted, numbering
         them from 1: ``"all"``, ``"odd"``, ``"even"``, or ``"difference"`` for
-        odd minus even. Everything but ``"all"`` needs :attr:`odd_frames`, and
-        the first such call builds :meth:`_odd_pyramid`; after that they are
+        odd minus even -- "odd" being the first half of :attr:`half_mask`,
+        which is the plus frames on a slow dichro scan. Everything but
+        ``"all"`` needs :attr:`half_mask`, and
+        the first such call builds :meth:`_half_pyramid`; after that they are
         all subtractions and cost what ``"all"`` costs.
         """
         lo = max(0, int(first))
@@ -1383,7 +1676,7 @@ class SpectrumData:
             raise ValueError(f"range_sum: no such part {part!r}")
 
         if part != "all":
-            self._odd_pyramid()
+            self._half_pyramid()
         if part == "even":
             return self.range_sum(first, last, dead_time) - self.range_sum(
                 first, last, dead_time, "odd"
@@ -1392,10 +1685,10 @@ class SpectrumData:
             odd = self.range_sum(first, last, dead_time, "odd")
             return odd - (self.range_sum(first, last, dead_time) - odd)
 
-        odd_only = part == "odd"
+        half_only = part == "odd"
         use_dt = dead_time and self._cum_dt is not None
-        if odd_only:
-            cum = self._cum_odd_dt if use_dt else self._cum_odd_raw
+        if half_only:
+            cum = self._cum_half_dt if use_dt else self._cum_half_raw
         else:
             cum = self._cum_dt if use_dt else self._cum_raw
         block = self._block
@@ -1405,20 +1698,20 @@ class SpectrumData:
 
         if i >= j:
             # No whole block in between, so there is nothing to subtract.
-            return self._read_range(lo, hi, use_dt, odd_only)
+            return self._read_range(lo, hi, use_dt, half_only)
 
         total = cum[j] - cum[i]
         if lo < i * block:
-            total = total + self._read_range(lo, i * block, use_dt, odd_only)
+            total = total + self._read_range(lo, i * block, use_dt, half_only)
         if j * block < hi:
-            total = total + self._read_range(j * block, hi, use_dt, odd_only)
+            total = total + self._read_range(j * block, hi, use_dt, half_only)
         return total
 
     def _read_range(
-        self, lo: int, hi: int, dead_time: bool, odd_only: bool = False
+        self, lo: int, hi: int, dead_time: bool, half_only: bool = False
     ) -> np.ndarray:
         """Sum frames ``[lo, hi)`` straight from the file."""
-        mask = self.odd_frames if odd_only else None
+        mask = self.half_mask if half_only else None
         with h5py.File(self.path, "r") as f:
             raw, corrected = self._sum_slice(
                 f[SPECTRUM_DATA_PATH], lo, hi, mask
@@ -1774,6 +2067,27 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.max_frames = max(d.n_frames for d in self.data)
         self.max_bins = max(d.n_bins for d in self.data)
         self.any_dead_time = any(d.have_dead_time for d in self.data)
+        # One Combine box drives every curve, so the scans must agree on how
+        # their frames split; a window mixing a softglue scan, a dichro one or
+        # a plain one has no split to offer (see _combine_available).
+        splits = {d.split for d in self.data}
+        self.split = splits.pop() if len(splits) == 1 else None
+        # The retarder fields every scan can be split by, in the first scan's
+        # order, which is POLARIZATION_CANDIDATES'.
+        self.pol_fields = (
+            [
+                name
+                for name in self.data[0].pol_fields
+                if all(name in d.pol_fields for d in self.data)
+            ]
+            if self.split == "polarization"
+            else []
+        )
+        if not self.pol_fields and self.split == "polarization":
+            self.split = None
+        for data in self.data:
+            if self.pol_fields:
+                data.set_pol_field(self.pol_fields[0])
 
         # Primary-stream columns, by (scan index, field). One open per field
         # per file, not one per redraw -- ticking an element must not go near
@@ -2038,25 +2352,59 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # box is enabled, so they belong side by side.
         row.addWidget(QtWidgets.QLabel("Combine"))
         self.combine_combo = QtWidgets.QComboBox()
-        for label, part, _ in COMBINE_MODES:
+        for label, part, _, _ in self._modes():
             self.combine_combo.addItem(label, part)
         usable = self._combine_available()
         self.combine_combo.setEnabled(usable)
-        self.combine_combo.setToolTip(
-            "What to do with the several frames of one scan point.\n"
-            "Frames are numbered from 1 within their point, so frame 1 is odd:\n"
-            '"Odd - even" is (frames 1, 3, 5 ...) minus (frames 2, 4, 6 ...).\n'
-            "The softglue scans alternate frame by frame -- scan 597 point 0\n"
-            "runs 5.4% apart, against 0.4% for a typical random split of\n"
-            "the same frames -- and that difference is the measurement.\n"
-            "Odd only and Even only show the two halves the difference is of;\n"
-            "a difference is worth believing once both have been looked at."
-            if usable
-            else "Needs more than one vortex frame per scan point, in every scan\n"
-            "loaded here. These have one, so there are no halves to tell apart."
-        )
+        if not usable:
+            tip = (
+                "Needs more than one vortex frame per scan point, or a dichro\n"
+                "scan with a retarder field that toggles -- the same in every\n"
+                "scan loaded here. These have neither, so there are no halves\n"
+                "to tell apart."
+            )
+        elif self.split == "polarization":
+            tip = (
+                "What to do with the polarization settings of one scan point.\n"
+                'The scan hints "polarization: dichro" and the retarder flips\n'
+                "between rows: plus is the larger reading of the Pol. field,\n"
+                "minus the smaller, and a point is the rows taken at one\n"
+                "energy -- four (+ - - +) on the usual scans.\n"
+                '"Dichro" is plus minus minus; normalised, it is the XMCD the\n'
+                "scan's dichro_monitor stream holds for its own fixed ROI, and\n"
+                "Sum normalised is the XAS, here over the ROI chosen below."
+            )
+        else:
+            tip = (
+                "What to do with the several frames of one scan point.\n"
+                "Frames are numbered from 1 within their point, so frame 1 is odd:\n"
+                '"Odd - even" is (frames 1, 3, 5 ...) minus (frames 2, 4, 6 ...).\n'
+                "The softglue scans alternate frame by frame -- scan 597 point 0\n"
+                "runs 5.4% apart, against 0.4% for a typical random split of\n"
+                "the same frames -- and that difference is the measurement.\n"
+                "Odd only and Even only show the two halves the difference is of;\n"
+                "a difference is worth believing once both have been looked at."
+            )
+        self.combine_combo.setToolTip(tip)
         self.combine_combo.currentIndexChanged.connect(self._schedule_redraw)
         row.addWidget(self.combine_combo)
+
+        # Which retarder says which frames are plus. Only on a slow dichro
+        # scan, and opened on the first of POLARIZATION_CANDIDATES that
+        # toggles; offered as a box because the guess is by name and order,
+        # and a scan that toggled two retarders needs a way to pick the other.
+        self.pol_combo = None
+        if self.split == "polarization":
+            row.addWidget(QtWidgets.QLabel("Pol."))
+            self.pol_combo = QtWidgets.QComboBox()
+            self.pol_combo.addItems(self.pol_fields)
+            self.pol_combo.setToolTip(
+                "The primary-stream field that tracks the polarization:\n"
+                "plus is its larger reading, minus its smaller. Only fields\n"
+                "that toggle in every scan loaded are offered."
+            )
+            self.pol_combo.currentTextChanged.connect(self._on_pol_changed)
+            row.addWidget(self.pol_combo)
 
         all_btn = QtWidgets.QPushButton("All frames")
         all_btn.clicked.connect(self._select_all_frames)
@@ -2082,22 +2430,49 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         """ "800 frames, 20 per scan point", where the two divide evenly."""
         if len(self.data) != 1:
             return f"of {self.max_frames}"
-        per_point = self.data[0].frames_per_point
+        data = self.data[0]
+        per_point = data.frames_per_point
         if per_point is None:
             return f"of {self.max_frames}"
+        if self.split == "polarization":
+            mask = data.half_mask
+            index = data.point_index
+            first = index == 0
+            plus = int(mask[first].sum())
+            return (
+                f"of {self.max_frames}, {per_point} per scan point "
+                f"({plus} plus, {int(first.sum()) - plus} minus)"
+            )
         return f"of {self.max_frames}, {per_point} per scan point"
 
     def _combine_available(self) -> bool:
-        """Whether every loaded scan can be split into odd and even frames.
+        """Whether every loaded scan splits its points' frames the same way.
 
         Every one, not any: a single Combine box drives all the curves, so a
         window holding one sgz scan and one ordinary scan would be asking for
         a difference the second cannot answer. Disabled is the honest state
-        there, and the tooltip says which condition failed.
+        there, and the tooltip says which condition failed. See
+        :attr:`SpectrumData.split` for the two ways a scan can split.
         """
-        return bool(self.data) and all(
-            d.multi_frame and d.odd_frames is not None for d in self.data
-        )
+        return self.split is not None
+
+    def _modes(self) -> tuple:
+        """This window's rows of :data:`COMBINE_MODES`.
+
+        The parity table where there is no split, so that the disabled box
+        still shows what a softglue scan would offer.
+        """
+        return COMBINE_MODES[self.split or "parity"]
+
+    def _half_names(self) -> tuple[str, str]:
+        """What the two halves are called here: ``("odd", "even")`` or plus/minus."""
+        return HALF_NAMES[self.split or "parity"]
+
+    def _on_pol_changed(self, name: str):
+        """Re-split every scan by the retarder field just chosen."""
+        for data in self.data:
+            data.set_pol_field(name)
+        self._schedule_redraw()
 
     def _combine_part(self) -> str:
         """The frames the Combine box is asking for: see :data:`COMBINE_MODES`.
@@ -2109,18 +2484,16 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             return "all"
         return self.combine_combo.currentData() or "all"
 
-    @staticmethod
-    def _count_label(part: str) -> str:
+    def _count_label(self, part: str) -> str:
         """What a Y axis is counting under *part*, from :data:`COMBINE_MODES`."""
-        for _, name, label in COMBINE_MODES:
+        for _, name, label, _ in self._modes():
             if name == part:
                 return label
         return "counts"
 
-    @staticmethod
-    def _mode_label(part: str) -> str:
+    def _mode_label(self, part: str) -> str:
         """The Combine box's own wording for *part*, for titles and messages."""
-        for label, name, _ in COMBINE_MODES:
+        for label, name, _, _ in self._modes():
             if name == part:
                 return label
         return part
@@ -2182,6 +2555,27 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         )
         self.log_box.toggled.connect(self._schedule_redraw)
         row.addWidget(self.log_box)
+
+        # The spectra's own monitor tick, apart from the trend's: that one
+        # opens checked, and this pane has always opened on counts. The
+        # monitor itself is the one picked in the ROI row, so the two panes
+        # can never be divided by different channels at once.
+        have = bool(self.monitor_fields)
+        self.spectrum_norm_box = QtWidgets.QCheckBox("/ monitor")
+        self.spectrum_norm_box.setChecked(False)
+        self.spectrum_norm_box.setEnabled(have)
+        self.spectrum_norm_box.setToolTip(
+            "Divide each spectrum by the monitor picked in the ROI row below,\n"
+            "totalled over the same frames the spectrum totals -- so two\n"
+            "scans, or two frame ranges, of different length or beam compare\n"
+            "directly. Under a contrast each half is divided by its own\n"
+            "frames' monitor, and the difference is of the two ratios, which\n"
+            "is what the trend does with the same tick."
+            if have
+            else "No live beam monitor among the fields these files record."
+        )
+        self.spectrum_norm_box.toggled.connect(self._schedule_redraw)
+        row.addWidget(self.spectrum_norm_box)
 
         row.addStretch(1)
         return row
@@ -2370,8 +2764,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.export_btn = QtWidgets.QPushButton("Export...")
         self.export_btn.setToolTip(
             "Write the plotted ROI trend to a text file: one row per scan\n"
-            "point, and all four Combine modes in it -- Sum, Odd - even,\n"
-            "Odd only, Even only -- whichever one is on screen. Normalised\n"
+            "point, and all four Combine modes in it -- "
+            + ", ".join(label for label, _, _, _ in self._modes())
+            + " --\nwhichever one is on screen. Normalised\n"
             "and raw side by side, with the monitor counts that divided\n"
             "them, so any of it can be recomputed or undone.\n"
             "Goes to an 'export' folder beside the scan data, named for the\n"
@@ -2960,6 +3355,13 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # nothing worth saving.
         total = np.zeros(self.max_bins)
         drawn = 0
+        normalize = (
+            self.spectrum_norm_box.isChecked()
+            and self.spectrum_norm_box.isEnabled()
+        )
+        monitor = self.monitor_combo.currentText() if normalize else ""
+        norm_notes: list[str] = []
+        divided = 0
 
         def draw(y, label, y_sum):
             nonlocal drawn
@@ -2968,7 +3370,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             total[: y_sum.size] += y_sum
             drawn += 1
 
-        for data in self.data:
+        for index, data in enumerate(self.data):
             usable = [i for i in chosen if i < data.n_elements]
             if not usable:
                 # It has none of the ticked elements -- a 4-element file in a
@@ -2982,7 +3384,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             if dead_time and not data.have_dead_time:
                 uncorrected.append(data.path.name)
             if part != "all":
-                half = data.odd_frames[first : min(last, data.n_frames - 1) + 1]
+                half = data.half_mask[first : min(last, data.n_frames - 1) + 1]
                 # A difference needs both halves; the two single-half modes
                 # need their own. min() of the two covers all three.
                 present = (
@@ -2999,6 +3401,24 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 if part == "all"
                 else data.range_sum(first, last, dead_time)
             )
+            if normalize:
+                divisors, note = self._spectrum_divisors(
+                    index, data, monitor, part, dead_time, first, last
+                )
+                if note:
+                    norm_notes.append(note)
+                if divisors is not None:
+                    totals = self._divide_spectrum(
+                        data,
+                        totals,
+                        sums,
+                        divisors,
+                        part,
+                        first,
+                        last,
+                        dead_time,
+                    )
+                    divided += 1
             if separate:
                 for i in usable:
                     draw(totals[i], f"element {i + 1}", sums[i])
@@ -3018,7 +3438,10 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             self._shown_total = total
 
         self.ax.set_xlabel("MCA bin")
-        self.ax.set_ylabel(self._count_label(part))
+        ylabel = self._count_label(part)
+        if divided:
+            ylabel += f" / {self._monitor_label(monitor)}"
+        self.ax.set_ylabel(ylabel)
         # The boxes, never an autoscale. Letting matplotlib choose would move
         # the axis whenever an element was unticked, and autoscaling to the
         # last non-zero bin would always find bin 4095, where everything above
@@ -3108,6 +3531,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             )
         if hidden:
             notes.insert(0, f"log Y hides {hidden} negative bins")
+        notes[:0] = norm_notes
         self.status.showMessage(
             self._status_text(first, last, clamped, uncorrected, skipped, notes)
             if drawn
@@ -3121,6 +3545,75 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         for window in self.monitor_windows.values():
             if window.isVisible():
                 window.refresh()
+
+    def _spectrum_divisors(
+        self, index, data, monitor, part, dead_time, first, last
+    ):
+        """The monitor totalled over the frames a spectrum totals.
+
+        ``(divisors, note)``, *divisors* mapping ``"all"`` -- and ``"odd"`` and
+        ``"even"`` under a contrast -- to the monitor total over the shown
+        frames of that half, or ``None`` when nothing can be divided.
+
+        The trend's own per-frame divisor (:meth:`_monitor_scale`), taken over
+        the shown range and *part*, so a computed monitor is reduced half by
+        half here exactly as there. Its totals are the numbers the trend's
+        points divide by, added up over every point -- which makes the
+        normalised spectrum, integrated over the ROI, the ROI's own ratio of
+        totals across the whole range.
+
+        A frame with no monitor reading (zero, or past the last recorded
+        row) is left out of the divisor but not out of the spectrum, which
+        cannot drop single frames; the note counts them.
+        """
+        stop = min(last, data.n_frames - 1)
+        if stop < first:
+            return None, None
+        scale, note = self._monitor_scale(
+            index, data, monitor, part, dead_time, (first, stop)
+        )
+        if scale is None:
+            return None, note
+        shown = scale[first : stop + 1]
+        mask = data.half_mask if part != "all" else None
+        half = None if mask is None else mask[first : stop + 1]
+
+        def total(keep):
+            values = shown if keep is None else shown[keep]
+            value = float(np.nansum(values))
+            # A half with no frames in the range has nothing to divide by;
+            # NaN keeps its curve off the plot instead of off the top of it.
+            return value if value > 0 else np.nan
+
+        divisors = {"all": total(None)}
+        if half is not None:
+            divisors["odd"] = total(half)
+            divisors["even"] = total(~half)
+        unread = int(np.count_nonzero(~np.isfinite(shown)))
+        if unread:
+            note = (
+                f"{data.path.name}: {unread} frame(s) shown without a "
+                f"{monitor} reading, counted in the spectrum but not the "
+                "divisor"
+            )
+        return divisors, note
+
+    @staticmethod
+    def _divide_spectrum(
+        data, totals, sums, divisors, part, first, last, dead_time
+    ):
+        """*totals* divided as the trend divides: each half by its own monitor.
+
+        The difference is rebuilt from its halves rather than divided whole,
+        since it has no single divisor -- (odd / mon_odd) - (even / mon_even),
+        the same arithmetic as the trend's normalised difference.
+        """
+        if part == "all":
+            return totals / divisors["all"]
+        if part in ("odd", "even"):
+            return totals / divisors[part]
+        odd = data.range_sum(first, last, dead_time, "odd")
+        return odd / divisors["odd"] - (sums - odd) / divisors["even"]
 
     # -- the trend pane -----------------------------------------------------
 
@@ -3164,7 +3657,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 None,
                 f"{data.path.name}: no {monitor} recorded, not normalized",
             )
-        index_of = data.point_index
+        # Through the row and not the plotted point: a recorded monitor has
+        # one reading per primary row, and a slow dichro point is several.
+        index_of = data.row_index
         if index_of is None:
             return (
                 None,
@@ -3260,7 +3755,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             return per_frame, None
 
         points = int(index_of[-1]) + 1
-        odd = data.odd_frames if part != "all" else None
+        odd = data.half_mask if part != "all" else None
         shown = np.zeros(data.n_frames, dtype=bool)
         first, stop = (0, data.n_frames - 1) if window is None else window
         shown[first : stop + 1] = True
@@ -3378,7 +3873,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         divided, and a *scale* as well, would divide twice.
 
         *part* is the Combine box: with anything but ``"all"`` the frames of a
-        point are split by :attr:`SpectrumData.odd_frames` and each half
+        point are split by :attr:`SpectrumData.half_mask` and each half
         totalled on its own, the difference being of the two sums -- which is
         what the spectrum pane next door has always shown, so the two panes
         now agree. The cost is that a point which ended up with 44 odd frames
@@ -3393,7 +3888,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         """
         n_frames = values.shape[0]
         index_all = data.point_index
-        full_mask = data.odd_frames if part != "all" else None
+        full_mask = data.half_mask if part != "all" else None
         odd = None if full_mask is None else full_mask[first : first + n_frames]
 
         if scale is not None and (kind == "frame" or index_all is None):
@@ -3516,6 +4011,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 f"{data.path.name}: {partial} point(s) total fewer frames "
                 f"than the rest, so their raw values sit low in proportion"
             )
+        first_half, second_half = self._half_names()
         if lopsided and scale is None:
             # On totals, a point with one more odd frame than even carries
             # that whole frame's counts into the difference as signal -- of
@@ -3526,8 +4022,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             # count cancels.
             notes.append(
                 f"{data.path.name}: {lopsided} point(s) hold unequal numbers "
-                f"of odd and even frames, so their raw difference carries the "
-                f"extra frame as signal; the normalised difference does not"
+                f"of {first_half} and {second_half} frames, so their raw "
+                f"difference carries the extra frame as signal; the "
+                f"normalised difference does not"
             )
 
         if kind == "point":
@@ -3546,6 +4043,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 TREND_POINT_AXIS,
                 notes + [f"{data.path.name}: no {field} recorded"],
             )
+        # One value per plotted point: the mean over a slow dichro point's
+        # rows, the column itself everywhere else.
+        x = data.reduce_rows(x)
         # The detector and the scan need not have written the same number of
         # points: scan 125 was aborted after 9 rows with ten complete 80-frame
         # blocks already on disk. Pair what pairs and say what was left over,
@@ -4059,6 +4559,16 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             ),
             f"dead time = {'corrected' if dead_time else 'uncorrected'}",
         ]
+        tags = {part: tag for _label, part, _unit, tag in self._modes()}
+        first_half, second_half = self._half_names()
+        diff, odd, even = tags["difference"], tags["odd"], tags["even"]
+        if self.split == "polarization":
+            lines.append(
+                f"split = by polarization: plus is the larger reading of "
+                f"{self.data[0].pol_field}, minus the smaller; a point is the "
+                f"{self.data[0].rows_per_point} rows taken at one setting of "
+                f"the scan axis, and its x the mean over them"
+            )
         if self._normalizable(dead_time, settings):
             lines.append(
                 f"monitor = {self._monitor_label(settings['monitor'])}"
@@ -4067,58 +4577,62 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 "values = raw and normalised; both are totals over each "
                 "point's frames, not means, and so is every mon_ column"
             )
-            # The one thing a reader of an odd - even column has to know, and
-            # the file is where they will be reading it. It is a different
-            # thing for each kind of monitor, so it is not one sentence: the
-            # computed one is taken from the same detector and alternates
-            # with the signal, a recorded one is a single number per point
-            # and cannot.
-            lines.append(
-                "note = oddeven_norm is exactly odd_norm - even_norm, and has "
-                "no single divisor of its own, so there is no mon_oddeven"
-            )
-            if settings["monitor"] in COMPUTED_MONITORS:
-                # What this costs is different for each element, so the note
-                # is too. Measured at the 7.41 keV line of scan 597, which
-                # reads -2.05% raw. Both monitors open on the same near-total
-                # band, so the element is what separates them: element 1
-                # alternates -2.41% over it and reads +0.37%, element 7
-                # alternates -7.40% and reads +6.62% -- the sign flips. The
-                # band does contain the ROI on either element, but it is 96%
-                # of the element, so element 1 no longer divides the line by
-                # itself the way its old one-peak window did.
-                element = COMPUTED_MONITORS[settings["monitor"]]
+            # Nothing about halves where there are none.
+            if self.split:
+                # The one thing a reader of an odd - even column has to know, and
+                # the file is where they will be reading it. It is a different
+                # thing for each kind of monitor, so it is not one sentence: the
+                # computed one is taken from the same detector and alternates
+                # with the signal, a recorded one is a single number per point
+                # and cannot.
                 lines.append(
-                    "note = each parity is divided by its own parity's "
-                    f"monitor; this one is element {element} of the same "
-                    "detector, which alternates with the frames itself, so "
-                    "the odd/even asymmetry below is the ROI's against that "
-                    "element's and not against a steady beam"
+                    f"note = {diff}_norm is exactly {odd}_norm - {even}_norm, and "
+                    f"has no single divisor of its own, so there is no mon_{diff}"
                 )
-                lines.append(
-                    "note = both computed monitors open on the same band, so "
-                    "the element is the choice: element 1 carries the signal "
-                    "and pulls the asymmetry towards its own, element 7 "
-                    "holds almost none of the line but alternates about "
-                    "three times harder and reverses the sign. Neither is a "
-                    "quiet reference -- there is no region of this detector "
-                    "that does not alternate, and the opening band contains "
-                    "the ROI on either element"
-                )
-            else:
-                # These were equal to each other while the pane reduced by
-                # the mean: one reading per point, spread over the frames and
-                # averaged straight back out. On totals each is that reading
-                # times the frames its own half contributed, so they part
-                # company at exactly the ragged points -- and that is the
-                # division doing its job, not an inconsistency.
-                lines.append(
-                    "note = one recorded reading per scan point, so mon_odd "
-                    "and mon_even are that reading times the frames each half "
-                    "totalled: equal wherever the halves are, and normalising "
-                    "then leaves the odd/even asymmetry alone; where they "
-                    "differ, normalising divides the extra frame back out"
-                )
+                if settings["monitor"] in COMPUTED_MONITORS:
+                    # What this costs is different for each element, so the note
+                    # is too. Measured at the 7.41 keV line of scan 597, which
+                    # reads -2.05% raw. Both monitors open on the same near-total
+                    # band, so the element is what separates them: element 1
+                    # alternates -2.41% over it and reads +0.37%, element 7
+                    # alternates -7.40% and reads +6.62% -- the sign flips. The
+                    # band does contain the ROI on either element, but it is 96%
+                    # of the element, so element 1 no longer divides the line by
+                    # itself the way its old one-peak window did.
+                    element = COMPUTED_MONITORS[settings["monitor"]]
+                    lines.append(
+                        "note = each parity is divided by its own parity's "
+                        f"monitor; this one is element {element} of the same "
+                        "detector, which alternates with the frames itself, so "
+                        f"the {first_half}/{second_half} asymmetry below is the "
+                        "ROI's against that "
+                        "element's and not against a steady beam"
+                    )
+                    lines.append(
+                        "note = both computed monitors open on the same band, so "
+                        "the element is the choice: element 1 carries the signal "
+                        "and pulls the asymmetry towards its own, element 7 "
+                        "holds almost none of the line but alternates about "
+                        "three times harder and reverses the sign. Neither is a "
+                        "quiet reference -- there is no region of this detector "
+                        "that does not alternate, and the opening band contains "
+                        "the ROI on either element"
+                    )
+                else:
+                    # These were equal to each other while the pane reduced by
+                    # the mean: one reading per point, spread over the frames and
+                    # averaged straight back out. On totals each is that reading
+                    # times the frames its own half contributed, so they part
+                    # company at exactly the ragged points -- and that is the
+                    # division doing its job, not an inconsistency.
+                    lines.append(
+                        f"note = one recorded reading per primary row, so "
+                        f"mon_{odd} and mon_{even} are the total of those readings "
+                        f"over the frames each half took: equal wherever the "
+                        f"halves are, and normalising then leaves the "
+                        f"{first_half}/{second_half} asymmetry alone; where they "
+                        f"differ, normalising divides the extra frame back out"
+                    )
         elif settings["normalize"]:
             # Asked for and not delivered. Saying "(none)" here would be true
             # of the numbers and a lie about the session: the box was ticked,
@@ -4167,10 +4681,11 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         xlabel = TREND_POINT_AXIS
         mean_x = np.empty(0)
 
-        for label, part, _unit in COMBINE_MODES:
-            tag = _safe_name(
-                label.replace(" - ", "").replace(" only", "")
-            ).lower()
+        tags = {part: tag for _label, part, _unit, tag in self._modes()}
+        # Sum alone where the frames do not split: the other three would be
+        # the sum again, or nothing, under names that promise a contrast.
+        modes = self._modes() if self.split else self._modes()[:1]
+        for _label, part, _unit, tag in modes:
             for suffix, these in (("raw", raw_settings), ("norm", settings)):
                 if suffix == "norm" and not normalize:
                     continue
@@ -4189,14 +4704,10 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                     names.append(f"{tag}_{stem}_{suffix}")
                     columns.append(y)
 
-        for part in ("all", "odd", "even"):
+        for part in ("all", "odd", "even") if self.split else ("all",):
             column = self._monitor_trend(dead_time, part, settings)
             if column is not None:
-                names.append(
-                    {"all": "mon_sum", "odd": "mon_odd", "even": "mon_even"}[
-                        part
-                    ]
-                )
+                names.append(f"mon_{tags[part]}")
                 columns.append(column)
 
         points = np.arange(
