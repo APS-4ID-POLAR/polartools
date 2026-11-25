@@ -57,6 +57,7 @@ polartools/
   image_viewer.py           area-detector stacks (pyqtgraph), behind Img
   flyscan_gui_dichro.py     `flyscan-dichro-gui`
   xmcd_gui.py               `xmcd-gui`
+  xanes_gui.py              `xanes-gui`; mirrors xmcd_gui.py
 ```
 
 ## House rules

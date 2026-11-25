@@ -89,6 +89,7 @@ docs = [
 
 [project.scripts]
 xmcd-gui = "polartools.xmcd_gui:main"
+xanes-gui = "polartools.xanes_gui:main"
 scan-viewer = "polartools.scan_viewer:main"
 flyscan-dichro-gui = "polartools.flyscan_gui_dichro:main"
 

@@ -26,14 +26,16 @@ coverage and autoapi, and not to be reformatted.
 
 ## GUIs
 
-Five PyQt6 modules, vendored from standalone beamline scripts and ported from
-PyQt5. Three are console scripts (`[project.scripts]`):
+Six PyQt6 modules: five vendored from standalone beamline scripts and ported
+from PyQt5, plus `xanes_gui.py`. Four are console scripts
+(`[project.scripts]`):
 
 | Entry point | Module | Opens |
 | --- | --- | --- |
 | `scan-viewer` | `scan_viewer.py` | Scan browser for a directory of `*_master.hdf` |
 | `flyscan-dichro-gui` | `flyscan_gui_dichro.py` | CR/CL flyscan difference maps |
 | `xmcd-gui` | `xmcd_gui.py` | Interactive XMCD normalization |
+| `xanes-gui` | `xanes_gui.py` | Interactive XANES normalization |
 
 **`_scan_viewer_base.py`** (~9900 lines) is the scan browser itself — listing,
 field table, plots, fits, XMCD panels, colour maps. It is what the beamline
@@ -53,8 +55,12 @@ Vortex element count nor the dead-time bookkeeping is constant between run
 cycles, so both are probed for rather than assumed.
 
 **`xmcd_gui.py`** is deliberately thin; the processing lives in
-`absorption.py`. It is the only GUI module with tests
-(`tests/test_xmcd_gui.py`, which builds a session-scoped `QApplication`).
+`absorption.py`. **`xanes_gui.py`** is its single-spectrum counterpart, built
+on the same layout, method names and helpers (copied, not shared), plus a
+column-file source and a reference overlay. Keep the two in step: a fix to a
+helper in one usually belongs in the other. They are the only GUI modules with
+tests (`tests/test_xmcd_gui.py`, `tests/test_xanes_gui.py`, each building a
+session-scoped `QApplication`).
 
 The GUI module docstrings are long and carry the reasoning — usually with the
 scan numbers that motivated it — behind every default. Read the docstring

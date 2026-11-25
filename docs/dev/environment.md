@@ -73,7 +73,8 @@ Not covered, for want of a data file:
 - `SPEHandler` — needs a Princeton Instruments SPE file
 - `process_rxes_mcd` — needs a scan whose image count is divisible by 4
   (lambda250k has 50, which is not)
-- every GUI module except `xmcd_gui` — all are in the coverage `omit` list
+- every GUI module except `xmcd_gui` and `xanes_gui` — all are in the
+  coverage `omit` list
 
 ## CI workflows
 
