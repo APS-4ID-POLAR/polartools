@@ -8,15 +8,20 @@ can launch it from anywhere:
 xanes-gui
 ```
 
+It takes no arguments. For the other graphical tools in the package, see
+[Scan viewers](viewers.md) and [Flyscan dichroism](flyscan_dichro.md).
+
 ## What it does
 
 Wraps the same functions documented in the [XAS / XMCD example](absorption.md)
 with a graphical workflow, for the simpler single-spectrum case (no ±-field
 pairing):
 
-- Load one set of scans from a SPEC file or databroker catalog, or load
-  directly from a plain column file by picking which columns are energy and
-  mu
+- Load one set of scans from a SPEC file, a folder of HDF5 master files or
+  CSV exports, or a databroker/tiled catalog, or load directly from a plain
+  column file by picking which columns are energy and mu
+- Points that are still NaN/inf after averaging (e.g. a monitor reading zero
+  in every scan) are dropped before normalizing; the status bar says how many
 - Set the edge energy (E₀), pre-edge, and post-edge windows interactively
 - See the normalized and flattened XANES update live as you adjust parameters
 - Save the processed XANES to a column file with a metadata header, to a
@@ -44,7 +49,7 @@ useful, you can usually find it (or build it) in that module.
 
 Open an issue with:
 
-- The polartools version (`xanes-gui --version` or `python -c "import polartools; print(polartools.__version__)"`)
+- The polartools version (`python -c "import polartools; print(polartools.__version__)"`)
 - The PyQt6 version (`python -c "from PyQt6.QtCore import QT_VERSION_STR; print(QT_VERSION_STR)"`)
 - A screenshot of the failure if it's visual
 - The full traceback from the terminal you launched `xanes-gui` from
@@ -53,3 +58,5 @@ Open an issue with:
 
 - [XAS / XMCD](absorption.md) — the underlying scriptable API
 - [XMCD GUI](xmcd_gui.md) — the paired ±-field counterpart to this GUI
+- [Scan viewers](viewers.md) — browse a directory of scans
+- [Installation](../installation.md) — Qt system libraries on Linux

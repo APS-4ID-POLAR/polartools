@@ -753,6 +753,27 @@ def test_on_load_success_sets_state(win, synthetic_data):
     assert win._results is not None
 
 
+def test_on_load_drops_nan_points(win, synthetic_data):
+    # lmfit aborts on NaN, so points still NaN after averaging are dropped.
+    e, mu = synthetic_data
+    mu = mu.copy()
+    mu[0] = np.nan
+    win.le_scans.setText("1")
+    win.cb_source.setCurrentIndex(0)
+    win.le_spec_path.setText("/fake/path.dat")
+
+    with patch(
+        "polartools.xanes_gui.load_multi_xas",
+        return_value=(e, mu, np.zeros_like(mu)),
+    ):
+        win._on_load()
+
+    assert win._energy.size == e.size - 1
+    assert np.all(np.isfinite(win._mu))
+    assert win._results is not None
+    assert "dropped 1 NaN point(s)" in win.status_bar.currentMessage()
+
+
 # ─── Guess-only-on-first-load behavior ───────────────────────────────────────
 
 
@@ -979,3 +1000,21 @@ def test_on_load_column_file_reparses_on_cache_miss(win, tmp_path):
 
     assert win._energy is not None
     assert win._results is not None
+
+
+def test_on_load_column_file_drops_nan_points(win, tmp_path, synthetic_data):
+    e, mu = synthetic_data
+    mu = mu.copy()
+    mu[5] = np.nan
+    path = str(tmp_path / "data.dat")
+    np.savetxt(path, np.column_stack((e * 1000, mu)))
+    win.cb_source.setCurrentIndex(win.cb_source.count() - 1)
+    win.le_column_path.setText(path)
+    win._preview_column_file(path)
+
+    win._on_load()
+
+    assert win._energy.size == e.size - 1
+    assert np.all(np.isfinite(win._mu))
+    assert win._results is not None
+    assert "dropped 1 NaN point(s)" in win.status_bar.currentMessage()

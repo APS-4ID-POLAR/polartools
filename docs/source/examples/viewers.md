@@ -175,5 +175,6 @@ not. Keep the subdirectory layout intact when copying data off the beamline.
 ## See also
 
 - [XMCD GUI](xmcd_gui.md) — interactive XMCD normalization
+- [XANES GUI](xanes_gui.md) — interactive XANES normalization
 - [Flyscan dichroism](flyscan_dichro.md) — the post-scan flyscan viewer
 - [Image processing](process_images.md) — the scriptable image reduction API
