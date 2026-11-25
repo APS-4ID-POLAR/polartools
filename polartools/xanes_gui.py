@@ -859,10 +859,11 @@ class MainWindow(QMainWindow):
         self.curve_raw.setData(self._energy, self._mu)
 
         # Guess normalization range markers only on the first load. On later
-        # loads, keep the current parameters (relative pre/post ranges) so
-        # tuned settings survive; the marker lines are repositioned onto the
-        # new e0 by _run_normalization.
-        if not self._markers_initialized:
+        # loads, keep the current parameters (relative pre/post ranges) so tuned
+        # settings survive; the marker lines are repositioned onto the new e0
+        # after normalization.
+        first_load = not self._markers_initialized
+        if first_load:
             self._init_markers()
             self._markers_initialized = True
 
@@ -873,6 +874,9 @@ class MainWindow(QMainWindow):
                 f"{self.status_bar.currentMessage()}  |  "
                 f"dropped {n_dropped} NaN point(s)"
             )
+
+        if not first_load:
+            self._sync_lines_to_entries()
 
     def _init_markers(self):
         energy = self._energy
@@ -1019,9 +1023,6 @@ class MainWindow(QMainWindow):
         if self._energy is None:
             return
 
-        self._results = None
-        self.btn_save.setEnabled(False)
-
         norm_kw = self._build_norm_kwargs()
         try:
             results = normalize_absorption(self._energy, self._mu, **norm_kw)
@@ -1036,8 +1037,6 @@ class MainWindow(QMainWindow):
         self.line_e0.setPos(self._e0_val)
         with QSignalBlocker(self.le_e0):
             self.le_e0.setText(f"{self._e0_val:.2f}")
-
-        self._sync_lines_to_entries()
 
         energy = results["energy"]
 

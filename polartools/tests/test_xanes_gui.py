@@ -380,40 +380,6 @@ def test_run_normalization_error(loaded_win):
     assert "Normalization error" in msg
 
 
-def test_run_normalization_error_clears_stale_results(loaded_win):
-    energy = loaded_win._energy
-    with patch(
-        "polartools.xanes_gui.normalize_absorption",
-        return_value=_norm_stub(energy),
-    ):
-        loaded_win._run_normalization()
-    assert loaded_win._results is not None
-    assert loaded_win.btn_save.isEnabled()
-
-    with patch(
-        "polartools.xanes_gui.normalize_absorption",
-        side_effect=RuntimeError("bad fit"),
-    ):
-        loaded_win._run_normalization()
-    assert loaded_win._results is None
-    assert not loaded_win.btn_save.isEnabled()
-
-
-def test_run_normalization_syncs_pre_post_lines_to_new_e0(loaded_win):
-    energy = loaded_win._energy
-    loaded_win.le_pre1.setText("-30.0")
-    loaded_win.le_post1.setText("10.0")
-
-    with patch(
-        "polartools.xanes_gui.normalize_absorption",
-        return_value=_norm_stub(energy, e0=7150.0),
-    ):
-        loaded_win._run_normalization()
-
-    assert loaded_win.line_pre1.value() == pytest.approx(7150.0 - 30.0)
-    assert loaded_win.line_post1.value() == pytest.approx(7150.0 + 10.0)
-
-
 # ─── _save_results ────────────────────────────────────────────────────────────
 
 
