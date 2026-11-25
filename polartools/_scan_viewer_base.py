@@ -34,9 +34,12 @@ For each ``*_master.hdf`` file written by ``MyNXWriter``
   scan changes -- the columns on offer, or which of them the scan asks for.
   Step along a run of lineup scans and the ticks made on the first stand for
   the rest, which is the comparison they were made for; open something else
-  and all three are read back from that scan's own hints, so nothing you
+  and X and Y are read back from that scan's own hints, so nothing you
   ticked an hour ago, on a scan since forgotten, is still deciding what you
-  are looking at now. (``hints``
+  are looking at now. Norm is the exception: a monitor you ticked stays
+  ticked across a change of kind, and one left clear stays clear, because
+  normalizing is a choice about the whole selection rather than about the
+  scan that happens to lead it. (``hints``
   describes ``primary``; a reduced stream brings its own defaults instead.
   The stream itself is the exception, and is kept when picked by hand.)
   Curves are overlaid across every selected file, optionally normalized by
@@ -329,6 +332,16 @@ For each ``*_master.hdf`` file written by ``MyNXWriter``
   ``entry/instrument/bluesky/streams/baseline`` stream for one selected file at
   a time, as a before/after table (the baseline stream records each field once
   before the scan and once after),
+- a "Metadata…" button opening another window, likewise for one selected
+  file, with the run-start metadata in ``entry/instrument/bluesky/metadata``
+  as a Key / Value tree. The writer saves each dict- or list-valued key
+  (``hints``, ``plan_args``, ``session_state``, ``versions``...) as PyYAML
+  text tagged ``text_format: yaml``. That text is parsed back into the dict
+  it was, so it opens as a tree rather than a block of YAML. The parse
+  rebuilds only numpy arrays and scalars and never constructs anything else
+  the Python tags name (see ``_MetadataLoader``). A filter box keeps the rows
+  matching a key or value, together with their parents and everything under
+  them,
 - a "Load Image" button that opens the detector frames belonging to the
   selected file(s) in a separate 2D image window (see ``image_viewer.py``).
   Selecting several files puts their images side by side in one window,
@@ -387,6 +400,7 @@ from pathlib import Path
 
 import h5py
 import numpy as np
+import yaml
 
 # Before matplotlib, which picks its Qt binding from whatever is already
 # imported -- see the longer note in image_viewer.py.
@@ -2735,6 +2749,122 @@ def read_baseline(path: Path) -> dict[str, tuple[object, object]]:
     return out
 
 
+class _MetadataLoader(yaml.SafeLoader):
+    """A safe YAML loader for the dicts the writer dumps into the metadata.
+
+    Run-start values that are dicts or lists are stored as PyYAML text, and
+    that text carries the Python tags the default dumper writes --
+    ``!!python/tuple``, numpy arrays and scalars pickled as
+    ``!!python/object/apply`` with their bytes in ``!!binary``, and
+    ``!!python/name`` references. ``yaml.safe_load`` refuses every one of
+    them, and the full loader would import and call whatever the tag names.
+    This one builds nothing but plain containers: numpy arrays, scalars and
+    dtypes are rebuilt from their bytes, and any other Python tag is read as
+    the mapping, list or text underneath it, so the parse does not fail on a
+    tag it has not met.
+    """
+
+
+def _metadata_plain(loader, node):
+    if isinstance(node, yaml.MappingNode):
+        return loader.construct_mapping(node, deep=True)
+    if isinstance(node, yaml.SequenceNode):
+        return loader.construct_sequence(node, deep=True)
+    return loader.construct_scalar(node)
+
+
+def _metadata_numpy_dtype(args, state):
+    dtype = np.dtype(args[0])
+    order = state[1] if state and len(state) > 1 else None
+    return dtype.newbyteorder(order) if order in ("<", ">") else dtype
+
+
+def _metadata_apply(loader, suffix, node):
+    """``!!python/object/apply:<callable>``, rebuilt only for numpy's own."""
+    plain = _metadata_plain(loader, node)
+    if isinstance(plain, dict):
+        args, state = plain.get("args", []), plain.get("state")
+    else:
+        args, state = plain, None
+    try:
+        if suffix == "numpy.dtype":
+            return _metadata_numpy_dtype(args, state)
+        if suffix.endswith("multiarray.scalar"):
+            dtype, raw = args[0], args[1]
+            return np.frombuffer(raw, dtype=dtype)[0]
+        if suffix.endswith("multiarray._reconstruct"):
+            # state is (version, shape, dtype, is_fortran, raw bytes).
+            _, shape, dtype, fortran, raw = state
+            order = "F" if fortran else "C"
+            return np.frombuffer(raw, dtype=dtype).reshape(shape, order=order)
+    except (TypeError, ValueError, IndexError, KeyError):
+        # A payload numpy cannot rebuild is shown as its plain YAML instead.
+        return plain
+    return plain
+
+
+_MetadataLoader.add_constructor(
+    "tag:yaml.org,2002:python/tuple",
+    lambda loader, node: loader.construct_sequence(node, deep=True),
+)
+_MetadataLoader.add_multi_constructor(
+    "tag:yaml.org,2002:python/object/apply:", _metadata_apply
+)
+_MetadataLoader.add_multi_constructor(
+    "tag:yaml.org,2002:python/",
+    lambda loader, suffix, node: _metadata_plain(loader, node),
+)
+
+
+def _metadata_text(value) -> str:
+    """One metadata leaf as the line of text the metadata window shows."""
+    if isinstance(value, np.ndarray):
+        if value.size == 1:
+            return str(value.reshape(-1)[0])
+        summary = np.array2string(value, precision=6, threshold=6)
+        return f"array{value.shape}: {' '.join(summary.split())}"
+    if isinstance(value, bytes):
+        return f"<{len(value)} bytes>"
+    if isinstance(value, np.generic):
+        return str(value.item())
+    return str(value)
+
+
+def read_metadata(path: Path) -> dict[str, object]:
+    """Every run-start metadata key of *path*, sorted, as Python values.
+
+    A text value marked ``text_format: yaml`` was a dict or list when it was
+    written and is parsed back into one (see :class:`_MetadataLoader`);
+    should that fail the raw text is kept. Numbers come back as numbers and
+    other text as text. A file without the metadata group gives ``{}``.
+    """
+    out: dict[str, object] = {}
+    with h5py.File(path, "r") as f:
+        group = f.get(METADATA_PATH)
+        if group is None:
+            return out
+        for name in sorted(group.keys()):
+            item = group[name]
+            if not isinstance(item, h5py.Dataset):
+                continue
+            raw = item[()]
+            value = np.asarray(raw)
+            if value.dtype.kind in "OSU":
+                text = _as_text(raw)
+                if item.attrs.get("text_format") == "yaml":
+                    try:
+                        out[name] = yaml.load(text, Loader=_MetadataLoader)
+                    except yaml.YAMLError:
+                        out[name] = text
+                else:
+                    out[name] = text
+            elif value.size == 1:
+                out[name] = value.reshape(-1)[0].item()
+            else:
+                out[name] = value
+    return out
+
+
 def _baseline_numbers(path: Path) -> dict[str, tuple[float, float]]:
     """Every numeric baseline field of *path*, as its before/after pair.
 
@@ -4803,6 +4933,12 @@ class HdfViewer(QtWidgets.QMainWindow):
             "Show the baseline (before/after) values for one selected file."
         )
         self.baseline_btn.clicked.connect(self._show_baseline_window)
+        self.metadata_btn = QtWidgets.QPushButton("Metadata…")
+        self.metadata_btn.setToolTip(
+            "Show the run-start metadata (plan, hints, versions, ...) for one\n"
+            "selected file. Values written as dicts or lists open as trees."
+        )
+        self.metadata_btn.clicked.connect(self._show_metadata_window)
         self.export_btn = QtWidgets.QPushButton("Export…")
         self.export_btn.setEnabled(False)
         self.export_btn.setToolTip(
@@ -4823,6 +4959,7 @@ class HdfViewer(QtWidgets.QMainWindow):
         top.addWidget(self.image_btn)
         top.addWidget(self.spectrum_btn)
         top.addWidget(self.baseline_btn)
+        top.addWidget(self.metadata_btn)
         top.addWidget(self.export_btn)
         top.addWidget(self.dir_label, 1)
         root.addLayout(top)
@@ -4884,6 +5021,9 @@ class HdfViewer(QtWidgets.QMainWindow):
         # Built now but shown only on demand, in its own window.
         self._baseline_panel = self._build_baseline_panel()
         self._baseline_window: QtWidgets.QDialog | None = None
+        self._metadata_panel = self._build_metadata_panel()
+        self._metadata_window: QtWidgets.QDialog | None = None
+        self._metadata_path: Path | None = None  # the file the tree shows
 
         self.status = self.statusBar()
 
@@ -5746,6 +5886,37 @@ class HdfViewer(QtWidgets.QMainWindow):
         layout.addWidget(self.baseline_table)
         return panel
 
+    def _build_metadata_panel(self) -> QtWidgets.QWidget:
+        panel = QtWidgets.QWidget()
+        layout = QtWidgets.QVBoxLayout(panel)
+
+        top = QtWidgets.QHBoxLayout()
+        top.addWidget(QtWidgets.QLabel("Metadata for file:"))
+        self.metadata_combo = QtWidgets.QComboBox()
+        self.metadata_combo.currentIndexChanged.connect(self._update_metadata)
+        top.addWidget(self.metadata_combo, 1)
+        layout.addLayout(top)
+
+        # iconfig and session_state alone run to hundreds of lines, so a
+        # key is easier found by typing than by unfolding.
+        self.metadata_filter = QtWidgets.QLineEdit()
+        self.metadata_filter.setPlaceholderText("Filter keys/values")
+        self.metadata_filter.setClearButtonEnabled(True)
+        self.metadata_filter.textChanged.connect(self._filter_metadata)
+        layout.addWidget(self.metadata_filter)
+
+        self.metadata_tree = QtWidgets.QTreeWidget()
+        self.metadata_tree.setColumnCount(2)
+        self.metadata_tree.setHeaderLabels(["Key", "Value"])
+        self.metadata_tree.setEditTriggers(
+            QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers
+        )
+        self.metadata_tree.setTextElideMode(QtCore.Qt.TextElideMode.ElideRight)
+        self.metadata_tree.setUniformRowHeights(True)
+        self.metadata_tree.header().setStretchLastSection(True)
+        layout.addWidget(self.metadata_tree)
+        return panel
+
     # -- Directory / file list -------------------------------------------
 
     def _choose_directory(self):
@@ -5903,17 +6074,21 @@ class HdfViewer(QtWidgets.QMainWindow):
             self.stream_combo.clear()
             self.stream_combo.blockSignals(False)
             self.baseline_combo.clear()
+            self.metadata_combo.clear()
             self._refresh_reduce_channels([])
             self._update_plot()
             self._update_baseline()
+            self._update_metadata()
             return
         self._refresh_stream_combo(paths)
         self._refresh_field_lists(paths, self.stream_combo.currentText())
         self._refresh_reduce_channels(paths)
         self._refresh_baseline_combo(paths)
+        self._refresh_metadata_combo(paths)
         self._auto_check_xmcd()
         self._update_plot()
         self._update_baseline()
+        self._update_metadata()
 
     def _auto_check_xmcd(self):
         """Pre-tick XMCD when the stream on screen is ``dichro_monitor``.
@@ -6024,23 +6199,27 @@ class HdfViewer(QtWidgets.QMainWindow):
         # ticks also stand while the scan that seeded them is still selected,
         # whichever end the new one was added at.
         kind = scan_kind(paths[0], fields, stream)
-        preferred_x, hinted_y, preferred_norm = kind[2], kind[3], kind[4]
+        preferred_x, hinted_y = kind[2], kind[3]
         preferred_y = list(hinted_y)
         keeping = kind == self._fields_kind or self._fields_leader in {
             str(path) for path in paths
         }
+        # Norm is the exception to the kind rule: a monitor ticked on one scan
+        # still divides the next, whatever kind of scan that is, and one left
+        # clear stays clear. It is never read off the hints here, which is
+        # where it starts anyway (see default_monitor_field). A monitor the
+        # selection no longer records gives way to nothing.
+        kept_x, kept_y, kept_norm = self._kept
+        preferred_norm = kept_norm if kept_norm in seen else ""
         if keeping:
             # What was ticked wins, as long as the selection still records it:
             # the kept ticks outlive the table they were made on, and a second
             # scan can be dropped as well as added, so a tick whose field went
-            # with it has to give way to the hint. An empty Norm is a choice
-            # and stays empty; an empty Y is only ever what is left when every
-            # ticked field has gone.
-            kept_x, kept_y, kept_norm = self._kept
+            # with it has to give way to the hint. An empty Y is only ever what
+            # is left when every ticked field has gone.
             live_y = [name for name in kept_y if name in seen]
             preferred_x = kept_x if kept_x in seen else preferred_x
             preferred_y = live_y if live_y or not kept_y else preferred_y
-            preferred_norm = kept_norm if kept_norm in seen else ""
         else:
             # Only a re-seed records the kind, so that the ticks stay attached
             # to the kind of scan they were made for rather than to a mixed
@@ -6758,6 +6937,16 @@ class HdfViewer(QtWidgets.QMainWindow):
         self.baseline_combo.blockSignals(False)
         if current in names:
             self.baseline_combo.setCurrentText(current)
+
+    def _refresh_metadata_combo(self, paths: list[Path]):
+        names = [p.name for p in paths]
+        current = self.metadata_combo.currentText()
+        self.metadata_combo.blockSignals(True)
+        self.metadata_combo.clear()
+        self.metadata_combo.addItems(names)
+        self.metadata_combo.blockSignals(False)
+        if current in names:
+            self.metadata_combo.setCurrentText(current)
 
     # -- Image windows ------------------------------------------------------
 
@@ -10042,6 +10231,101 @@ class HdfViewer(QtWidgets.QMainWindow):
                 )
         self.baseline_table.setSortingEnabled(True)
         self.baseline_table.resizeColumnsToContents()
+
+    # -- Metadata -------------------------------------------------------
+
+    def _show_metadata_window(self):
+        """Open (or raise) the separate run-start metadata window."""
+        if self._metadata_window is None:
+            window = QtWidgets.QDialog(self)
+            window.setWindowTitle("Metadata (run start)")
+            window.resize(760, 640)
+            layout = QtWidgets.QVBoxLayout(window)
+            layout.setContentsMargins(6, 6, 6, 6)
+            layout.addWidget(self._metadata_panel)
+            self._metadata_window = window
+        # Show first, for the same reason as the baseline window.
+        self._metadata_window.show()
+        self._metadata_window.raise_()
+        self._metadata_window.activateWindow()
+        self._refresh_metadata_combo(self._selected_paths())
+        self._update_metadata(force=True)
+
+    def _update_metadata(self, *_, force: bool = False):
+        window = getattr(self, "_metadata_window", None)
+        if window is None or not window.isVisible():
+            return  # nothing on screen to fill in; reading the file can wait
+        name = self.metadata_combo.currentText()
+        path = next((p for p in self._selected_paths() if p.name == name), None)
+        # Selecting more files keeps the one on show, and re-reading it would
+        # fold away whatever had been opened in the tree.
+        if not force and path is not None and path == self._metadata_path:
+            return
+        self._metadata_path = path
+        self.metadata_tree.clear()
+        if path is None:
+            return
+        try:
+            metadata = read_metadata(path)
+        # h5py raises KeyError or RuntimeError, not only OSError, on a file
+        # still being written; a button press should report it, not crash.
+        except (OSError, KeyError, RuntimeError, ValueError) as exc:
+            self.status.showMessage(f"Could not read metadata of {name}: {exc}")
+            return
+
+        root = self.metadata_tree.invisibleRootItem()
+        for key, value in metadata.items():
+            self._add_metadata_item(root, key, value)
+        self.metadata_tree.resizeColumnToContents(0)
+        self._filter_metadata(self.metadata_filter.text())
+
+    def _add_metadata_item(self, parent, key: str, value) -> None:
+        """One tree row for *value*, with a child per entry if it has any.
+
+        A list of plain values -- a detector list, a pair of names -- reads
+        best on one line, so only lists holding containers are unfolded.
+        """
+        item = QtWidgets.QTreeWidgetItem(parent, [str(key), ""])
+        if isinstance(value, dict):
+            for child_key, child in value.items():
+                self._add_metadata_item(item, child_key, child)
+            item.setText(1, f"{{{len(value)} keys}}")
+            return
+        if isinstance(value, (list, tuple)):
+            if any(isinstance(v, (dict, list, tuple)) for v in value):
+                for index, child in enumerate(value):
+                    self._add_metadata_item(item, f"[{index}]", child)
+                item.setText(1, f"[{len(value)} items]")
+                return
+            text = "[" + ", ".join(_metadata_text(v) for v in value) + "]"
+        else:
+            text = _metadata_text(value)
+        item.setText(1, text)
+        item.setToolTip(1, text)
+
+    def _filter_metadata(self, text: str):
+        """Show only the rows whose key or value holds *text*, with their path.
+
+        An empty filter shows everything with only the top level open.
+        """
+        needle = text.strip().lower()
+
+        def visit(item, inside_match: bool) -> bool:
+            # Whatever sits under a matching row stays visible with it, so
+            # filtering on "hints" still shows what the hints are.
+            own = bool(needle) and (
+                needle in item.text(0).lower() or needle in item.text(1).lower()
+            )
+            below = False
+            for index in range(item.childCount()):
+                below = visit(item.child(index), inside_match or own) or below
+            item.setHidden(bool(needle) and not (own or below or inside_match))
+            item.setExpanded(below)
+            return own or below
+
+        root = self.metadata_tree.invisibleRootItem()
+        for index in range(root.childCount()):
+            visit(root.child(index), False)
 
 
 def main():

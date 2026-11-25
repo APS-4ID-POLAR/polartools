@@ -101,7 +101,7 @@ nothing to work from.
 What does rescue it is ``ArrayCounter``, which counts frames *within* a point
 and resets to 1 at every one, so ``cumsum(counter == 1) - 1`` is an exact
 frame-to-point map however ragged the scan -- see
-:meth:`SpectrumData.point_index`. On scan 125 it finds **ten** complete
+:meth:`SpectrumData.row_index`. On scan 125 it finds **ten** complete
 80-frame blocks against the 9 rows the scan recorded: the detector finished a
 point the scan was aborted before writing down. So anything pairing frames
 with stream rows takes the shorter of the two and says so. The 2025-1 vintage
@@ -185,12 +185,60 @@ over another, and it flattens the very trend being looked for. Dividing the
 for. So they are offered, last, where a click can reach them, and never
 chosen for you: ``gI0`` and ``hI0`` still open these scans.
 
+**The slow dichro layout.** The other way a point's frames split in two. A
+dichro scan run without the softglue writes one vortex frame per primary row
+and flips the retarder between rows, so the halves are told apart not by
+position but by what the retarder read. The 2026-3 scan this was written on
+has as many frames as rows, ``ArrayCounter`` 1 throughout, and four rows per
+energy, ``pr2_pzt_localdc`` running ``25.24 14.76 14.76 25.24`` at every one.
+Such a scan says so in its hints, ``polarization: dichro``, and that is what
+turns this on -- together with a retarder field that toggles, the first of
+:data:`POLARIZATION_CANDIDATES` to do so, which the "Pol." box can override.
+
+"Plus" is the larger reading and "minus" the smaller, which is
+``_scan_viewer_base.reduce_dichro``'s convention, so Combine offers Sum,
+Dichro (plus - minus), Plus pol. and Minus pol. A plotted point is then not a
+row but the rows of one energy: the count comes from the scan's own
+``dichro_monitor`` stream, primary rows over its rows, and failing
+that from the shortest cycle the retarder repeats on. The trend's x is the
+mean over those rows, and a recorded monitor still divides row by row.
+
+That stream also holds the beamline's own reduction, over the fixed ROI the
+IOC was set to; the point of this window is to redo it over an ROI chosen
+here. Set to that ROI -- the per-element ``vortex_stats{n}_roi1`` sums are a
+bin range of the cube, frame k against row k -- dead-time corrected and divided by ``hI0``, the
+normalised Sum reproduces ``dichro_xas`` to 1e-5 and the normalised Dichro
+``dichro_xmcd`` with correlation 0.99997. Not to the last digit, because the
+stream averages each row's ratio and this pane takes the ratio of the totals,
+as it does for every other scan.
+
+A multi-frame scan keeps its odd/even split even when its hints say dichro:
+the softglue frames alternate within a row, which the parity split measures
+and the polarization split, one setting per row, could not see.
+
+**Peak fitting.** The trend can plot fitted Gaussian areas instead of the
+ROI's counts -- the Signal box beside the ROI, set up in a
+:class:`PeakFitWindow` of its own so that this window keeps its four rows.
+The shape is fitted once per scan and element, on the spectrum summed over
+the frames shown, and then each frame's area is a fixed linear projection
+of it (:func:`spectrum_fit.area_weights`); being linear, it totals over
+points, halves and monitors exactly as an ROI sum does, so
+:meth:`SpectrumData.weighted_trend` stands in for :meth:`SpectrumData
+.roi_trend` and nothing downstream changes. See :mod:`spectrum_fit` for the
+measurements behind that and for what a background term costs. On the
+2026-3 dichro scan the fit was tried on, the background below the Pt line
+itself flips with the polarization (+1.2 +- 0.2 % plus/minus, in a window
+with no line in it): the ROI's contrast carries part of that and the fitted
+area, with a linear background, does not -- which is the case the fit is
+for, and a reason to look at both.
+
 Run standalone on one or more spectrum files, or let ``scan_viewer_sgz``'s
 "Load Spectrum..." button open them for the scans it lists.
 """
 
 from __future__ import annotations
 
+import itertools
 import re
 import sys
 from datetime import datetime
@@ -209,9 +257,17 @@ import matplotlib
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT
 from matplotlib.figure import Figure
+from matplotlib.ticker import EngFormatter
 from matplotlib.widgets import SpanSelector
 
 from .image_viewer import recorded_detector_file
+from .spectrum_fit import BACKGROUNDS
+from .spectrum_fit import FWHM_PER_SIGMA
+from .spectrum_fit import PeakSpec
+from .spectrum_fit import area_weights
+from .spectrum_fit import decompose
+from .spectrum_fit import fit_shape
+from .spectrum_fit import suggest_peaks
 
 SPECTRUM_DATA_PATH = "entry/data/data"
 NDATTR_PATH = "entry/instrument/NDAttributes"
@@ -342,12 +398,55 @@ TREND_FRAME_AXIS = "frame"
 # word range_sum and the trend both take. One table rather than three, so
 # that a fifth contrast cannot be added to the menu and forgotten on an axis.
 # Sum first, so the box opens on what every other viewer here shows.
-COMBINE_MODES = (
-    ("Sum", "all", "counts"),
-    ("Odd - even", "difference", "odd - even counts"),
-    ("Odd only", "odd", "odd-numbered counts"),
-    ("Even only", "even", "even-numbered counts"),
+#
+# One table per way of splitting a point's frames in two -- see "The slow
+# dichro layout" in the module docstring. The parts are named for the parity
+# split, which came first, and mean "first half" and "second half" to the
+# arithmetic: under the polarization split "odd" is the plus frames and "even"
+# the minus ones. The fourth entry is the stem of the export's column names.
+COMBINE_MODES = {
+    "parity": (
+        ("Sum", "all", "counts", "sum"),
+        ("Odd - even", "difference", "odd - even counts", "oddeven"),
+        ("Odd only", "odd", "odd-numbered counts", "odd"),
+        ("Even only", "even", "even-numbered counts", "even"),
+    ),
+    "polarization": (
+        ("Sum", "all", "counts", "sum"),
+        (
+            "Dichro (plus - minus)",
+            "difference",
+            "plus - minus counts",
+            "dichro",
+        ),
+        ("Plus pol.", "odd", "plus-polarization counts", "plus"),
+        ("Minus pol.", "even", "minus-polarization counts", "minus"),
+    ),
+}
+# What each split calls its two halves, in prose.
+HALF_NAMES = {"parity": ("odd", "even"), "polarization": ("plus", "minus")}
+
+# The slow dichro layout: the scan's hint that says so, and the primary-stream
+# fields that can record the retarder, the first that toggles being the one
+# used. pr2's piezo first, since it is what every dichro scan here has used.
+DICHRO_HINT = "dichro"
+POLARIZATION_CANDIDATES = (
+    "pr2_pzt_localdc",
+    "pr1_pzt_localdc",
+    "pr3_pzt_localdc",
+    "pr1_th",
+    "pr2_th",
+    "pr3_th",
 )
+# How far a retarder field must move to count as toggling: _scan_viewer_base's
+# PR_ATOL, copied for the import-cycle reason given above _yaml_block_items.
+POLARIZATION_ATOL = 0.1
+# The stream a dichro scan reduces into, one row per point. Only its length
+# is read here -- the rows per point -- never its values, which are the
+# beamline's reduction over its own fixed ROIs.
+DICHRO_STREAM_PATH = "entry/instrument/bluesky/streams/dichro_monitor"
+# The longest polarization cycle looked for when the dichro stream is missing.
+MAX_POLARIZATION_PERIOD = 16
 # Modes that subtract one half of the frames from the other, and so can go
 # negative. Collected rather than compared against "difference" in five
 # places, since a second contrast would otherwise have to find all five.
@@ -395,6 +494,26 @@ DEFAULT_MONITOR_BINS = (200, 1800)
 # Peak button, the spin boxes and a drag of the band, while the opening default
 # is assigned directly in _build_roi_row and does not pass through it.
 _REMEMBERED_ROI_BINS: tuple[int, int] | None = None
+
+# The peak fit -- see PeakFitWindow and spectrum_fit. What the trend plots:
+# the ROI's counts, or the fitted areas of the peaks ticked "Use".
+SIGNALS = (("ROI sum", "roi"), ("Fit area", "fit"))
+# The background a new fit opens on. Linear, so that an area is the peak's
+# alone; the noise that costs is in the Background box's tooltip.
+DEFAULT_FIT_BACKGROUND = "linear"
+# A new peak's starting width: about what the Vortex resolves near 10 keV.
+DEFAULT_PEAK_FWHM_EV = 200.0
+# How far the opening fit window reaches either side of the ROI's centre, as
+# a multiple of the ROI's half-width, and at least this many eV: room for the
+# background on both sides of the line the ROI was put on.
+FIT_WINDOW_ROI_WIDTHS = 3.0
+MIN_FIT_HALF_WIDTH_EV = 400.0
+# The last fit made, for the next window to open on: the window and the
+# peaks, in bins, for the reason _REMEMBERED_ROI_BINS is in bins.
+_REMEMBERED_FIT: dict | None = None
+# A number for every peak made, so that a fit's peaks can be told apart from
+# the table's after rows are added or removed -- see _fitted_rows.
+_PEAK_IDS = itertools.count()
 
 # How far two scans' X values may differ and still be averaged together, as a
 # fraction of one step. Relative and not absolute for the reason
@@ -580,7 +699,7 @@ def is_multi_frame_scan(spectrum: Path) -> bool:
             if node is not None:
                 counter = np.asarray(node[()]).ravel()
                 starts = counter == 1
-                # The same guard point_index uses: a file whose first frame is
+                # The same guard row_index uses: a file whose first frame is
                 # not the start of a point cannot be cut into points at all.
                 if starts.size and starts.any() and starts[0]:
                     index = np.cumsum(starts) - 1
@@ -699,6 +818,106 @@ def scan_axis_field(master: Path | None, fields: list[str]) -> str | None:
             if candidate in fields:
                 return candidate
     return None
+
+
+def hint_scalar(master: Path | None, key: str) -> str:
+    """One ``key: value`` line of the scan's hints, as text, or ``""``.
+
+    ``_scan_viewer_base._yaml_scalar`` for the one shape needed here -- the
+    ``polarization: dichro`` line -- read here for the import-cycle reason
+    given above :func:`_yaml_block_items`.
+    """
+    if master is None:
+        return ""
+    for line in _meta_text(master, "hints").splitlines():
+        name, sep, value = line.partition(":")
+        if sep and name == key:
+            return value.strip()
+    return ""
+
+
+def stream_length(master: Path | None, stream_path: str) -> int | None:
+    """Rows in one stream of the master, from its first 1-D field."""
+    if master is None:
+        return None
+    try:
+        with h5py.File(master, "r") as f:
+            grp = f.get(stream_path)
+            if grp is None:
+                return None
+            for name in sorted(grp.keys()):
+                node = grp[name]
+                value = node.get("value") if hasattr(node, "get") else None
+                if value is not None and value.shape:
+                    return int(value.shape[0])
+    except (OSError, AttributeError, ValueError, IndexError):
+        return None
+    return None
+
+
+def polarization_period(plus: np.ndarray) -> int | None:
+    """The shortest cycle the plus/minus sequence repeats on, or ``None``.
+
+    The fallback for finding the rows of one dichro point when the scan wrote
+    no dichro stream to count them by. ``+ - - +`` repeats on 4 and not on 2
+    or 3; a cycle has to hold both polarizations to be one, or a scan that
+    sat at one setting would read as a cycle of one.
+    """
+    n = plus.size
+    for period in range(2, min(MAX_POLARIZATION_PERIOD, n) + 1):
+        cycle = plus[:period]
+        if not (cycle.any() and (~cycle).any()):
+            continue
+        if np.array_equal(plus[period:], plus[: n - period]):
+            return period
+    return None
+
+
+def rows_per_dichro_point(master: Path | None, plus: np.ndarray) -> int | None:
+    """How many primary rows make one point of a slow dichro scan.
+
+    The dichro stream's row count first: the scan wrote one row there per
+    point, so primary rows over that is the cycle -- 4 on the 2026-3 scans.
+    Rounded rather than required to divide, because a scan stopped part way
+    leaves the two a row or so out of step; and checked against *plus*,
+    since a cycle that leaves a point with one polarization only is not the
+    cycle. Failing that, :func:`polarization_period` reads the cycle off the
+    retarder itself.
+    """
+    rows = plus.size
+    points = stream_length(master, DICHRO_STREAM_PATH)
+    if points:
+        k = int(round(rows / points))
+        complete = (rows // k) * k if k >= 2 else 0
+        if complete:
+            groups = plus[:complete].reshape(-1, k)
+            if groups.any(axis=1).all() and (~groups).any(axis=1).all():
+                return k
+    return polarization_period(plus)
+
+
+def polarization_fields(master: Path | None) -> dict[str, tuple]:
+    """The retarder fields a slow dichro scan can be split by.
+
+    Field name -> ``(values, rows_per_point)``, in the order of
+    :data:`POLARIZATION_CANDIDATES`. A field qualifies by toggling -- two
+    settings at least :data:`POLARIZATION_ATOL` apart -- and by the rows it
+    splits falling into points (:func:`rows_per_dichro_point`). Recorded is
+    not enough: a scan records every retarder whether it moved or not.
+    """
+    found = {}
+    for name in POLARIZATION_CANDIDATES:
+        values = read_primary_field(master, name)
+        if values is None:
+            continue
+        finite = values[np.isfinite(values)]
+        if finite.size < 2 or np.ptp(finite) <= POLARIZATION_ATOL:
+            continue
+        plus = values > (finite.min() + finite.max()) / 2.0
+        k = rows_per_dichro_point(master, plus)
+        if k:
+            found[name] = (values, k)
+    return found
 
 
 def primary_fields(master: Path | None) -> list[str]:
@@ -1029,12 +1248,36 @@ class SpectrumData:
         # single pass answers every element selection and both dead-time
         # variants, so the cache turns element ticking into no file reads at
         # all; see roi_trend.
-        self._trends: dict[str, tuple[tuple[int, int], tuple]] = {}
-        # The odd-numbered frames' own pyramid, built on first use and kept.
-        # A second streamed pass (0.98 s on scan 597's 5456 frames) that a
-        # window left on "Sum" never pays; see _odd_pyramid.
-        self._cum_odd_raw: np.ndarray | None = None
-        self._cum_odd_dt: np.ndarray | None = None
+        self._trends: dict[str, tuple[tuple, tuple]] = {}
+        # The first half's own pyramid -- odd frames, or plus ones -- built on
+        # first use and kept. A second streamed pass (0.98 s on scan 597's
+        # 5456 frames) that a window left on "Sum" never pays; see
+        # _half_pyramid.
+        self._cum_half_raw: np.ndarray | None = None
+        self._cum_half_dt: np.ndarray | None = None
+        # half_mask, worked out once per split rather than at every redraw,
+        # which asks for it from several places.
+        self._half_mask: np.ndarray | None = None
+
+        # How the frames of a point split in two, if they do: "parity" for
+        # the softglue layout, "polarization" for the slow dichro one, None
+        # for neither. Softglue first, so that a multi-frame scan keeps its
+        # odd/even split even when its hints also say dichro.
+        self.split: str | None = None
+        self.pol_fields: dict[str, tuple] = {}
+        self.pol_field: str | None = None
+        self._pol: np.ndarray | None = None
+        self._rows_per_point = 1
+        if self.multi_frame and self.odd_frames is not None:
+            self.split = "parity"
+        elif (
+            hint_scalar(self.master, "polarization") == DICHRO_HINT
+            and self.row_index is not None
+        ):
+            self.pol_fields = polarization_fields(self.master)
+            if self.pol_fields:
+                self.split = "polarization"
+                self.set_pol_field(next(iter(self.pol_fields)))
 
     # -- building -----------------------------------------------------------
 
@@ -1190,9 +1433,23 @@ class SpectrumData:
     def have_dead_time(self) -> bool:
         return self._cum_dt is not None
 
+    def set_pol_field(self, name: str) -> None:
+        """Split by retarder field *name*, one of :attr:`pol_fields`.
+
+        Drops the half pyramid, which was built over the old field's plus
+        frames; the next contrast asked for rebuilds it.
+        """
+        if name == self.pol_field or name not in self.pol_fields:
+            return
+        self.pol_field = name
+        self._pol, self._rows_per_point = self.pol_fields[name]
+        self._cum_half_raw = None
+        self._cum_half_dt = None
+        self._half_mask = None
+
     @property
-    def frames_per_point(self) -> int | None:
-        """Frames per scan point, where the two divide evenly.
+    def frames_per_row(self) -> int | None:
+        """Frames per primary-stream row, where the two divide evenly.
 
         ``None`` when they do not -- an aborted scan writes a ratio that means
         nothing (scan 125: 800 frames, 100 points declared, 9 taken).
@@ -1204,8 +1461,54 @@ class SpectrumData:
         return self.n_frames // self.n_points
 
     @property
+    def frames_per_point(self) -> int | None:
+        """Frames per plotted point: per row, times the rows of a dichro point."""
+        per_row = self.frames_per_row
+        if per_row is None:
+            return None
+        if self.split == "polarization":
+            return per_row * self._rows_per_point
+        return per_row
+
+    @property
+    def rows_per_point(self) -> int:
+        """Primary rows per plotted point: 1 but on a slow dichro scan."""
+        return self._rows_per_point if self.split == "polarization" else 1
+
+    @property
     def point_index(self) -> np.ndarray | None:
-        """Which scan point each frame belongs to, as ``(n_frames,)`` ints.
+        """Which plotted point each frame belongs to, as ``(n_frames,)`` ints.
+
+        :attr:`row_index` everywhere but on a slow dichro scan, where a point
+        is the :attr:`rows_per_point` rows taken at one energy -- the four
+        polarization settings of a ``+ - - +`` cycle.
+        """
+        rows = self.row_index
+        if rows is None:
+            return None
+        return rows // self.rows_per_point
+
+    def reduce_rows(self, column: np.ndarray) -> np.ndarray:
+        """A per-row primary column as one value per plotted point.
+
+        The mean over the point's rows, ignoring NaN, on a slow dichro scan --
+        where the energy readback differs in the fifth decimal between the
+        four rows of one point -- and *column* itself otherwise.
+        """
+        k = self.rows_per_point
+        if k == 1:
+            return column
+        group = np.arange(column.size) // k
+        finite = np.isfinite(column)
+        n = np.bincount(group[finite], minlength=group[-1] + 1)
+        total = np.bincount(
+            group[finite], weights=column[finite], minlength=group[-1] + 1
+        )
+        return np.where(n > 0, total / np.maximum(n, 1), np.nan)
+
+    @property
+    def row_index(self) -> np.ndarray | None:
+        """Which primary-stream row each frame belongs to, as ``(n_frames,)`` ints.
 
         ``ArrayCounter`` first, because it is the only exact answer: it resets
         to 1 at every point, so ``cumsum(counter == 1) - 1`` numbers the points
@@ -1225,9 +1528,9 @@ class SpectrumData:
             # informed, but at least it does not silently mislabel it.
             if starts.any() and starts[0]:
                 return np.cumsum(starts) - 1
-        per_point = self.frames_per_point
-        if per_point:
-            return np.arange(self.n_frames) // per_point
+        per_row = self.frames_per_row
+        if per_row:
+            return np.arange(self.n_frames) // per_row
         return None
 
     @property
@@ -1243,7 +1546,7 @@ class SpectrumData:
         against the nine rows its stream recorded -- and that one ragged end
         says nothing about how the scan was run.
         """
-        index = self.point_index
+        index = self.row_index
         if index is None or index.size == 0:
             return False
         return float(np.median(np.bincount(index))) >= 2.0
@@ -1268,11 +1571,58 @@ class SpectrumData:
             starts = counter == 1
             if starts.any() and starts[0]:
                 return (counter % 2) == 1
-        per_point = self.frames_per_point
-        if per_point:
+        per_row = self.frames_per_row
+        if per_row:
             # Position 0 is frame 1, so an even position is an odd frame.
-            return (np.arange(self.n_frames) % per_point) % 2 == 0
+            return (np.arange(self.n_frames) % per_row) % 2 == 0
         return None
+
+    @property
+    def half_mask(self) -> np.ndarray | None:
+        """The frames of the first half, as a per-frame boolean.
+
+        :attr:`odd_frames` under the parity split. Under the polarization
+        split the frames whose row read the retarder field above the middle
+        of its range: "plus" is the larger reading, the convention
+        ``_scan_viewer_base.reduce_dichro`` uses, binary however many
+        settings the readback shows.
+
+        A frame past the last row the scan recorded -- the detector can
+        finish a point the scan never wrote down -- takes the setting of the
+        same place in the first point's cycle, since the cycle is fixed;
+        otherwise it would fall into the minus half by default. ``None`` when
+        there is no split.
+
+        Cached until :meth:`set_pol_field` changes the split, and read-only,
+        since every caller shares the one array.
+        """
+        if self._half_mask is None:
+            mask = self._build_half_mask()
+            if mask is not None:
+                mask.flags.writeable = False
+            self._half_mask = mask
+        return self._half_mask
+
+    def _build_half_mask(self) -> np.ndarray | None:
+        """:attr:`half_mask`, worked out from scratch."""
+        if self.split == "parity":
+            mask = self.odd_frames
+            return None if mask is None else np.array(mask, dtype=bool)
+        if self.split != "polarization":
+            return None
+        pol = self._pol
+        finite = pol[np.isfinite(pol)]
+        plus_rows = pol > (finite.min() + finite.max()) / 2.0
+        k = self._rows_per_point
+        # A row whose readback was not recorded is placed the same way.
+        unread = np.flatnonzero(~np.isfinite(pol))
+        plus_rows[unread] = plus_rows[unread % k]
+        rows = self.row_index
+        known = rows < plus_rows.size
+        mask = np.empty(self.n_frames, dtype=bool)
+        mask[known] = plus_rows[rows[known]]
+        mask[~known] = plus_rows[rows[~known] % k]
+        return mask
 
     def roi_trend(
         self, lo: int, hi: int, slot: str = "roi"
@@ -1321,14 +1671,68 @@ class SpectrumData:
         self._trends[slot] = ((lo, hi), (raw, corrected))
         return self._trends[slot][1]
 
-    def _odd_pyramid(self):
-        """Build, once, the same cumulative pyramid over odd frames alone.
+    def weighted_trend(
+        self, lo: int, hi: int, weights: np.ndarray, slot: str = "fit"
+    ) -> tuple[np.ndarray, np.ndarray | None]:
+        """:meth:`roi_trend` with a weight per bin and element instead of a box.
+
+        *weights* is ``(n_elements, hi - lo + 1)``: element ``e``'s value in
+        a frame is ``frame[e, lo:hi + 1] @ weights[e]``. With the weights from
+        :func:`spectrum_fit.area_weights` that is the frame's fitted peak
+        area, and being linear in the frame it totals over points and halves
+        exactly as an ROI sum does -- which is why everything downstream of
+        :meth:`roi_trend` takes this unchanged. A row of NaN, for an element
+        with no fit, gives that element NaN throughout.
+
+        Dead time is applied per frame afterwards, as there: a factor
+        constant across bins commutes with the dot product. Cached under
+        *slot* on the window and the weights themselves, so refitting is a
+        new pass and nothing else is.
+        """
+        lo, hi = int(lo), int(hi)
+        weights = np.asarray(weights, dtype=np.float64)
+        if lo < 0 or hi >= self.n_bins or hi < lo:
+            raise ValueError(
+                f"{self.path.name}: fit window {lo}-{hi} is outside its "
+                f"{self.n_bins} bins"
+            )
+        if weights.shape != (self.n_elements, hi - lo + 1):
+            raise ValueError(
+                f"{self.path.name}: weights {weights.shape} do not match "
+                f"{self.n_elements} elements over bins {lo}-{hi}"
+            )
+        key = (lo, hi, hash(weights.tobytes()))
+        held = self._trends.get(slot)
+        if held is not None and held[0] == key:
+            return held[1]
+
+        raw = np.zeros((self.n_frames, self.n_elements), dtype=np.float64)
+        corrected = np.zeros_like(raw) if self._factors is not None else None
+        with h5py.File(self.path, "r") as f:
+            dset = f[SPECTRUM_DATA_PATH]
+            for start in range(0, self.n_frames, READ_CHUNK):
+                stop = min(start + READ_CHUNK, self.n_frames)
+                block = np.einsum(
+                    "fek,ek->fe", dset[start:stop, :, lo : hi + 1], weights
+                )
+                raw[start:stop] = block
+                if corrected is not None:
+                    corrected[start:stop] = block * self._factors[start:stop]
+
+        self._trends[slot] = (key, (raw, corrected))
+        return self._trends[slot][1]
+
+    def _half_pyramid(self):
+        """Build, once, the same cumulative pyramid over the first half alone.
+
+        The odd frames under the parity split, the plus ones under the
+        polarization split -- whatever :attr:`half_mask` selects.
 
         A second streamed pass -- 0.98 s over scan 597's 5456 frames, against
         1.27 s for the pass at open -- paid the first time a contrast is asked
         for and never by a window that stays on "Sum".
 
-        Only the odd half is stored: the even half is the whole minus this, so
+        Only the first half is stored: the second is the whole minus this, so
         the file is read once more rather than twice and one array pair is
         kept rather than two.
 
@@ -1337,17 +1741,17 @@ class SpectrumData:
         5456-frame scan, which is odd, so from the second block on the
         positions within a block and the frames within a point disagree.
         """
-        if self._cum_odd_raw is not None:
+        if self._cum_half_raw is not None:
             return
-        mask = self.odd_frames
+        mask = self.half_mask
         if mask is None:
             raise ValueError(
-                f"{self.path.name} records no frame numbering within its scan "
-                "points, so its frames cannot be split into odd and even."
+                f"{self.path.name} records no way to split the frames of its "
+                "scan points in two."
             )
         n_blocks = self._cum_raw.shape[0] - 1
-        self._cum_odd_raw = np.zeros_like(self._cum_raw)
-        self._cum_odd_dt = (
+        self._cum_half_raw = np.zeros_like(self._cum_raw)
+        self._cum_half_dt = (
             None if self._cum_dt is None else np.zeros_like(self._cum_dt)
         )
         with h5py.File(self.path, "r") as f:
@@ -1356,9 +1760,9 @@ class SpectrumData:
                 lo = b * self._block
                 hi = min(lo + self._block, self.n_frames)
                 raw, corrected = self._sum_slice(dset, lo, hi, mask)
-                self._cum_odd_raw[b + 1] = self._cum_odd_raw[b] + raw
-                if self._cum_odd_dt is not None:
-                    self._cum_odd_dt[b + 1] = self._cum_odd_dt[b] + corrected
+                self._cum_half_raw[b + 1] = self._cum_half_raw[b] + raw
+                if self._cum_half_dt is not None:
+                    self._cum_half_dt[b + 1] = self._cum_half_dt[b] + corrected
 
     def range_sum(
         self, first: int, last: int, dead_time: bool, part: str = "all"
@@ -1371,8 +1775,10 @@ class SpectrumData:
 
         *part* picks which frames of each scan point are counted, numbering
         them from 1: ``"all"``, ``"odd"``, ``"even"``, or ``"difference"`` for
-        odd minus even. Everything but ``"all"`` needs :attr:`odd_frames`, and
-        the first such call builds :meth:`_odd_pyramid`; after that they are
+        odd minus even -- "odd" being the first half of :attr:`half_mask`,
+        which is the plus frames on a slow dichro scan. Everything but
+        ``"all"`` needs :attr:`half_mask`, and
+        the first such call builds :meth:`_half_pyramid`; after that they are
         all subtractions and cost what ``"all"`` costs.
         """
         lo = max(0, int(first))
@@ -1383,7 +1789,7 @@ class SpectrumData:
             raise ValueError(f"range_sum: no such part {part!r}")
 
         if part != "all":
-            self._odd_pyramid()
+            self._half_pyramid()
         if part == "even":
             return self.range_sum(first, last, dead_time) - self.range_sum(
                 first, last, dead_time, "odd"
@@ -1392,10 +1798,10 @@ class SpectrumData:
             odd = self.range_sum(first, last, dead_time, "odd")
             return odd - (self.range_sum(first, last, dead_time) - odd)
 
-        odd_only = part == "odd"
+        half_only = part == "odd"
         use_dt = dead_time and self._cum_dt is not None
-        if odd_only:
-            cum = self._cum_odd_dt if use_dt else self._cum_odd_raw
+        if half_only:
+            cum = self._cum_half_dt if use_dt else self._cum_half_raw
         else:
             cum = self._cum_dt if use_dt else self._cum_raw
         block = self._block
@@ -1405,20 +1811,20 @@ class SpectrumData:
 
         if i >= j:
             # No whole block in between, so there is nothing to subtract.
-            return self._read_range(lo, hi, use_dt, odd_only)
+            return self._read_range(lo, hi, use_dt, half_only)
 
         total = cum[j] - cum[i]
         if lo < i * block:
-            total = total + self._read_range(lo, i * block, use_dt, odd_only)
+            total = total + self._read_range(lo, i * block, use_dt, half_only)
         if j * block < hi:
-            total = total + self._read_range(j * block, hi, use_dt, odd_only)
+            total = total + self._read_range(j * block, hi, use_dt, half_only)
         return total
 
     def _read_range(
-        self, lo: int, hi: int, dead_time: bool, odd_only: bool = False
+        self, lo: int, hi: int, dead_time: bool, half_only: bool = False
     ) -> np.ndarray:
         """Sum frames ``[lo, hi)`` straight from the file."""
-        mask = self.odd_frames if odd_only else None
+        mask = self.half_mask if half_only else None
         with h5py.File(self.path, "r") as f:
             raw, corrected = self._sum_slice(
                 f[SPECTRUM_DATA_PATH], lo, hi, mask
@@ -1744,6 +2150,573 @@ class MonitorRoiWindow(QtWidgets.QDialog):
         event.ignore()
 
 
+class PeakFitWindow(QtWidgets.QDialog):
+    """Sets up the Gaussian fit whose peak areas the trend can plot.
+
+    Its own window and not more rows on the viewer's, which already has four:
+    a fit wants a plot of its own -- data, model, each peak, and the residual
+    beneath -- and a table of peaks, and none of that is wanted once the fit
+    is made. What is left on the viewer is the Signal box that chooses the
+    fit over the ROI, and the button that opens this.
+
+    Everything it edits lives on the viewer (:meth:`SpectrumViewerWindow
+    ._fit_all` and the ``fit_*`` attributes), as the monitor bands do for
+    :class:`MonitorRoiWindow`, so closing this keeps the fit and the trend
+    keeps using it.
+
+    The table holds *starting values*, one row per peak and shared by every
+    element and scan; Fit fits each element of each scan from them, on its
+    own summed spectrum over the frames shown, because the elements' gains
+    differ by a few bins. The fitted columns and the plot show the scan and
+    element picked at the top. "Use" decides which peaks' areas the trend
+    sums -- a peak can be in the fit, taking its share of an overlap, without
+    being counted.
+
+    The areas listed are not lmfit's: they are the fixed-shape least-squares
+    solve (:func:`spectrum_fit.decompose`) that the trend applies frame by
+    frame, so the number in the table is the number the trend totals.
+    """
+
+    COLUMNS = (
+        "Use",
+        "Centre [keV]",
+        "FWHM [eV]",
+        "Fix centre",
+        "Fitted [keV]",
+        "Fitted FWHM [eV]",
+        "Area",
+    )
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.viewer = parent
+        self.setWindowTitle("Peak fit")
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowType.Window)
+        self.span = None
+        self._syncing = False
+        # Armed by "Add peak": the next click on the spectrum places one.
+        self._adding = False
+        self._build_ui()
+        self.refresh()
+
+    # -- construction -------------------------------------------------------
+
+    def _build_ui(self):
+        viewer = self.viewer
+        layout = QtWidgets.QVBoxLayout(self)
+
+        row = QtWidgets.QHBoxLayout()
+        row.addWidget(QtWidgets.QLabel("Window"))
+        self.lo_spin = QtWidgets.QDoubleSpinBox()
+        self.lo_spin.setPrefix("from ")
+        self.hi_spin = QtWidgets.QDoubleSpinBox()
+        self.hi_spin.setPrefix("to ")
+        for spin, value in (
+            (self.lo_spin, viewer.fit_lo_kev),
+            (self.hi_spin, viewer.fit_hi_kev),
+        ):
+            spin.setDecimals(3)
+            spin.setSingleStep(0.01)
+            spin.setSuffix(" keV")
+            spin.setKeyboardTracking(False)
+            spin.setRange(*self._kev_limits())
+            fit_spin_width(
+                spin, f"{spin.prefix()}{spin.maximum():.3f}{spin.suffix()}"
+            )
+            spin.setValue(value)
+            spin.valueChanged.connect(self._on_window_spin)
+            spin.setToolTip(
+                "The bins the fit is made over, shaded on the plot; drag the\n"
+                "band or its edges, or type the ends. Wide enough to show the\n"
+                "background either side of the peaks, which is what the\n"
+                "background terms are estimated from."
+            )
+            row.addWidget(spin)
+
+        row.addWidget(QtWidgets.QLabel("Background"))
+        self.background_combo = QtWidgets.QComboBox()
+        self.background_combo.addItems(BACKGROUNDS)
+        self.background_combo.setCurrentText(viewer.fit_background)
+        self.background_combo.setToolTip(
+            "What is fitted under the peaks. Linear is the honest default:\n"
+            "the area is then the peak's alone. It costs noise, since the\n"
+            "background is estimated from the sparse wings of the window --\n"
+            "on an isolated line the dichro ratio came out ~40% noisier\n"
+            "than an ROI sum's. 'none' is as quiet as an ROI but counts the\n"
+            "background under the peak as peak. Fitting is worth it where\n"
+            "lines overlap or the background slopes."
+        )
+        self.background_combo.currentTextChanged.connect(self._on_background)
+        row.addWidget(self.background_combo)
+
+        self.shared_box = QtWidgets.QCheckBox("Same width")
+        self.shared_box.setChecked(viewer.fit_shared_width)
+        self.shared_box.setToolTip(
+            "Tie every peak's width to the first's. The detector's\n"
+            "resolution changes little across a few hundred eV, and tying\n"
+            "the widths steadies a fit of lines that overlap."
+        )
+        self.shared_box.toggled.connect(self._on_shared)
+        row.addWidget(self.shared_box)
+
+        self.scan_combo = QtWidgets.QComboBox()
+        for data in viewer.data:
+            self.scan_combo.addItem(data.path.name)
+        self.scan_combo.currentIndexChanged.connect(self.refresh)
+        if len(viewer.data) > 1:
+            row.addWidget(QtWidgets.QLabel("Scan"))
+            row.addWidget(self.scan_combo)
+
+        row.addWidget(QtWidgets.QLabel("Element"))
+        self.element_combo = QtWidgets.QComboBox()
+        for i in range(viewer.max_elements):
+            self.element_combo.addItem(str(i + 1))
+        self.element_combo.setToolTip(
+            "The element shown. Every element is fitted, each on its own\n"
+            "spectrum, since their gains differ by a few bins."
+        )
+        self.element_combo.currentIndexChanged.connect(self.refresh)
+        row.addWidget(self.element_combo)
+
+        self.log_box = QtWidgets.QCheckBox("Log Y")
+        self.log_box.setChecked(False)
+        self.log_box.toggled.connect(self.refresh)
+        row.addWidget(self.log_box)
+        row.addStretch(1)
+        layout.addLayout(row)
+
+        self.figure = Figure(figsize=(8, 4.6), constrained_layout=True)
+        self.canvas = FigureCanvasQTAgg(self.figure)
+        grid = self.figure.add_gridspec(2, 1, height_ratios=(3, 1))
+        self.ax = self.figure.add_subplot(grid[0])
+        self.resid_ax = self.figure.add_subplot(grid[1], sharex=self.ax)
+        self.toolbar = NavigationToolbar2QT(self.canvas, self)
+        self.canvas.mpl_connect("button_press_event", self._on_click)
+        layout.addWidget(self.toolbar)
+        layout.addWidget(self.canvas, 1)
+
+        bottom = QtWidgets.QHBoxLayout()
+        self.table = QtWidgets.QTableWidget(0, len(self.COLUMNS))
+        self.table.setHorizontalHeaderLabels(self.COLUMNS)
+        self.table.verticalHeader().setVisible(True)
+        self.table.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+        )
+        self.table.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows
+        )
+        self.table.itemChanged.connect(self._on_item_changed)
+        bottom.addWidget(self.table, 1)
+
+        buttons = QtWidgets.QVBoxLayout()
+        for label, slot, tip in (
+            (
+                "Add peak",
+                self._arm_add,
+                "Then click on the spectrum where the peak is.",
+            ),
+            (
+                "Find peaks",
+                self._find_peaks,
+                "Replace the peaks with those found in the window, shoulders\n"
+                "included -- they are found by curvature, not by height.",
+            ),
+            ("Remove", self._remove_selected, "Remove the selected rows."),
+            (
+                "Fit → start",
+                self._copy_fit_to_start,
+                "Take the fitted centres and widths shown as the starting\n"
+                "values for the next fit.",
+            ),
+        ):
+            button = QtWidgets.QPushButton(label)
+            button.setToolTip(tip)
+            button.clicked.connect(slot)
+            buttons.addWidget(button)
+        self.fit_btn = QtWidgets.QPushButton("Fit")
+        self.fit_btn.setToolTip(
+            "Fit every element of every scan from the starting values, on\n"
+            "its spectrum summed over the frames shown -- both halves of a\n"
+            "contrast, since polarization changes intensities and not line\n"
+            "shapes. The trend then uses these shapes until the next Fit."
+        )
+        font = self.fit_btn.font()
+        font.setBold(True)
+        self.fit_btn.setFont(font)
+        self.fit_btn.clicked.connect(self._fit)
+        buttons.addWidget(self.fit_btn)
+        buttons.addStretch(1)
+        bottom.addLayout(buttons)
+        layout.addLayout(bottom)
+
+        self.status = QtWidgets.QLabel("")
+        self.status.setWordWrap(True)
+        layout.addWidget(self.status)
+        self.resize(940, 760)
+
+    def _kev_limits(self) -> tuple[float, float]:
+        ends = self.viewer._bin_to_kev([0, self.viewer.max_bins - 1])
+        return float(ends[0]), float(ends[-1])
+
+    # -- what is shown ------------------------------------------------------
+
+    def _shown(self):
+        """``(index, data, element, spectrum)`` for the scan and element picked."""
+        viewer = self.viewer
+        index = max(0, self.scan_combo.currentIndex())
+        data = viewer.data[index]
+        element = max(0, self.element_combo.currentIndex())
+        first, last = viewer.first_spin.value(), viewer.last_spin.value()
+        if element >= data.n_elements or min(last, data.n_frames - 1) < first:
+            return index, data, element, None
+        totals = data.range_sum(first, last, viewer.deadtime_box.isChecked())
+        return index, data, element, totals[element]
+
+    # -- editing ------------------------------------------------------------
+
+    def _changed(self, message: str = ""):
+        """Something the fit depends on changed: say so and redraw."""
+        self.viewer.fit_dirty = bool(self.viewer.fit_results)
+        self.refresh()
+        if message:
+            self.status.setText(message)
+
+    def _on_window_spin(self, *_):
+        if self._syncing:
+            return
+        lo, hi = sorted((self.lo_spin.value(), self.hi_spin.value()))
+        self.viewer.fit_lo_kev, self.viewer.fit_hi_kev = lo, hi
+        self._changed()
+
+    def _on_span_select(self, low: float, high: float):
+        lo, hi = int(round(low)), int(round(high))
+        if hi <= lo:
+            self.refresh()
+            return
+        self._syncing = True
+        try:
+            self.lo_spin.setValue(float(self.viewer._bin_to_kev(lo)))
+            self.hi_spin.setValue(float(self.viewer._bin_to_kev(hi)))
+        finally:
+            self._syncing = False
+        self._on_window_spin()
+
+    def _on_background(self, text: str):
+        self.viewer.fit_background = text
+        self._changed()
+
+    def _on_shared(self, on: bool):
+        self.viewer.fit_shared_width = on
+        self._changed()
+
+    def _on_item_changed(self, item):
+        """A table edit: write the row back to the viewer's starting values."""
+        if self._syncing:
+            return
+        row = item.row()
+        peaks = self.viewer.fit_peaks
+        if row >= len(peaks):
+            return
+        peak = peaks[row]
+        column = item.column()
+        if column == 0:
+            peak["use"] = item.checkState() == QtCore.Qt.CheckState.Checked
+            # Which peaks are summed changes the trend, not the fit.
+            self.viewer._schedule_redraw()
+            self.refresh()
+            return
+        if column == 3:
+            peak["fixed"] = item.checkState() == QtCore.Qt.CheckState.Checked
+        elif column in (1, 2):
+            try:
+                value = float(item.text())
+            except ValueError:
+                self.refresh()
+                return
+            if column == 1:
+                peak["centre_kev"] = value
+            elif value > 0:
+                peak["fwhm_ev"] = value
+        self._changed()
+
+    def _arm_add(self):
+        self._adding = True
+        self.status.setText("Click on the spectrum where the new peak is.")
+        if self.span is not None:
+            self.span.set_active(False)
+
+    def _on_click(self, event):
+        if not self._adding or event.inaxes is not self.ax:
+            return
+        if self.toolbar.mode:  # zoom or pan has the mouse
+            return
+        if event.xdata is None:
+            return
+        self._adding = False
+        viewer = self.viewer
+        widths = [p["fwhm_ev"] for p in viewer.fit_peaks]
+        viewer.fit_peaks.append(
+            viewer._new_peak(
+                float(viewer._bin_to_kev(event.xdata)),
+                float(np.median(widths)) if widths else DEFAULT_PEAK_FWHM_EV,
+            )
+        )
+        self._changed(f"Added peak {len(viewer.fit_peaks)}.")
+
+    def _find_peaks(self):
+        _index, _data, _element, spectrum = self._shown()
+        if spectrum is None:
+            self.status.setText("Nothing shown to find peaks in.")
+            return
+        lo, hi = self.viewer.fit_bins()
+        found = suggest_peaks(spectrum, lo, hi)
+        if not found:
+            self.status.setText("No peaks found in the window.")
+            return
+        self.viewer.fit_peaks = [
+            self.viewer._peak_from_spec(spec) for spec in found
+        ]
+        self._changed(f"Found {len(found)} peak(s).")
+
+    def _remove_selected(self):
+        rows = sorted(
+            {index.row() for index in self.table.selectedIndexes()},
+            reverse=True,
+        )
+        if not rows:
+            self.status.setText("Select the rows to remove first.")
+            return
+        for row in rows:
+            if row < len(self.viewer.fit_peaks):
+                del self.viewer.fit_peaks[row]
+        self._changed(f"Removed {len(rows)} peak(s).")
+
+    def _copy_fit_to_start(self):
+        index, _data, element, _spectrum = self._shown()
+        result = self.viewer.fit_results.get((index, element))
+        if result is None or not result.success:
+            self.status.setText("No successful fit shown to copy from.")
+            return
+        for fitted, row in enumerate(self.viewer._fitted_rows()):
+            if row is None or fitted >= result.n_peaks:
+                continue
+            peak = self.viewer.fit_peaks[row]
+            centre, sigma = result.centres[fitted], result.sigmas[fitted]
+            peak["centre_kev"] = float(self.viewer._bin_to_kev(centre))
+            peak["fwhm_ev"] = self.viewer._sigma_to_fwhm_ev(sigma)
+        self._changed("Starting values set from the fit shown.")
+
+    def _fit(self):
+        QtWidgets.QApplication.setOverrideCursor(
+            QtCore.Qt.CursorShape.WaitCursor
+        )
+        try:
+            messages = self.viewer._fit_all()
+        finally:
+            QtWidgets.QApplication.restoreOverrideCursor()
+        self.refresh()
+        self.status.setText("\n".join(messages))
+
+    # -- drawing ------------------------------------------------------------
+
+    def _make_span(self):
+        if self.span is not None:
+            self.span.disconnect_events()
+        self.span = SpanSelector(
+            self.ax,
+            self._on_span_select,
+            "horizontal",
+            interactive=True,
+            drag_from_anywhere=True,
+            useblit=False,
+            props={"facecolor": "0.35", "alpha": 0.12},
+            handle_props={"color": "0.25"},
+        )
+        self.span.extents = self.viewer.fit_bins()
+        self.span.set_active(not self._adding)
+
+    def _fill_table(self, result, areas):
+        """The starting values, and beside them the fit of what is shown."""
+        viewer = self.viewer
+        # The fit's columns by the table's rows: a row added since has no
+        # fitted values, and a row removed takes its own with it.
+        fitted_of = {
+            row: fitted
+            for fitted, row in enumerate(viewer._fitted_rows())
+            if row is not None
+        }
+        self._syncing = True
+        try:
+            self.table.setRowCount(len(viewer.fit_peaks))
+            for row, peak in enumerate(viewer.fit_peaks):
+                fitted = fitted_of.get(row)
+                cells = [
+                    "",
+                    f"{peak['centre_kev']:.4f}",
+                    f"{peak['fwhm_ev']:.0f}",
+                    "",
+                    "",
+                    "",
+                    "",
+                ]
+                if (
+                    result is not None
+                    and result.success
+                    and fitted is not None
+                    and fitted < result.n_peaks
+                ):
+                    centre = result.centres[fitted]
+                    cells[4] = f"{float(viewer._bin_to_kev(centre)):.4f}"
+                    cells[5] = (
+                        f"{viewer._sigma_to_fwhm_ev(result.sigmas[fitted]):.0f}"
+                    )
+                    cells[6] = f"{areas[fitted]:.6g}"
+                for column, text in enumerate(cells):
+                    item = QtWidgets.QTableWidgetItem(text)
+                    flags = QtCore.Qt.ItemFlag.ItemIsEnabled
+                    flags |= QtCore.Qt.ItemFlag.ItemIsSelectable
+                    if column in (0, 3):
+                        flags |= QtCore.Qt.ItemFlag.ItemIsUserCheckable
+                        on = peak["use"] if column == 0 else peak["fixed"]
+                        item.setCheckState(
+                            QtCore.Qt.CheckState.Checked
+                            if on
+                            else QtCore.Qt.CheckState.Unchecked
+                        )
+                    elif column in (1, 2):
+                        flags |= QtCore.Qt.ItemFlag.ItemIsEditable
+                    item.setFlags(flags)
+                    self.table.setItem(row, column, item)
+        finally:
+            self._syncing = False
+
+    def refresh(self, *_):
+        """Redraw the shown spectrum, the fit, its peaks and the residual."""
+        viewer = self.viewer
+        index, data, element, spectrum = self._shown()
+        lo, hi = viewer.fit_bins()
+        log = self.log_box.isChecked()
+
+        self.ax.clear()
+        self.resid_ax.clear()
+        result = viewer.fit_results.get((index, element))
+        areas = np.empty(0)
+        notes = []
+        if spectrum is not None:
+            bins = np.arange(spectrum.size)
+            self.ax.plot(
+                bins,
+                spectrum,
+                drawstyle="steps-mid",
+                lw=0.8,
+                color="0.25",
+                label="data",
+            )
+            if result is not None and result.success:
+                coefficients, matrix = decompose(spectrum, result)
+                xs = np.arange(result.lo, result.hi + 1)
+                n = result.n_peaks
+                background = (
+                    matrix[:, n:] @ coefficients[n:]
+                    if matrix.shape[1] > n
+                    else np.zeros(xs.size)
+                )
+                model = matrix @ coefficients
+                self.ax.plot(xs, model, color="C3", lw=1.3, label="fit")
+                rows = viewer._fitted_rows()
+                for i in range(n):
+                    # Named by its row in the table now, which is what the
+                    # Use ticks refer to; a peak removed since the fit is
+                    # still in it, and counted by nothing.
+                    row = rows[i] if i < len(rows) else None
+                    used = row is not None and viewer.fit_peaks[row]["use"]
+                    if row is None:
+                        label = "removed peak"
+                    else:
+                        label = f"peak {row + 1}" + (
+                            "" if used else " (not used)"
+                        )
+                    self.ax.plot(
+                        xs,
+                        matrix[:, i] * coefficients[i] + background,
+                        ls="-" if used else ":",
+                        lw=0.9,
+                        label=label,
+                    )
+                if result.background != "none":
+                    self.ax.plot(
+                        xs,
+                        background,
+                        color="0.5",
+                        ls="--",
+                        lw=0.8,
+                        label="background",
+                    )
+                observed = spectrum[result.lo : result.hi + 1]
+                residual = (observed - model) / np.sqrt(
+                    np.maximum(observed, 1.0)
+                )
+                self.resid_ax.plot(
+                    xs, residual, drawstyle="steps-mid", lw=0.8, color="0.25"
+                )
+                self.resid_ax.axhline(0.0, color="0.5", lw=0.6)
+                areas = coefficients[:n]
+                notes.append(f"reduced chi2 {result.redchi:.3g}")
+            elif result is not None:
+                notes.append(f"fit failed: {result.message}")
+        for peak in viewer.fit_peaks:
+            self.ax.axvline(
+                float(viewer._kev_to_bin(peak["centre_kev"])),
+                color="0.55",
+                lw=0.6,
+                ls=":",
+            )
+
+        pad = max(5, (hi - lo) // 4)
+        left, right = max(0, lo - pad), min(viewer.max_bins - 1, hi + pad)
+        self.ax.set_xlim(left, right)
+        if spectrum is not None:
+            inside = spectrum[left : right + 1]
+            if log:
+                self.ax.set_yscale("log", nonpositive="clip")
+                positive = inside[inside > 0]
+                if positive.size:
+                    self.ax.set_ylim(
+                        positive.min() / Y_LOG_MARGIN,
+                        positive.max() * Y_LOG_MARGIN,
+                    )
+            elif inside.size and inside.max() > 0:
+                self.ax.set_ylim(0.0, inside.max() * Y_MARGIN)
+        self.ax.set_ylabel(f"element {element + 1} counts")
+        if not log:
+            # "2M" on the ticks rather than a "1e6" above the axis, where it
+            # lands on the energy axis's labels.
+            self.ax.yaxis.set_major_formatter(EngFormatter(sep=""))
+        self.resid_ax.set_ylabel("residual / σ")
+        self.resid_ax.set_xlabel("MCA bin")
+        self.ax.tick_params(labelbottom=False)
+        title = f"{data.path.name}, element {element + 1}: bins {lo}-{hi}"
+        if notes:
+            title += " -- " + ", ".join(notes)
+        self.ax.set_title(title, fontsize="small")
+        if spectrum is not None:
+            self.ax.legend(fontsize="small")
+        self.ax.secondary_xaxis("top", functions=viewer._energy_map())
+        self._make_span()
+        self.canvas.draw_idle()
+        self._fill_table(result, areas)
+        if viewer.fit_dirty:
+            self.status.setText(
+                "Changed since the last fit: the trend still uses that fit. "
+                "Press Fit to refit."
+            )
+
+    def closeEvent(self, event):
+        """Hide, keeping the fit: it belongs to the viewer."""
+        self.hide()
+        event.ignore()
+
+
 class SpectrumViewerWindow(QtWidgets.QMainWindow):
     """Plots one or more MCA spectra, overlaid, against bin number.
 
@@ -1774,6 +2747,27 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.max_frames = max(d.n_frames for d in self.data)
         self.max_bins = max(d.n_bins for d in self.data)
         self.any_dead_time = any(d.have_dead_time for d in self.data)
+        # One Combine box drives every curve, so the scans must agree on how
+        # their frames split; a window mixing a softglue scan, a dichro one or
+        # a plain one has no split to offer (see _combine_available).
+        splits = {d.split for d in self.data}
+        self.split = splits.pop() if len(splits) == 1 else None
+        # The retarder fields every scan can be split by, in the first scan's
+        # order, which is POLARIZATION_CANDIDATES'.
+        self.pol_fields = (
+            [
+                name
+                for name in self.data[0].pol_fields
+                if all(name in d.pol_fields for d in self.data)
+            ]
+            if self.split == "polarization"
+            else []
+        )
+        if not self.pol_fields and self.split == "polarization":
+            self.split = None
+        for data in self.data:
+            if self.pol_fields:
+                data.set_pol_field(self.pol_fields[0])
 
         # Primary-stream columns, by (scan index, field). One open per field
         # per file, not one per redraw -- ticking an element must not go near
@@ -1847,6 +2841,26 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # once it matters -- see the end of _redraw_trend.
         self._monitor_default_note: dict[str, bool] = {}
         self.monitor_windows: dict[str, MonitorRoiWindow] = {}
+
+        # The peak fit (PeakFitWindow), owned here like the monitor bands so
+        # that closing its window keeps it. The window and the starting peaks
+        # are energies, like the ROI, filled in when the fit window first
+        # opens; the results are per (scan index, element) and in bins.
+        self.fit_lo_kev: float | None = None
+        self.fit_hi_kev: float | None = None
+        # Each {"centre_kev", "fwhm_ev", "use", "fixed"}: starting values,
+        # shared by every element and scan.
+        self.fit_peaks: list[dict] = []
+        self.fit_background = DEFAULT_FIT_BACKGROUND
+        self.fit_shared_width = False
+        self.fit_results: dict = {}
+        # The ids of fit_peaks at the last Fit, in the order of its columns:
+        # rows added or removed since then must not shift which fitted peak a
+        # Use tick stands for (see _fitted_rows).
+        self.fit_ids: list[int] = []
+        # Whether the starting values have moved since fit_results were made.
+        self.fit_dirty = False
+        self.fit_window: PeakFitWindow | None = None
         # What the spectrum pane last drew, summed: the "Peak" button searches
         # this, so that it finds the peak of what is on screen rather than of
         # a selection nobody is looking at. Filled by every _redraw.
@@ -2038,25 +3052,59 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # box is enabled, so they belong side by side.
         row.addWidget(QtWidgets.QLabel("Combine"))
         self.combine_combo = QtWidgets.QComboBox()
-        for label, part, _ in COMBINE_MODES:
+        for label, part, _, _ in self._modes():
             self.combine_combo.addItem(label, part)
         usable = self._combine_available()
         self.combine_combo.setEnabled(usable)
-        self.combine_combo.setToolTip(
-            "What to do with the several frames of one scan point.\n"
-            "Frames are numbered from 1 within their point, so frame 1 is odd:\n"
-            '"Odd - even" is (frames 1, 3, 5 ...) minus (frames 2, 4, 6 ...).\n'
-            "The softglue scans alternate frame by frame -- scan 597 point 0\n"
-            "runs 5.4% apart, against 0.4% for a typical random split of\n"
-            "the same frames -- and that difference is the measurement.\n"
-            "Odd only and Even only show the two halves the difference is of;\n"
-            "a difference is worth believing once both have been looked at."
-            if usable
-            else "Needs more than one vortex frame per scan point, in every scan\n"
-            "loaded here. These have one, so there are no halves to tell apart."
-        )
+        if not usable:
+            tip = (
+                "Needs more than one vortex frame per scan point, or a dichro\n"
+                "scan with a retarder field that toggles -- the same in every\n"
+                "scan loaded here. These have neither, so there are no halves\n"
+                "to tell apart."
+            )
+        elif self.split == "polarization":
+            tip = (
+                "What to do with the polarization settings of one scan point.\n"
+                'The scan hints "polarization: dichro" and the retarder flips\n'
+                "between rows: plus is the larger reading of the Pol. field,\n"
+                "minus the smaller, and a point is the rows taken at one\n"
+                "energy -- four (+ - - +) on the usual scans.\n"
+                '"Dichro" is plus minus minus; normalised, it is the XMCD the\n'
+                "scan's dichro_monitor stream holds for its own fixed ROI, and\n"
+                "Sum normalised is the XAS, here over the ROI chosen below."
+            )
+        else:
+            tip = (
+                "What to do with the several frames of one scan point.\n"
+                "Frames are numbered from 1 within their point, so frame 1 is odd:\n"
+                '"Odd - even" is (frames 1, 3, 5 ...) minus (frames 2, 4, 6 ...).\n'
+                "The softglue scans alternate frame by frame -- scan 597 point 0\n"
+                "runs 5.4% apart, against 0.4% for a typical random split of\n"
+                "the same frames -- and that difference is the measurement.\n"
+                "Odd only and Even only show the two halves the difference is of;\n"
+                "a difference is worth believing once both have been looked at."
+            )
+        self.combine_combo.setToolTip(tip)
         self.combine_combo.currentIndexChanged.connect(self._schedule_redraw)
         row.addWidget(self.combine_combo)
+
+        # Which retarder says which frames are plus. Only on a slow dichro
+        # scan, and opened on the first of POLARIZATION_CANDIDATES that
+        # toggles; offered as a box because the guess is by name and order,
+        # and a scan that toggled two retarders needs a way to pick the other.
+        self.pol_combo = None
+        if self.split == "polarization":
+            row.addWidget(QtWidgets.QLabel("Pol."))
+            self.pol_combo = QtWidgets.QComboBox()
+            self.pol_combo.addItems(self.pol_fields)
+            self.pol_combo.setToolTip(
+                "The primary-stream field that tracks the polarization:\n"
+                "plus is its larger reading, minus its smaller. Only fields\n"
+                "that toggle in every scan loaded are offered."
+            )
+            self.pol_combo.currentTextChanged.connect(self._on_pol_changed)
+            row.addWidget(self.pol_combo)
 
         all_btn = QtWidgets.QPushButton("All frames")
         all_btn.clicked.connect(self._select_all_frames)
@@ -2082,22 +3130,49 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         """ "800 frames, 20 per scan point", where the two divide evenly."""
         if len(self.data) != 1:
             return f"of {self.max_frames}"
-        per_point = self.data[0].frames_per_point
+        data = self.data[0]
+        per_point = data.frames_per_point
         if per_point is None:
             return f"of {self.max_frames}"
+        if self.split == "polarization":
+            mask = data.half_mask
+            index = data.point_index
+            first = index == 0
+            plus = int(mask[first].sum())
+            return (
+                f"of {self.max_frames}, {per_point} per scan point "
+                f"({plus} plus, {int(first.sum()) - plus} minus)"
+            )
         return f"of {self.max_frames}, {per_point} per scan point"
 
     def _combine_available(self) -> bool:
-        """Whether every loaded scan can be split into odd and even frames.
+        """Whether every loaded scan splits its points' frames the same way.
 
         Every one, not any: a single Combine box drives all the curves, so a
         window holding one sgz scan and one ordinary scan would be asking for
         a difference the second cannot answer. Disabled is the honest state
-        there, and the tooltip says which condition failed.
+        there, and the tooltip says which condition failed. See
+        :attr:`SpectrumData.split` for the two ways a scan can split.
         """
-        return bool(self.data) and all(
-            d.multi_frame and d.odd_frames is not None for d in self.data
-        )
+        return self.split is not None
+
+    def _modes(self) -> tuple:
+        """This window's rows of :data:`COMBINE_MODES`.
+
+        The parity table where there is no split, so that the disabled box
+        still shows what a softglue scan would offer.
+        """
+        return COMBINE_MODES[self.split or "parity"]
+
+    def _half_names(self) -> tuple[str, str]:
+        """What the two halves are called here: ``("odd", "even")`` or plus/minus."""
+        return HALF_NAMES[self.split or "parity"]
+
+    def _on_pol_changed(self, name: str):
+        """Re-split every scan by the retarder field just chosen."""
+        for data in self.data:
+            data.set_pol_field(name)
+        self._schedule_redraw()
 
     def _combine_part(self) -> str:
         """The frames the Combine box is asking for: see :data:`COMBINE_MODES`.
@@ -2109,18 +3184,16 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             return "all"
         return self.combine_combo.currentData() or "all"
 
-    @staticmethod
-    def _count_label(part: str) -> str:
+    def _count_label(self, part: str) -> str:
         """What a Y axis is counting under *part*, from :data:`COMBINE_MODES`."""
-        for _, name, label in COMBINE_MODES:
+        for _, name, label, _ in self._modes():
             if name == part:
                 return label
         return "counts"
 
-    @staticmethod
-    def _mode_label(part: str) -> str:
+    def _mode_label(self, part: str) -> str:
         """The Combine box's own wording for *part*, for titles and messages."""
-        for label, name, _ in COMBINE_MODES:
+        for label, name, _, _ in self._modes():
             if name == part:
                 return label
         return part
@@ -2182,6 +3255,27 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         )
         self.log_box.toggled.connect(self._schedule_redraw)
         row.addWidget(self.log_box)
+
+        # The spectra's own monitor tick, apart from the trend's: that one
+        # opens checked, and this pane has always opened on counts. The
+        # monitor itself is the one picked in the ROI row, so the two panes
+        # can never be divided by different channels at once.
+        have = bool(self.monitor_fields)
+        self.spectrum_norm_box = QtWidgets.QCheckBox("/ monitor")
+        self.spectrum_norm_box.setChecked(False)
+        self.spectrum_norm_box.setEnabled(have)
+        self.spectrum_norm_box.setToolTip(
+            "Divide each spectrum by the monitor picked in the ROI row below,\n"
+            "totalled over the same frames the spectrum totals -- so two\n"
+            "scans, or two frame ranges, of different length or beam compare\n"
+            "directly. Under a contrast each half is divided by its own\n"
+            "frames' monitor, and the difference is of the two ratios, which\n"
+            "is what the trend does with the same tick."
+            if have
+            else "No live beam monitor among the fields these files record."
+        )
+        self.spectrum_norm_box.toggled.connect(self._schedule_redraw)
+        row.addWidget(self.spectrum_norm_box)
 
         row.addStretch(1)
         return row
@@ -2356,6 +3450,31 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         peak_btn.clicked.connect(self._center_on_peak)
         row.addWidget(peak_btn)
 
+        # What the trend plots. Two controls here and the rest of the fit in
+        # its own window, which this row cannot hold and need not show once
+        # a fit is made. "Fit area" is offered only once there is a fit.
+        row.addWidget(QtWidgets.QLabel("Signal"))
+        self.signal_combo = QtWidgets.QComboBox()
+        for label, signal in SIGNALS:
+            self.signal_combo.addItem(label, signal)
+        self.signal_combo.model().item(1).setEnabled(False)
+        self.signal_combo.setToolTip(
+            "What the trend plots: the counts in the ROI, or the fitted area\n"
+            "of the peaks ticked 'Use' in the Peak fit window. Fit area is\n"
+            "for lines that overlap or sit on a sloping background; on an\n"
+            "isolated line an ROI is as good and less noisy."
+        )
+        self.signal_combo.currentIndexChanged.connect(self._schedule_redraw)
+        row.addWidget(self.signal_combo)
+
+        fit_btn = QtWidgets.QPushButton("Fit peaks...")
+        fit_btn.setToolTip(
+            "Open the Peak fit window: fit Gaussians and a background over a\n"
+            "window of the spectrum, to plot their areas instead of the ROI."
+        )
+        fit_btn.clicked.connect(self._open_fit_window)
+        row.addWidget(fit_btn)
+
         self.plot_roi_btn = QtWidgets.QPushButton("Plot ROI")
         self.plot_roi_btn.setCheckable(True)
         self.plot_roi_btn.setToolTip(
@@ -2370,8 +3489,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.export_btn = QtWidgets.QPushButton("Export...")
         self.export_btn.setToolTip(
             "Write the plotted ROI trend to a text file: one row per scan\n"
-            "point, and all four Combine modes in it -- Sum, Odd - even,\n"
-            "Odd only, Even only -- whichever one is on screen. Normalised\n"
+            "point, and all four Combine modes in it -- "
+            + ", ".join(label for label, _, _, _ in self._modes())
+            + " --\nwhichever one is on screen. Normalised\n"
             "and raw side by side, with the monitor counts that divided\n"
             "them, so any of it can be recomputed or undone.\n"
             "Goes to an 'export' folder beside the scan data, named for the\n"
@@ -2495,6 +3615,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.gain_spin.setValue(DEFAULT_EV_PER_BIN)
         self.gain_spin.setSuffix(" eV/bin")
         self.gain_spin.setKeyboardTracking(False)
+        self.gain_spin.valueChanged.connect(self._on_energy_axis_changed)
         self.gain_spin.valueChanged.connect(self._schedule_redraw)
         row.addWidget(self.gain_spin)
 
@@ -2505,6 +3626,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.offset_spin.setPrefix("offset ")
         self.offset_spin.setSuffix(" eV")
         self.offset_spin.setKeyboardTracking(False)
+        self.offset_spin.valueChanged.connect(self._on_energy_axis_changed)
         self.offset_spin.valueChanged.connect(self._schedule_redraw)
         row.addWidget(self.offset_spin)
 
@@ -2855,6 +3977,316 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         )
         self.roi_span.extents = self._roi_bins()
 
+    # -- the peak fit -------------------------------------------------------
+
+    def _using_fit(self) -> bool:
+        """Whether the trend plots fitted areas rather than the ROI."""
+        return self.signal_combo.currentData() == "fit" and bool(
+            self.fit_results
+        )
+
+    def fit_bins(self) -> tuple[int, int]:
+        """The fit window as bins, from the energies the fit window holds."""
+        ends = self._kev_to_bin([self.fit_lo_kev, self.fit_hi_kev])
+        lo, hi = sorted(int(round(float(b))) for b in ends)
+        lo = max(0, min(lo, self.max_bins - 2))
+        return lo, max(lo + 1, min(hi, self.max_bins - 1))
+
+    def _sigma_to_fwhm_ev(self, sigma_bins: float) -> float:
+        return float(sigma_bins) * FWHM_PER_SIGMA * self.gain_spin.value()
+
+    @staticmethod
+    def _new_peak(
+        centre_kev: float, fwhm_ev: float, use: bool = True, fixed: bool = False
+    ) -> dict:
+        """A table row, with the id that ties it to the fit it goes into."""
+        return {
+            "id": next(_PEAK_IDS),
+            "centre_kev": float(centre_kev),
+            "fwhm_ev": float(fwhm_ev),
+            "use": use,
+            "fixed": fixed,
+        }
+
+    def _peak_from_spec(self, spec: PeakSpec) -> dict:
+        """A table row from a peak in bins."""
+        return self._new_peak(
+            self._bin_to_kev(spec.centre),
+            self._sigma_to_fwhm_ev(spec.sigma),
+            fixed=not spec.vary_centre,
+        )
+
+    def _fit_starts(self) -> list[PeakSpec]:
+        """The table's starting values, in bins, for :func:`fit_shape`."""
+        gain = self.gain_spin.value()
+        return [
+            PeakSpec(
+                centre=float(self._kev_to_bin(peak["centre_kev"])),
+                sigma=peak["fwhm_ev"] / gain / FWHM_PER_SIGMA,
+                vary_centre=not peak["fixed"],
+            )
+            for peak in self.fit_peaks
+        ]
+
+    def _ensure_fit_defaults(self):
+        """Give the fit a window and peaks to open on, the first time.
+
+        The last fit of this session if it fits this spectrum, as for the
+        ROI; otherwise a window around the ROI -- which is where the line of
+        interest has been put -- and the peaks found in it.
+        """
+        if self.fit_lo_kev is not None:
+            return
+        remembered = _REMEMBERED_FIT
+        if remembered is not None and remembered["hi"] <= self.max_bins - 1:
+            self.fit_lo_kev = float(self._bin_to_kev(remembered["lo"]))
+            self.fit_hi_kev = float(self._bin_to_kev(remembered["hi"]))
+            self.fit_background = remembered["background"]
+            self.fit_shared_width = remembered["shared"]
+            self.fit_peaks = [
+                dict(self._peak_from_spec(spec), use=use)
+                for spec, use in remembered["peaks"]
+            ]
+            return
+        half = max(
+            self.roi_width_ev * FIT_WINDOW_ROI_WIDTHS, MIN_FIT_HALF_WIDTH_EV
+        )
+        self.fit_lo_kev = self.roi_center_kev - half / 1000.0
+        self.fit_hi_kev = self.roi_center_kev + half / 1000.0
+        lo, hi = self.fit_bins()
+        self.fit_lo_kev = float(self._bin_to_kev(lo))
+        self.fit_hi_kev = float(self._bin_to_kev(hi))
+        first, last = self.first_spin.value(), self.last_spin.value()
+        data = self.data[0]
+        if min(last, data.n_frames - 1) >= first:
+            summed = data.range_sum(first, last, self.deadtime_box.isChecked())
+            spectrum = summed[: data.n_elements].sum(axis=0)
+            self.fit_peaks = [
+                self._peak_from_spec(spec)
+                for spec in suggest_peaks(
+                    spectrum, lo, min(hi, data.n_bins - 1)
+                )
+            ]
+
+    def _open_fit_window(self, *_):
+        self._ensure_fit_defaults()
+        if self.fit_window is None:
+            self.fit_window = PeakFitWindow(self)
+        else:
+            self.fit_window.refresh()
+        self.fit_window.show()
+        self.fit_window.raise_()
+        self.fit_window.activateWindow()
+
+    def _on_energy_axis_changed(self, *_):
+        """A new gain or offset: the fit's peaks and window no longer agree.
+
+        The fit is in bins and the trend keeps using it, but the window and
+        starting peaks are energies and have just moved to other bins, so a
+        refit would not be the fit on show.
+        """
+        if self.fit_results:
+            self.fit_dirty = True
+
+    def _fit_all(self) -> list[str]:
+        """Fit every element of every scan from the table. Returns messages.
+
+        Each element of each scan on its own spectrum, summed over the frames
+        shown and both halves, dead-time corrected as the box says. Every
+        element, ticked or not, so that ticking one later needs no refit.
+        """
+        global _REMEMBERED_FIT
+        starts = self._fit_starts()
+        if not starts:
+            return ["No peaks to fit: add some, or press Find peaks."]
+        lo, hi = self.fit_bins()
+        first, last = self.first_spin.value(), self.last_spin.value()
+        dead_time = self.deadtime_box.isChecked()
+
+        results = {}
+        failures = []
+        for index, data in enumerate(self.data):
+            if min(last, data.n_frames - 1) < first:
+                failures.append(
+                    f"{data.path.name}: no frames in {first}-{last}"
+                )
+                continue
+            if hi > data.n_bins - 1:
+                failures.append(f"{data.path.name}: window past its last bin")
+                continue
+            totals = data.range_sum(first, last, dead_time)
+            for element in range(data.n_elements):
+                result = fit_shape(
+                    totals[element],
+                    lo,
+                    hi,
+                    starts,
+                    self.fit_background,
+                    self.fit_shared_width,
+                )
+                results[(index, element)] = result
+                if not result.success:
+                    failures.append(
+                        f"{data.path.name} element {element + 1}: "
+                        f"{result.message}"
+                    )
+
+        good = [r for r in results.values() if r.success]
+        warned = sorted(
+            {r.message for r in good if r.message}
+        )  # lmfit notes on fits that still gave usable numbers
+        self.fit_results = results
+        self.fit_ids = [peak["id"] for peak in self.fit_peaks]
+        self.fit_dirty = False
+        self.signal_combo.model().item(1).setEnabled(bool(good))
+        messages = [f"Fitted {len(good)} of {len(results)} element spectra"]
+        if good:
+            chi = [r.redchi for r in good]
+            messages[0] += f", reduced chi2 {min(chi):.3g}-{max(chi):.3g}."
+            _REMEMBERED_FIT = {
+                "lo": lo,
+                "hi": hi,
+                "background": self.fit_background,
+                "shared": self.fit_shared_width,
+                "peaks": [
+                    (spec, peak["use"])
+                    for spec, peak in zip(starts, self.fit_peaks)
+                ],
+            }
+            if self.signal_combo.currentData() != "fit":
+                # Opened to be used: switch the trend over, and say so.
+                self.signal_combo.setCurrentIndex(1)
+                messages.append("The trend now plots the fitted areas.")
+        else:
+            messages[0] += "."
+            if self.signal_combo.currentData() == "fit":
+                self.signal_combo.setCurrentIndex(0)
+        if warned:
+            messages.append(
+                f"{sum(1 for r in good if r.message)} fit(s) carry an lmfit "
+                f"note, numbers still usable: {'; '.join(warned)}"
+            )
+        messages.extend(failures)
+        self._schedule_redraw()
+        return messages
+
+    def _fitted_rows(self) -> list[int | None]:
+        """Each peak of the last fit's table row now, ``None`` if removed.
+
+        The fit's columns are in the order the table had at Fit; rows added
+        or removed since must not shift which of them a Use tick counts.
+        """
+        rows = {peak["id"]: row for row, peak in enumerate(self.fit_peaks)}
+        return [rows.get(peak_id) for peak_id in self.fit_ids]
+
+    def _fit_used_pairs(self) -> list[tuple[int, int]]:
+        """``(fitted index, table row)`` of every peak the trend sums.
+
+        Ticked "Use" and in the last fit: a peak added since has no area to
+        sum, and one removed since is no longer there to be ticked.
+        """
+        return [
+            (fitted, row)
+            for fitted, row in enumerate(self._fitted_rows())
+            if row is not None and self.fit_peaks[row]["use"]
+        ]
+
+    def _fit_used(self) -> list[int]:
+        """The last fit's indices of the peaks the trend sums."""
+        return [fitted for fitted, _row in self._fit_used_pairs()]
+
+    def _fit_shape_settings(self) -> tuple[int, int, str]:
+        """``(lo, hi, background)`` of the last fit, else of the window now.
+
+        The fit's own, since the window and background can be changed --
+        or the energy axis moved under them -- without refitting, and what
+        the trend plots is still that fit.
+        """
+        for result in self.fit_results.values():
+            return result.lo, result.hi, result.background
+        lo, hi = self.fit_bins()
+        return lo, hi, self.fit_background
+
+    def _fit_weights(self, index, data):
+        """``(lo, hi, weights)`` for :meth:`SpectrumData.weighted_trend`.
+
+        A row per element: the weights giving the summed area of the used
+        peaks under that element's own fitted shape, NaN where it has none.
+        ``None`` when the scan has no fit at all.
+        """
+        used = self._fit_used()
+        fitted = [
+            self.fit_results.get((index, element))
+            for element in range(data.n_elements)
+        ]
+        known = [r for r in fitted if r is not None]
+        if not known:
+            return None
+        lo, hi = known[0].lo, known[0].hi
+        weights = np.full((data.n_elements, hi - lo + 1), np.nan)
+        for element, result in enumerate(fitted):
+            if (
+                result is not None
+                and result.success
+                and (result.lo, result.hi) == (lo, hi)
+            ):
+                weights[element] = area_weights(result, used)
+        return lo, hi, weights
+
+    def _fit_description(self, short: bool = False) -> str:
+        """The fit in one line: for the export header, or *short* for a title.
+
+        The short form names the peaks summed and nothing else -- the window
+        and background are in the export header and the Peak fit window,
+        and a title carrying them was cut off at the pane's width.
+        """
+        lo, hi, background = self._fit_shape_settings()
+        # Numbered by table row, which is how the Peak fit window shows them.
+        rows = [row for _fitted, row in self._fit_used_pairs()]
+        if short:
+            if not rows:
+                return "fit area: no peak ticked"
+            energies = ", ".join(
+                f"{self.fit_peaks[r]['centre_kev']:.2f}" for r in rows
+            )
+            numbers = "+".join(str(r + 1) for r in rows)
+            return f"fit area of peak {numbers} ({energies} keV)"
+        peaks = ", ".join(
+            f"{r + 1} ({self.fit_peaks[r]['centre_kev']:.3f} keV)" for r in rows
+        )
+        ends = self._bin_to_kev([lo, hi])
+        return (
+            f"fit area of peak{'s' if len(rows) != 1 else ''} "
+            f"{peaks or '(none ticked)'}, window "
+            f"{float(ends[0]):.3f}-{float(ends[-1]):.3f} keV = bins "
+            f"{lo}-{hi}, {background} background"
+        )
+
+    def _draw_fit_band(self):
+        """The fit window and the used peaks, where the ROI band would be.
+
+        Not draggable: the window is moved in the Peak fit window, which is
+        where the fit it belongs to is redone. The ROI's own band is taken
+        down meanwhile, since the trend is not plotting it.
+        """
+        if self.roi_span is not None:
+            self.roi_span.disconnect_events()
+            self.roi_span = None
+        known = [r for r in self.fit_results.values() if r.success]
+        if not known:
+            return
+        lo, hi = known[0].lo, known[0].hi
+        self.ax.axvspan(lo, hi, facecolor="0.35", alpha=0.12, lw=0)
+        for edge in (lo, hi):
+            self.ax.axvline(edge, color="0.25", lw=0.7, ls="--")
+        for _fitted, row in self._fit_used_pairs():
+            self.ax.axvline(
+                float(self._kev_to_bin(self.fit_peaks[row]["centre_kev"])),
+                color="0.25",
+                lw=0.7,
+                ls=":",
+            )
+
     def _set_all_elements(self, on: bool):
         for box in self.element_boxes:
             box.blockSignals(True)
@@ -2960,6 +4392,13 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # nothing worth saving.
         total = np.zeros(self.max_bins)
         drawn = 0
+        normalize = (
+            self.spectrum_norm_box.isChecked()
+            and self.spectrum_norm_box.isEnabled()
+        )
+        monitor = self.monitor_combo.currentText() if normalize else ""
+        norm_notes: list[str] = []
+        divided = 0
 
         def draw(y, label, y_sum):
             nonlocal drawn
@@ -2968,7 +4407,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             total[: y_sum.size] += y_sum
             drawn += 1
 
-        for data in self.data:
+        for index, data in enumerate(self.data):
             usable = [i for i in chosen if i < data.n_elements]
             if not usable:
                 # It has none of the ticked elements -- a 4-element file in a
@@ -2982,7 +4421,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             if dead_time and not data.have_dead_time:
                 uncorrected.append(data.path.name)
             if part != "all":
-                half = data.odd_frames[first : min(last, data.n_frames - 1) + 1]
+                half = data.half_mask[first : min(last, data.n_frames - 1) + 1]
                 # A difference needs both halves; the two single-half modes
                 # need their own. min() of the two covers all three.
                 present = (
@@ -2999,6 +4438,24 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 if part == "all"
                 else data.range_sum(first, last, dead_time)
             )
+            if normalize:
+                divisors, note = self._spectrum_divisors(
+                    index, data, monitor, part, dead_time, first, last
+                )
+                if note:
+                    norm_notes.append(note)
+                if divisors is not None:
+                    totals = self._divide_spectrum(
+                        data,
+                        totals,
+                        sums,
+                        divisors,
+                        part,
+                        first,
+                        last,
+                        dead_time,
+                    )
+                    divided += 1
             if separate:
                 for i in usable:
                     draw(totals[i], f"element {i + 1}", sums[i])
@@ -3018,7 +4475,10 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             self._shown_total = total
 
         self.ax.set_xlabel("MCA bin")
-        self.ax.set_ylabel(self._count_label(part))
+        ylabel = self._count_label(part)
+        if divided:
+            ylabel += f" / {self._monitor_label(monitor)}"
+        self.ax.set_ylabel(ylabel)
         # The boxes, never an autoscale. Letting matplotlib choose would move
         # the axis whenever an element was unticked, and autoscaling to the
         # last non-zero bin would always find bin 4095, where everything above
@@ -3093,8 +4553,12 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
 
         # After the clear and after set_xlim: the band is an artist on these
         # axes and went with the one, and it is placed in data coordinates
-        # that the other has just settled.
-        self._make_roi_span()
+        # that the other has just settled. The fit window's band instead
+        # while the trend is plotting fitted areas.
+        if self._using_fit():
+            self._draw_fit_band()
+        else:
+            self._make_roi_span()
 
         self.canvas.draw_idle()
         # The same flag the spectrum pane drew with, passed in rather than
@@ -3108,6 +4572,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             )
         if hidden:
             notes.insert(0, f"log Y hides {hidden} negative bins")
+        notes[:0] = norm_notes
         self.status.showMessage(
             self._status_text(first, last, clamped, uncorrected, skipped, notes)
             if drawn
@@ -3121,6 +4586,77 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         for window in self.monitor_windows.values():
             if window.isVisible():
                 window.refresh()
+        if self.fit_window is not None and self.fit_window.isVisible():
+            self.fit_window.refresh()
+
+    def _spectrum_divisors(
+        self, index, data, monitor, part, dead_time, first, last
+    ):
+        """The monitor totalled over the frames a spectrum totals.
+
+        ``(divisors, note)``, *divisors* mapping ``"all"`` -- and ``"odd"`` and
+        ``"even"`` under a contrast -- to the monitor total over the shown
+        frames of that half, or ``None`` when nothing can be divided.
+
+        The trend's own per-frame divisor (:meth:`_monitor_scale`), taken over
+        the shown range and *part*, so a computed monitor is reduced half by
+        half here exactly as there. Its totals are the numbers the trend's
+        points divide by, added up over every point -- which makes the
+        normalised spectrum, integrated over the ROI, the ROI's own ratio of
+        totals across the whole range.
+
+        A frame with no monitor reading (zero, or past the last recorded
+        row) is left out of the divisor but not out of the spectrum, which
+        cannot drop single frames; the note counts them.
+        """
+        stop = min(last, data.n_frames - 1)
+        if stop < first:
+            return None, None
+        scale, note = self._monitor_scale(
+            index, data, monitor, part, dead_time, (first, stop)
+        )
+        if scale is None:
+            return None, note
+        shown = scale[first : stop + 1]
+        mask = data.half_mask if part != "all" else None
+        half = None if mask is None else mask[first : stop + 1]
+
+        def total(keep):
+            values = shown if keep is None else shown[keep]
+            value = float(np.nansum(values))
+            # A half with no frames in the range has nothing to divide by;
+            # NaN keeps its curve off the plot instead of off the top of it.
+            return value if value > 0 else np.nan
+
+        divisors = {"all": total(None)}
+        if half is not None:
+            divisors["odd"] = total(half)
+            divisors["even"] = total(~half)
+        unread = int(np.count_nonzero(~np.isfinite(shown)))
+        if unread:
+            note = (
+                f"{data.path.name}: {unread} frame(s) shown without a "
+                f"{monitor} reading, counted in the spectrum but not the "
+                "divisor"
+            )
+        return divisors, note
+
+    @staticmethod
+    def _divide_spectrum(
+        data, totals, sums, divisors, part, first, last, dead_time
+    ):
+        """*totals* divided as the trend divides: each half by its own monitor.
+
+        The difference is rebuilt from its halves rather than divided whole,
+        since it has no single divisor -- (odd / mon_odd) - (even / mon_even),
+        the same arithmetic as the trend's normalised difference.
+        """
+        if part == "all":
+            return totals / divisors["all"]
+        if part in ("odd", "even"):
+            return totals / divisors[part]
+        odd = data.range_sum(first, last, dead_time, "odd")
+        return odd / divisors["odd"] - (sums - odd) / divisors["even"]
 
     # -- the trend pane -----------------------------------------------------
 
@@ -3164,7 +4700,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 None,
                 f"{data.path.name}: no {monitor} recorded, not normalized",
             )
-        index_of = data.point_index
+        # Through the row and not the plotted point: a recorded monitor has
+        # one reading per primary row, and a slow dichro point is several.
+        index_of = data.row_index
         if index_of is None:
             return (
                 None,
@@ -3260,7 +4798,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             return per_frame, None
 
         points = int(index_of[-1]) + 1
-        odd = data.odd_frames if part != "all" else None
+        odd = data.half_mask if part != "all" else None
         shown = np.zeros(data.n_frames, dtype=bool)
         first, stop = (0, data.n_frames - 1) if window is None else window
         shown[first : stop + 1] = True
@@ -3378,7 +4916,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         divided, and a *scale* as well, would divide twice.
 
         *part* is the Combine box: with anything but ``"all"`` the frames of a
-        point are split by :attr:`SpectrumData.odd_frames` and each half
+        point are split by :attr:`SpectrumData.half_mask` and each half
         totalled on its own, the difference being of the two sums -- which is
         what the spectrum pane next door has always shown, so the two panes
         now agree. The cost is that a point which ended up with 44 odd frames
@@ -3393,7 +4931,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         """
         n_frames = values.shape[0]
         index_all = data.point_index
-        full_mask = data.odd_frames if part != "all" else None
+        full_mask = data.half_mask if part != "all" else None
         odd = None if full_mask is None else full_mask[first : first + n_frames]
 
         if scale is not None and (kind == "frame" or index_all is None):
@@ -3516,6 +5054,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 f"{data.path.name}: {partial} point(s) total fewer frames "
                 f"than the rest, so their raw values sit low in proportion"
             )
+        first_half, second_half = self._half_names()
         if lopsided and scale is None:
             # On totals, a point with one more odd frame than even carries
             # that whole frame's counts into the difference as signal -- of
@@ -3526,8 +5065,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             # count cancels.
             notes.append(
                 f"{data.path.name}: {lopsided} point(s) hold unequal numbers "
-                f"of odd and even frames, so their raw difference carries the "
-                f"extra frame as signal; the normalised difference does not"
+                f"of {first_half} and {second_half} frames, so their raw "
+                f"difference carries the extra frame as signal; the "
+                f"normalised difference does not"
             )
 
         if kind == "point":
@@ -3546,6 +5086,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 TREND_POINT_AXIS,
                 notes + [f"{data.path.name}: no {field} recorded"],
             )
+        # One value per plotted point: the mean over a slow dichro point's
+        # rows, the column itself everywhere else.
+        x = data.reduce_rows(x)
         # The detector and the scan need not have written the same number of
         # points: scan 125 was aborted after 9 rows with ten complete 80-frame
         # blocks already on disk. Pair what pairs and say what was left over,
@@ -3580,6 +5123,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             "monitor": self.monitor_combo.currentText() if normalize else "",
             "low": low,
             "high": high,
+            "signal": "fit" if self._using_fit() else "roi",
         }
 
     def _trend_curves(self, chosen, dead_time, part, separate, settings):
@@ -3620,6 +5164,11 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # a scan with none of its frames in the window says nothing about the
         # scale the others are averaged on.
         per_point: set = set()
+        if settings.get("signal") == "fit" and self.fit_dirty:
+            # Said here as well as in the Peak fit window, which may be shut.
+            notes.append(
+                "peak fit changed since the last Fit; this is still that fit"
+            )
 
         for index, data in enumerate(self.data):
             usable = [i for i in chosen if i < data.n_elements]
@@ -3629,7 +5178,29 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             if stop < first:
                 notes.append(f"{data.path.name}: no frames in {first}-{last}")
                 continue
-            raw, corrected = data.roi_trend(low, high)
+            if settings.get("signal") == "fit":
+                window = self._fit_weights(index, data)
+                if window is None:
+                    notes.append(f"{data.path.name}: no peak fit, left out")
+                    continue
+                # An element with no fit has NaN weights, and would turn the
+                # summed curve NaN from end to end; it is left out instead,
+                # as a scan missing an element is, and named.
+                unfit = [
+                    e for e in usable if not np.isfinite(window[2][e]).all()
+                ]
+                if unfit:
+                    notes.append(
+                        f"{data.path.name}: no fit for element(s) "
+                        + ", ".join(str(e + 1) for e in unfit)
+                        + ", left out"
+                    )
+                    usable = [e for e in usable if e not in unfit]
+                    if not usable:
+                        continue
+                raw, corrected = data.weighted_trend(*window)
+            else:
+                raw, corrected = data.roi_trend(low, high)
             values = corrected if dead_time and corrected is not None else raw
             scale = None
             if normalize:
@@ -3849,14 +5420,19 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # divisor is named beside it. Under a contrast it says which frames
         # it is a sum of, since the difference of two sums is the one number
         # on this pane a reader could otherwise take for a count.
-        label = f"sum ROI {self._count_label(part)}"
+        fitted = settings.get("signal") == "fit"
+        label = (
+            f"{'fit area' if fitted else 'sum ROI'} {self._count_label(part)}"
+        )
         self.trend_ax.set_ylabel(
             f"{label} / {self._monitor_label(monitor)}" if normalize else label
         )
         # Both readings of the ROI, so that neither can be doubted: the energy
         # it was set to, and the bins that energy currently resolves to.
         title = (
-            f"ROI {self.roi_center_kev:.3f} ± "
+            self._fit_description(short=True)
+            if fitted
+            else f"ROI {self.roi_center_kev:.3f} ± "
             f"{self.roi_width_ev / 1000.0:.3f} keV = bins {low}-{high}"
         )
         if part != "all":
@@ -4046,8 +5622,12 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 if len(per_point) == 1 and None not in per_point
                 else ""
             ),
-            f"roi = {self.roi_center_kev:.3f} +- "
-            f"{self.roi_width_ev / 1000.0:.3f} keV = bins {low}-{high}",
+            (
+                f"signal = {self._fit_description()}"
+                if settings.get("signal") == "fit"
+                else f"roi = {self.roi_center_kev:.3f} +- "
+                f"{self.roi_width_ev / 1000.0:.3f} keV = bins {low}-{high}"
+            ),
             f"energy axis = {self.gain_spin.value():.3f} eV/bin, offset "
             f"{self.offset_spin.value():.1f} eV (nominal, not recorded)",
             "elements = "
@@ -4059,6 +5639,41 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             ),
             f"dead time = {'corrected' if dead_time else 'uncorrected'}",
         ]
+        if settings.get("signal") == "fit":
+            # Each element's own shape: the areas below are under these, and
+            # nothing else in the file says what they were.
+            lines.append(
+                "note = areas are fixed-shape least-squares solves frame by "
+                "frame, with each element's shape fitted to its spectrum "
+                "summed over the frames shown"
+            )
+            for (index, element), result in sorted(self.fit_results.items()):
+                name = self.data[index].path.name
+                if not result.success:
+                    lines.append(
+                        f"fit = {name} element {element + 1}: failed "
+                        f"({result.message})"
+                    )
+                    continue
+                shape = ", ".join(
+                    f"{float(self._bin_to_kev(c)):.4f} keV "
+                    f"FWHM {self._sigma_to_fwhm_ev(s):.0f} eV"
+                    for c, s in zip(result.centres, result.sigmas)
+                )
+                lines.append(
+                    f"fit = {name} element {element + 1}: {shape}; "
+                    f"reduced chi2 {result.redchi:.3g}"
+                )
+        tags = {part: tag for _label, part, _unit, tag in self._modes()}
+        first_half, second_half = self._half_names()
+        diff, odd, even = tags["difference"], tags["odd"], tags["even"]
+        if self.split == "polarization":
+            lines.append(
+                f"split = by polarization: plus is the larger reading of "
+                f"{self.data[0].pol_field}, minus the smaller; a point is the "
+                f"{self.data[0].rows_per_point} rows taken at one setting of "
+                f"the scan axis, and its x the mean over them"
+            )
         if self._normalizable(dead_time, settings):
             lines.append(
                 f"monitor = {self._monitor_label(settings['monitor'])}"
@@ -4067,58 +5682,62 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 "values = raw and normalised; both are totals over each "
                 "point's frames, not means, and so is every mon_ column"
             )
-            # The one thing a reader of an odd - even column has to know, and
-            # the file is where they will be reading it. It is a different
-            # thing for each kind of monitor, so it is not one sentence: the
-            # computed one is taken from the same detector and alternates
-            # with the signal, a recorded one is a single number per point
-            # and cannot.
-            lines.append(
-                "note = oddeven_norm is exactly odd_norm - even_norm, and has "
-                "no single divisor of its own, so there is no mon_oddeven"
-            )
-            if settings["monitor"] in COMPUTED_MONITORS:
-                # What this costs is different for each element, so the note
-                # is too. Measured at the 7.41 keV line of scan 597, which
-                # reads -2.05% raw. Both monitors open on the same near-total
-                # band, so the element is what separates them: element 1
-                # alternates -2.41% over it and reads +0.37%, element 7
-                # alternates -7.40% and reads +6.62% -- the sign flips. The
-                # band does contain the ROI on either element, but it is 96%
-                # of the element, so element 1 no longer divides the line by
-                # itself the way its old one-peak window did.
-                element = COMPUTED_MONITORS[settings["monitor"]]
+            # Nothing about halves where there are none.
+            if self.split:
+                # The one thing a reader of an odd - even column has to know, and
+                # the file is where they will be reading it. It is a different
+                # thing for each kind of monitor, so it is not one sentence: the
+                # computed one is taken from the same detector and alternates
+                # with the signal, a recorded one is a single number per point
+                # and cannot.
                 lines.append(
-                    "note = each parity is divided by its own parity's "
-                    f"monitor; this one is element {element} of the same "
-                    "detector, which alternates with the frames itself, so "
-                    "the odd/even asymmetry below is the ROI's against that "
-                    "element's and not against a steady beam"
+                    f"note = {diff}_norm is exactly {odd}_norm - {even}_norm, and "
+                    f"has no single divisor of its own, so there is no mon_{diff}"
                 )
-                lines.append(
-                    "note = both computed monitors open on the same band, so "
-                    "the element is the choice: element 1 carries the signal "
-                    "and pulls the asymmetry towards its own, element 7 "
-                    "holds almost none of the line but alternates about "
-                    "three times harder and reverses the sign. Neither is a "
-                    "quiet reference -- there is no region of this detector "
-                    "that does not alternate, and the opening band contains "
-                    "the ROI on either element"
-                )
-            else:
-                # These were equal to each other while the pane reduced by
-                # the mean: one reading per point, spread over the frames and
-                # averaged straight back out. On totals each is that reading
-                # times the frames its own half contributed, so they part
-                # company at exactly the ragged points -- and that is the
-                # division doing its job, not an inconsistency.
-                lines.append(
-                    "note = one recorded reading per scan point, so mon_odd "
-                    "and mon_even are that reading times the frames each half "
-                    "totalled: equal wherever the halves are, and normalising "
-                    "then leaves the odd/even asymmetry alone; where they "
-                    "differ, normalising divides the extra frame back out"
-                )
+                if settings["monitor"] in COMPUTED_MONITORS:
+                    # What this costs is different for each element, so the note
+                    # is too. Measured at the 7.41 keV line of scan 597, which
+                    # reads -2.05% raw. Both monitors open on the same near-total
+                    # band, so the element is what separates them: element 1
+                    # alternates -2.41% over it and reads +0.37%, element 7
+                    # alternates -7.40% and reads +6.62% -- the sign flips. The
+                    # band does contain the ROI on either element, but it is 96%
+                    # of the element, so element 1 no longer divides the line by
+                    # itself the way its old one-peak window did.
+                    element = COMPUTED_MONITORS[settings["monitor"]]
+                    lines.append(
+                        "note = each parity is divided by its own parity's "
+                        f"monitor; this one is element {element} of the same "
+                        "detector, which alternates with the frames itself, so "
+                        f"the {first_half}/{second_half} asymmetry below is the "
+                        "ROI's against that "
+                        "element's and not against a steady beam"
+                    )
+                    lines.append(
+                        "note = both computed monitors open on the same band, so "
+                        "the element is the choice: element 1 carries the signal "
+                        "and pulls the asymmetry towards its own, element 7 "
+                        "holds almost none of the line but alternates about "
+                        "three times harder and reverses the sign. Neither is a "
+                        "quiet reference -- there is no region of this detector "
+                        "that does not alternate, and the opening band contains "
+                        "the ROI on either element"
+                    )
+                else:
+                    # These were equal to each other while the pane reduced by
+                    # the mean: one reading per point, spread over the frames and
+                    # averaged straight back out. On totals each is that reading
+                    # times the frames its own half contributed, so they part
+                    # company at exactly the ragged points -- and that is the
+                    # division doing its job, not an inconsistency.
+                    lines.append(
+                        f"note = one recorded reading per primary row, so "
+                        f"mon_{odd} and mon_{even} are the total of those readings "
+                        f"over the frames each half took: equal wherever the "
+                        f"halves are, and normalising then leaves the "
+                        f"{first_half}/{second_half} asymmetry alone; where they "
+                        f"differ, normalising divides the extra frame back out"
+                    )
         elif settings["normalize"]:
             # Asked for and not delivered. Saying "(none)" here would be true
             # of the numbers and a lie about the session: the box was ticked,
@@ -4167,10 +5786,11 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         xlabel = TREND_POINT_AXIS
         mean_x = np.empty(0)
 
-        for label, part, _unit in COMBINE_MODES:
-            tag = _safe_name(
-                label.replace(" - ", "").replace(" only", "")
-            ).lower()
+        tags = {part: tag for _label, part, _unit, tag in self._modes()}
+        # Sum alone where the frames do not split: the other three would be
+        # the sum again, or nothing, under names that promise a contrast.
+        modes = self._modes() if self.split else self._modes()[:1]
+        for _label, part, _unit, tag in modes:
             for suffix, these in (("raw", raw_settings), ("norm", settings)):
                 if suffix == "norm" and not normalize:
                     continue
@@ -4189,14 +5809,10 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                     names.append(f"{tag}_{stem}_{suffix}")
                     columns.append(y)
 
-        for part in ("all", "odd", "even"):
+        for part in ("all", "odd", "even") if self.split else ("all",):
             column = self._monitor_trend(dead_time, part, settings)
             if column is not None:
-                names.append(
-                    {"all": "mon_sum", "odd": "mon_odd", "even": "mon_even"}[
-                        part
-                    ]
-                )
+                names.append(f"mon_{tags[part]}")
                 columns.append(column)
 
         points = np.arange(

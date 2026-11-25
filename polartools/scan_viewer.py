@@ -9,10 +9,12 @@ adds the Combine box for scans that took more than one vortex frame per point
 and offers ``vortex_total_el1`` and ``vortex_total_el7`` as monitors.
 
 The browser itself gains five things, all through the same subclass: bold
-text throughout; a blue scan number on any scan that wrote more than one
-vortex frame per point -- the sgz softglue layout, and the scans this
-edition's Combine box has something to say about; a Find row in the Baseline
-window that jumps to a field by part of its name; a directory listing that
+text throughout; a coloured scan number for the scans that need a second
+look -- red for a dichro scan and green for a lock-in one, going by the
+``polarization`` hint the macro wrote, and blue on any other scan that wrote
+more than one vortex frame per point, the sgz softglue layout and the scans
+this edition's Combine box has something to say about; a Find row in the
+Baseline window that jumps to a field by part of its name; a directory listing that
 appears at once instead of after every file has been read, which on a
 2714-scan directory is the difference between 0.05 s and 82 s; and an Auto
 refresh button that adds scans to the listing as they land.
@@ -54,6 +56,23 @@ from . import spectrum_viewer
 # answers a different question -- that one says a spectrum exists, this says
 # the spectrum has halves.
 SOFTGLUE_COLOR = QtGui.QColor("blue")
+
+# The same idea for the scans whose ``polarization`` hint says the retarder
+# was doing something: the two values :func:`_base.reduce_mode` and the
+# reduce tab care about. ``fixed``, which nearly every scan says, gets nothing.
+# These win over the softglue blue on a scan that is both, since the hint is
+# what the macro meant -- though no softglue scan seen so far says anything
+# but ``fixed``.
+POLARIZATION_COLORS = {
+    spectrum_viewer.DICHRO_HINT: (
+        QtGui.QColor("red"),
+        "A dichro scan: the retarder was stepped between helicities.",
+    ),
+    _base.LOCKIN_HINT: (
+        QtGui.QColor("green"),
+        "A lock-in scan: the retarder was modulated against the lock-in.",
+    ),
+}
 
 # How long one chunk of the fill pass may hold the event loop, in
 # milliseconds. Time and not a row count, because the cost per row is all
@@ -226,7 +245,9 @@ def _module_global(module, name: str, value):
 
 
 class SgHdfViewer(_base.HdfViewer):
-    """The browser, in bold, with softglue scan numbers in blue.
+    """The browser, with dichro, lock-in and softglue scans in colour.
+
+    Their scan numbers are bold, in red, green and blue respectively.
 
     A subclass and not an edit to ``_scan_viewer_base.py``: that file is what the
     beamline runs every day and stays byte-for-byte identical. Both additions
@@ -556,7 +577,7 @@ class SgHdfViewer(_base.HdfViewer):
         self._bare.discard(row)
         cells = self._scan_row(path)
         # From 1: column 0 is the scan number, which the cheap pass already
-        # wrote, and rewriting it would undo the blue below on a refresh.
+        # wrote, and rewriting it would undo the colour below on a refresh.
         for column in range(1, len(cells)):
             item = table.item(row, column)
             if item is not None:
@@ -564,20 +585,32 @@ class SgHdfViewer(_base.HdfViewer):
         self._color_row_now(table, row, path)
 
     def _color_row_now(self, table, row: int, path: Path):
-        """Blue one row's scan number if its cube holds halves.
+        """Colour one row's scan number by what kind of scan it is.
 
-        Folded into the fill rather than a pass of its own, as it used to be:
-        it needs the same ``resolve_spectrum_file`` the "Spc" cell just asked
-        for, and one pass over the listing is one set of opens instead of two.
+        Red or green where the ``polarization`` hint says dichro or lock-in
+        -- see :data:`POLARIZATION_COLORS` -- and otherwise blue if its cube
+        holds halves. The hint costs nothing here: ``read_scan_info`` caches
+        on (path, mtime, size) and the fill has just called it.
+
+        The softglue test is folded into the fill rather than a pass of its
+        own, as it used to be: it needs the same ``resolve_spectrum_file`` the
+        "Spc" cell just asked for, and one pass over the listing is one set of
+        opens instead of two.
         Both that and :func:`spectrum_viewer.is_multi_frame_scan` cache on
         (path, mtime, size), so the second ask costs a dict lookup and a
         refresh of an unchanged directory reopens nothing at all.
         """
-        cube = spectrum_viewer.resolve_spectrum_file(path)
-        if cube is None or not spectrum_viewer.is_multi_frame_scan(cube):
-            return
         item = table.item(row, 0)
         if item is None:
+            return
+        hint = _base.read_scan_info(path)["hints"]["polarization"]
+        if hint in POLARIZATION_COLORS:
+            color, tip = POLARIZATION_COLORS[hint]
+            item.setForeground(QtGui.QBrush(color))
+            item.setToolTip(tip)
+            return
+        cube = spectrum_viewer.resolve_spectrum_file(path)
+        if cube is None or not spectrum_viewer.is_multi_frame_scan(cube):
             return
         item.setForeground(QtGui.QBrush(SOFTGLUE_COLOR))
         item.setToolTip(

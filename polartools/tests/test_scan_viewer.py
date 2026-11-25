@@ -6,7 +6,12 @@ import numpy as np
 
 pytest.importorskip("PyQt6", reason="PyQt6 not installed — skipping GUI tests")
 
+import h5py  # noqa: E402
+import yaml  # noqa: E402
+
+from polartools._scan_viewer_base import METADATA_PATH  # noqa: E402
 from polartools._scan_viewer_base import merge_grids  # noqa: E402
+from polartools._scan_viewer_base import read_metadata  # noqa: E402
 
 
 def grid(x, y, z):
@@ -62,3 +67,48 @@ def test_merge_grids_ignores_unmeasured_cells():
     np.testing.assert_array_equal(merged["z"][1], [4, 6])
     assert merged["averaged"] == 1
     assert np.isnan(merged["z"][2]).all()
+
+
+def test_read_metadata_parses_yaml_and_numpy(tmp_path):
+    path = tmp_path / "scan.hdf"
+    hints = {
+        "detectors": ["det1"],
+        "dimensions": [(["motor1"], "primary")],
+        "monitor": "mon",
+    }
+    blob = {
+        "array": np.arange(3.0),
+        "scalar": np.float64(2.5),
+        "int": np.int32(-4),
+    }
+    with h5py.File(path, "w") as f:
+        meta = f.create_group(METADATA_PATH)
+        meta["plan_name"] = b"scan"
+        meta["num_points"] = np.int64(11)
+        for name, value in (("hints", hints), ("blob", blob)):
+            meta[name] = yaml.dump(value).encode()
+            meta[name].attrs["text_format"] = "yaml"
+        meta["broken"] = b"a: [unclosed"
+        meta["broken"].attrs["text_format"] = "yaml"
+
+    metadata = read_metadata(path)
+
+    assert list(metadata) == sorted(metadata)
+    assert metadata["plan_name"] == "scan"
+    assert metadata["num_points"] == 11
+    assert metadata["hints"] == {
+        "detectors": ["det1"],
+        "dimensions": [[["motor1"], "primary"]],
+        "monitor": "mon",
+    }
+    np.testing.assert_array_equal(metadata["blob"]["array"], [0.0, 1.0, 2.0])
+    assert metadata["blob"]["scalar"] == 2.5
+    assert metadata["blob"]["int"] == -4
+    assert metadata["broken"] == "a: [unclosed"
+
+
+def test_read_metadata_without_group_is_empty(tmp_path):
+    path = tmp_path / "plain.h5"
+    with h5py.File(path, "w") as f:
+        f["data"] = np.zeros(3)
+    assert read_metadata(path) == {}

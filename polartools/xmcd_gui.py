@@ -1027,6 +1027,15 @@ class MainWindow(QMainWindow):
             self.status_bar.showMessage("Load failed.")
             return
 
+        # The loaders average scans with nanmean, but a point that is bad in
+        # every scan (or in the only scan) is still NaN/inf, and the lmfit
+        # normalization refuses NaN. Drop those points.
+        good_p = np.isfinite(ep) & np.isfinite(yp) & np.isfinite(zp)
+        good_m = np.isfinite(em) & np.isfinite(ym) & np.isfinite(zm)
+        n_dropped = int((~good_p).sum() + (~good_m).sum())
+        ep, yp, zp = ep[good_p], yp[good_p], zp[good_p]
+        em, ym, zm = em[good_m], ym[good_m], zm[good_m]
+
         sort_p = np.argsort(ep)
         sort_m = np.argsort(em)
         self._plus_energy = ep[sort_p] * 1000
@@ -1054,6 +1063,11 @@ class MainWindow(QMainWindow):
             f"Loaded {len(scans_plus)} H+ and {len(scans_minus)} H− scans — normalizing…"
         )
         self._run_normalization()
+        if n_dropped:
+            self.status_bar.showMessage(
+                f"{self.status_bar.currentMessage()}  |  "
+                f"dropped {n_dropped} NaN point(s)"
+            )
 
         if not first_load:
             self._sync_lines_to_entries()

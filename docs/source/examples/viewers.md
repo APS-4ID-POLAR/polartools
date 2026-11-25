@@ -31,7 +31,9 @@ Select one scan, or ctrl/shift-click several, and they are overlaid:
   field each, Y any number. They start on whatever the scan's own `hints`
   nominate, so a scan plots itself the way it was meant to be read. Norm
   starts clear, because normalizing rescales every number on the plot and in
-  the statistics table.
+  the statistics table. Selecting a different kind of scan re-reads X and Y
+  from its hints, but Norm carries over: a monitor you ticked stays ticked,
+  and one left clear stays clear.
 - **log(mon/det)** — plots the absorption rather than a plain ratio, which is
   what makes a transmission XAS scan readable straight off `primary`.
 - **Statistics, Integrate, Fit** — max, min, half-max centre and FWHM per
@@ -58,6 +60,13 @@ Select one scan, or ctrl/shift-click several, and they are overlaid:
 - **Auto refresh** adds scans to the listing as they land, so the browser can
   be left open during a run. A scan whose file is still being written gets a
   row with blank cells rather than being dropped.
+- **Baseline… / Metadata…** — open windows for one selected file at a time.
+  Baseline shows each baseline field before and after the scan. Metadata
+  shows the run-start metadata in `entry/instrument/bluesky/metadata` (plan,
+  arguments, hints, versions, session state, ...). The writer stores dict and
+  list values as YAML text, and this window opens them back up as trees, with
+  numpy arrays decoded. A filter box finds a key or value anywhere in the
+  tree.
 
 :::{note}
 Read the module docstrings for the full behaviour — they are long and they
@@ -96,7 +105,36 @@ raw curves in a window meant for comparing elements state a wrong conclusion
 about the hardware rather confidently. The checkbox turns it off.
 
 The **Combine** box handles scans that took more than one frame per point, and
-`vortex_total_el1` / `vortex_total_el7` are offered as monitors.
+`vortex_total_el1` / `vortex_total_el7` are offered as monitors. The spectra
+can be divided by the monitor too: the **/ monitor** tick beside Log Y uses the
+monitor picked for the ROI trend. Each spectrum is divided by the monitor
+summed over the same frames, and under a contrast each half by its own.
+
+It also handles slow dichro scans: one frame per point, with the retarder
+flipped from point to point. These are scans whose hints read
+`polarization: dichro`. For them Combine offers **Sum**, **Dichro (plus −
+minus)**, **Plus pol.** and **Minus pol.** Plus is the larger reading of the
+polarization field and minus the smaller. That field is picked automatically
+from `pr{2,1,3}_pzt_localdc` or `pr{1,2,3}_th`, whichever toggles, and can be
+changed in the **Pol.** box. The rows taken at one energy (four, `+ − − +`,
+on the usual scans) become one point of the ROI trend. This re-does the
+scan's `dichro_monitor` reduction over an ROI of your choosing: normalised,
+Sum is the XAS and Dichro the XMCD. If a scan has several frames per point
+and also reads `polarization: dichro`, the odd/even split is the one used.
+
+The trend can plot fitted peak areas instead of the ROI's counts. **Fit
+peaks…** opens a separate Peak fit window. Set a fit window, add peaks (by
+clicking, or **Find peaks**, which also finds shoulders), choose a background,
+and press **Fit**. Every element of every scan is fitted on its own summed
+spectrum, with a residual plot to judge the fit. Tick **Use** for the peaks
+whose summed area the trend should plot; peaks left unticked still take their
+share of an overlap. **Signal** then switches the trend between *ROI sum* and
+*Fit area*. The peak shapes are fitted once and held fixed, so each frame's
+area is a linear projection that totals over points, polarization halves and
+monitors exactly as ROI counts do. That suits fluorescence lines, not the
+elastic line of an energy scan, which moves. Fitting pays where lines overlap
+or the background is polarization-dependent or sloped. On an isolated line a
+background term makes the result noisier than an ROI.
 
 ## The image viewer — `Img`
 
