@@ -1507,6 +1507,9 @@ Module Contents
       otherwise it would fall into the minus half by default. ``None`` when
       there is no split.
 
+      Cached until :meth:`set_pol_field` changes the split, and read-only,
+      since every caller shares the one array.
+
 
 
 
@@ -1972,6 +1975,12 @@ Module Contents
 
    .. py:attribute:: fit_results
       :type:  dict
+
+
+   .. py:attribute:: fit_ids
+      :type:  list[int]
+      :value: []
+
 
 
    .. py:attribute:: fit_dirty

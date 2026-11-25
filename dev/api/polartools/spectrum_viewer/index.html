@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../../_static/documentation_options.js?v=2167108d"></script>
+    <script src="../../../_static/documentation_options.js?v=ec2d5ef7"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post44+gb559b3510" />
+  <meta name="docsearch:version" content="0.6.0.post45+g14f9b7793" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -1667,6 +1667,8 @@ finish a point the scan never wrote down – takes the setting of the
 same place in the first point’s cycle, since the cycle is fixed;
 otherwise it would fall into the minus half by default. <code class="docutils literal notranslate"><span class="pre">None</span></code> when
 there is no split.</p>
+<p>Cached until <a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.set_pol_field" title="polartools.spectrum_viewer.SpectrumData.set_pol_field"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_pol_field()</span></code></a> changes the split, and read-only,
+since every caller shares the one array.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1950,6 +1952,11 @@ it has, and the status bar says which were clamped.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_ids">
+<span class="sig-name descname"><span class="pre">fit_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_ids" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_dirty">
 <span class="sig-name descname"><span class="pre">fit_dirty</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_dirty" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
@@ -2165,6 +2172,7 @@ reopening the dialog.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_background"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_background</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_shared_width"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_shared_width</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_results"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_results</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_ids"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_ids</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_dirty"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_dirty</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_window"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_window</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.monitor_bins"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.monitor_bins()</span></code></a></li>
