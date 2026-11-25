@@ -90,7 +90,7 @@ holding `entry/data/data` shaped `(frames, elements, bins)`. The browser's
 directly:
 
 ```bash
-spectrum-viewer path/to/scan_000055_master.hdf
+python -m polartools.spectrum_viewer path/to/scan_000055_master.hdf
 ```
 
 Both the master file and the spectrum file itself are accepted — the master is
@@ -145,7 +145,7 @@ in `detectors_file_relative_path`). The viewer resolves either, and falls back
 to deriving `pva_<stem>.h5` when the master records neither.
 
 ```bash
-image-viewer path/to/pva_tise2_2_00006.h5 [more.h5 ...]
+python -m polartools.image_viewer path/to/pva_tise2_2_00006.h5 [more.h5 ...]
 ```
 
 Built on pyqtgraph: pan/zoom, level and colormap control, rectangular ROIs

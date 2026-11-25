@@ -8,7 +8,7 @@ covers this in three layers:
 | --- | --- |
 | {py:mod}`polartools.process_flyscan` | Reduce one scan: position stream → per-image `x`, `y`, `I0`; detector file → per-image ROI sum |
 | {py:mod}`polartools.dichro_maps` | Pair scans up, regrid them, difference, align, stitch and animate |
-| {py:mod}`polartools.gui.flyscan_dichro` | The `flyscan-dichro-gui` application over both |
+| {py:mod}`polartools.flyscan_gui_dichro` | The `flyscan-dichro-gui` application over both |
 
 ## Expected layout
 
