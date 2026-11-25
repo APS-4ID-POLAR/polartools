@@ -88,10 +88,12 @@ docs = [
 ]
 
 [project.scripts]
-xmcd-gui = "polartools.xmcd_gui:main"
-xanes-gui = "polartools.xanes_gui:main"
-scan-viewer = "polartools.scan_viewer:main"
-flyscan-dichro-gui = "polartools.flyscan_gui_dichro:main"
+xmcd-gui = "polartools.gui.xmcd:main"
+xanes-gui = "polartools.gui.xanes:main"
+scan-viewer = "polartools.gui.scan_viewer:main"
+spectrum-viewer = "polartools.gui.spectrum_viewer:main"
+image-viewer = "polartools.gui.image_viewer:main"
+flyscan-dichro-gui = "polartools.gui.flyscan_dichro:main"
 
 [project.urls]
 Homepage = "https://github.com/APS-4ID-POLAR/polartools"
@@ -170,11 +172,11 @@ omit = [
     "polartools/_pyrixs.py",
     "polartools/tests/*",
     # Vendored GUI modules; no test coverage yet.
-    "polartools/_scan_viewer_base.py",
-    "polartools/scan_viewer.py",
-    "polartools/spectrum_viewer.py",
-    "polartools/image_viewer.py",
-    "polartools/flyscan_gui_dichro.py",
+    "polartools/gui/_scan_viewer_base.py",
+    "polartools/gui/scan_viewer.py",
+    "polartools/gui/spectrum_viewer.py",
+    "polartools/gui/image_viewer.py",
+    "polartools/gui/flyscan_dichro.py",
     "polartools/dichro_maps.py",
     "polartools/process_flyscan.py",
 ]

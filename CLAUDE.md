@@ -11,7 +11,7 @@ Detail lives in two companion files. Read the relevant one before working in
 that area; this file is only the index.
 
 - **[docs/dev/architecture.md](docs/dev/architecture.md)** — what each module
-  does, how the five GUI modules fit together, the two catalog backends.
+  does, how the GUI modules in `gui/` fit together, the two catalog backends.
 - **[docs/dev/environment.md](docs/dev/environment.md)** — packaging,
   dependency rules, the conda/Qt trap, test fixtures and gaps, CI, releases,
   known issues.
@@ -51,19 +51,20 @@ polartools/
   manage_database.py        databroker-pack / suitcase import-export
   area_detector_handlers.py Lambda / Eiger / SPE asset handlers
   _larch.py  _pyrixs.py     hoisted upstream helpers — do not reformat
-  _scan_viewer_base.py      the scan browser (~9900 lines)
-  scan_viewer.py            rebinds the base; `scan-viewer`
-  spectrum_viewer.py        Vortex MCA cubes, behind the browser's Spc button
-  image_viewer.py           area-detector stacks (pyqtgraph), behind Img
-  flyscan_gui_dichro.py     `flyscan-dichro-gui`
-  xmcd_gui.py               `xmcd-gui`
-  xanes_gui.py              `xanes-gui`; mirrors xmcd_gui.py
+  gui/                      PyQt6 apps; may import the library, never the reverse
+    _scan_viewer_base.py    the scan browser (~10300 lines)
+    scan_viewer.py          rebinds the base; `scan-viewer`
+    spectrum_viewer.py      Vortex MCA cubes, behind Spc; `spectrum-viewer`
+    image_viewer.py         area-detector stacks (pyqtgraph), behind Img; `image-viewer`
+    flyscan_dichro.py       `flyscan-dichro-gui`
+    xmcd.py                 `xmcd-gui`
+    xanes.py                `xanes-gui`; mirrors xmcd.py
 ```
 
 ## House rules
 
-1. **`_scan_viewer_base.py` is load-bearing** — it is what the beamline runs
-   every day. `scan_viewer.py` rebinds it rather than forking it, so browser
+1. **`gui/_scan_viewer_base.py` is load-bearing** — it is what the beamline runs
+   every day. `gui/scan_viewer.py` rebinds it rather than forking it, so browser
    changes belong in the base, where both editions get them.
 2. **Read a GUI module's docstring before changing one of its defaults.** They
    are long on purpose and record why each default is what it is, usually with
@@ -77,5 +78,8 @@ polartools/
    brings the `xcb-util-cursor` that Qt ≥6.5 cannot start without.
 6. **`polartools/_version.py` is generated** by `hatch-vcs` from git tags. Do
    not edit it.
-7. `image_viewer.open_hkl_window` imports a module that was never vendored.
+7. `gui/image_viewer.open_hkl_window` imports a module that was never vendored.
    It is tracked separately — leave it alone.
+8. **The library never imports the GUIs.** No module outside `gui/` may import
+   `polartools.gui`, PyQt6 or pyqtgraph; `tests/test_import_boundary.py` enforces
+   it.

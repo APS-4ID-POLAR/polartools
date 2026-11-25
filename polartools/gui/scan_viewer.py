@@ -2,9 +2,9 @@
 """The scan browser, with the softglue spectrum window behind its Spc button.
 
 Everything in the browser itself -- the file tree, the scan table, the plots,
-the reduce tab -- is :mod:`polartools._scan_viewer_base`, unchanged and
+the reduce tab -- is :mod:`polartools.gui._scan_viewer_base`, unchanged and
 imported. The only difference is which spectrum viewer its "Load Spectrum"
-button opens: :mod:`polartools.spectrum_viewer`, the softglue edition, which
+button opens: :mod:`polartools.gui.spectrum_viewer`, the softglue edition, which
 adds the Combine box for scans that took more than one vortex frame per point
 and offers ``vortex_total_el1`` and ``vortex_total_el7`` as monitors.
 

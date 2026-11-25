@@ -36,12 +36,12 @@ better off calling `polartools.absorption.process_xmcd` directly.
 
 ## Architecture
 
-The GUI is a single file: [`polartools/xmcd_gui.py`][src]. It's intentionally
+The GUI is a single file: [`polartools/gui/xmcd.py`][src]. It's intentionally
 thin — almost all the actual processing is delegated to functions in
 `polartools.absorption`. So if a scriptable equivalent of any GUI feature is
 useful, you can usually find it (or build it) in that module.
 
-[src]: https://github.com/APS-4ID-POLAR/polartools/blob/main/polartools/xmcd_gui.py
+[src]: https://github.com/APS-4ID-POLAR/polartools/blob/main/polartools/gui/xmcd.py
 
 ## Reporting GUI bugs
 

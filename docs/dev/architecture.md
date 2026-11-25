@@ -26,18 +26,21 @@ coverage and autoapi, and not to be reformatted.
 
 ## GUIs
 
-Six PyQt6 modules: five vendored from standalone beamline scripts and ported
-from PyQt5, plus `xanes_gui.py`. Four are console scripts
-(`[project.scripts]`):
+Seven PyQt6 modules in `polartools/gui/`: five vendored from standalone beamline
+scripts and ported from PyQt5, plus `xanes.py`. Six are console scripts
+(`[project.scripts]`). Modules in `gui/` may import the library; no library
+module may import `gui/`, PyQt6 or pyqtgraph (`tests/test_import_boundary.py`).
 
 | Entry point | Module | Opens |
 | --- | --- | --- |
-| `scan-viewer` | `scan_viewer.py` | Scan browser for a directory of `*_master.hdf` |
-| `flyscan-dichro-gui` | `flyscan_gui_dichro.py` | CR/CL flyscan difference maps |
-| `xmcd-gui` | `xmcd_gui.py` | Interactive XMCD normalization |
-| `xanes-gui` | `xanes_gui.py` | Interactive XANES normalization |
+| `scan-viewer` | `gui/scan_viewer.py` | Scan browser for a directory of `*_master.hdf` |
+| `flyscan-dichro-gui` | `gui/flyscan_dichro.py` | CR/CL flyscan difference maps |
+| `xmcd-gui` | `gui/xmcd.py` | Interactive XMCD normalization |
+| `xanes-gui` | `gui/xanes.py` | Interactive XANES normalization |
+| `spectrum-viewer` | `gui/spectrum_viewer.py` | Vortex MCA spectrum cubes |
+| `image-viewer` | `gui/image_viewer.py` | Area-detector image stacks |
 
-**`_scan_viewer_base.py`** (~9900 lines) is the scan browser itself — listing,
+**`_scan_viewer_base.py`** (~10300 lines) is the scan browser itself — listing,
 field table, plots, fits, XMCD panels, colour maps. It is what the beamline
 runs every day; treat it as load-bearing.
 
@@ -50,17 +53,17 @@ behaviour therefore belongs in the base, where both editions get it; copying a
 
 **`spectrum_viewer.py`** (Vortex MCA cubes) and **`image_viewer.py`**
 (area-detector stacks, pyqtgraph) are opened by the browser's `Spc` and `Img`
-buttons, and also run as `python -m polartools.<module> <file>`. Neither the
+buttons, and also run as `spectrum-viewer` / `image-viewer`. Neither the
 Vortex element count nor the dead-time bookkeeping is constant between run
 cycles, so both are probed for rather than assumed.
 
-**`xmcd_gui.py`** is deliberately thin; the processing lives in
-`absorption.py`. **`xanes_gui.py`** is its single-spectrum counterpart, built
+**`xmcd.py`** is deliberately thin; the processing lives in
+`absorption.py`. **`xanes.py`** is its single-spectrum counterpart, built
 on the same layout, method names and helpers (copied, not shared), plus a
 column-file source and a reference overlay. Keep the two in step: a fix to a
-helper in one usually belongs in the other. They are the only GUI modules with
-tests (`tests/test_xmcd_gui.py`, `tests/test_xanes_gui.py`, each building a
-session-scoped `QApplication`).
+helper in one usually belongs in the other. Their tests
+(`tests/gui/test_xmcd.py`, `tests/gui/test_xanes.py`) each build a
+session-scoped `QApplication`.
 
 The GUI module docstrings are long and carry the reasoning — usually with the
 scan numbers that motivated it — behind every default. Read the docstring

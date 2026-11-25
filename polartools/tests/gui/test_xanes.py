@@ -27,7 +27,7 @@ def qapp():
 
 @pytest.fixture
 def win(qapp):
-    from polartools.xanes_gui import MainWindow
+    from polartools.gui.xanes import MainWindow
 
     window = MainWindow()
     yield window
@@ -362,7 +362,7 @@ def test_run_normalization_no_data_noop(win):
 def test_run_normalization_success(loaded_win):
     energy = loaded_win._energy
     with patch(
-        "polartools.xanes_gui.normalize_absorption",
+        "polartools.gui.xanes.normalize_absorption",
         return_value=_norm_stub(energy),
     ):
         loaded_win._run_normalization()
@@ -372,7 +372,7 @@ def test_run_normalization_success(loaded_win):
 
 def test_run_normalization_error(loaded_win):
     with patch(
-        "polartools.xanes_gui.normalize_absorption",
+        "polartools.gui.xanes.normalize_absorption",
         side_effect=RuntimeError("bad fit"),
     ):
         loaded_win._run_normalization()
@@ -384,7 +384,7 @@ def test_run_normalization_error(loaded_win):
 
 
 def test_save_results_no_results_noop(win):
-    with patch("polartools.xanes_gui.save_xas") as mock_save:
+    with patch("polartools.gui.xanes.save_xas") as mock_save:
         win._save_results()
     mock_save.assert_not_called()
 
@@ -392,7 +392,7 @@ def test_save_results_no_results_noop(win):
 def test_save_results_absolute_path(normalized_win, tmp_path):
     fname = str(tmp_path / "out.dat")
     normalized_win.le_savename.setText(fname)
-    with patch("polartools.xanes_gui.save_xas") as mock_save:
+    with patch("polartools.gui.xanes.save_xas") as mock_save:
         normalized_win._save_results()
     mock_save.assert_called_once_with(normalized_win._results, fname)
     assert "Saved" in normalized_win.status_bar.currentMessage()
@@ -402,10 +402,10 @@ def test_save_results_save_error(normalized_win, tmp_path):
     fname = str(tmp_path / "out.dat")
     normalized_win.le_savename.setText(fname)
     with patch(
-        "polartools.xanes_gui.save_xas",
+        "polartools.gui.xanes.save_xas",
         side_effect=OSError("disk full"),
     ):
-        with patch("polartools.xanes_gui.QMessageBox.critical") as mock_err:
+        with patch("polartools.gui.xanes.QMessageBox.critical") as mock_err:
             normalized_win._save_results()
     mock_err.assert_called_once()
 
@@ -442,8 +442,8 @@ def test_save_results_uses_folder_without_dialog(normalized_win, tmp_path):
     normalized_win.le_savename.setText("out.dat")
     expected = str(tmp_path / "out.dat")
     with (
-        patch("polartools.xanes_gui.save_xas") as mock_save,
-        patch("polartools.xanes_gui.QFileDialog.getSaveFileName") as mock_dlg,
+        patch("polartools.gui.xanes.save_xas") as mock_save,
+        patch("polartools.gui.xanes.QFileDialog.getSaveFileName") as mock_dlg,
     ):
         normalized_win._save_results()
     mock_dlg.assert_not_called()
@@ -458,9 +458,9 @@ def test_save_results_prompts_when_file_exists(normalized_win, tmp_path):
     fname.write_text("existing content")
     normalized_win.le_savename.setText(str(fname))
     with (
-        patch("polartools.xanes_gui.save_xas") as mock_save,
+        patch("polartools.gui.xanes.save_xas") as mock_save,
         patch(
-            "polartools.xanes_gui.QMessageBox.question",
+            "polartools.gui.xanes.QMessageBox.question",
             return_value=QMessageBox.StandardButton.Yes,
         ) as mock_q,
     ):
@@ -474,9 +474,9 @@ def test_save_results_overwrite_declined_skips_save(normalized_win, tmp_path):
     fname.write_text("existing content")
     normalized_win.le_savename.setText(str(fname))
     with (
-        patch("polartools.xanes_gui.save_xas") as mock_save,
+        patch("polartools.gui.xanes.save_xas") as mock_save,
         patch(
-            "polartools.xanes_gui.QMessageBox.question",
+            "polartools.gui.xanes.QMessageBox.question",
             return_value=QMessageBox.StandardButton.No,
         ),
     ):
@@ -489,8 +489,8 @@ def test_save_results_no_prompt_when_file_missing(normalized_win, tmp_path):
     fname = str(tmp_path / "new_out.dat")
     normalized_win.le_savename.setText(fname)
     with (
-        patch("polartools.xanes_gui.save_xas") as mock_save,
-        patch("polartools.xanes_gui.QMessageBox.question") as mock_q,
+        patch("polartools.gui.xanes.save_xas") as mock_save,
+        patch("polartools.gui.xanes.QMessageBox.question") as mock_q,
     ):
         normalized_win._save_results()
     mock_q.assert_not_called()
@@ -505,12 +505,12 @@ def test_save_results_dialog_path_no_extra_prompt(normalized_win, tmp_path):
     normalized_win.le_savefolder.setText("")
     normalized_win.le_savename.setText("out.dat")
     with (
-        patch("polartools.xanes_gui.save_xas") as mock_save,
+        patch("polartools.gui.xanes.save_xas") as mock_save,
         patch(
-            "polartools.xanes_gui.QFileDialog.getSaveFileName",
+            "polartools.gui.xanes.QFileDialog.getSaveFileName",
             return_value=(str(fname), ""),
         ),
-        patch("polartools.xanes_gui.QMessageBox.question") as mock_q,
+        patch("polartools.gui.xanes.QMessageBox.question") as mock_q,
     ):
         normalized_win._save_results()
     mock_q.assert_not_called()
@@ -536,7 +536,7 @@ def _write_reference_file(path):
 
 
 def test_load_reference_no_path_warns(win):
-    with patch("polartools.xanes_gui.QMessageBox.warning") as mock_warn:
+    with patch("polartools.gui.xanes.QMessageBox.warning") as mock_warn:
         win._load_reference()
     mock_warn.assert_called_once()
     assert win._ref_energy is None
@@ -558,7 +558,7 @@ def test_load_reference_success(win, tmp_path):
 
 def test_load_reference_missing_file_shows_error(win):
     win.le_reference.setText("/no/such/file.dat")
-    with patch("polartools.xanes_gui.QMessageBox.critical") as mock_err:
+    with patch("polartools.gui.xanes.QMessageBox.critical") as mock_err:
         win._load_reference()
     mock_err.assert_called_once()
     assert win._ref_energy is None
@@ -568,7 +568,7 @@ def test_load_reference_bad_shape_shows_error(win, tmp_path):
     fname = str(tmp_path / "bad.dat")
     np.savetxt(fname, np.linspace(0, 1, 10))
     win.le_reference.setText(fname)
-    with patch("polartools.xanes_gui.QMessageBox.critical") as mock_err:
+    with patch("polartools.gui.xanes.QMessageBox.critical") as mock_err:
         win._load_reference()
     mock_err.assert_called_once()
     assert win._ref_energy is None
@@ -674,7 +674,7 @@ def test_entry_changed_valid_text(loaded_win):
 
 def test_on_load_parse_error_shows_dialog(win):
     win.le_scans.setText("")
-    with patch("polartools.xanes_gui.QMessageBox.critical") as mock_msg:
+    with patch("polartools.gui.xanes.QMessageBox.critical") as mock_msg:
         win._on_load()
     mock_msg.assert_called_once()
 
@@ -683,7 +683,7 @@ def test_on_load_source_error_shows_dialog(win):
     win.le_scans.setText("1")
     win.cb_source.setCurrentIndex(0)  # SPEC
     win.le_spec_path.setText("")  # empty → ValueError in _resolve_source
-    with patch("polartools.xanes_gui.QMessageBox.critical") as mock_msg:
+    with patch("polartools.gui.xanes.QMessageBox.critical") as mock_msg:
         win._on_load()
     mock_msg.assert_called_once()
 
@@ -693,10 +693,10 @@ def test_on_load_load_error_shows_dialog(win):
     win.cb_source.setCurrentIndex(0)
     win.le_spec_path.setText("/fake/path.dat")
     with patch(
-        "polartools.xanes_gui.load_multi_xas",
+        "polartools.gui.xanes.load_multi_xas",
         side_effect=OSError("file not found"),
     ):
-        with patch("polartools.xanes_gui.QMessageBox.critical") as mock_msg:
+        with patch("polartools.gui.xanes.QMessageBox.critical") as mock_msg:
             win._on_load()
     mock_msg.assert_called_once()
 
@@ -708,9 +708,9 @@ def test_on_load_success_sets_state(win, synthetic_data):
     win.le_spec_path.setText("/fake/path.dat")
 
     fake_return = (e, mu, np.zeros_like(mu))
-    with patch("polartools.xanes_gui.load_multi_xas", return_value=fake_return):
+    with patch("polartools.gui.xanes.load_multi_xas", return_value=fake_return):
         with patch(
-            "polartools.xanes_gui.normalize_absorption",
+            "polartools.gui.xanes.normalize_absorption",
             side_effect=lambda *a, **k: _norm_stub(e * 1000),
         ):
             win._on_load()
@@ -729,7 +729,7 @@ def test_on_load_drops_nan_points(win, synthetic_data):
     win.le_spec_path.setText("/fake/path.dat")
 
     with patch(
-        "polartools.xanes_gui.load_multi_xas",
+        "polartools.gui.xanes.load_multi_xas",
         return_value=(e, mu, np.zeros_like(mu)),
     ):
         win._on_load()
@@ -750,9 +750,9 @@ def test_on_load_guesses_only_first_load(win, synthetic_data):
     win.le_spec_path.setText("/fake/path.dat")
     fake_return = (e, mu, np.zeros_like(mu))
     with (
-        patch("polartools.xanes_gui.load_multi_xas", return_value=fake_return),
+        patch("polartools.gui.xanes.load_multi_xas", return_value=fake_return),
         patch(
-            "polartools.xanes_gui.normalize_absorption",
+            "polartools.gui.xanes.normalize_absorption",
             side_effect=lambda *a, **k: _norm_stub(e * 1000),
         ),
         patch.object(win, "_init_markers", wraps=win._init_markers) as spy,
@@ -775,7 +775,7 @@ def test_on_guess_reguesses_with_data(loaded_win):
     energy = loaded_win._energy
     with (
         patch(
-            "polartools.xanes_gui.normalize_absorption",
+            "polartools.gui.xanes.normalize_absorption",
             side_effect=lambda *a, **k: _norm_stub(energy),
         ),
         patch.object(loaded_win, "_init_markers") as spy,
@@ -826,7 +826,7 @@ def test_preview_column_file_single_column(win, tmp_path):
 
 
 def test_preview_column_file_missing_shows_error(win):
-    with patch("polartools.xanes_gui.QMessageBox.critical") as mock_msg:
+    with patch("polartools.gui.xanes.QMessageBox.critical") as mock_msg:
         win._preview_column_file("/no/such/file.dat")
     mock_msg.assert_called_once()
 
@@ -834,7 +834,7 @@ def test_preview_column_file_missing_shows_error(win):
 def test_browse_column_file_cancelled_noop(win):
     with (
         patch(
-            "polartools.xanes_gui.QFileDialog.getOpenFileName",
+            "polartools.gui.xanes.QFileDialog.getOpenFileName",
             return_value=("", ""),
         ),
         patch.object(win, "_preview_column_file") as spy,
@@ -848,7 +848,7 @@ def test_browse_column_file_sets_path_and_previews(win, tmp_path):
     path = str(tmp_path / "data.dat")
     _write_column_file(path)
     with patch(
-        "polartools.xanes_gui.QFileDialog.getOpenFileName",
+        "polartools.gui.xanes.QFileDialog.getOpenFileName",
         return_value=(path, "Data files (*.dat)"),
     ):
         win._browse_column_file()
@@ -885,7 +885,7 @@ def test_on_source_changed_disables_scan_widgets(win):
 def test_on_load_column_file_no_path_shows_error(win):
     win.cb_source.setCurrentIndex(win.cb_source.count() - 1)
     win.le_column_path.setText("")
-    with patch("polartools.xanes_gui.QMessageBox.critical") as mock_msg:
+    with patch("polartools.gui.xanes.QMessageBox.critical") as mock_msg:
         win._on_load()
     mock_msg.assert_called_once()
 
@@ -893,7 +893,7 @@ def test_on_load_column_file_no_path_shows_error(win):
 def test_on_load_column_file_bad_file_shows_error(win):
     win.cb_source.setCurrentIndex(win.cb_source.count() - 1)
     win.le_column_path.setText("/no/such/file.dat")
-    with patch("polartools.xanes_gui.QMessageBox.critical") as mock_msg:
+    with patch("polartools.gui.xanes.QMessageBox.critical") as mock_msg:
         win._on_load()
     mock_msg.assert_called_once()
 
@@ -906,7 +906,7 @@ def test_on_load_column_file_out_of_range_column(win, tmp_path):
     win._preview_column_file(path)
     with QSignalBlocker(win.cb_mu_col):
         win.cb_mu_col.setCurrentIndex(-1)
-    with patch("polartools.xanes_gui.QMessageBox.critical") as mock_msg:
+    with patch("polartools.gui.xanes.QMessageBox.critical") as mock_msg:
         win._on_load()
     mock_msg.assert_called_once()
 
@@ -919,7 +919,7 @@ def test_on_load_column_file_success(win, tmp_path):
     win._preview_column_file(path)
 
     with patch(
-        "polartools.xanes_gui.normalize_absorption",
+        "polartools.gui.xanes.normalize_absorption",
         side_effect=lambda *a, **k: _norm_stub(win._energy),
     ):
         win._on_load()
@@ -938,9 +938,9 @@ def test_on_load_column_file_reuses_preview_cache(win, tmp_path):
     win._preview_column_file(path)
 
     with (
-        patch("polartools.xanes_gui.np.loadtxt") as mock_loadtxt,
+        patch("polartools.gui.xanes.np.loadtxt") as mock_loadtxt,
         patch(
-            "polartools.xanes_gui.normalize_absorption",
+            "polartools.gui.xanes.normalize_absorption",
             side_effect=lambda *a, **k: _norm_stub(win._energy),
         ),
     ):
@@ -959,7 +959,7 @@ def test_on_load_column_file_reparses_on_cache_miss(win, tmp_path):
     assert win._column_cache is None
 
     with patch(
-        "polartools.xanes_gui.normalize_absorption",
+        "polartools.gui.xanes.normalize_absorption",
         side_effect=lambda *a, **k: _norm_stub(win._energy),
     ):
         win._on_load()

@@ -9,9 +9,9 @@ pytest.importorskip("PyQt6", reason="PyQt6 not installed — skipping GUI tests"
 import h5py  # noqa: E402
 import yaml  # noqa: E402
 
-from polartools._scan_viewer_base import METADATA_PATH  # noqa: E402
-from polartools._scan_viewer_base import merge_grids  # noqa: E402
-from polartools._scan_viewer_base import read_metadata  # noqa: E402
+from polartools.gui._scan_viewer_base import METADATA_PATH  # noqa: E402
+from polartools.gui._scan_viewer_base import merge_grids  # noqa: E402
+from polartools.gui._scan_viewer_base import read_metadata  # noqa: E402
 
 
 def grid(x, y, z):

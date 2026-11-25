@@ -261,13 +261,13 @@ from matplotlib.ticker import EngFormatter
 from matplotlib.widgets import SpanSelector
 
 from .image_viewer import recorded_detector_file
-from .spectrum_fit import BACKGROUNDS
-from .spectrum_fit import FWHM_PER_SIGMA
-from .spectrum_fit import PeakSpec
-from .spectrum_fit import area_weights
-from .spectrum_fit import decompose
-from .spectrum_fit import fit_shape
-from .spectrum_fit import suggest_peaks
+from ..spectrum_fit import BACKGROUNDS
+from ..spectrum_fit import FWHM_PER_SIGMA
+from ..spectrum_fit import PeakSpec
+from ..spectrum_fit import area_weights
+from ..spectrum_fit import decompose
+from ..spectrum_fit import fit_shape
+from ..spectrum_fit import suggest_peaks
 
 SPECTRUM_DATA_PATH = "entry/data/data"
 NDATTR_PATH = "entry/instrument/NDAttributes"

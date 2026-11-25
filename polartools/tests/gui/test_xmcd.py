@@ -23,7 +23,7 @@ def qapp():
 
 @pytest.fixture
 def win(qapp):
-    from polartools.xmcd_gui import MainWindow
+    from polartools.gui.xmcd import MainWindow
 
     window = MainWindow()
     yield window
@@ -399,7 +399,7 @@ def test_run_normalization_success(loaded_win):
         "edge_step": 1.0,
         "flat": np.ones_like(energy),
     }
-    with patch("polartools.xmcd_gui.normalize_absorption", return_value=stub):
+    with patch("polartools.gui.xmcd.normalize_absorption", return_value=stub):
         loaded_win._run_normalization()
     assert loaded_win.btn_save.isEnabled()
     assert loaded_win._plus_results is not None
@@ -408,7 +408,7 @@ def test_run_normalization_success(loaded_win):
 
 def test_run_normalization_error(loaded_win):
     with patch(
-        "polartools.xmcd_gui.normalize_absorption",
+        "polartools.gui.xmcd.normalize_absorption",
         side_effect=RuntimeError("bad fit"),
     ):
         loaded_win._run_normalization()
@@ -420,7 +420,7 @@ def test_run_normalization_error(loaded_win):
 
 
 def test_save_results_no_results_noop(win):
-    with patch("polartools.xmcd_gui.save_xmcd") as mock_save:
+    with patch("polartools.gui.xmcd.save_xmcd") as mock_save:
         win._save_results()
     mock_save.assert_not_called()
 
@@ -428,7 +428,7 @@ def test_save_results_no_results_noop(win):
 def test_save_results_absolute_path(normalized_win, tmp_path):
     fname = str(tmp_path / "out.dat")
     normalized_win.le_savename.setText(fname)
-    with patch("polartools.xmcd_gui.save_xmcd") as mock_save:
+    with patch("polartools.gui.xmcd.save_xmcd") as mock_save:
         normalized_win._save_results()
     mock_save.assert_called_once_with(
         normalized_win._plus_results, normalized_win._minus_results, fname
@@ -440,10 +440,10 @@ def test_save_results_save_error(normalized_win, tmp_path):
     fname = str(tmp_path / "out.dat")
     normalized_win.le_savename.setText(fname)
     with patch(
-        "polartools.xmcd_gui.save_xmcd",
+        "polartools.gui.xmcd.save_xmcd",
         side_effect=OSError("disk full"),
     ):
-        with patch("polartools.xmcd_gui.QMessageBox.critical") as mock_err:
+        with patch("polartools.gui.xmcd.QMessageBox.critical") as mock_err:
             normalized_win._save_results()
     mock_err.assert_called_once()
 
@@ -536,7 +536,7 @@ def test_entry_changed_valid_text(loaded_win):
 def test_on_load_parse_error_shows_dialog(win):
     win.le_scans_plus.setText("")
     win.le_scans_minus.setText("2")
-    with patch("polartools.xmcd_gui.QMessageBox.critical") as mock_msg:
+    with patch("polartools.gui.xmcd.QMessageBox.critical") as mock_msg:
         win._on_load()
     mock_msg.assert_called_once()
 
@@ -546,7 +546,7 @@ def test_on_load_source_error_shows_dialog(win):
     win.le_scans_minus.setText("2")
     win.cb_source.setCurrentIndex(0)  # SPEC
     win.le_spec_path.setText("")  # empty → ValueError in _resolve_source
-    with patch("polartools.xmcd_gui.QMessageBox.critical") as mock_msg:
+    with patch("polartools.gui.xmcd.QMessageBox.critical") as mock_msg:
         win._on_load()
     mock_msg.assert_called_once()
 
@@ -557,10 +557,10 @@ def test_on_load_load_error_shows_dialog(win):
     win.cb_source.setCurrentIndex(0)
     win.le_spec_path.setText("/fake/path.dat")
     with patch(
-        "polartools.xmcd_gui.load_multi_dichro",
+        "polartools.gui.xmcd.load_multi_dichro",
         side_effect=OSError("file not found"),
     ):
-        with patch("polartools.xmcd_gui.QMessageBox.critical") as mock_msg:
+        with patch("polartools.gui.xmcd.QMessageBox.critical") as mock_msg:
             win._on_load()
     mock_msg.assert_called_once()
 
@@ -575,9 +575,9 @@ def test_on_load_success_sets_state(win, synthetic_data):
 
     fake_return = (ep, yp, zp, None, None)
     with patch(
-        "polartools.xmcd_gui.load_multi_dichro", return_value=fake_return
+        "polartools.gui.xmcd.load_multi_dichro", return_value=fake_return
     ):
-        with patch("polartools.xmcd_gui.normalize_absorption") as mock_norm:
+        with patch("polartools.gui.xmcd.normalize_absorption") as mock_norm:
             mock_norm.return_value = {
                 "energy": ep * 1000,
                 "mu": yp,
@@ -607,7 +607,7 @@ def test_on_load_drops_nan_points(win, synthetic_data):
     win.cb_kind.setCurrentIndex(0)
 
     with patch(
-        "polartools.xmcd_gui.load_multi_dichro",
+        "polartools.gui.xmcd.load_multi_dichro",
         return_value=(ep, yp, zp, None, None),
     ):
         win._on_load()
@@ -676,7 +676,7 @@ def test_run_normalization_independent_uses_separate_kwargs(loaded_win):
         "flat": np.ones_like(energy),
     }
     with patch(
-        "polartools.xmcd_gui.normalize_absorption", return_value=stub
+        "polartools.gui.xmcd.normalize_absorption", return_value=stub
     ) as mock_norm:
         loaded_win._run_normalization()
 
@@ -707,7 +707,7 @@ def test_run_normalization_dependent_uses_same_kwargs(loaded_win):
         "flat": np.ones_like(energy),
     }
     with patch(
-        "polartools.xmcd_gui.normalize_absorption", return_value=stub
+        "polartools.gui.xmcd.normalize_absorption", return_value=stub
     ) as mock_norm:
         loaded_win._run_normalization()
 
@@ -767,7 +767,7 @@ def test_run_normalization_applies_lockin_factor(loaded_win):
     loaded_win._loaded_kind = "lockin"
     loaded_win.le_l_factor.setText("100")
     with patch(
-        "polartools.xmcd_gui.normalize_absorption",
+        "polartools.gui.xmcd.normalize_absorption",
         side_effect=lambda *a, **k: _norm_stub(energy),
     ):
         loaded_win._run_normalization()
@@ -783,7 +783,7 @@ def test_run_normalization_no_factor_for_dichro(loaded_win):
     loaded_win._loaded_kind = "dichro"
     loaded_win.le_l_factor.setText("100")  # ignored in dichro mode
     with patch(
-        "polartools.xmcd_gui.normalize_absorption",
+        "polartools.gui.xmcd.normalize_absorption",
         side_effect=lambda *a, **k: _norm_stub(energy),
     ):
         loaded_win._run_normalization()
@@ -804,10 +804,10 @@ def test_on_load_guesses_only_first_load(win, synthetic_data):
     fake_return = (ep, yp, zp, None, None)
     with (
         patch(
-            "polartools.xmcd_gui.load_multi_dichro", return_value=fake_return
+            "polartools.gui.xmcd.load_multi_dichro", return_value=fake_return
         ),
         patch(
-            "polartools.xmcd_gui.normalize_absorption",
+            "polartools.gui.xmcd.normalize_absorption",
             side_effect=lambda *a, **k: _norm_stub(ep * 1000),
         ),
         patch.object(win, "_init_markers", wraps=win._init_markers) as spy,
@@ -830,7 +830,7 @@ def test_on_guess_reguesses_with_data(loaded_win):
     energy = loaded_win._plus_energy
     with (
         patch(
-            "polartools.xmcd_gui.normalize_absorption",
+            "polartools.gui.xmcd.normalize_absorption",
             side_effect=lambda *a, **k: _norm_stub(energy),
         ),
         patch.object(loaded_win, "_init_markers") as spy,

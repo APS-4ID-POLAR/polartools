@@ -32,7 +32,7 @@ which API:
 - `pyqtgraph>=0.13` — first release handling PyQt6 and numpy 2 together
 - `PyQt6>=6.2`, `h5py>=3`, `hdf5plugin>=3`
 
-numpy needs no floor: `_scan_viewer_base.py` picks between `np.trapezoid` and
+numpy needs no floor: `gui/_scan_viewer_base.py` picks between `np.trapezoid` and
 `np.trapz` at import, so 1.x and 2.x both work.
 
 **`import hdf5plugin` is load-bearing.** It registers the LZ4/bitshuffle HDF5
@@ -73,7 +73,7 @@ Not covered, for want of a data file:
 - `SPEHandler` — needs a Princeton Instruments SPE file
 - `process_rxes_mcd` — needs a scan whose image count is divisible by 4
   (lambda250k has 50, which is not)
-- every GUI module except `xmcd_gui` and `xanes_gui` — all are in the
+- every GUI module except `gui/xmcd` and `gui/xanes` — all are in the
   coverage `omit` list
 
 ## CI workflows

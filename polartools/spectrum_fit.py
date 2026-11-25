@@ -1,6 +1,6 @@
 """Gaussian peak fitting for the spectrum viewer's trend.
 
-The trend in :mod:`spectrum_viewer` totals a box ROI per frame. This module
+The trend in :mod:`polartools.gui.spectrum_viewer` totals a box ROI per frame. This module
 offers the alternative of fitting several Gaussians and a background over a
 window of bins, and taking the *area* of the chosen peaks instead -- for lines
 that overlap, or sit on a background a box cannot take out.
