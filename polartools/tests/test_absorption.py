@@ -16,6 +16,23 @@ def test_load_multi_xas():
     assert allclose(xas.mean(), -7.64847338574727)
 
 
+def test_load_multi_xas_skips_non_finite(monkeypatch):
+    # A point that is NaN in one scan is averaged over the others.
+    energy = np.linspace(7.0, 7.1, 5)
+    scans = {
+        1: np.array([1.0, np.nan, 3.0, 4.0, 5.0]),
+        2: np.array([3.0, 4.0, 5.0, 6.0, 7.0]),
+    }
+    monkeypatch.setattr(
+        absorption,
+        "load_absorption",
+        lambda scan, *args, **kwargs: (energy, scans[scan]),
+    )
+    _, xas, xas_std = absorption.load_multi_xas([1, 2], "fake.dat")
+    assert allclose(xas, [2.0, 4.0, 4.0, 5.0, 6.0])
+    assert np.isnan(xas_std[1])
+
+
 def test_load_multi_dichro():
     path = join("polartools", "tests", "data_for_test")
     scans = [39, 40, 41]

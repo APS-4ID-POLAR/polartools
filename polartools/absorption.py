@@ -457,8 +457,7 @@ def load_multi_xas(
 
     if return_mean:
         if len(xanes.shape) == 2:
-            xanes_std = xanes.std(axis=0) / np.sqrt(len(scans))
-            xanes = xanes.mean(axis=0)
+            xanes, xanes_std = _mean_over_scans(xanes)
             return energy, xanes, xanes_std
         else:
             return energy, xanes, np.zeros((xanes.size))
