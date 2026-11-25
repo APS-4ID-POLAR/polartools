@@ -70,6 +70,6 @@ def test_library_module_imports_without_qt(module):
         env=env,
         timeout=300,
     )
-    assert (
-        result.returncode == 0
-    ), f"{module} imported GUI modules:\n{result.stdout}{result.stderr}"
+    assert result.returncode == 0, (
+        f"{module} imported GUI modules:\n{result.stdout}{result.stderr}"
+    )
