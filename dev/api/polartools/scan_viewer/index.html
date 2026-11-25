@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../../_static/documentation_options.js?v=ec2d5ef7"></script>
+    <script src="../../../_static/documentation_options.js?v=f3b1f8ff"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0.post45+g14f9b7793" />
+  <meta name="docsearch:version" content="0.6.0.post46+gcfe7af8fd" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -652,7 +652,7 @@ way:</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.SgHdfViewer" title="polartools.scan_viewer.SgHdfViewer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SgHdfViewer</span></code></a></p></td>
-<td><p>The browser, in bold, with dichro, lock-in and softglue scan numbers</p></td>
+<td><p>The browser, with dichro, lock-in and softglue scans in colour.</p></td>
 </tr>
 </tbody>
 </table>
@@ -720,8 +720,8 @@ way:</p>
 <dt class="sig sig-object py" id="polartools.scan_viewer.SgHdfViewer">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.scan_viewer.</span></span><span class="sig-name descname"><span class="pre">SgHdfViewer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#polartools.scan_viewer.SgHdfViewer" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">polartools._scan_viewer_base.HdfViewer</span></code></p>
-<p>The browser, in bold, with dichro, lock-in and softglue scan numbers
-in red, green and blue.</p>
+<p>The browser, with dichro, lock-in and softglue scans in colour.</p>
+<p>Their scan numbers are bold, in red, green and blue respectively.</p>
 <p>A subclass and not an edit to <code class="docutils literal notranslate"><span class="pre">_scan_viewer_base.py</span></code>: that file is what the
 beamline runs every day and stays byte-for-byte identical. Both additions
 are things the base class has no hook for, so each overrides the smallest
