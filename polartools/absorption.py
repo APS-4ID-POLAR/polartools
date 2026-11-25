@@ -29,7 +29,7 @@ from spec2nexus.spec import SpecDataFile, SpecDataFileNotFound, NotASpecDataFile
 from ._larch import finde0, index_nearest
 from xraydb import xray_line, xray_edge, material_mu
 from lmfit.models import PolynomialModel
-from warnings import warn
+from warnings import warn, catch_warnings, simplefilter
 import matplotlib.pyplot as plt
 
 _spec_default_cols = dict(
@@ -55,6 +55,30 @@ def _sort_and_deduplicate(x, *ys):
     """Sort arrays by x and remove duplicate x values."""
     _, idx = np.unique(x, return_index=True)
     return (x[idx],) + tuple(y[idx] for y in ys)
+
+
+def _mean_over_scans(values):
+    """
+    Average stacked scans (axis 0), skipping non-finite points.
+
+    A detector or monitor that reads zero at one point gives inf or NaN there
+    (log(0/0), x/0); that scan is left out of the average at that point rather
+    than spoiling it. Points beyond a scan's energy range (NaN from the
+    interpolation onto the common grid) are skipped the same way. A point with
+    no finite value in any scan stays NaN.
+
+    Returns the mean and the error of the mean. The error is NaN where fewer
+    than two scans are finite: one value carries no spread to estimate it
+    from, and a zero there would read as a perfectly known point.
+    """
+    values = np.where(np.isfinite(values), values, np.nan)
+    count = np.sum(np.isfinite(values), axis=0)
+    with catch_warnings():
+        simplefilter("ignore", RuntimeWarning)  # all-NaN columns
+        mean = np.nanmean(values, axis=0)
+        error = np.nanstd(values, axis=0) / np.sqrt(count)
+    error = np.where(count >= 2, error, np.nan)
+    return mean, error
 
 
 def _select_default_names(source, **kwargs):
@@ -562,10 +586,8 @@ def load_multi_dichro(
 
     if return_mean:
         if len(xanes.shape) == 2:
-            xanes_std = xanes.std(axis=0) / np.sqrt(len(scans))
-            xanes = xanes.mean(axis=0)
-            xmcd_std = xmcd.std(axis=0) / np.sqrt(len(scans))
-            xmcd = xmcd.mean(axis=0)
+            xanes, xanes_std = _mean_over_scans(xanes)
+            xmcd, xmcd_std = _mean_over_scans(xmcd)
             return energy, xanes, xmcd, xanes_std, xmcd_std
         else:
             return (
@@ -686,10 +708,8 @@ def load_multi_lockin(
 
     if return_mean:
         if len(xanes.shape) == 2:
-            xanes_std = xanes.std(axis=0) / np.sqrt(len(scans))
-            xanes = xanes.mean(axis=0)
-            xmcd_std = xmcd.std(axis=0) / np.sqrt(len(scans))
-            xmcd = xmcd.mean(axis=0)
+            xanes, xanes_std = _mean_over_scans(xanes)
+            xmcd, xmcd_std = _mean_over_scans(xmcd)
             return energy, xanes, xmcd, xanes_std, xmcd_std
         else:
             return (

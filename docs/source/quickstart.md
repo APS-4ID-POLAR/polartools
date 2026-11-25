@@ -2,6 +2,10 @@
 
 A short tour of `polartools`: load a scan, look at it, fit a peak.
 
+In a hurry, and the data is a directory of `*_master.hdf` files? Run
+`scan-viewer` in it and everything below is a few clicks instead — see
+[Scan viewers](examples/viewers.md).
+
 ## Load a SPEC scan into a DataFrame
 
 ```python
@@ -65,4 +69,6 @@ result.plot()
 - [Load data](examples/load_data.md) — every supported source backend, with examples
 - [XAS / XMCD](examples/absorption.md) — normalization, dichroism, edge-step
 - [Diffraction](examples/diffraction.md) — peak fitting, peak series, HKL conversions
+- [Scan viewers](examples/viewers.md) — `scan-viewer` and the spectrum and image windows
+- [Flyscan dichroism](examples/flyscan_dichro.md) — CR/CL difference maps, in the GUI and scripted
 - [API reference](api/polartools/index.rst) — full function-by-function reference

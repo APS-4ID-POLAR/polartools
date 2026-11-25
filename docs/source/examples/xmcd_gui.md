@@ -8,6 +8,9 @@ polartools`, so you can launch it from anywhere:
 xmcd-gui
 ```
 
+It takes no arguments. For the other graphical tools in the package, see
+[Scan viewers](viewers.md) and [Flyscan dichroism](flyscan_dichro.md).
+
 ## What it does
 
 Wraps the same functions documented in the [XAS / XMCD example](absorption.md)
@@ -44,7 +47,7 @@ useful, you can usually find it (or build it) in that module.
 
 Open an issue with:
 
-- The polartools version (`xmcd-gui --version` or `python -c "import polartools; print(polartools.__version__)"`)
+- The polartools version (`python -c "import polartools; print(polartools.__version__)"`)
 - The PyQt6 version (`python -c "from PyQt6.QtCore import QT_VERSION_STR; print(QT_VERSION_STR)"`)
 - A screenshot of the failure if it's visual
 - The full traceback from the terminal you launched `xmcd-gui` from
@@ -52,3 +55,6 @@ Open an issue with:
 ## See also
 
 - [XAS / XMCD](absorption.md) — the underlying scriptable API
+- [Scan viewers](viewers.md) — browse a directory of scans, and the XMCD
+  panels the browser reduces them to
+- [Installation](../installation.md) — Qt system libraries on Linux

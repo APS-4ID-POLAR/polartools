@@ -595,6 +595,30 @@ def test_on_load_success_sets_state(win, synthetic_data):
     assert win._minus_energy is not None
 
 
+def test_on_load_drops_nan_points(win, synthetic_data):
+    # lmfit aborts on NaN, so points still NaN after averaging are dropped.
+    ep, yp, zp = synthetic_data
+    yp = yp.copy()
+    yp[0] = np.nan
+    win.le_scans_plus.setText("1")
+    win.le_scans_minus.setText("2")
+    win.cb_source.setCurrentIndex(0)
+    win.le_spec_path.setText("/fake/path.dat")
+    win.cb_kind.setCurrentIndex(0)
+
+    with patch(
+        "polartools.xmcd_gui.load_multi_dichro",
+        return_value=(ep, yp, zp, None, None),
+    ):
+        win._on_load()
+
+    assert win._plus_energy.size == ep.size - 1
+    assert np.all(np.isfinite(win._plus_mu))
+    assert win._minus_energy.size == ep.size - 1
+    assert win._plus_results is not None
+    assert "dropped 2 NaN point(s)" in win.status_bar.currentMessage()
+
+
 # ─── Independent H+/H− normalization ─────────────────────────────────────────
 
 
