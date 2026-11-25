@@ -238,6 +238,7 @@ Run standalone on one or more spectrum files, or let ``scan_viewer_sgz``'s
 
 from __future__ import annotations
 
+import itertools
 import re
 import sys
 from datetime import datetime
@@ -510,6 +511,9 @@ MIN_FIT_HALF_WIDTH_EV = 400.0
 # The last fit made, for the next window to open on: the window and the
 # peaks, in bins, for the reason _REMEMBERED_ROI_BINS is in bins.
 _REMEMBERED_FIT: dict | None = None
+# A number for every peak made, so that a fit's peaks can be told apart from
+# the table's after rows are added or removed -- see _fitted_rows.
+_PEAK_IDS = itertools.count()
 
 # How far two scans' X values may differ and still be averaged together, as a
 # fraction of one step. Relative and not absolute for the reason
@@ -1251,6 +1255,9 @@ class SpectrumData:
         # _half_pyramid.
         self._cum_half_raw: np.ndarray | None = None
         self._cum_half_dt: np.ndarray | None = None
+        # half_mask, worked out once per split rather than at every redraw,
+        # which asks for it from several places.
+        self._half_mask: np.ndarray | None = None
 
         # How the frames of a point split in two, if they do: "parity" for
         # the softglue layout, "polarization" for the slow dichro one, None
@@ -1438,6 +1445,7 @@ class SpectrumData:
         self._pol, self._rows_per_point = self.pol_fields[name]
         self._cum_half_raw = None
         self._cum_half_dt = None
+        self._half_mask = None
 
     @property
     def frames_per_row(self) -> int | None:
@@ -1584,9 +1592,22 @@ class SpectrumData:
         same place in the first point's cycle, since the cycle is fixed;
         otherwise it would fall into the minus half by default. ``None`` when
         there is no split.
+
+        Cached until :meth:`set_pol_field` changes the split, and read-only,
+        since every caller shares the one array.
         """
+        if self._half_mask is None:
+            mask = self._build_half_mask()
+            if mask is not None:
+                mask.flags.writeable = False
+            self._half_mask = mask
+        return self._half_mask
+
+    def _build_half_mask(self) -> np.ndarray | None:
+        """:attr:`half_mask`, worked out from scratch."""
         if self.split == "parity":
-            return self.odd_frames
+            mask = self.odd_frames
+            return None if mask is None else np.array(mask, dtype=bool)
         if self.split != "polarization":
             return None
         pol = self._pol
@@ -2435,14 +2456,10 @@ class PeakFitWindow(QtWidgets.QDialog):
         viewer = self.viewer
         widths = [p["fwhm_ev"] for p in viewer.fit_peaks]
         viewer.fit_peaks.append(
-            {
-                "centre_kev": float(viewer._bin_to_kev(event.xdata)),
-                "fwhm_ev": float(np.median(widths))
-                if widths
-                else DEFAULT_PEAK_FWHM_EV,
-                "use": True,
-                "fixed": False,
-            }
+            viewer._new_peak(
+                float(viewer._bin_to_kev(event.xdata)),
+                float(np.median(widths)) if widths else DEFAULT_PEAK_FWHM_EV,
+            )
         )
         self._changed(f"Added peak {len(viewer.fit_peaks)}.")
 
@@ -2480,9 +2497,11 @@ class PeakFitWindow(QtWidgets.QDialog):
         if result is None or not result.success:
             self.status.setText("No successful fit shown to copy from.")
             return
-        for peak, centre, sigma in zip(
-            self.viewer.fit_peaks, result.centres, result.sigmas
-        ):
+        for fitted, row in enumerate(self.viewer._fitted_rows()):
+            if row is None or fitted >= result.n_peaks:
+                continue
+            peak = self.viewer.fit_peaks[row]
+            centre, sigma = result.centres[fitted], result.sigmas[fitted]
             peak["centre_kev"] = float(self.viewer._bin_to_kev(centre))
             peak["fwhm_ev"] = self.viewer._sigma_to_fwhm_ev(sigma)
         self._changed("Starting values set from the fit shown.")
@@ -2519,10 +2538,18 @@ class PeakFitWindow(QtWidgets.QDialog):
     def _fill_table(self, result, areas):
         """The starting values, and beside them the fit of what is shown."""
         viewer = self.viewer
+        # The fit's columns by the table's rows: a row added since has no
+        # fitted values, and a row removed takes its own with it.
+        fitted_of = {
+            row: fitted
+            for fitted, row in enumerate(viewer._fitted_rows())
+            if row is not None
+        }
         self._syncing = True
         try:
             self.table.setRowCount(len(viewer.fit_peaks))
             for row, peak in enumerate(viewer.fit_peaks):
+                fitted = fitted_of.get(row)
                 cells = [
                     "",
                     f"{peak['centre_kev']:.4f}",
@@ -2535,15 +2562,15 @@ class PeakFitWindow(QtWidgets.QDialog):
                 if (
                     result is not None
                     and result.success
-                    and row < result.n_peaks
+                    and fitted is not None
+                    and fitted < result.n_peaks
                 ):
-                    cells[4] = (
-                        f"{float(viewer._bin_to_kev(result.centres[row])):.4f}"
-                    )
+                    centre = result.centres[fitted]
+                    cells[4] = f"{float(viewer._bin_to_kev(centre)):.4f}"
                     cells[5] = (
-                        f"{viewer._sigma_to_fwhm_ev(result.sigmas[row]):.0f}"
+                        f"{viewer._sigma_to_fwhm_ev(result.sigmas[fitted]):.0f}"
                     )
-                    cells[6] = f"{areas[row]:.6g}"
+                    cells[6] = f"{areas[fitted]:.6g}"
                 for column, text in enumerate(cells):
                     item = QtWidgets.QTableWidgetItem(text)
                     flags = QtCore.Qt.ItemFlag.ItemIsEnabled
@@ -2596,18 +2623,25 @@ class PeakFitWindow(QtWidgets.QDialog):
                 )
                 model = matrix @ coefficients
                 self.ax.plot(xs, model, color="C3", lw=1.3, label="fit")
+                rows = viewer._fitted_rows()
                 for i in range(n):
-                    used = (
-                        viewer.fit_peaks[i]["use"]
-                        if i < len(viewer.fit_peaks)
-                        else False
-                    )
+                    # Named by its row in the table now, which is what the
+                    # Use ticks refer to; a peak removed since the fit is
+                    # still in it, and counted by nothing.
+                    row = rows[i] if i < len(rows) else None
+                    used = row is not None and viewer.fit_peaks[row]["use"]
+                    if row is None:
+                        label = "removed peak"
+                    else:
+                        label = f"peak {row + 1}" + (
+                            "" if used else " (not used)"
+                        )
                     self.ax.plot(
                         xs,
                         matrix[:, i] * coefficients[i] + background,
                         ls="-" if used else ":",
                         lw=0.9,
-                        label=f"peak {i + 1}" + ("" if used else " (not used)"),
+                        label=label,
                     )
                 if result.background != "none":
                     self.ax.plot(
@@ -2820,6 +2854,10 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.fit_background = DEFAULT_FIT_BACKGROUND
         self.fit_shared_width = False
         self.fit_results: dict = {}
+        # The ids of fit_peaks at the last Fit, in the order of its columns:
+        # rows added or removed since then must not shift which fitted peak a
+        # Use tick stands for (see _fitted_rows).
+        self.fit_ids: list[int] = []
         # Whether the starting values have moved since fit_results were made.
         self.fit_dirty = False
         self.fit_window: PeakFitWindow | None = None
@@ -3577,6 +3615,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.gain_spin.setValue(DEFAULT_EV_PER_BIN)
         self.gain_spin.setSuffix(" eV/bin")
         self.gain_spin.setKeyboardTracking(False)
+        self.gain_spin.valueChanged.connect(self._on_energy_axis_changed)
         self.gain_spin.valueChanged.connect(self._schedule_redraw)
         row.addWidget(self.gain_spin)
 
@@ -3587,6 +3626,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.offset_spin.setPrefix("offset ")
         self.offset_spin.setSuffix(" eV")
         self.offset_spin.setKeyboardTracking(False)
+        self.offset_spin.valueChanged.connect(self._on_energy_axis_changed)
         self.offset_spin.valueChanged.connect(self._schedule_redraw)
         row.addWidget(self.offset_spin)
 
@@ -3955,14 +3995,26 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
     def _sigma_to_fwhm_ev(self, sigma_bins: float) -> float:
         return float(sigma_bins) * FWHM_PER_SIGMA * self.gain_spin.value()
 
+    @staticmethod
+    def _new_peak(
+        centre_kev: float, fwhm_ev: float, use: bool = True, fixed: bool = False
+    ) -> dict:
+        """A table row, with the id that ties it to the fit it goes into."""
+        return {
+            "id": next(_PEAK_IDS),
+            "centre_kev": float(centre_kev),
+            "fwhm_ev": float(fwhm_ev),
+            "use": use,
+            "fixed": fixed,
+        }
+
     def _peak_from_spec(self, spec: PeakSpec) -> dict:
         """A table row from a peak in bins."""
-        return {
-            "centre_kev": float(self._bin_to_kev(spec.centre)),
-            "fwhm_ev": self._sigma_to_fwhm_ev(spec.sigma),
-            "use": True,
-            "fixed": not spec.vary_centre,
-        }
+        return self._new_peak(
+            self._bin_to_kev(spec.centre),
+            self._sigma_to_fwhm_ev(spec.sigma),
+            fixed=not spec.vary_centre,
+        )
 
     def _fit_starts(self) -> list[PeakSpec]:
         """The table's starting values, in bins, for :func:`fit_shape`."""
@@ -4026,6 +4078,16 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.fit_window.raise_()
         self.fit_window.activateWindow()
 
+    def _on_energy_axis_changed(self, *_):
+        """A new gain or offset: the fit's peaks and window no longer agree.
+
+        The fit is in bins and the trend keeps using it, but the window and
+        starting peaks are energies and have just moved to other bins, so a
+        refit would not be the fit on show.
+        """
+        if self.fit_results:
+            self.fit_dirty = True
+
     def _fit_all(self) -> list[str]:
         """Fit every element of every scan from the table. Returns messages.
 
@@ -4074,6 +4136,7 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
             {r.message for r in good if r.message}
         )  # lmfit notes on fits that still gave usable numbers
         self.fit_results = results
+        self.fit_ids = [peak["id"] for peak in self.fit_peaks]
         self.fit_dirty = False
         self.signal_combo.model().item(1).setEnabled(bool(good))
         messages = [f"Fitted {len(good)} of {len(results)} element spectra"]
@@ -4107,8 +4170,42 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self._schedule_redraw()
         return messages
 
+    def _fitted_rows(self) -> list[int | None]:
+        """Each peak of the last fit's table row now, ``None`` if removed.
+
+        The fit's columns are in the order the table had at Fit; rows added
+        or removed since must not shift which of them a Use tick counts.
+        """
+        rows = {peak["id"]: row for row, peak in enumerate(self.fit_peaks)}
+        return [rows.get(peak_id) for peak_id in self.fit_ids]
+
+    def _fit_used_pairs(self) -> list[tuple[int, int]]:
+        """``(fitted index, table row)`` of every peak the trend sums.
+
+        Ticked "Use" and in the last fit: a peak added since has no area to
+        sum, and one removed since is no longer there to be ticked.
+        """
+        return [
+            (fitted, row)
+            for fitted, row in enumerate(self._fitted_rows())
+            if row is not None and self.fit_peaks[row]["use"]
+        ]
+
     def _fit_used(self) -> list[int]:
-        return [i for i, peak in enumerate(self.fit_peaks) if peak["use"]]
+        """The last fit's indices of the peaks the trend sums."""
+        return [fitted for fitted, _row in self._fit_used_pairs()]
+
+    def _fit_shape_settings(self) -> tuple[int, int, str]:
+        """``(lo, hi, background)`` of the last fit, else of the window now.
+
+        The fit's own, since the window and background can be changed --
+        or the energy axis moved under them -- without refitting, and what
+        the trend plots is still that fit.
+        """
+        for result in self.fit_results.values():
+            return result.lo, result.hi, result.background
+        lo, hi = self.fit_bins()
+        return lo, hi, self.fit_background
 
     def _fit_weights(self, index, data):
         """``(lo, hi, weights)`` for :meth:`SpectrumData.weighted_trend`.
@@ -4143,24 +4240,26 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         and background are in the export header and the Peak fit window,
         and a title carrying them was cut off at the pane's width.
         """
-        lo, hi = self.fit_bins()
-        used = self._fit_used()
+        lo, hi, background = self._fit_shape_settings()
+        # Numbered by table row, which is how the Peak fit window shows them.
+        rows = [row for _fitted, row in self._fit_used_pairs()]
         if short:
-            if not used:
+            if not rows:
                 return "fit area: no peak ticked"
             energies = ", ".join(
-                f"{self.fit_peaks[i]['centre_kev']:.2f}" for i in used
+                f"{self.fit_peaks[r]['centre_kev']:.2f}" for r in rows
             )
-            numbers = "+".join(str(i + 1) for i in used)
+            numbers = "+".join(str(r + 1) for r in rows)
             return f"fit area of peak {numbers} ({energies} keV)"
         peaks = ", ".join(
-            f"{i + 1} ({self.fit_peaks[i]['centre_kev']:.3f} keV)" for i in used
+            f"{r + 1} ({self.fit_peaks[r]['centre_kev']:.3f} keV)" for r in rows
         )
+        ends = self._bin_to_kev([lo, hi])
         return (
-            f"fit area of peak{'s' if len(used) != 1 else ''} "
+            f"fit area of peak{'s' if len(rows) != 1 else ''} "
             f"{peaks or '(none ticked)'}, window "
-            f"{self.fit_lo_kev:.3f}-{self.fit_hi_kev:.3f} keV = bins "
-            f"{lo}-{hi}, {self.fit_background} background"
+            f"{float(ends[0]):.3f}-{float(ends[-1]):.3f} keV = bins "
+            f"{lo}-{hi}, {background} background"
         )
 
     def _draw_fit_band(self):
@@ -4180,9 +4279,9 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         self.ax.axvspan(lo, hi, facecolor="0.35", alpha=0.12, lw=0)
         for edge in (lo, hi):
             self.ax.axvline(edge, color="0.25", lw=0.7, ls="--")
-        for i in self._fit_used():
+        for _fitted, row in self._fit_used_pairs():
             self.ax.axvline(
-                float(self._kev_to_bin(self.fit_peaks[i]["centre_kev"])),
+                float(self._kev_to_bin(self.fit_peaks[row]["centre_kev"])),
                 color="0.25",
                 lw=0.7,
                 ls=":",
@@ -5065,6 +5164,11 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
         # a scan with none of its frames in the window says nothing about the
         # scale the others are averaged on.
         per_point: set = set()
+        if settings.get("signal") == "fit" and self.fit_dirty:
+            # Said here as well as in the Peak fit window, which may be shut.
+            notes.append(
+                "peak fit changed since the last Fit; this is still that fit"
+            )
 
         for index, data in enumerate(self.data):
             usable = [i for i in chosen if i < data.n_elements]
@@ -5079,17 +5183,21 @@ class SpectrumViewerWindow(QtWidgets.QMainWindow):
                 if window is None:
                     notes.append(f"{data.path.name}: no peak fit, left out")
                     continue
-                if not np.isfinite(window[2]).all():
-                    unfit = [
-                        str(e + 1)
-                        for e in usable
-                        if not np.isfinite(window[2][e]).all()
-                    ]
-                    if unfit:
-                        notes.append(
-                            f"{data.path.name}: no fit for element(s) "
-                            + ", ".join(unfit)
-                        )
+                # An element with no fit has NaN weights, and would turn the
+                # summed curve NaN from end to end; it is left out instead,
+                # as a scan missing an element is, and named.
+                unfit = [
+                    e for e in usable if not np.isfinite(window[2][e]).all()
+                ]
+                if unfit:
+                    notes.append(
+                        f"{data.path.name}: no fit for element(s) "
+                        + ", ".join(str(e + 1) for e in unfit)
+                        + ", left out"
+                    )
+                    usable = [e for e in usable if e not in unfit]
+                    if not usable:
+                        continue
                 raw, corrected = data.weighted_trend(*window)
             else:
                 raw, corrected = data.roi_trend(low, high)

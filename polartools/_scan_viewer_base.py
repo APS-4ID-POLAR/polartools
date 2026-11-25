@@ -10266,7 +10266,9 @@ class HdfViewer(QtWidgets.QMainWindow):
             return
         try:
             metadata = read_metadata(path)
-        except OSError as exc:
+        # h5py raises KeyError or RuntimeError, not only OSError, on a file
+        # still being written; a button press should report it, not crash.
+        except (OSError, KeyError, RuntimeError, ValueError) as exc:
             self.status.showMessage(f"Could not read metadata of {name}: {exc}")
             return
 

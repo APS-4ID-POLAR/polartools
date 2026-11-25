@@ -47,7 +47,8 @@ def test_mean_over_scans_skips_non_finite():
     mean, error = absorption._mean_over_scans(values)
     assert allclose(mean[:3], [1.0, 4.0, 5.0])
     assert allclose(error[1], np.std([2.0, 4.0, 6.0]) / np.sqrt(3))
-    assert error[0] == 0.0
+    # One finite scan gives no spread to estimate an error from.
+    assert np.isnan(error[0])
     assert np.isnan(mean[3]) and np.isnan(error[3])
 
 

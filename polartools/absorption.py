@@ -66,7 +66,9 @@ def _mean_over_scans(values):
     interpolation onto the common grid) are skipped the same way. A point with
     no finite value in any scan stays NaN.
 
-    Returns the mean and the error of the mean.
+    Returns the mean and the error of the mean. The error is NaN where fewer
+    than two scans are finite: one value carries no spread to estimate it
+    from, and a zero there would read as a perfectly known point.
     """
     values = np.where(np.isfinite(values), values, np.nan)
     count = np.sum(np.isfinite(values), axis=0)
@@ -74,6 +76,7 @@ def _mean_over_scans(values):
         simplefilter("ignore", RuntimeWarning)  # all-NaN columns
         mean = np.nanmean(values, axis=0)
         error = np.nanstd(values, axis=0) / np.sqrt(count)
+    error = np.where(count >= 2, error, np.nan)
     return mean, error
 
 

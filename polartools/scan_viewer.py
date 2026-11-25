@@ -64,7 +64,7 @@ SOFTGLUE_COLOR = QtGui.QColor("blue")
 # what the macro meant -- though no softglue scan seen so far says anything
 # but ``fixed``.
 POLARIZATION_COLORS = {
-    "dichro": (
+    spectrum_viewer.DICHRO_HINT: (
         QtGui.QColor("red"),
         "A dichro scan: the retarder was stepped between helicities.",
     ),
