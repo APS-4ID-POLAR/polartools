@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=6a604523" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -41,23 +41,23 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../../_static/documentation_options.js?v=9a7f3f10"></script>
+    <script src="../../../_static/documentation_options.js?v=2b0af04c"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../_static/design-tabs.js?v=fcb327ea"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/polartools/spectrum_viewer/index';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="polartools.xmcd_gui" href="../xmcd_gui/index.html" />
-    <link rel="prev" title="polartools.scan_viewer" href="../scan_viewer/index.html" />
+    <link rel="prev" title="polartools.spectrum_fit" href="../spectrum_fit/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.7.0.post2+gb1260bdc9" />
+  <meta name="docsearch:version" content="0.7.0.post10+gdb9889bdb" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -516,6 +516,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../process_flyscan/index.html">polartools.process_flyscan</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../process_images/index.html">polartools.process_images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../scan_viewer/index.html">polartools.scan_viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spectrum_fit/index.html">polartools.spectrum_fit</a></li>
 <li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">polartools.spectrum_viewer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xmcd_gui/index.html">polartools.xmcd_gui</a></li>
 </ul>
@@ -673,7 +674,7 @@ nothing to work from.</p>
 <p>What does rescue it is <code class="docutils literal notranslate"><span class="pre">ArrayCounter</span></code>, which counts frames <em>within</em> a point
 and resets to 1 at every one, so <code class="docutils literal notranslate"><span class="pre">cumsum(counter</span> <span class="pre">==</span> <span class="pre">1)</span> <span class="pre">-</span> <span class="pre">1</span></code> is an exact
 frame-to-point map however ragged the scan – see
-<a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.point_index" title="polartools.spectrum_viewer.SpectrumData.point_index"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SpectrumData.point_index()</span></code></a>. On scan 125 it finds <strong>ten</strong> complete
+<a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.row_index" title="polartools.spectrum_viewer.SpectrumData.row_index"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SpectrumData.row_index()</span></code></a>. On scan 125 it finds <strong>ten</strong> complete
 80-frame blocks against the 9 rows the scan recorded: the detector finished a
 point the scan was aborted before writing down. So anything pairing frames
 with stream rows takes the shorter of the two and says so. The 2025-1 vintage
@@ -749,6 +750,48 @@ over another, and it flattens the very trend being looked for. Dividing the
 <strong>difference</strong> is the asymmetry, which is the quantity an XMCD measurement is
 for. So they are offered, last, where a click can reach them, and never
 chosen for you: <code class="docutils literal notranslate"><span class="pre">gI0</span></code> and <code class="docutils literal notranslate"><span class="pre">hI0</span></code> still open these scans.</p>
+<p><strong>The slow dichro layout.</strong> The other way a point’s frames split in two. A
+dichro scan run without the softglue writes one vortex frame per primary row
+and flips the retarder between rows, so the halves are told apart not by
+position but by what the retarder read. The 2026-3 scan this was written on
+has as many frames as rows, <code class="docutils literal notranslate"><span class="pre">ArrayCounter</span></code> 1 throughout, and four rows per
+energy, <code class="docutils literal notranslate"><span class="pre">pr2_pzt_localdc</span></code> running <code class="docutils literal notranslate"><span class="pre">25.24</span> <span class="pre">14.76</span> <span class="pre">14.76</span> <span class="pre">25.24</span></code> at every one.
+Such a scan says so in its hints, <code class="docutils literal notranslate"><span class="pre">polarization:</span> <span class="pre">dichro</span></code>, and that is what
+turns this on – together with a retarder field that toggles, the first of
+<a class="reference internal" href="#polartools.spectrum_viewer.POLARIZATION_CANDIDATES" title="polartools.spectrum_viewer.POLARIZATION_CANDIDATES"><code class="xref py py-data docutils literal notranslate"><span class="pre">POLARIZATION_CANDIDATES</span></code></a> to do so, which the “Pol.” box can override.</p>
+<p>“Plus” is the larger reading and “minus” the smaller, which is
+<code class="docutils literal notranslate"><span class="pre">_scan_viewer_base.reduce_dichro</span></code>’s convention, so Combine offers Sum,
+Dichro (plus - minus), Plus pol. and Minus pol. A plotted point is then not a
+row but the rows of one energy: the count comes from the scan’s own
+<code class="docutils literal notranslate"><span class="pre">dichro_monitor</span></code> stream, primary rows over its rows, and failing
+that from the shortest cycle the retarder repeats on. The trend’s x is the
+mean over those rows, and a recorded monitor still divides row by row.</p>
+<p>That stream also holds the beamline’s own reduction, over the fixed ROI the
+IOC was set to; the point of this window is to redo it over an ROI chosen
+here. Set to that ROI – the per-element <code class="docutils literal notranslate"><span class="pre">vortex_stats{n}_roi1</span></code> sums are a
+bin range of the cube, frame k against row k – dead-time corrected and divided by <code class="docutils literal notranslate"><span class="pre">hI0</span></code>, the
+normalised Sum reproduces <code class="docutils literal notranslate"><span class="pre">dichro_xas</span></code> to 1e-5 and the normalised Dichro
+<code class="docutils literal notranslate"><span class="pre">dichro_xmcd</span></code> with correlation 0.99997. Not to the last digit, because the
+stream averages each row’s ratio and this pane takes the ratio of the totals,
+as it does for every other scan.</p>
+<p>A multi-frame scan keeps its odd/even split even when its hints say dichro:
+the softglue frames alternate within a row, which the parity split measures
+and the polarization split, one setting per row, could not see.</p>
+<p><strong>Peak fitting.</strong> The trend can plot fitted Gaussian areas instead of the
+ROI’s counts – the Signal box beside the ROI, set up in a
+<a class="reference internal" href="#polartools.spectrum_viewer.PeakFitWindow" title="polartools.spectrum_viewer.PeakFitWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PeakFitWindow</span></code></a> of its own so that this window keeps its four rows.
+The shape is fitted once per scan and element, on the spectrum summed over
+the frames shown, and then each frame’s area is a fixed linear projection
+of it (<code class="xref py py-func docutils literal notranslate"><span class="pre">spectrum_fit.area_weights()</span></code>); being linear, it totals over
+points, halves and monitors exactly as an ROI sum does, so
+<a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.weighted_trend" title="polartools.spectrum_viewer.SpectrumData.weighted_trend"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SpectrumData.weighted_trend()</span></code></a> stands in for <code class="xref py py-meth docutils literal notranslate"><span class="pre">SpectrumData</span>
+<span class="pre">.roi_trend()</span></code> and nothing downstream changes. See <code class="xref py py-mod docutils literal notranslate"><span class="pre">spectrum_fit</span></code> for the
+measurements behind that and for what a background term costs. On the
+2026-3 dichro scan the fit was tried on, the background below the Pt line
+itself flips with the polarization (+1.2 +- 0.2 % plus/minus, in a window
+with no line in it): the ROI’s contrast carries part of that and the fitted
+area, with a linear background, does not – which is the case the fit is
+for, and a reason to look at both.</p>
 <p>Run standalone on one or more spectrum files, or let <code class="docutils literal notranslate"><span class="pre">scan_viewer_sgz</span></code>’s
 “Load Spectrum…” button open them for the scans it lists.</p>
 <section id="attributes">
@@ -833,6 +876,24 @@ chosen for you: <code class="docutils literal notranslate"><span class="pre">gI0
 <tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.COMBINE_MODES" title="polartools.spectrum_viewer.COMBINE_MODES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">COMBINE_MODES</span></code></a></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.HALF_NAMES" title="polartools.spectrum_viewer.HALF_NAMES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HALF_NAMES</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.DICHRO_HINT" title="polartools.spectrum_viewer.DICHRO_HINT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DICHRO_HINT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.POLARIZATION_CANDIDATES" title="polartools.spectrum_viewer.POLARIZATION_CANDIDATES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">POLARIZATION_CANDIDATES</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.POLARIZATION_ATOL" title="polartools.spectrum_viewer.POLARIZATION_ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">POLARIZATION_ATOL</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.DICHRO_STREAM_PATH" title="polartools.spectrum_viewer.DICHRO_STREAM_PATH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DICHRO_STREAM_PATH</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.MAX_POLARIZATION_PERIOD" title="polartools.spectrum_viewer.MAX_POLARIZATION_PERIOD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAX_POLARIZATION_PERIOD</span></code></a></p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.SIGNED_PARTS" title="polartools.spectrum_viewer.SIGNED_PARTS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SIGNED_PARTS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
@@ -842,10 +903,25 @@ chosen for you: <code class="docutils literal notranslate"><span class="pre">gI0
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.DEFAULT_MONITOR_BINS" title="polartools.spectrum_viewer.DEFAULT_MONITOR_BINS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_MONITOR_BINS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.SAME_X_STEPS" title="polartools.spectrum_viewer.SAME_X_STEPS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAME_X_STEPS</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.SIGNALS" title="polartools.spectrum_viewer.SIGNALS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SIGNALS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.SPIN_CHROME_PX" title="polartools.spectrum_viewer.SPIN_CHROME_PX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPIN_CHROME_PX</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.DEFAULT_FIT_BACKGROUND" title="polartools.spectrum_viewer.DEFAULT_FIT_BACKGROUND"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_FIT_BACKGROUND</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.DEFAULT_PEAK_FWHM_EV" title="polartools.spectrum_viewer.DEFAULT_PEAK_FWHM_EV"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_PEAK_FWHM_EV</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.FIT_WINDOW_ROI_WIDTHS" title="polartools.spectrum_viewer.FIT_WINDOW_ROI_WIDTHS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FIT_WINDOW_ROI_WIDTHS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.MIN_FIT_HALF_WIDTH_EV" title="polartools.spectrum_viewer.MIN_FIT_HALF_WIDTH_EV"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MIN_FIT_HALF_WIDTH_EV</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.SAME_X_STEPS" title="polartools.spectrum_viewer.SAME_X_STEPS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SAME_X_STEPS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.SPIN_CHROME_PX" title="polartools.spectrum_viewer.SPIN_CHROME_PX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SPIN_CHROME_PX</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -862,7 +938,10 @@ chosen for you: <code class="docutils literal notranslate"><span class="pre">gI0
 <tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.MonitorRoiWindow" title="polartools.spectrum_viewer.MonitorRoiWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MonitorRoiWindow</span></code></a></p></td>
 <td><p>Picks the energy window one computed monitor counts in.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.SpectrumViewerWindow" title="polartools.spectrum_viewer.SpectrumViewerWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpectrumViewerWindow</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.PeakFitWindow" title="polartools.spectrum_viewer.PeakFitWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PeakFitWindow</span></code></a></p></td>
+<td><p>Sets up the Gaussian fit whose peak areas the trend can plot.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.SpectrumViewerWindow" title="polartools.spectrum_viewer.SpectrumViewerWindow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpectrumViewerWindow</span></code></a></p></td>
 <td><p>Plots one or more MCA spectra, overlaid, against bin number.</p></td>
 </tr>
 </tbody>
@@ -891,40 +970,55 @@ chosen for you: <code class="docutils literal notranslate"><span class="pre">gI0
 <tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.scan_axis_field" title="polartools.spectrum_viewer.scan_axis_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scan_axis_field</span></code></a>(master, fields) → str | None</p></td>
 <td><p>The field this scan stepped, out of those <em>fields</em> actually holds.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.primary_fields" title="polartools.spectrum_viewer.primary_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">primary_fields</span></code></a>(master) → list[str]</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.hint_scalar" title="polartools.spectrum_viewer.hint_scalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hint_scalar</span></code></a>(master, key) → str</p></td>
+<td><p>One <code class="docutils literal notranslate"><span class="pre">key:</span> <span class="pre">value</span></code> line of the scan's hints, as text, or <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.stream_length" title="polartools.spectrum_viewer.stream_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stream_length</span></code></a>(master, stream_path) → int | None</p></td>
+<td><p>Rows in one stream of the master, from its first 1-D field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.polarization_period" title="polartools.spectrum_viewer.polarization_period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">polarization_period</span></code></a>(plus) → int | None</p></td>
+<td><p>The shortest cycle the plus/minus sequence repeats on, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.rows_per_dichro_point" title="polartools.spectrum_viewer.rows_per_dichro_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rows_per_dichro_point</span></code></a>(master, plus) → int | None</p></td>
+<td><p>How many primary rows make one point of a slow dichro scan.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.polarization_fields" title="polartools.spectrum_viewer.polarization_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">polarization_fields</span></code></a>(master) → dict[str, tuple]</p></td>
+<td><p>The retarder fields a slow dichro scan can be split by.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.primary_fields" title="polartools.spectrum_viewer.primary_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">primary_fields</span></code></a>(master) → list[str]</p></td>
 <td><p>Names in the master's primary stream that carry a 1-D <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.read_primary_field" title="polartools.spectrum_viewer.read_primary_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_primary_field</span></code></a>(master, name) → numpy.ndarray | None</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.read_primary_field" title="polartools.spectrum_viewer.read_primary_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_primary_field</span></code></a>(master, name) → numpy.ndarray | None</p></td>
 <td><p>One primary-stream field as float64, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it is not there.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.infer_bin_range" title="polartools.spectrum_viewer.infer_bin_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_bin_range</span></code></a>(total) → tuple[int, int]</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.infer_bin_range" title="polartools.spectrum_viewer.infer_bin_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_bin_range</span></code></a>(total) → tuple[int, int]</p></td>
 <td><p>The bin range worth opening on, from where the counts actually are.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.stack_mean" title="polartools.spectrum_viewer.stack_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack_mean</span></code></a>(pieces) → numpy.ndarray</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.stack_mean" title="polartools.spectrum_viewer.stack_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack_mean</span></code></a>(pieces) → numpy.ndarray</p></td>
 <td><p>Mean of several 1-D arrays of unequal length, padding with NaN.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.scan_number" title="polartools.spectrum_viewer.scan_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scan_number</span></code></a>(path) → str</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.scan_number" title="polartools.spectrum_viewer.scan_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scan_number</span></code></a>(path) → str</p></td>
 <td><p>The scan number in a file name: <code class="docutils literal notranslate"><span class="pre">000597</span></code> from <code class="docutils literal notranslate"><span class="pre">scan_000597.h5</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.file_prefix" title="polartools.spectrum_viewer.file_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_prefix</span></code></a>(path) → str</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.file_prefix" title="polartools.spectrum_viewer.file_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_prefix</span></code></a>(path) → str</p></td>
 <td><p>The part of a file name in front of the scan number: <code class="docutils literal notranslate"><span class="pre">scan</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.scan_tags" title="polartools.spectrum_viewer.scan_tags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scan_tags</span></code></a>(paths) → dict[str, str]</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.scan_tags" title="polartools.spectrum_viewer.scan_tags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scan_tags</span></code></a>(paths) → dict[str, str]</p></td>
 <td><p>A short name per path, keyed by <code class="docutils literal notranslate"><span class="pre">str(path)</span></code>: enough to tell them apart.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.write_aligned_columns" title="polartools.spectrum_viewer.write_aligned_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_aligned_columns</span></code></a>(path, names, columns, header) → None</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.write_aligned_columns" title="polartools.spectrum_viewer.write_aligned_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_aligned_columns</span></code></a>(path, names, columns, header) → None</p></td>
 <td><p>Write <em>columns</em> side by side, space-aligned, under a commented header.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.same_grid" title="polartools.spectrum_viewer.same_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">same_grid</span></code></a>(first, second) → bool</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.same_grid" title="polartools.spectrum_viewer.same_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">same_grid</span></code></a>(first, second) → bool</p></td>
 <td><p>Whether two X columns step the same points, over the length they share.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.apply_bold_defaults" title="polartools.spectrum_viewer.apply_bold_defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_bold_defaults</span></code></a>(app) → None</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.apply_bold_defaults" title="polartools.spectrum_viewer.apply_bold_defaults"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_bold_defaults</span></code></a>(app) → None</p></td>
 <td><p>Bold text everywhere this edition draws: Qt widgets and plots alike.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.fit_spin_width" title="polartools.spectrum_viewer.fit_spin_width"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_spin_width</span></code></a>(spin, widest) → None</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.fit_spin_width" title="polartools.spectrum_viewer.fit_spin_width"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_spin_width</span></code></a>(spin, widest) → None</p></td>
 <td><p>Size a spin box to the longest text it can ever show.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.main" title="polartools.spectrum_viewer.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>([argv])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.spectrum_viewer.main" title="polartools.spectrum_viewer.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>([argv])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -1060,7 +1154,37 @@ chosen for you: <code class="docutils literal notranslate"><span class="pre">gI0
 
 <dl class="py data">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.COMBINE_MODES">
-<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">COMBINE_MODES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('Sum',</span> <span class="pre">'all',</span> <span class="pre">'counts'),</span> <span class="pre">('Odd</span> <span class="pre">-</span> <span class="pre">even',</span> <span class="pre">'difference',</span> <span class="pre">'odd</span> <span class="pre">-</span> <span class="pre">even</span> <span class="pre">counts'),</span> <span class="pre">('Odd</span> <span class="pre">only',...</span></span><a class="headerlink" href="#polartools.spectrum_viewer.COMBINE_MODES" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">COMBINE_MODES</span></span><a class="headerlink" href="#polartools.spectrum_viewer.COMBINE_MODES" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.HALF_NAMES">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">HALF_NAMES</span></span><a class="headerlink" href="#polartools.spectrum_viewer.HALF_NAMES" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.DICHRO_HINT">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">DICHRO_HINT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dichro'</span></span><a class="headerlink" href="#polartools.spectrum_viewer.DICHRO_HINT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.POLARIZATION_CANDIDATES">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">POLARIZATION_CANDIDATES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('pr2_pzt_localdc',</span> <span class="pre">'pr1_pzt_localdc',</span> <span class="pre">'pr3_pzt_localdc',</span> <span class="pre">'pr1_th',</span> <span class="pre">'pr2_th',</span> <span class="pre">'pr3_th')</span></span><a class="headerlink" href="#polartools.spectrum_viewer.POLARIZATION_CANDIDATES" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.POLARIZATION_ATOL">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">POLARIZATION_ATOL</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.1</span></span><a class="headerlink" href="#polartools.spectrum_viewer.POLARIZATION_ATOL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.DICHRO_STREAM_PATH">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">DICHRO_STREAM_PATH</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'entry/instrument/bluesky/streams/dichro_monitor'</span></span><a class="headerlink" href="#polartools.spectrum_viewer.DICHRO_STREAM_PATH" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.MAX_POLARIZATION_PERIOD">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">MAX_POLARIZATION_PERIOD</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></span><a class="headerlink" href="#polartools.spectrum_viewer.MAX_POLARIZATION_PERIOD" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -1076,6 +1200,31 @@ chosen for you: <code class="docutils literal notranslate"><span class="pre">gI0
 <dl class="py data">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.DEFAULT_MONITOR_BINS">
 <span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_MONITOR_BINS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(200,</span> <span class="pre">1800)</span></span><a class="headerlink" href="#polartools.spectrum_viewer.DEFAULT_MONITOR_BINS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SIGNALS">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">SIGNALS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('ROI</span> <span class="pre">sum',</span> <span class="pre">'roi'),</span> <span class="pre">('Fit</span> <span class="pre">area',</span> <span class="pre">'fit'))</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SIGNALS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.DEFAULT_FIT_BACKGROUND">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_FIT_BACKGROUND</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'linear'</span></span><a class="headerlink" href="#polartools.spectrum_viewer.DEFAULT_FIT_BACKGROUND" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.DEFAULT_PEAK_FWHM_EV">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_PEAK_FWHM_EV</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">200.0</span></span><a class="headerlink" href="#polartools.spectrum_viewer.DEFAULT_PEAK_FWHM_EV" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.FIT_WINDOW_ROI_WIDTHS">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">FIT_WINDOW_ROI_WIDTHS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3.0</span></span><a class="headerlink" href="#polartools.spectrum_viewer.FIT_WINDOW_ROI_WIDTHS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.MIN_FIT_HALF_WIDTH_EV">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">MIN_FIT_HALF_WIDTH_EV</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">400.0</span></span><a class="headerlink" href="#polartools.spectrum_viewer.MIN_FIT_HALF_WIDTH_EV" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -1179,6 +1328,55 @@ matters more than it looks: the sample-motor scans record no <code class="docuti
 field at all, so an axis hardcoded to energy would be dead on them.</p>
 <p><code class="docutils literal notranslate"><span class="pre">None</span></code> when the scan names no axis these fields carry, which is also
 what a missing master gives.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.hint_scalar">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">hint_scalar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><span class="pre">pathlib.Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#polartools.spectrum_viewer.hint_scalar" title="Link to this definition">#</a></dt>
+<dd><p>One <code class="docutils literal notranslate"><span class="pre">key:</span> <span class="pre">value</span></code> line of the scan’s hints, as text, or <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">_scan_viewer_base._yaml_scalar</span></code> for the one shape needed here – the
+<code class="docutils literal notranslate"><span class="pre">polarization:</span> <span class="pre">dichro</span></code> line – read here for the import-cycle reason
+given above <code class="xref py py-func docutils literal notranslate"><span class="pre">_yaml_block_items()</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.stream_length">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">stream_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><span class="pre">pathlib.Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#polartools.spectrum_viewer.stream_length" title="Link to this definition">#</a></dt>
+<dd><p>Rows in one stream of the master, from its first 1-D field.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.polarization_period">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">polarization_period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#polartools.spectrum_viewer.polarization_period" title="Link to this definition">#</a></dt>
+<dd><p>The shortest cycle the plus/minus sequence repeats on, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>The fallback for finding the rows of one dichro point when the scan wrote
+no dichro stream to count them by. <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">-</span> <span class="pre">-</span> <span class="pre">+</span></code> repeats on 4 and not on 2
+or 3; a cycle has to hold both polarizations to be one, or a scan that
+sat at one setting would read as a cycle of one.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.rows_per_dichro_point">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">rows_per_dichro_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><span class="pre">pathlib.Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">plus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#polartools.spectrum_viewer.rows_per_dichro_point" title="Link to this definition">#</a></dt>
+<dd><p>How many primary rows make one point of a slow dichro scan.</p>
+<p>The dichro stream’s row count first: the scan wrote one row there per
+point, so primary rows over that is the cycle – 4 on the 2026-3 scans.
+Rounded rather than required to divide, because a scan stopped part way
+leaves the two a row or so out of step; and checked against <em>plus</em>,
+since a cycle that leaves a point with one polarization only is not the
+cycle. Failing that, <a class="reference internal" href="#polartools.spectrum_viewer.polarization_period" title="polartools.spectrum_viewer.polarization_period"><code class="xref py py-func docutils literal notranslate"><span class="pre">polarization_period()</span></code></a> reads the cycle off the
+retarder itself.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.polarization_fields">
+<span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">polarization_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><span class="pre">pathlib.Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polartools.spectrum_viewer.polarization_fields" title="Link to this definition">#</a></dt>
+<dd><p>The retarder fields a slow dichro scan can be split by.</p>
+<p>Field name -&gt; <code class="docutils literal notranslate"><span class="pre">(values,</span> <span class="pre">rows_per_point)</span></code>, in the order of
+<a class="reference internal" href="#polartools.spectrum_viewer.POLARIZATION_CANDIDATES" title="polartools.spectrum_viewer.POLARIZATION_CANDIDATES"><code class="xref py py-data docutils literal notranslate"><span class="pre">POLARIZATION_CANDIDATES</span></code></a>. A field qualifies by toggling – two
+settings at least <a class="reference internal" href="#polartools.spectrum_viewer.POLARIZATION_ATOL" title="polartools.spectrum_viewer.POLARIZATION_ATOL"><code class="xref py py-data docutils literal notranslate"><span class="pre">POLARIZATION_ATOL</span></code></a> apart – and by the rows it
+splits falling into points (<a class="reference internal" href="#polartools.spectrum_viewer.rows_per_dichro_point" title="polartools.spectrum_viewer.rows_per_dichro_point"><code class="xref py py-func docutils literal notranslate"><span class="pre">rows_per_dichro_point()</span></code></a>). Recorded is
+not enough: a scan records every retarder whether it moved or not.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1337,23 +1535,86 @@ shape this.</p>
 <span class="sig-name descname"><span class="pre">n_points</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.n_points" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.split" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.pol_fields">
+<span class="sig-name descname"><span class="pre">pol_fields</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.pol_fields" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.pol_field">
+<span class="sig-name descname"><span class="pre">pol_field</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.pol_field" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.have_dead_time">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">have_dead_time</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.have_dead_time" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.set_pol_field">
+<span class="sig-name descname"><span class="pre">set_pol_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.set_pol_field" title="Link to this definition">#</a></dt>
+<dd><p>Split by retarder field <em>name</em>, one of <a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.pol_fields" title="polartools.spectrum_viewer.SpectrumData.pol_fields"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pol_fields</span></code></a>.</p>
+<p>Drops the half pyramid, which was built over the old field’s plus
+frames; the next contrast asked for rebuilds it.</p>
+</dd></dl>
+
 <dl class="py property">
-<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.frames_per_point">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">frames_per_point</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.frames_per_point" title="Link to this definition">#</a></dt>
-<dd><p>Frames per scan point, where the two divide evenly.</p>
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.frames_per_row">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">frames_per_row</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.frames_per_row" title="Link to this definition">#</a></dt>
+<dd><p>Frames per primary-stream row, where the two divide evenly.</p>
 <p><code class="docutils literal notranslate"><span class="pre">None</span></code> when they do not – an aborted scan writes a ratio that means
 nothing (scan 125: 800 frames, 100 points declared, 9 taken).</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.frames_per_point">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">frames_per_point</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.frames_per_point" title="Link to this definition">#</a></dt>
+<dd><p>per row, times the rows of a dichro point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Frames per plotted point</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.rows_per_point">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rows_per_point</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.rows_per_point" title="Link to this definition">#</a></dt>
+<dd><p>1 but on a slow dichro scan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Primary rows per plotted point</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.point_index">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">point_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.point_index" title="Link to this definition">#</a></dt>
-<dd><p>Which scan point each frame belongs to, as <code class="docutils literal notranslate"><span class="pre">(n_frames,)</span></code> ints.</p>
+<dd><p>Which plotted point each frame belongs to, as <code class="docutils literal notranslate"><span class="pre">(n_frames,)</span></code> ints.</p>
+<p><a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.row_index" title="polartools.spectrum_viewer.SpectrumData.row_index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">row_index</span></code></a> everywhere but on a slow dichro scan, where a point
+is the <a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.rows_per_point" title="polartools.spectrum_viewer.SpectrumData.rows_per_point"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rows_per_point</span></code></a> rows taken at one energy – the four
+polarization settings of a <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">-</span> <span class="pre">-</span> <span class="pre">+</span></code> cycle.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.reduce_rows">
+<span class="sig-name descname"><span class="pre">reduce_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.reduce_rows" title="Link to this definition">#</a></dt>
+<dd><p>A per-row primary column as one value per plotted point.</p>
+<p>The mean over the point’s rows, ignoring NaN, on a slow dichro scan –
+where the energy readback differs in the fifth decimal between the
+four rows of one point – and <em>column</em> itself otherwise.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.row_index">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">row_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.row_index" title="Link to this definition">#</a></dt>
+<dd><p>Which primary-stream row each frame belongs to, as <code class="docutils literal notranslate"><span class="pre">(n_frames,)</span></code> ints.</p>
 <p><code class="docutils literal notranslate"><span class="pre">ArrayCounter</span></code> first, because it is the only exact answer: it resets
 to 1 at every point, so <code class="docutils literal notranslate"><span class="pre">cumsum(counter</span> <span class="pre">==</span> <span class="pre">1)</span> <span class="pre">-</span> <span class="pre">1</span></code> numbers the points
 however ragged the scan. On scan 125 – declared 100 points, aborted
@@ -1392,6 +1653,24 @@ neither is available there is no numbering to speak of and this is
 anyway.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.half_mask">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">half_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.half_mask" title="Link to this definition">#</a></dt>
+<dd><p>The frames of the first half, as a per-frame boolean.</p>
+<p><a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.odd_frames" title="polartools.spectrum_viewer.SpectrumData.odd_frames"><code class="xref py py-attr docutils literal notranslate"><span class="pre">odd_frames</span></code></a> under the parity split. Under the polarization
+split the frames whose row read the retarder field above the middle
+of its range: “plus” is the larger reading, the convention
+<code class="docutils literal notranslate"><span class="pre">_scan_viewer_base.reduce_dichro</span></code> uses, binary however many
+settings the readback shows.</p>
+<p>A frame past the last row the scan recorded – the detector can
+finish a point the scan never wrote down – takes the setting of the
+same place in the first point’s cycle, since the cycle is fixed;
+otherwise it would fall into the minus half by default. <code class="docutils literal notranslate"><span class="pre">None</span></code> when
+there is no split.</p>
+<p>Cached until <a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.set_pol_field" title="polartools.spectrum_viewer.SpectrumData.set_pol_field"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_pol_field()</span></code></a> changes the split, and read-only,
+since every caller shares the one array.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.roi_trend">
 <span class="sig-name descname"><span class="pre">roi_trend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'roi'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.roi_trend" title="Link to this definition">#</a></dt>
@@ -1418,6 +1697,23 @@ actually been divided by.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.weighted_trend">
+<span class="sig-name descname"><span class="pre">weighted_trend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">slot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fit'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.weighted_trend" title="Link to this definition">#</a></dt>
+<dd><p><a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.roi_trend" title="polartools.spectrum_viewer.SpectrumData.roi_trend"><code class="xref py py-meth docutils literal notranslate"><span class="pre">roi_trend()</span></code></a> with a weight per bin and element instead of a box.</p>
+<p><em>weights</em> is <code class="docutils literal notranslate"><span class="pre">(n_elements,</span> <span class="pre">hi</span> <span class="pre">-</span> <span class="pre">lo</span> <span class="pre">+</span> <span class="pre">1)</span></code>: element <code class="docutils literal notranslate"><span class="pre">e</span></code>’s value in
+a frame is <code class="docutils literal notranslate"><span class="pre">frame[e,</span> <span class="pre">lo:hi</span> <span class="pre">+</span> <span class="pre">1]</span> <span class="pre">&#64;</span> <span class="pre">weights[e]</span></code>. With the weights from
+<code class="xref py py-func docutils literal notranslate"><span class="pre">spectrum_fit.area_weights()</span></code> that is the frame’s fitted peak
+area, and being linear in the frame it totals over points and halves
+exactly as an ROI sum does – which is why everything downstream of
+<a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.roi_trend" title="polartools.spectrum_viewer.SpectrumData.roi_trend"><code class="xref py py-meth docutils literal notranslate"><span class="pre">roi_trend()</span></code></a> takes this unchanged. A row of NaN, for an element
+with no fit, gives that element NaN throughout.</p>
+<p>Dead time is applied per frame afterwards, as there: a factor
+constant across bins commutes with the dot product. Cached under
+<em>slot</em> on the window and the weights themselves, so refitting is a
+new pass and nothing else is.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumData.range_sum">
 <span class="sig-name descname"><span class="pre">range_sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dead_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">numpy.ndarray</span></a></span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumData.range_sum" title="Link to this definition">#</a></dt>
 <dd><p>Total frames <em>first</em> to <em>last</em> inclusive, as <code class="docutils literal notranslate"><span class="pre">(n_elements,</span> <span class="pre">n_bins)</span></code>.</p>
@@ -1426,8 +1722,10 @@ at each end is read from the file. Clamped rather than refused, because
 one spin-box range is shared by scans of different length.</p>
 <p><em>part</em> picks which frames of each scan point are counted, numbering
 them from 1: <code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;odd&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;even&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;difference&quot;</span></code> for
-odd minus even. Everything but <code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> needs <a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.odd_frames" title="polartools.spectrum_viewer.SpectrumData.odd_frames"><code class="xref py py-attr docutils literal notranslate"><span class="pre">odd_frames</span></code></a>, and
-the first such call builds <code class="xref py py-meth docutils literal notranslate"><span class="pre">_odd_pyramid()</span></code>; after that they are
+odd minus even – “odd” being the first half of <a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.half_mask" title="polartools.spectrum_viewer.SpectrumData.half_mask"><code class="xref py py-attr docutils literal notranslate"><span class="pre">half_mask</span></code></a>,
+which is the plus frames on a slow dichro scan. Everything but
+<code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> needs <a class="reference internal" href="#polartools.spectrum_viewer.SpectrumData.half_mask" title="polartools.spectrum_viewer.SpectrumData.half_mask"><code class="xref py py-attr docutils literal notranslate"><span class="pre">half_mask</span></code></a>, and
+the first such call builds <code class="xref py py-meth docutils literal notranslate"><span class="pre">_half_pyramid()</span></code>; after that they are
 all subtractions and cost what <code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> costs.</p>
 </dd></dl>
 
@@ -1497,6 +1795,59 @@ already in memory.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.PeakFitWindow">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">PeakFitWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#polartools.spectrum_viewer.PeakFitWindow" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">PyQt6.QtWidgets.QDialog</span></code></p>
+<p>Sets up the Gaussian fit whose peak areas the trend can plot.</p>
+<p>Its own window and not more rows on the viewer’s, which already has four:
+a fit wants a plot of its own – data, model, each peak, and the residual
+beneath – and a table of peaks, and none of that is wanted once the fit
+is made. What is left on the viewer is the Signal box that chooses the
+fit over the ROI, and the button that opens this.</p>
+<p>Everything it edits lives on the viewer (<code class="xref py py-meth docutils literal notranslate"><span class="pre">SpectrumViewerWindow</span>
+<span class="pre">._fit_all()</span></code> and the <code class="docutils literal notranslate"><span class="pre">fit_*</span></code> attributes), as the monitor bands do for
+<a class="reference internal" href="#polartools.spectrum_viewer.MonitorRoiWindow" title="polartools.spectrum_viewer.MonitorRoiWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonitorRoiWindow</span></code></a>, so closing this keeps the fit and the trend
+keeps using it.</p>
+<p>The table holds <em>starting values</em>, one row per peak and shared by every
+element and scan; Fit fits each element of each scan from them, on its
+own summed spectrum over the frames shown, because the elements’ gains
+differ by a few bins. The fitted columns and the plot show the scan and
+element picked at the top. “Use” decides which peaks’ areas the trend
+sums – a peak can be in the fit, taking its share of an overlap, without
+being counted.</p>
+<p>The areas listed are not lmfit’s: they are the fixed-shape least-squares
+solve (<code class="xref py py-func docutils literal notranslate"><span class="pre">spectrum_fit.decompose()</span></code>) that the trend applies frame by
+frame, so the number in the table is the number the trend totals.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.PeakFitWindow.COLUMNS">
+<span class="sig-name descname"><span class="pre">COLUMNS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('Use',</span> <span class="pre">'Centre</span> <span class="pre">[keV]',</span> <span class="pre">'FWHM</span> <span class="pre">[eV]',</span> <span class="pre">'Fix</span> <span class="pre">centre',</span> <span class="pre">'Fitted</span> <span class="pre">[keV]',</span> <span class="pre">'Fitted</span> <span class="pre">FWHM</span> <span class="pre">[eV]',</span> <span class="pre">'Area')</span></span><a class="headerlink" href="#polartools.spectrum_viewer.PeakFitWindow.COLUMNS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.PeakFitWindow.viewer">
+<span class="sig-name descname"><span class="pre">viewer</span></span><a class="headerlink" href="#polartools.spectrum_viewer.PeakFitWindow.viewer" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.PeakFitWindow.span">
+<span class="sig-name descname"><span class="pre">span</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#polartools.spectrum_viewer.PeakFitWindow.span" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.PeakFitWindow.refresh">
+<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#polartools.spectrum_viewer.PeakFitWindow.refresh" title="Link to this definition">#</a></dt>
+<dd><p>Redraw the shown spectrum, the fit, its peaks and the residual.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.PeakFitWindow.closeEvent">
+<span class="sig-name descname"><span class="pre">closeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#polartools.spectrum_viewer.PeakFitWindow.closeEvent" title="Link to this definition">#</a></dt>
+<dd><p>Hide, keeping the fit: it belongs to the viewer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.spectrum_viewer.</span></span><span class="sig-name descname"><span class="pre">SpectrumViewerWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">PyQt6.QtWidgets.QMainWindow</span></code></p>
@@ -1531,6 +1882,16 @@ it has, and the status bar says which were clamped.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.split">
+<span class="sig-name descname"><span class="pre">split</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.split" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.pol_fields">
+<span class="sig-name descname"><span class="pre">pol_fields</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.pol_fields" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.default_bin_range">
 <span class="sig-name descname"><span class="pre">default_bin_range</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.default_bin_range" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
@@ -1560,6 +1921,51 @@ it has, and the status bar says which were clamped.</p>
 <span class="sig-name descname"><span class="pre">monitor_windows</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#polartools.spectrum_viewer.MonitorRoiWindow" title="polartools.spectrum_viewer.MonitorRoiWindow"><span class="pre">MonitorRoiWindow</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.monitor_windows" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_lo_kev">
+<span class="sig-name descname"><span class="pre">fit_lo_kev</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_lo_kev" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_hi_kev">
+<span class="sig-name descname"><span class="pre">fit_hi_kev</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_hi_kev" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_peaks">
+<span class="sig-name descname"><span class="pre">fit_peaks</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_peaks" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_background">
+<span class="sig-name descname"><span class="pre">fit_background</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'linear'</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_background" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_shared_width">
+<span class="sig-name descname"><span class="pre">fit_shared_width</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_shared_width" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_results">
+<span class="sig-name descname"><span class="pre">fit_results</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_results" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_ids">
+<span class="sig-name descname"><span class="pre">fit_ids</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_ids" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_dirty">
+<span class="sig-name descname"><span class="pre">fit_dirty</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_dirty" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_window">
+<span class="sig-name descname"><span class="pre">fit_window</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#polartools.spectrum_viewer.PeakFitWindow" title="polartools.spectrum_viewer.PeakFitWindow"><span class="pre">PeakFitWindow</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_window" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.monitor_bins">
 <span class="sig-name descname"><span class="pre">monitor_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.monitor_bins" title="Link to this definition">#</a></dt>
@@ -1568,6 +1974,12 @@ it has, and the status bar says which were clamped.</p>
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">_roi_bins()</span></code> is derived from the ROI boxes: the range is an
 energy, so a recalibration moves the monitor’s bins without anyone
 reopening the dialog.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polartools.spectrum_viewer.SpectrumViewerWindow.fit_bins">
+<span class="sig-name descname"><span class="pre">fit_bins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_bins" title="Link to this definition">#</a></dt>
+<dd><p>The fit window as bins, from the energies the fit window holds.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1596,12 +2008,12 @@ reopening the dialog.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../scan_viewer/index.html"
+       href="../spectrum_fit/index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">polartools.scan_viewer</p>
+        <p class="prev-next-title">polartools.spectrum_fit</p>
       </div>
     </a>
     <a class="right-next"
@@ -1662,9 +2074,20 @@ reopening the dialog.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.TREND_POINT_AXIS"><code class="docutils literal notranslate"><span class="pre">TREND_POINT_AXIS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.TREND_FRAME_AXIS"><code class="docutils literal notranslate"><span class="pre">TREND_FRAME_AXIS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.COMBINE_MODES"><code class="docutils literal notranslate"><span class="pre">COMBINE_MODES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.HALF_NAMES"><code class="docutils literal notranslate"><span class="pre">HALF_NAMES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.DICHRO_HINT"><code class="docutils literal notranslate"><span class="pre">DICHRO_HINT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.POLARIZATION_CANDIDATES"><code class="docutils literal notranslate"><span class="pre">POLARIZATION_CANDIDATES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.POLARIZATION_ATOL"><code class="docutils literal notranslate"><span class="pre">POLARIZATION_ATOL</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.DICHRO_STREAM_PATH"><code class="docutils literal notranslate"><span class="pre">DICHRO_STREAM_PATH</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.MAX_POLARIZATION_PERIOD"><code class="docutils literal notranslate"><span class="pre">MAX_POLARIZATION_PERIOD</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SIGNED_PARTS"><code class="docutils literal notranslate"><span class="pre">SIGNED_PARTS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.DEFAULT_ROI_WIDTH_EV"><code class="docutils literal notranslate"><span class="pre">DEFAULT_ROI_WIDTH_EV</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.DEFAULT_MONITOR_BINS"><code class="docutils literal notranslate"><span class="pre">DEFAULT_MONITOR_BINS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SIGNALS"><code class="docutils literal notranslate"><span class="pre">SIGNALS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.DEFAULT_FIT_BACKGROUND"><code class="docutils literal notranslate"><span class="pre">DEFAULT_FIT_BACKGROUND</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.DEFAULT_PEAK_FWHM_EV"><code class="docutils literal notranslate"><span class="pre">DEFAULT_PEAK_FWHM_EV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.FIT_WINDOW_ROI_WIDTHS"><code class="docutils literal notranslate"><span class="pre">FIT_WINDOW_ROI_WIDTHS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.MIN_FIT_HALF_WIDTH_EV"><code class="docutils literal notranslate"><span class="pre">MIN_FIT_HALF_WIDTH_EV</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SAME_X_STEPS"><code class="docutils literal notranslate"><span class="pre">SAME_X_STEPS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.spectrum_path_for_master"><code class="docutils literal notranslate"><span class="pre">spectrum_path_for_master()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.is_spectrum_file"><code class="docutils literal notranslate"><span class="pre">is_spectrum_file()</span></code></a></li>
@@ -1672,6 +2095,11 @@ reopening the dialog.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.master_path_for_spectrum"><code class="docutils literal notranslate"><span class="pre">master_path_for_spectrum()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.is_multi_frame_scan"><code class="docutils literal notranslate"><span class="pre">is_multi_frame_scan()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.scan_axis_field"><code class="docutils literal notranslate"><span class="pre">scan_axis_field()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.hint_scalar"><code class="docutils literal notranslate"><span class="pre">hint_scalar()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.stream_length"><code class="docutils literal notranslate"><span class="pre">stream_length()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.polarization_period"><code class="docutils literal notranslate"><span class="pre">polarization_period()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.rows_per_dichro_point"><code class="docutils literal notranslate"><span class="pre">rows_per_dichro_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.polarization_fields"><code class="docutils literal notranslate"><span class="pre">polarization_fields()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.primary_fields"><code class="docutils literal notranslate"><span class="pre">primary_fields()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.read_primary_field"><code class="docutils literal notranslate"><span class="pre">read_primary_field()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.infer_bin_range"><code class="docutils literal notranslate"><span class="pre">infer_bin_range()</span></code></a></li>
@@ -1688,12 +2116,22 @@ reopening the dialog.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.path"><code class="docutils literal notranslate"><span class="pre">SpectrumData.path</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.master"><code class="docutils literal notranslate"><span class="pre">SpectrumData.master</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.n_points"><code class="docutils literal notranslate"><span class="pre">SpectrumData.n_points</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.split"><code class="docutils literal notranslate"><span class="pre">SpectrumData.split</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.pol_fields"><code class="docutils literal notranslate"><span class="pre">SpectrumData.pol_fields</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.pol_field"><code class="docutils literal notranslate"><span class="pre">SpectrumData.pol_field</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.have_dead_time"><code class="docutils literal notranslate"><span class="pre">SpectrumData.have_dead_time</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.set_pol_field"><code class="docutils literal notranslate"><span class="pre">SpectrumData.set_pol_field()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.frames_per_row"><code class="docutils literal notranslate"><span class="pre">SpectrumData.frames_per_row</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.frames_per_point"><code class="docutils literal notranslate"><span class="pre">SpectrumData.frames_per_point</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.rows_per_point"><code class="docutils literal notranslate"><span class="pre">SpectrumData.rows_per_point</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.point_index"><code class="docutils literal notranslate"><span class="pre">SpectrumData.point_index</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.reduce_rows"><code class="docutils literal notranslate"><span class="pre">SpectrumData.reduce_rows()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.row_index"><code class="docutils literal notranslate"><span class="pre">SpectrumData.row_index</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.multi_frame"><code class="docutils literal notranslate"><span class="pre">SpectrumData.multi_frame</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.odd_frames"><code class="docutils literal notranslate"><span class="pre">SpectrumData.odd_frames</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.half_mask"><code class="docutils literal notranslate"><span class="pre">SpectrumData.half_mask</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.roi_trend"><code class="docutils literal notranslate"><span class="pre">SpectrumData.roi_trend()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.weighted_trend"><code class="docutils literal notranslate"><span class="pre">SpectrumData.weighted_trend()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumData.range_sum"><code class="docutils literal notranslate"><span class="pre">SpectrumData.range_sum()</span></code></a></li>
 </ul>
 </li>
@@ -1706,19 +2144,39 @@ reopening the dialog.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.MonitorRoiWindow.closeEvent"><code class="docutils literal notranslate"><span class="pre">MonitorRoiWindow.closeEvent()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.PeakFitWindow"><code class="docutils literal notranslate"><span class="pre">PeakFitWindow</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.PeakFitWindow.COLUMNS"><code class="docutils literal notranslate"><span class="pre">PeakFitWindow.COLUMNS</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.PeakFitWindow.viewer"><code class="docutils literal notranslate"><span class="pre">PeakFitWindow.viewer</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.PeakFitWindow.span"><code class="docutils literal notranslate"><span class="pre">PeakFitWindow.span</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.PeakFitWindow.refresh"><code class="docutils literal notranslate"><span class="pre">PeakFitWindow.refresh()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.PeakFitWindow.closeEvent"><code class="docutils literal notranslate"><span class="pre">PeakFitWindow.closeEvent()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.data"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.data</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.max_elements"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.max_elements</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.max_frames"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.max_frames</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.max_bins"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.max_bins</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.any_dead_time"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.any_dead_time</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.split"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.split</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.pol_fields"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.pol_fields</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.default_bin_range"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.default_bin_range</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.roi_center_kev"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.roi_center_kev</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.roi_width_ev"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.roi_width_ev</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.roi_span"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.roi_span</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.monitor_ranges_kev"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.monitor_ranges_kev</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.monitor_windows"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.monitor_windows</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_lo_kev"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_lo_kev</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_hi_kev"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_hi_kev</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_peaks"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_peaks</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_background"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_background</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_shared_width"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_shared_width</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_results"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_results</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_ids"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_ids</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_dirty"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_dirty</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_window"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_window</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.monitor_bins"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.monitor_bins()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.fit_bins"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.fit_bins()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.spectrum_viewer.SpectrumViewerWindow.closeEvent"><code class="docutils literal notranslate"><span class="pre">SpectrumViewerWindow.closeEvent()</span></code></a></li>
 </ul>
 </li>

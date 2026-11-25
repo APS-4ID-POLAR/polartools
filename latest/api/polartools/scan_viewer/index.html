@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=6a604523" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -41,23 +41,23 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../../_static/documentation_options.js?v=9a7f3f10"></script>
+    <script src="../../../_static/documentation_options.js?v=2b0af04c"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="../../../_static/design-tabs.js?v=fcb327ea"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/polartools/scan_viewer/index';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="polartools.spectrum_viewer" href="../spectrum_viewer/index.html" />
+    <link rel="next" title="polartools.spectrum_fit" href="../spectrum_fit/index.html" />
     <link rel="prev" title="polartools.process_images" href="../process_images/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.7.0.post2+gb1260bdc9" />
+  <meta name="docsearch:version" content="0.7.0.post10+gdb9889bdb" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -516,6 +516,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../process_flyscan/index.html">polartools.process_flyscan</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../process_images/index.html">polartools.process_images</a></li>
 <li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">polartools.scan_viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spectrum_fit/index.html">polartools.spectrum_fit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../spectrum_viewer/index.html">polartools.spectrum_viewer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../xmcd_gui/index.html">polartools.xmcd_gui</a></li>
 </ul>
@@ -588,10 +589,12 @@ button opens: <a class="reference internal" href="../spectrum_viewer/index.html#
 adds the Combine box for scans that took more than one vortex frame per point
 and offers <code class="docutils literal notranslate"><span class="pre">vortex_total_el1</span></code> and <code class="docutils literal notranslate"><span class="pre">vortex_total_el7</span></code> as monitors.</p>
 <p>The browser itself gains five things, all through the same subclass: bold
-text throughout; a blue scan number on any scan that wrote more than one
-vortex frame per point – the sgz softglue layout, and the scans this
-edition’s Combine box has something to say about; a Find row in the Baseline
-window that jumps to a field by part of its name; a directory listing that
+text throughout; a coloured scan number for the scans that need a second
+look – red for a dichro scan and green for a lock-in one, going by the
+<code class="docutils literal notranslate"><span class="pre">polarization</span></code> hint the macro wrote, and blue on any other scan that wrote
+more than one vortex frame per point, the sgz softglue layout and the scans
+this edition’s Combine box has something to say about; a Find row in the
+Baseline window that jumps to a field by part of its name; a directory listing that
 appears at once instead of after every file has been read, which on a
 2714-scan directory is the difference between 0.05 s and 82 s; and an Auto
 refresh button that adds scans to the listing as they land.</p>
@@ -616,25 +619,28 @@ way:</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.SOFTGLUE_COLOR" title="polartools.scan_viewer.SOFTGLUE_COLOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SOFTGLUE_COLOR</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.scan_viewer.FILL_SLICE_MS" title="polartools.scan_viewer.FILL_SLICE_MS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FILL_SLICE_MS</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.scan_viewer.POLARIZATION_COLORS" title="polartools.scan_viewer.POLARIZATION_COLORS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">POLARIZATION_COLORS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_THREADS" title="polartools.scan_viewer.PREFETCH_THREADS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_THREADS</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.FILL_SLICE_MS" title="polartools.scan_viewer.FILL_SLICE_MS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FILL_SLICE_MS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_BYTES" title="polartools.scan_viewer.PREFETCH_BYTES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_BYTES</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_THREADS" title="polartools.scan_viewer.PREFETCH_THREADS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_THREADS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_AHEAD" title="polartools.scan_viewer.PREFETCH_AHEAD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_AHEAD</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_BYTES" title="polartools.scan_viewer.PREFETCH_BYTES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_BYTES</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_PROBE" title="polartools.scan_viewer.PREFETCH_PROBE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_PROBE</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_AHEAD" title="polartools.scan_viewer.PREFETCH_AHEAD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_AHEAD</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_IDLE_S" title="polartools.scan_viewer.PREFETCH_IDLE_S"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_IDLE_S</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_PROBE" title="polartools.scan_viewer.PREFETCH_PROBE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_PROBE</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#polartools.scan_viewer.REFRESH_INTERVAL_MS" title="polartools.scan_viewer.REFRESH_INTERVAL_MS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">REFRESH_INTERVAL_MS</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#polartools.scan_viewer.PREFETCH_IDLE_S" title="polartools.scan_viewer.PREFETCH_IDLE_S"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PREFETCH_IDLE_S</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.REFRESH_INTERVAL_MS" title="polartools.scan_viewer.REFRESH_INTERVAL_MS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">REFRESH_INTERVAL_MS</span></code></a></p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -646,7 +652,7 @@ way:</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#polartools.scan_viewer.SgHdfViewer" title="polartools.scan_viewer.SgHdfViewer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SgHdfViewer</span></code></a></p></td>
-<td><p>The browser, in bold, with softglue scan numbers in blue.</p></td>
+<td><p>The browser, with dichro, lock-in and softglue scans in colour.</p></td>
 </tr>
 </tbody>
 </table>
@@ -668,6 +674,11 @@ way:</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="polartools.scan_viewer.SOFTGLUE_COLOR">
 <span class="sig-prename descclassname"><span class="pre">polartools.scan_viewer.</span></span><span class="sig-name descname"><span class="pre">SOFTGLUE_COLOR</span></span><a class="headerlink" href="#polartools.scan_viewer.SOFTGLUE_COLOR" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="polartools.scan_viewer.POLARIZATION_COLORS">
+<span class="sig-prename descclassname"><span class="pre">polartools.scan_viewer.</span></span><span class="sig-name descname"><span class="pre">POLARIZATION_COLORS</span></span><a class="headerlink" href="#polartools.scan_viewer.POLARIZATION_COLORS" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py data">
@@ -709,7 +720,8 @@ way:</p>
 <dt class="sig sig-object py" id="polartools.scan_viewer.SgHdfViewer">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polartools.scan_viewer.</span></span><span class="sig-name descname"><span class="pre">SgHdfViewer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#polartools.scan_viewer.SgHdfViewer" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">polartools._scan_viewer_base.HdfViewer</span></code></p>
-<p>The browser, in bold, with softglue scan numbers in blue.</p>
+<p>The browser, with dichro, lock-in and softglue scans in colour.</p>
+<p>Their scan numbers are bold, in red, green and blue respectively.</p>
 <p>A subclass and not an edit to <code class="docutils literal notranslate"><span class="pre">_scan_viewer_base.py</span></code>: that file is what the
 beamline runs every day and stays byte-for-byte identical. Both additions
 are things the base class has no hook for, so each overrides the smallest
@@ -751,11 +763,11 @@ method that can carry it.</p>
       </div>
     </a>
     <a class="right-next"
-       href="../spectrum_viewer/index.html"
+       href="../spectrum_fit/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">polartools.spectrum_viewer</p>
+        <p class="prev-next-title">polartools.spectrum_fit</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -783,6 +795,7 @@ method that can carry it.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.scan_viewer.SOFTGLUE_COLOR"><code class="docutils literal notranslate"><span class="pre">SOFTGLUE_COLOR</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.scan_viewer.POLARIZATION_COLORS"><code class="docutils literal notranslate"><span class="pre">POLARIZATION_COLORS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.scan_viewer.FILL_SLICE_MS"><code class="docutils literal notranslate"><span class="pre">FILL_SLICE_MS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.scan_viewer.PREFETCH_THREADS"><code class="docutils literal notranslate"><span class="pre">PREFETCH_THREADS</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polartools.scan_viewer.PREFETCH_BYTES"><code class="docutils literal notranslate"><span class="pre">PREFETCH_BYTES</span></code></a></li>

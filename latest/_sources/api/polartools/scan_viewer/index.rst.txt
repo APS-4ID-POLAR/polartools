@@ -15,10 +15,12 @@ polartools.scan_viewer
    and offers ``vortex_total_el1`` and ``vortex_total_el7`` as monitors.
 
    The browser itself gains five things, all through the same subclass: bold
-   text throughout; a blue scan number on any scan that wrote more than one
-   vortex frame per point -- the sgz softglue layout, and the scans this
-   edition's Combine box has something to say about; a Find row in the Baseline
-   window that jumps to a field by part of its name; a directory listing that
+   text throughout; a coloured scan number for the scans that need a second
+   look -- red for a dichro scan and green for a lock-in one, going by the
+   ``polarization`` hint the macro wrote, and blue on any other scan that wrote
+   more than one vortex frame per point, the sgz softglue layout and the scans
+   this edition's Combine box has something to say about; a Find row in the
+   Baseline window that jumps to a field by part of its name; a directory listing that
    appears at once instead of after every file has been read, which on a
    2714-scan directory is the difference between 0.05 s and 82 s; and an Auto
    refresh button that adds scans to the listing as they land.
@@ -49,6 +51,7 @@ Attributes
 .. autoapisummary::
 
    polartools.scan_viewer.SOFTGLUE_COLOR
+   polartools.scan_viewer.POLARIZATION_COLORS
    polartools.scan_viewer.FILL_SLICE_MS
    polartools.scan_viewer.PREFETCH_THREADS
    polartools.scan_viewer.PREFETCH_BYTES
@@ -78,6 +81,8 @@ Module Contents
 ---------------
 
 .. py:data:: SOFTGLUE_COLOR
+
+.. py:data:: POLARIZATION_COLORS
 
 .. py:data:: FILL_SLICE_MS
    :value: 5
@@ -113,7 +118,9 @@ Module Contents
 
 
    
-   The browser, in bold, with softglue scan numbers in blue.
+   The browser, with dichro, lock-in and softglue scans in colour.
+
+   Their scan numbers are bold, in red, green and blue respectively.
 
    A subclass and not an edit to ``_scan_viewer_base.py``: that file is what the
    beamline runs every day and stays byte-for-byte identical. Both additions
