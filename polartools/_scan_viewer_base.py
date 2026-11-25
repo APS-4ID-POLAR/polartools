@@ -2798,7 +2798,8 @@ def _metadata_apply(loader, suffix, node):
             order = "F" if fortran else "C"
             return np.frombuffer(raw, dtype=dtype).reshape(shape, order=order)
     except (TypeError, ValueError, IndexError, KeyError):
-        pass
+        # A payload numpy cannot rebuild is shown as its plain YAML instead.
+        return plain
     return plain
 
 

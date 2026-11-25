@@ -245,8 +245,9 @@ def _module_global(module, name: str, value):
 
 
 class SgHdfViewer(_base.HdfViewer):
-    """The browser, in bold, with dichro, lock-in and softglue scan numbers
-    in red, green and blue.
+    """The browser, with dichro, lock-in and softglue scans in colour.
+
+    Their scan numbers are bold, in red, green and blue respectively.
 
     A subclass and not an edit to ``_scan_viewer_base.py``: that file is what the
     beamline runs every day and stays byte-for-byte identical. Both additions
