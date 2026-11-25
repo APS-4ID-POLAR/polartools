@@ -23,7 +23,7 @@ def qapp():
 @pytest.fixture
 def fitted(qapp, tmp_path):
     """A viewer on a synthetic 4-element cube, fitted with three peaks."""
-    from polartools import spectrum_viewer as sv
+    from polartools.gui import spectrum_viewer as sv
 
     bins = np.arange(4096)
     spectrum = 20.0 + sum(
@@ -84,7 +84,7 @@ def test_energy_axis_change_marks_fit_stale(fitted):
 
 
 def test_unfit_element_is_left_out_of_sum(fitted):
-    from polartools import spectrum_viewer as sv
+    from polartools.gui import spectrum_viewer as sv
 
     fitted.fit_results.pop((0, 3))
     fitted.signal_combo.setCurrentIndex(1)

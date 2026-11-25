@@ -81,7 +81,7 @@ out of frames keeps showing its last one.
 
 Run standalone on one or more image files with::
 
-    python image_viewer.py scan_000310.h5 [scan_000311.h5 ...]
+    image-viewer scan_000310.h5 [scan_000311.h5 ...]
 """
 
 from __future__ import annotations

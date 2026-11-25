@@ -41,6 +41,8 @@ Installing the package puts the beamline's viewers on your `PATH`:
 | Command | What it opens |
 | --- | --- |
 | `scan-viewer [directory]` | Scan browser for a directory of `*_master.hdf` files, with the fluorescence-spectrum and image-stack windows behind its `Spc` and `Img` buttons |
+| `spectrum-viewer <file> [...]` | The fluorescence-spectrum window on its own, for a master or spectrum file |
+| `image-viewer <file.h5> [...]` | The image-stack window on its own |
 | `flyscan-dichro-gui` | Post-scan flyscan dichroism viewer: CR/CL maps and their difference |
 | `xmcd-gui` | Interactive XMCD normalization and dichroism |
 | `xanes-gui` | Interactive XANES normalization |

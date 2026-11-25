@@ -49,12 +49,12 @@ from matplotlib.colors import LogNorm, SymLogNorm
 from matplotlib.figure import Figure
 from matplotlib.patches import Rectangle
 
-from .process_flyscan import (
+from ..process_flyscan import (
     process_images,
     process_position_stream,
     process_vortex,
 )
-from .dichro_maps import interior_columns
+from ..dichro_maps import interior_columns
 
 #: How the difference colour scale is chosen. "Interior" exists because a
 #: thick sample's absorption edges carry a far larger (and spurious)
