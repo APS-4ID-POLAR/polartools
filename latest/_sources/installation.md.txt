@@ -87,13 +87,14 @@ scan-viewer .
 
 ## Console scripts
 
-Installing the package puts three applications on your `PATH`:
+Installing the package puts four applications on your `PATH`:
 
 | Command | Opens | Documented in |
 | --- | --- | --- |
 | `scan-viewer [directory]` | The scan browser, and the spectrum and image viewers behind its buttons | [Scan viewers](examples/viewers.md) |
 | `flyscan-dichro-gui [options]` | The post-scan flyscan dichroism viewer | [Flyscan dichroism](examples/flyscan_dichro.md) |
 | `xmcd-gui` | Interactive XMCD normalization and dichroism | [XMCD GUI](examples/xmcd_gui.md) |
+| `xanes-gui` | Interactive XANES normalization | [XANES GUI](examples/xanes_gui.md) |
 
 ## Optional: enable pre-commit hooks
 

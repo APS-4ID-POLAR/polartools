@@ -48,6 +48,7 @@ Submodules
    /api/polartools/scan_viewer/index
    /api/polartools/spectrum_fit/index
    /api/polartools/spectrum_viewer/index
+   /api/polartools/xanes_gui/index
    /api/polartools/xmcd_gui/index
 
 
