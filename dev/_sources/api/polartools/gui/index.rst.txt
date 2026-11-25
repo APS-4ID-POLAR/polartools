@@ -1,0 +1,47 @@
+polartools.gui
+==============
+
+.. py:module:: polartools.gui
+
+.. autoapi-nested-parse::
+
+   
+   Copyright (c) 2020, UChicago Argonne, LLC.
+
+   See LICENSE file for details.
+
+   The beamline's PyQt6 applications. Modules here may import the analysis
+   library (``polartools.*``); no library module may import this package.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /api/polartools/gui/flyscan_dichro/index
+   /api/polartools/gui/image_viewer/index
+   /api/polartools/gui/scan_viewer/index
+   /api/polartools/gui/spectrum_viewer/index
+   /api/polartools/gui/xanes/index
+   /api/polartools/gui/xmcd/index
+
+

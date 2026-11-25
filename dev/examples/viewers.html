@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../_static/documentation_options.js?v=8367d5a2"></script>
+    <script src="../_static/documentation_options.js?v=980f5b99"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.7.0.post17+g9dd6a0539" />
+  <meta name="docsearch:version" content="0.7.0.post20+gfd2609806" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -657,7 +657,7 @@ spectra into the master file. They go into a file of their own, named in
 <p>holding <code class="docutils literal notranslate"><span class="pre">entry/data/data</span></code> shaped <code class="docutils literal notranslate"><span class="pre">(frames,</span> <span class="pre">elements,</span> <span class="pre">bins)</span></code>. The browser’s
 <strong>Spc</strong> button opens that file for the selected scan. It can also be opened
 directly:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>polartools.spectrum_viewer<span class="w"> </span>path/to/scan_000055_master.hdf
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>spectrum-viewer<span class="w"> </span>path/to/scan_000055_master.hdf
 </pre></div>
 </div>
 <p>Both the master file and the spectrum file itself are accepted — the master is
@@ -706,7 +706,7 @@ two writers — the pvapy streaming consumer (a sibling file named in
 <code class="docutils literal notranslate"><span class="pre">pva_streaming</span></code>) or an areaDetector plugin (a per-detector subdirectory, named
 in <code class="docutils literal notranslate"><span class="pre">detectors_file_relative_path</span></code>). The viewer resolves either, and falls back
 to deriving <code class="docutils literal notranslate"><span class="pre">pva_&lt;stem&gt;.h5</span></code> when the master records neither.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>polartools.image_viewer<span class="w"> </span>path/to/pva_tise2_2_00006.h5<span class="w"> </span><span class="o">[</span>more.h5<span class="w"> </span>...<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>image-viewer<span class="w"> </span>path/to/pva_tise2_2_00006.h5<span class="w"> </span><span class="o">[</span>more.h5<span class="w"> </span>...<span class="o">]</span>
 </pre></div>
 </div>
 <p>Built on pyqtgraph: pan/zoom, level and colormap control, rectangular ROIs

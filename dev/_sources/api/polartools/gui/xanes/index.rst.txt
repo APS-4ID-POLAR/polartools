@@ -1,0 +1,127 @@
+polartools.gui.xanes
+====================
+
+.. py:module:: polartools.gui.xanes
+
+.. autoapi-nested-parse::
+
+   XANES normalization GUI using PyQt6 + pyqtgraph.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   polartools.gui.xanes.C_RAW
+   polartools.gui.xanes.C_PRE
+   polartools.gui.xanes.C_POST
+   polartools.gui.xanes.C_E0
+   polartools.gui.xanes.C_PRE1
+   polartools.gui.xanes.C_PRE2
+   polartools.gui.xanes.C_POST1
+   polartools.gui.xanes.C_POST2
+   polartools.gui.xanes.C_NORM
+   polartools.gui.xanes.C_FLAT
+   polartools.gui.xanes.C_REF
+   polartools.gui.xanes.NORM_DELAY_MS
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   polartools.gui.xanes.MainWindow
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   polartools.gui.xanes.main
+
+
+Module Contents
+---------------
+
+.. py:data:: C_RAW
+   :value: '#4C72B0'
+
+
+.. py:data:: C_PRE
+   :value: '#FF8800'
+
+
+.. py:data:: C_POST
+   :value: '#00AA44'
+
+
+.. py:data:: C_E0
+   :value: '#222222'
+
+
+.. py:data:: C_PRE1
+   :value: '#FF6600'
+
+
+.. py:data:: C_PRE2
+   :value: '#CC4400'
+
+
+.. py:data:: C_POST1
+   :value: '#00AA44'
+
+
+.. py:data:: C_POST2
+   :value: '#006622'
+
+
+.. py:data:: C_NORM
+   :value: '#4C72B0'
+
+
+.. py:data:: C_FLAT
+   :value: '#DD8452'
+
+
+.. py:data:: C_REF
+   :value: '#888888'
+
+
+.. py:data:: NORM_DELAY_MS
+   :value: 50
+
+
+.. py:class:: MainWindow
+
+   Bases: :py:obj:`PyQt6.QtWidgets.QMainWindow`
+
+
+.. py:function:: main()
+
+   
+   Console entry point for the ``xanes-gui`` application.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
